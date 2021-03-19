@@ -225,11 +225,12 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     lower = NULL,
     upper = NULL,
     log = NULL,
+    conditionals = NULL,
     initialize = function(predictor, x.interest = NULL, target = NULL,
       epsilon = NULL, fixed.features = NULL, max.changed = NULL,
       mu = 50, generations = 50, p.rec = 0.9, p.rec.gen = 0.7, p.rec.use.orig = 0.7,
       p.mut = 0.2, p.mut.gen = 0.5, p.mut.use.orig = 0.2, k = 1L, weights = NULL,
-      lower = NULL, upper = NULL, initialization = "random",
+      lower = NULL, upper = NULL, conditionals = FALSE, initialization = "random",
       track.infeas = TRUE) {
 
       super$initialize(predictor = predictor)
@@ -264,6 +265,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       checkmate::assert_logical(track.infeas)
       checkmate::assert_character(initialization)
       checkmate::assert_true(initialization %in% c("random", "sd", "icecurve", "traindata"))
+      checkmate::assert_logical(conditionals)
 
       # assign
       self$target = target
@@ -283,6 +285,11 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       self$upper = upper
       self$track.infeas = track.infeas
       self$initialization = initialization
+      if (conditionals) {
+        conditionals = fit_conditionals(self$predictor$data, 
+          ctrl = partykit::ctree_control(maxdepth = 5L))
+      } 
+      self$conditionals = conditionals 
       
       # Check if column names of x.interest and observed data are identical
       if(any(!(self$predictor$data$feature.names %in% colnames(x.interest)))) {
@@ -340,8 +347,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
           } else if (left < 0) {
             cfexps = cfexps[feas.id,]
           }
-        } 
-          idx = private$hv_contribution(t(cfexps[, obj.nams]), nr.solutions = nr.solutions, 
+        }
+          idx = private$hv_contribution(t(cfexps[, private$obj.names]), nr.solutions = nr.solutions, 
             best = best)
           results.subset = self$results
           results.subset$counterfactuals = results.subset$counterfactuals[idx, ]
@@ -683,7 +690,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       sdev.l = sdev_to_list(private$sdev, private$param.set)
       # Use mutator based on conditional distributions if functions are given
       # it is the case if self$predictor$conditionals is NOT logical
-      if (is.logical(self$predictor$conditionals)) {
+      if (is.logical(self$conditionals)) {
         single.mutator = suppressMessages(mosmafs::combine.operators(private$param.set,
           numeric = ecr::setup(mosmafs::mutGaussScaled, p = self$p.mut.gen, sdev = sdev.l$numeric),
           integer = ecr::setup(mosmafs::mutGaussIntScaled, p = self$p.mut.gen, sdev = sdev.l$integer),
@@ -929,7 +936,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       ref.point = c(0.5, 1, max(fitness[3,])+1, 1)
       for (i in seq_len(nr.solutions)) {
         best = c(best, which.max(apply(fitness, 2, 
-          function(obs) computeHV(cbind(fitness[,best], obs), ref.point = ref.point)
+          function(obs) ecr::computeHV(cbind(fitness[,best], obs), ref.point = ref.point)
         )))
       }
       return(best)
