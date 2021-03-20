@@ -204,6 +204,7 @@ NULL
 Counterfactuals = R6::R6Class("Counterfactuals",
   inherit = InterpretationMethod,
   public = list(
+    predictor = NULL,
     x.interest = NULL,
     y.hat.interest = NULL,
     target = NULL,
@@ -226,6 +227,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     upper = NULL,
     log = NULL,
     conditionals = NULL,
+    results = NULL,
     initialize = function(predictor, x.interest = NULL, target = NULL,
       epsilon = NULL, fixed.features = NULL, max.changed = NULL,
       mu = 50, generations = 50, p.rec = 0.9, p.rec.gen = 0.7, p.rec.use.orig = 0.7,
@@ -286,13 +288,13 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       self$track.infeas = track.infeas
       self$initialization = initialization
       if (conditionals) {
-        conditionals = fit_conditionals(self$predictor$data, 
+        conditionals = fit_conditionals(self$predictor$data$get.x(), 
           ctrl = partykit::ctree_control(maxdepth = 5L))
       } 
       self$conditionals = conditionals 
       
       # Check if column names of x.interest and observed data are identical
-      if(any(!(self$predictor$data$feature.names %in% colnames(x.interest)))) {
+      if(!is.null(x.interest) && any(!(self$predictor$data$feature.names %in% colnames(x.interest)))) {
         stop("colnames of x.interest must be identical to observed data")
       }
       
@@ -312,7 +314,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       # Set x.interest
       if (!is.null(x.interest) & !is.null(target)) {
         private$set_x_interest(x.interest)
-        private$run()
+        self$explain(x.interest = self$x.interest, target = self$target)
       }
     },
     explain = function(x.interest, target) {
@@ -514,9 +516,9 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       private$ecrresults = continueEcr(ecr.object = private$ecrresults, generations = generations)
       results = private$evaluate(private$ecrresults)
       private$dataDesign = results
-      private$qResults = private$run.prediction(results)
-      # self$generations = self$generations + generations
+      private$qResults = self$predictor$predict(data.frame(private$dataDesign))
       self$results = private$aggregate()
+      self$generations = self$generations + generations
     },
     get_hv = function() {
       return(tail(self$log$fitness.domHV, 1))
@@ -537,6 +539,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
   ),
   private = list(
     #featurenames = NULL,
+    dataDesign = NULL,
     range = NULL,
     ref.point = NULL,
     sdev = NULL,
@@ -544,6 +547,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     param.set.init = NULL,
     ecrresults = NULL,
     obj.names = NULL,
+    finished = NULL,
+    qResults = NULL,
     set_x_interest = function(x.interest) {
       assert_data_frame(x.interest, any.missing = FALSE, all.missing = FALSE,
         nrows = 1, null.ok = FALSE)
@@ -567,9 +572,25 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       self$results = NULL
       private$finished = FALSE
     },
+    # based on InterpretationMethod::run() 
+    # but own functionality necessary since results does not expect a list()
+    run = function(force = FALSE, ...) {
+      if (force) private$flush()
+      if (!private$finished) {
+        # Observed data
+        private$dataSample <- private$getData()
+        # Get counterfactuals 
+        private$dataDesign = private$intervene()
+        # Get predictions for counterfactuals
+        private$qResults = self$predictor$predict(data.frame(private$dataDesign))
+        # Get results list 
+        self$results = private$aggregate()
+        private$finished <- TRUE
+      }
+      },
     intervene = function() {
 
-      # Define reference point for hypervolumn computation
+      # Define reference point for hypervolume computation
       private$ref.point = c(min(abs(self$y.hat.interest - self$target)),
         1, ncol(self$x.interest))
       private$obj.names = c("dist.target", "dist.x.interest", "nr.changed")
@@ -731,8 +752,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
               X = data.table::as.data.table(data.frame(ind.short, stringsAsFactors = FALSE))
               single.mutator = suppressMessages(mosmafs::combine.operators(private$param.set,
                 .params.group = c(a),
-                group = ecr::setup(mutConDens, X = X,
-                  pred = self$predictor, param.set = private$param.set),
+                group = ecr::setup(mutConDens, conditionals = self$conditionals, 
+                  X = X, pred = self$predictor, param.set = private$param.set),
                 use.orig = mutInd, numeric = mutInd, integer = mutInd, discrete = mutInd,
                 logical = mutInd, .binary.discrete.as.logical = FALSE))
               ind = single.mutator(ind)
@@ -787,7 +808,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         p.recomb = self$p.rec,
         p.mut = self$p.mut, log.stats = log.stats)
       private$ecrresults = ecrresults
-      private$evaluate(ecrresults)
+      return(private$evaluate(ecrresults))
     },
     evaluate = function(ecrresults) {
 
@@ -850,15 +871,6 @@ Counterfactuals = R6::R6Class("Counterfactuals",
 
       result = cbind(finalpop, fit)
 
-      # # Remove counterfactuals that do not satisfy the soft constraint epsilon
-      # if (!is.null(self$epsilon)) {
-      #   feas.id = result$dist.target <= self$epsilon
-      #   if (any(feas.id)) {
-      #     result = result[feas.id,]
-      #   } else {
-      #     message("no counterfactual found that satisfies the constraint epsilon.")
-      #   }
-      # }
       return(result)
     },
     aggregate = function() {
