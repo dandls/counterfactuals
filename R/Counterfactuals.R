@@ -23,8 +23,11 @@ Counterfactuals = R6Class("Counterfactuals",
     
     make_results_list = function(cfactuals) {
       cfactuals_diff = private$compute_diff(cfactuals)
-      cfactuals$nr_changed = cfactuals_diff$nr_changed = private$count_changes(cfactuals_diff)
-      cfactuals$pred = cfactuals_diff$pred = private$desired_outcome
+      n_changes = private$count_changes(cfactuals_diff)
+      cfactuals[, nr_changed := n_changes]
+      cfactuals_diff[, nr_changed := n_changes]
+      cfactuals[, pred := private$desired_outcome]
+      cfactuals_diff[, pred := private$desired_outcome]
       list("counterfactuals" = cfactuals, "counterfactuals_diff" = cfactuals_diff)
     },
     
@@ -34,42 +37,45 @@ Counterfactuals = R6Class("Counterfactuals",
       is_numeric = sapply(x_interest, checkmate::test_numeric)
       numeric_colnames = col_names[is_numeric]
       non_numeric_colnames  = col_names[!col_names %in% numeric_colnames]
-      diff_numeric_cols = private$comp_diff_numeric_cols(
-        cfactuals, x_interest, numeric_colnames
-      )
-      diff_non_numeric_cols = private$comp_diff_non_numeric_cols(
-        cfactuals, x_interest, non_numeric_colnames
-      )
-      diff = cfactuals
-      diff[, numeric_colnames] = diff_numeric_cols
-      diff[, non_numeric_colnames] = diff_non_numeric_cols
+      diff = data.table::copy(cfactuals)
+      if (length(numeric_colnames) > 0) {
+        diff_numeric_cols = private$comp_diff_numeric_cols(
+          cfactuals, x_interest, numeric_colnames
+        )
+        data.table::set(diff, j = numeric_colnames, value = diff_numeric_cols)
+      }
+      if (length(non_numeric_colnames) > 0) {
+        diff_non_numeric_cols = private$comp_diff_non_numeric_cols(
+          cfactuals, x_interest, non_numeric_colnames
+        )
+        data.table::set(diff, j = non_numeric_colnames, value = diff_non_numeric_cols)
+      }
       diff
     },
     
     comp_diff_numeric_cols = function(dt, x_interest, numeric_colnames) {
-      if (length(numeric_colnames) == 0) {
-        return(numeric(0))
-      }
-      dt = dt[, numeric_colnames, with = FALSE]
-      x_interest = x_interest[, numeric_colnames, with = FALSE]
-      as.data.frame(sweep(as.matrix(dt), 2, as.numeric(x_interest)))
+      dt = dt[, ..numeric_colnames]
+      x_interest = x_interest[, ..numeric_colnames]
+      
+      # TODO: Find DT solution
+      data.table::as.data.table(sweep(as.matrix(dt), 2, as.numeric(x_interest)))
     },
     
-    comp_diff_non_numeric_cols = function(df, x_interest, non_numeric_colnames) {
-      if (length(non_numeric_colnames) == 0) {
-        return(character(0))
-      }
-      df = df[, non_numeric_colnames, with = FALSE]
-      x_interest = x_interest[, non_numeric_colnames, with = FALSE]
-      df_char = sapply(df, as.character)
+    comp_diff_non_numeric_cols = function(dt, x_interest, non_numeric_colnames) {
+      dt = dt[, ..non_numeric_colnames]
+      x_interest = x_interest[, ..non_numeric_colnames]
+      dt_char = sapply(dt, as.character)
       x_interest_char = sapply(x_interest, as.character)
-      no_diff = sweep(as.matrix(df_char), 2, as.matrix(x_interest_char), FUN = "==")
-      df_char[no_diff] = "0"
-      df_char
+      no_diff = sweep(as.matrix(dt_char), 2, as.matrix(x_interest_char), FUN = "==")
+      dt_char[no_diff] = "0"
+      # TODO: Find DT solution
+      data.table::as.data.table(dt_char)
     },
     
     count_changes = function(diff) {
-      diff_char = as.matrix(diff[, names(private$x_interest)])
+      names_x_interest = names(private$x_interest)
+      # TODO: Find DT solution (comapre "0" or 0)
+      diff_char = as.matrix(diff[, ..names_x_interest])
       as.integer(rowSums(diff_char != "0", na.rm = TRUE))
     },
     

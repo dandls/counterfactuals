@@ -19,7 +19,7 @@ test_that("make_results_list methods returns correct output for mixed cf variabl
   res_cfs_diffs = res$counterfactuals_diff
   
   # Output format ----------------------------------------------------------------------------------
-  expected_cols = c(colnames(cfactuals), "nr_changed", "pred")
+  expected_cols = c("col_a", "col_b", "col_c", "dist_x_interest", "nr_changed", "pred")
   expect_list(res, len = 2L)
   expect_data_table(res_cfs, nrows = nrow(cfactuals))
   expect_data_table(res_cfs_diffs, nrows = nrow(cfactuals))

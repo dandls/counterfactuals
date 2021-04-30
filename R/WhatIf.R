@@ -1,3 +1,4 @@
+#' @import data.table
 WhatIf = R6Class("WhatIf",
   inherit = Counterfactuals,
   
@@ -11,7 +12,7 @@ WhatIf = R6Class("WhatIf",
     
     preprocess = function() {
       is_desired_outcome = (private$y_hat == private$desired_outcome)
-      private$X_desired_outcome = private$X[is_desired_outcome, ]
+      private$X_desired_outcome = private$X[is_desired_outcome]
     },
     
     calculate = function() {
@@ -23,6 +24,7 @@ WhatIf = R6Class("WhatIf",
     aggregate = function() {
       X_temp = private$X_desired_outcome
       X_temp$dist_x_interest = private$dist_vector
+      # order(origin, -dest)]
       X_temp_ordered = X_temp[order(X_temp$dist_x_interest), ]
       cfactuals = head(X_temp_ordered, private$n)
       private$.results = private$make_results_list(cfactuals)
@@ -54,7 +56,7 @@ WhatIf = R6Class("WhatIf",
       # TODO: Check if y is in X -> if yes remove and message
       
       private$predictor = predictor
-      private$X = as.data.table(private$infer_X(X))
+      private$X = data.table::setDT(private$infer_X(X))
       y_hat_raw = predictor$predict(private$X)
       private$check_that_classif_task(y_hat_raw)
       y_hat_one_col = private$one_hot_to_one_col(y_hat_raw)
@@ -66,7 +68,7 @@ WhatIf = R6Class("WhatIf",
       
       # TODO: Check if desired_outcome is in private$y_hat
       
-      private$x_interest = as.data.table(x_interest)
+      private$x_interest = data.table::setDT(x_interest)
       private$desired_outcome = desired_outcome
       private$n = n
       private$n_cores = n_cores
@@ -88,14 +90,12 @@ gower_dist <- function(x, data, n_cores) {
   }
 
   # For numeric variables, build ranges (max-min) to be used in gower-distance.
-  datax <- rbind(data, x)
-  ranges = rep(NA, ncol(datax))
-  for (i in 1:ncol(datax)) {
-    col <- datax[[i]]
-    if (is.numeric(col)) {
-      ranges[i] <- max(col, na.rm = TRUE) - min(col, na.rm = TRUE)
-    }
+  get_range_if_numeric = function(x) {
+    is_numeric = checkmate::test_numeric(x)
+    ifelse(is_numeric, max(x, na.rm = TRUE) - min(x, na.rm = TRUE), NA)
   }
+  datax = rbind(data, x)
+  ranges = sapply(datax, get_range_if_numeric)
 
   chunk_size = floor(nrow(data) / n_cores)
   dist_vector = foreach(
@@ -141,6 +141,7 @@ gower_dist <- function(x, data, n_cores) {
 # wi$results
 # 
 # library(mlbench)
+# library("randomForest")
 # data(PimaIndiansDiabetes)
 # dim(PimaIndiansDiabetes)
 # levels(PimaIndiansDiabetes$diabetes)
@@ -157,16 +158,19 @@ gower_dist <- function(x, data, n_cores) {
 # wi$results
 # 
 # 
-# gower_dist(unlist(oneinst), PimaIndiansDiabetes[, -9],  n_cores = 3)
-
+# gower_dist(oneinst, PimaIndiansDiabetes[1:5, -9],  n_cores = 3)
+# 
 # library("randomForest")
 # testi = mtcars
 # testi$am = as.factor(testi$am)
 # testi$vs = as.factor(testi$vs)
 # testi$cyl = as.factor(testi$cyl)
 # rf <- randomForest(am ~ ., data = testi[, c("am", "vs", "cyl")], ntree = 20)
-# mod_class = Predictor$new(rf, testi[, c("am", "vs", "cyl")])
 # 
+# oneinst = head(subset(testi, select = c(vs, cyl)), 1L)
+# gower_dist(oneinst, testi[, c("vs", "cyl")],  n_cores = 3)
+# mod_class = Predictor$new(rf, testi[, c("am", "vs", "cyl")])
+
 # wi = WhatIf$new(mod_class)
 # oneinst = head(subset(testi, select = c(vs, cyl)), 1L)
 # n = 3L

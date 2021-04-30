@@ -10,19 +10,21 @@ Maintainer: Susanne Dandl <dandl.susanne@googlemail.com>
 Description: Counterfactuals as described in <doi:DOI>.
 URL: https://github.com/TODO
 BugReports: https://github.com/TODO/issues
-Imports: R6,
-         checkmate,
-         ggplot2,
-         Metrics,
-         ParamHelpers, 
-         mosmafs,
-         ecr,
-         StatMatch,
-         ggplot2,
-         GGally,
-         ggExtra,
-         metR, 
-         iml
+Imports: 
+    R6,
+    checkmate,
+    ggplot2,
+    Metrics,
+    ParamHelpers,
+    mosmafs,
+    ecr,
+    StatMatch,
+    ggplot2,
+    GGally,
+    ggExtra,
+    metR,
+    iml,
+    data.table
 Suggests: randomForest,
           mlt,
           gower,
