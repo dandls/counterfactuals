@@ -26,17 +26,10 @@ WhatIf = R6Class("WhatIf",
       X_temp[, c("dist_x_interest", "pred") := list(private$dist_vector, private$desired_outcome)]
       
       cfactuals = head(data.table::setorder(X_temp, dist_x_interest), private$n)
-      cfactuals[, "nr_changed" := private$count_changes(cfactuals)]
+      n_changes = private$count_changes(cfactuals[, names(private$x_interest), with = FALSE])
+      cfactuals[, "nr_changed" := n_changes]
       
-      names_x_interest = names(private$x_interest)
-      diff = private$compute_diff(cfactuals[, ..names_x_interest])
-      cfactuals_diff = data.table::copy(cfactuals)
-      data.table::set(cfactuals_diff, j = names_x_interest, value = diff)
-      
-      private$.results = list(
-        "counterfactuals" = cfactuals, 
-        "counterfactuals_diff" = cfactuals_diff
-      )
+      private$.results = private$make_results_list(cfactuals)
     },
     
     compute_gower_dist = function(x_interest, X, n_cores = private$n_cores) {
