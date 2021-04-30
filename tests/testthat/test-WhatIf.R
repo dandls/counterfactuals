@@ -18,7 +18,7 @@ test_that("Returns correct output format for numeric columns only", {
   cfs = res$counterfactuals
   cfs_diff = res$counterfactuals_diff
   expect_data_table(cfs, nrows = n)
-  expected_cols = c(colnames(iris_sub)[-5], "dist_x_interest", "nr_changed", "pred")
+  expected_cols = c(colnames(iris_sub)[-5], "dist_x_interest", "pred", "nr_changed")
   expect_true(all(colnames(cfs) == expected_cols))
   expect_data_table(cfs_diff, nrows = n)
   expect_true(all(colnames(cfs_diff) == expected_cols))
@@ -43,7 +43,7 @@ test_that("Returns correct output format for factor columns only", {
   cfs = res$counterfactuals
   cfs_diff = res$counterfactuals_diff
   expect_data_table(cfs, nrows = n)
-  expected_cols = c(colnames(df)[-1L], "dist_x_interest", "nr_changed", "pred")
+  expected_cols = c(colnames(df)[-1L], "dist_x_interest", "pred", "nr_changed")
   expect_true(all(colnames(cfs) == expected_cols))
   expect_data_table(cfs_diff, nrows = n)
   expect_true(all(colnames(cfs_diff) == expected_cols))
@@ -64,7 +64,7 @@ test_that("Returns correct output format for factor and numeric columns", {
   cfs = res$counterfactuals
   cfs_diff = res$counterfactuals_diff
   expect_data_table(cfs, nrows = n)
-  expected_cols = c(colnames(oneinst), "dist_x_interest", "nr_changed", "pred")
+  expected_cols = c(colnames(oneinst), "dist_x_interest", "pred", "nr_changed")
   expect_true(all(colnames(cfs) == expected_cols))
   expect_data_table(cfs_diff, nrows = n)
   expect_true(all(colnames(cfs_diff) == expected_cols))

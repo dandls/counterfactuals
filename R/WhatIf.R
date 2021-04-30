@@ -23,11 +23,20 @@ WhatIf = R6Class("WhatIf",
     
     aggregate = function() {
       X_temp = private$X_desired_outcome
-      X_temp$dist_x_interest = private$dist_vector
-      # order(origin, -dest)]
-      X_temp_ordered = X_temp[order(X_temp$dist_x_interest), ]
-      cfactuals = head(X_temp_ordered, private$n)
-      private$.results = private$make_results_list(cfactuals)
+      X_temp[, c("dist_x_interest", "pred") := list(private$dist_vector, private$desired_outcome)]
+      
+      cfactuals = head(data.table::setorder(X_temp, dist_x_interest), private$n)
+      cfactuals[, "nr_changed" := private$count_changes(cfactuals)]
+      
+      names_x_interest = names(private$x_interest)
+      diff = private$compute_diff(cfactuals[, ..names_x_interest])
+      cfactuals_diff = data.table::copy(cfactuals)
+      data.table::set(cfactuals_diff, j = names_x_interest, value = diff)
+      
+      private$.results = list(
+        "counterfactuals" = cfactuals, 
+        "counterfactuals_diff" = cfactuals_diff
+      )
     },
     
     compute_gower_dist = function(x_interest, X, n_cores = private$n_cores) {

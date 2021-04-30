@@ -21,16 +21,6 @@ Counterfactuals = R6Class("Counterfactuals",
       NULL
     },
     
-    make_results_list = function(cfactuals) {
-      cfactuals_diff = private$compute_diff(cfactuals)
-      n_changes = private$count_changes(cfactuals_diff)
-      cfactuals[, nr_changed := n_changes]
-      cfactuals_diff[, nr_changed := n_changes]
-      cfactuals[, pred := private$desired_outcome]
-      cfactuals_diff[, pred := private$desired_outcome]
-      list("counterfactuals" = cfactuals, "counterfactuals_diff" = cfactuals_diff)
-    },
-    
     compute_diff = function(cfactuals) {
       x_interest = private$x_interest
       col_names = names(x_interest)
@@ -72,11 +62,12 @@ Counterfactuals = R6Class("Counterfactuals",
       data.table::as.data.table(dt_char)
     },
     
-    count_changes = function(diff) {
+    count_changes = function(cfactuals) {
       names_x_interest = names(private$x_interest)
-      # TODO: Find DT solution (comapre "0" or 0)
-      diff_char = as.matrix(diff[, ..names_x_interest])
-      as.integer(rowSums(diff_char != "0", na.rm = TRUE))
+      m_cfactuals = as.matrix(cfactuals[, ..names_x_interest])
+      m_x_interest = as.matrix(private$x_interest)
+      n_changes = rowSums(sweep(m_cfactuals, 2, m_x_interest, FUN = "!="), na.rm = TRUE)
+      as.integer(n_changes)
     },
     
     check_that_classif_task = function(prediction) {
