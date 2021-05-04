@@ -6,7 +6,7 @@
 #'
 #' @section Arguments:
 #' \describe{
-#' \item{input.data:}{(data.frame)\cr Training data}
+#' \item{data:}{(data.frame)\cr Training data}
 #' \item{lower: }{numeric\cr Vector of minimal values for numeric features.
 #' If NULL lower is extracted from input data specified in field 'data' of
 #' 'predictor'.}
@@ -15,51 +15,55 @@
 #' 'predictor'.}
 #' }
 #' @return (list)
-make_paramlist = function(input.data, lower = NULL, upper = NULL, use.orig = TRUE) {
-  checkmate::assert_data_frame(input.data)
+make_paramlist = function(data, lower = NULL, upper = NULL, use_orig = TRUE) {
+  checkmate::assert_data_frame(data)
   checkmate::assert_numeric(lower, null.ok = TRUE)
   checkmate::assert_numeric(upper, null.ok = TRUE)
+  checkmate::assert_logical(use_orig, any.missing = FALSE, len = 1L)
+  checkmate::assert_true(all(names(lower) %in% names(data)))
+  checkmate::assert_true(all(names(upper) %in% names(data)))
 
-  assert_true(all(names(lower) %in% names(input.data)))
-  assert_true(all(names(upper) %in% names(input.data)))
-
-  ncol = ncol(input.data)
-
-  l = lapply(colnames(input.data), function(colnam) {
-    col = input.data[[colnam]]
-    if (colnam %in% names(lower)) {
-      l = lower[[colnam]]
+  makeParam = function(column_name) {
+    column = data[[column_name]]
+    
+    if (column_name %in% names(lower)) {
+      col_lower = lower[[column_name]]
     } else {
-      l =  tryCatch(min(col, na.rm = TRUE), error = function(err) NA)
+      col_lower = tryCatch(min(column, na.rm = TRUE), error = function(err) NA)
     }
-    if (colnam %in% names(upper)) {
-      u = upper[[colnam]]
+    
+    if (column_name %in% names(upper)) {
+      col_upper = upper[[column_name]]
     }
     else {
-      u = tryCatch(max(col, na.rm = TRUE), error = function(err) NA)
+      col_upper = tryCatch(max(column, na.rm = TRUE), error = function(err) NA)
     }
-
-    if (is.double(col)) {
-      ParamHelpers::makeNumericParam(colnam, lower = l, upper = u)
+    
+    if (is.double(column)) {
+      param = ParamHelpers::makeNumericParam(column_name, lower = col_lower, upper = col_upper)
     }
-
-    else if (is.integer(col)) {
-      ParamHelpers::makeIntegerParam(colnam, lower = l, upper = u)
+    else if (is.integer(column)) {
+      param = ParamHelpers::makeIntegerParam(column_name, lower = col_lower, upper = col_upper)
     }
-
     else {
-      if (is.character(col)) {
-        values = unique(col)
+      if (is.character(column)) {
+        values = unique(column)
       } else {
-        values = char_to_factor(levels(col))
+        values = char_to_factor(levels(column))
       }
-      ParamHelpers::makeDiscreteParam(colnam, values = values)
+      param = ParamHelpers::makeDiscreteParam(column_name, values = values)
     }
-  })
-  if (use.orig) {
-    l[[length(l)+1]] = ParamHelpers::makeLogicalVectorParam("use.orig", len = ncol)
+    
+    param
   }
-  return(l)
+  
+  paramlist = lapply(colnames(data), makeParam)
+  if (use_orig) {
+    param_origin = ParamHelpers::makeLogicalVectorParam("use_orig", len = ncol(data))
+    paramlist[[length(paramlist) + 1]] = param_origin
+  }
+  
+  paramlist
 }
 
 #' Create a list with named vectors of standard deviation

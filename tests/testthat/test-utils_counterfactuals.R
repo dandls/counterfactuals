@@ -1,48 +1,51 @@
-# context("utils_counterfactuals")
-# 
-# discval = c("a", "b", "c")
-# test.df = data.frame(num = runif(10, 0, 1),
-#   char = sample(discval, size = 10, replace = TRUE),
-#   fact = factor(sample(discval, size = 10, replace = TRUE), levels = c(discval)),
-#   int = sample(1:20, size = 10), stringsAsFactors = FALSE)
-# ps = ParamHelpers::makeParamSet(params = make_paramlist(test.df))
-# 
-# test_that("make_paramlist", {
-#   expect_true(all(c("num", "char", "fact", "int", "use.orig") %in% getParamIds(ps)))
-#   invisible(lapply(getValues(ps)[[1]], function(x) expect_class(x, "character")))
-#   invisible(lapply(getValues(ps)[[2]], function(x) expect_class(x, "factor")))
-#   expect_true(all(getParamTypes(ps) == c("numeric", "discrete", "discrete",
-#     "integer", "logicalvector")))
-# 
-#   # set lower
-#   lower = c(-1, 0)
-#   names(lower) = c("num", "int")
-#   ps.low = ParamHelpers::makeParamSet(params = make_paramlist(test.df,
-#     lower = lower))
-#   assert_true(all(getLower(ps.low) == lower))
-# 
-#   upper = c(1, 11)
-#   names(upper) = c("num", "int")
-#   ps.upper = ParamHelpers::makeParamSet(params = make_paramlist(test.df,
-#     upper = upper))
-#   assert_true(all(getUpper(ps.upper) == upper))
-# 
-#   # lower = upper --> error
-#   lower = 1
-#   names(lower) = "num"
-#   expect_error(make_paramlist(test.df, lower = lower),
-#     "some component of 'upper' is smaller than the corresponding one in 'lower'")
-# 
-#   # wrong names in upper and lower
-#   upper = c(1, 11)
-#   names(upper) = c("num3", "int")
-#   expect_error(make_paramlist(test.df, upper = upper))
-#   expect_error(make_paramlist(test.df, lower = upper))
-# 
-#   # one parameter
-# 
-# 
-# })
+
+
+test_that("make_paramlist", {
+  
+  discval = c("a", "b", "c")
+  test_df = data.frame(
+    num = runif(10, 0, 1),
+    char = sample(discval, size = 10L, replace = TRUE),
+    fact = factor(sample(discval, size = 10L, replace = TRUE), levels = c(discval)),
+    int = sample(1:20, size = 10L)
+  )
+  ps = ParamHelpers::makeParamSet(params = make_paramlist(test_df))
+  ps_values = getValues(ps)
+  
+  expect_true(all(c("num", "char", "fact", "int", "use_orig") %in% getParamIds(ps)))
+  invisible(sapply(ps_values[[1L]], expect_class, "character"))
+  invisible(sapply(ps_values[[2L]], expect_class, "factor"))
+  expect_identical(
+    getParamTypes(ps), c("numeric", "discrete", "discrete", "integer", "logicalvector")
+  )
+
+  # manually set lower
+  lower = c(-1, 0L)
+  names(lower) = c("num", "int")
+  ps_low = ParamHelpers::makeParamSet(params = make_paramlist(test_df, lower = lower))
+  expect_identical(getLower(ps_low), lower)
+  
+  # manually set upper
+  upper = c(1, 11)
+  names(upper) = c("num", "int")
+  ps_upper = ParamHelpers::makeParamSet(params = make_paramlist(test_df, upper = upper))
+  expect_identical(getUpper(ps_upper), upper)
+  
+  # if some values in the data are smaller then lower (and upper inferred from data), return error
+  lower = 100L
+  names(lower) = "num"
+  expect_error(
+    make_paramlist(test_df, lower = lower),
+    "some component of 'upper' is smaller than the corresponding one in 'lower'"
+  )
+
+  # wrong names in upper and lower
+  vals = c(1L, 11L)
+  names(vals) = c("num3", "int")
+  expect_snapshot(make_paramlist(test_df, upper = vals), error = TRUE)
+  expect_snapshot(make_paramlist(test_df, lower = vals), error = TRUE)
+
+})
 # 
 # 
 # test_that("sdev_to_list", {
