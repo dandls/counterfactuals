@@ -24,7 +24,8 @@ Imports:
     ggExtra,
     metR,
     iml,
-    data.table
+    data.table,
+    doParallel
 Suggests: randomForest,
           mlt,
           gower,

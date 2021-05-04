@@ -4,7 +4,7 @@
 \alias{make_paramlist}
 \title{Extract information about each feature from input dataset}
 \usage{
-make_paramlist(input.data, lower = NULL, upper = NULL, use.orig = TRUE)
+make_paramlist(data, lower = NULL, upper = NULL, use_orig = TRUE)
 }
 \value{
 (list)
@@ -15,7 +15,7 @@ Results in a list as input for ParamHelpers::makeParamSet.
 \section{Arguments}{
 
 \describe{
-\item{input.data:}{(data.frame)\cr Training data}
+\item{data:}{(data.frame)\cr Training data}
 \item{lower: }{numeric\cr Vector of minimal values for numeric features.
 If NULL lower is extracted from input data specified in field 'data' of
 'predictor'.}

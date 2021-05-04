@@ -1,24 +1,35 @@
 library(checkmate)
 library(data.table)
-library(randomForest)
+invisible(library(randomForest))
 
 set.seed(54542142)
 
-iris_sub = iris[c(1:5, 50:55, 100:105), ]
-rf = randomForest(Species ~ ., data = iris_sub, ntree = 2L)
-mod_class = Predictor$new(rf, iris_sub)
+
+rf = randomForest(Species ~ ., data = iris, ntree = 2L)
+mod_class = Predictor$new(rf, type = "class", class = "versicolor")
+
+test_that("Parallelization leads to same results as sequential execution", {
+  oneinst = head(subset(iris, select = -Species), 1)
+  wi = WhatIf$new(mod_class, n_counterfactuals = 10L, n_cores = parallel::detectCores() - 1L)
+  wi$find_counterfactuals(oneinst, 1)
+  res_par = wi$results
+  wi = WhatIf$new(mod_class, n_counterfactuals = 10L, n_cores = 1L)
+  wi$find_counterfactuals(oneinst, 1)
+  res_seq = wi$results
+  expect_identical(res_par, res_seq)
+})
 
 test_that("Returns correct output format for numeric columns only", {
   n = 3L
   wi = WhatIf$new(mod_class, n_counterfactuals = n, n_cores = 1L)
-  oneinst = head(subset(iris_sub, select = -Species), 1L)
-  wi$find_counterfactuals(oneinst, "virginica")
+  oneinst = head(subset(iris, select = -Species), 1L)
+  wi$find_counterfactuals(oneinst, 1)
   res = wi$results
   expect_list(res, len = 2L)
   cfs = res$counterfactuals
   cfs_diff = res$counterfactuals_diff
   expect_data_table(cfs, nrows = n)
-  expected_cols = c(colnames(iris_sub)[-5], "dist_x_interest", "pred", "nr_changed")
+  expected_cols = c(colnames(iris)[-5], "dist_x_interest", "pred", "nr_changed")
   expect_true(all(colnames(cfs) == expected_cols))
   expect_data_table(cfs_diff, nrows = n)
   expect_true(all(colnames(cfs_diff) == expected_cols))
@@ -28,37 +39,37 @@ test_that("Returns correct output format for numeric columns only", {
 
 
 test_that("Returns correct output format for factor columns only", {
-  df = mtcars[, c("am", "vs", "cyl")]
-  df$am = as.factor(df$am)
-  df$vs = as.factor(df$vs)
-  df$cyl = as.factor(df$cyl)
-  rf <- randomForest(am ~ ., data = df, ntree = 5L)
-  mod = Predictor$new(rf, df)
+  df2 = mtcars[, c("am", "vs", "cyl")]
+  df2$am = as.factor(df2$am)
+  df2$vs = as.factor(df2$vs)
+  df2$cyl = as.factor(df2$cyl)
+  rf2 = randomForest(am ~ ., data = df2, ntree = 5L)
+  mod2 = Predictor$new(rf2, data = df2, type = "class")
   n = 5L
-  wi = WhatIf$new(mod, n_counterfactuals = n, n_cores = 1L)
-  oneinst = df[1L, c("vs", "cyl")]
-  wi$find_counterfactuals(oneinst, "0")
-  res = wi$results
+  wi2 = WhatIf$new(mod2, n_counterfactuals = n, n_cores = 1L)
+  oneinst = df2[1L, c("vs", "cyl")]
+  wi2$find_counterfactuals(oneinst, 0)
+  res = wi2$results
   expect_list(res, len = 2L)
   cfs = res$counterfactuals
   cfs_diff = res$counterfactuals_diff
   expect_data_table(cfs, nrows = n)
-  expected_cols = c(colnames(df)[-1L], "dist_x_interest", "pred", "nr_changed")
+  expected_cols = c(colnames(df2)[-1L], "dist_x_interest", "pred", "nr_changed")
   expect_true(all(colnames(cfs) == expected_cols))
   expect_data_table(cfs_diff, nrows = n)
   expect_true(all(colnames(cfs_diff) == expected_cols))
 })
 
 test_that("Returns correct output format for factor and numeric columns", {
-  df = mtcars
-  df$am = as.factor(df$am)
-  df$vs = as.factor(df$vs)
-  rf <- randomForest(am ~ ., data = df, ntree = 5L)
-  mod = Predictor$new(rf, df)
+  mydf = mtcars
+  mydf$am = as.factor(mydf$am)
+  mydf$vs = as.factor(mydf$vs)
+  rf = randomForest(am ~ ., data = mydf, ntree = 5L)
+  mod = Predictor$new(rf, data = mydf, type = "class")
   n = 5L
   wi = WhatIf$new(mod, n_counterfactuals = n, n_cores = 1L)
-  oneinst = head(subset(df, select = -am), n = 1L)
-  wi$find_counterfactuals(oneinst, "0")
+  oneinst = head(subset(mydf, select = -am), n = 1L)
+  wi$find_counterfactuals(oneinst, 0)
   res = wi$results
   expect_list(res, len = 2L)
   cfs = res$counterfactuals
@@ -71,19 +82,10 @@ test_that("Returns correct output format for factor and numeric columns", {
 })
 
 
-test_that("Parallelization leads to same results as sequential execution", {
-  oneinst = head(subset(iris_sub, select = -Species), 1)
-  wi = WhatIf$new(mod_class, n_counterfactuals = 10L, n_cores = parallel::detectCores() - 1L)
-  wi$find_counterfactuals(oneinst, "virginica")
-  res_par = wi$results
-  wi = WhatIf$new(mod_class, n_counterfactuals = 10L, n_cores = parallel::detectCores() - 1L)
-  wi$find_counterfactuals(oneinst, "virginica")
-  res_seq = wi$results
-  expect_identical(res_par, res_seq)
-})
+
 
 test_that("Init works for classification tasks only", {
-  
+
   # Regression task
   rf_regr = randomForest::randomForest(mpg ~ ., data = mtcars, ntree = 2L)
   mod_regr = Predictor$new(rf_regr)
@@ -93,11 +95,14 @@ test_that("Init works for classification tasks only", {
   expect_error(WhatIf$new(mod_class), NA)
 
   # The type of the task is inferred using the `inferTaskFromPrediction` from the iml package.
+  # The function is called internally when a Predictor object uses the method `predict`
   # Check that possible changes to this function don't break the code.
-  pred_regr = mod_regr$predict(mtcars[1:2, ])
-  expect_equal(iml:::inferTaskFromPrediction(pred_regr), "regression")
-  pred_class = mod_class$predict(iris_sub[1:2, ])
-  expect_equal(iml:::inferTaskFromPrediction(pred_class), "classification")
+  invisible(mod_regr$predict(mtcars[1:2, -which(colnames(mtcars) == "mpg")]))
+  expect_identical(mod_regr$task, "regression")
+  
+  invisible(mod_class$predict(iris[1:2, 1:4]))
+  expect_identical(mod_class$task, "classification")
+
 })
 
 

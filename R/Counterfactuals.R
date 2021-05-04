@@ -5,6 +5,8 @@ Counterfactuals = R6Class("Counterfactuals",
     # TODO: can this be a range for all methods? (for moc it can) -> NO
     desired_outcome = NULL,
     .results = NULL,
+    param_set = NULL,
+    y_hat_interest = NULL,
     
     run = function() {
       private$preprocess()
@@ -36,9 +38,8 @@ Counterfactuals = R6Class("Counterfactuals",
       as.integer(n_changes)
     },
     
-    check_that_classif_task = function(prediction) {
-      task = iml:::inferTaskFromPrediction(prediction)
-      if (task != "classification") {
+    check_that_classif_task = function(predictor) {
+      if (predictor$task != "classification") {
         err_msg = sprintf("`%s` only works for classification tasks.", class(self)[1])
         stop(err_msg)
       }
@@ -61,18 +62,37 @@ Counterfactuals = R6Class("Counterfactuals",
     plot_parallel = function(n_solutions, feature_names) {
       # TODO
     },
-    plot_surface = function(n_solutions, feature_names) {
-      # TODO
+    plot_surface = function(features = NULL, grid_size = 50L, epsilon = NULL) {
+      assert_character(features, null.ok = TRUE, min.len = 2L)
+      assert_integerish(grid_size, len = 1L)
+      assert_numeric(epsilon, len = 1L, null.ok = TRUE)
+      
+      if (is.null(features)) {
+        features = private$predictor$data$feature.names
+      }
+      if (length(features) != 2L) {
+        stop("The number of features must be 2.")
+      }
+      
+      cf = self$results$counterfactuals
+      
+      change.id = which(rowSums(self$results$counterfactuals_diff[, ..features] != 0) == cf$nr_changed)
+      instances = cf[change.id, ]
+      
+      # if (!is.null(epsilon)) {
+      #   instances = instances[instances$dist.target<=epsilon, ]
+      # }
+      res = get_ice_curve_area(
+        instance = private$x_interest, features = features, predictor = private$predictor, 
+        param.set = private$param_set, grid.size = grid_size
+      )
+                               
+      x.interest = cbind(private$x_interest, pred = private$y.hat.interest)
+      plot_ice_curve_area(res, predictor = private$predictor, instances, x.interest = x.interest)
+                          
     },
     print = function() {
       # TODO: As in InterpretationMethod R6 class
-    },
-    
-    find_counterfactuals = function(x_interest, desired_outcome) {
-      # TODO: Check if desired_outcome is in private$y_hat
-      private$x_interest = data.table::setDT(x_interest)
-      private$desired_outcome = desired_outcome
-      private$run()
     }
   )
 )
