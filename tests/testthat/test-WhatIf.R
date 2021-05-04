@@ -9,10 +9,10 @@ rf = randomForest(Species ~ ., data = iris_sub, ntree = 2L)
 mod_class = Predictor$new(rf, iris_sub)
 
 test_that("Returns correct output format for numeric columns only", {
-  wi = WhatIf$new(mod_class)
-  oneinst = head(subset(iris_sub, select = -Species), 1L)
   n = 3L
-  wi$find_counterfactuals(oneinst, "virginica", n = n, n_cores = 1L)
+  wi = WhatIf$new(mod_class, n_counterfactuals = n, n_cores = 1L)
+  oneinst = head(subset(iris_sub, select = -Species), 1L)
+  wi$find_counterfactuals(oneinst, "virginica")
   res = wi$results
   expect_list(res, len = 2L)
   cfs = res$counterfactuals
@@ -34,10 +34,10 @@ test_that("Returns correct output format for factor columns only", {
   df$cyl = as.factor(df$cyl)
   rf <- randomForest(am ~ ., data = df, ntree = 5L)
   mod = Predictor$new(rf, df)
-  wi = WhatIf$new(mod)
-  oneinst = df[1L, c("vs", "cyl")]
   n = 5L
-  wi$find_counterfactuals(oneinst, "0", n = n, n_cores = 1L)
+  wi = WhatIf$new(mod, n_counterfactuals = n, n_cores = 1L)
+  oneinst = df[1L, c("vs", "cyl")]
+  wi$find_counterfactuals(oneinst, "0")
   res = wi$results
   expect_list(res, len = 2L)
   cfs = res$counterfactuals
@@ -55,10 +55,10 @@ test_that("Returns correct output format for factor and numeric columns", {
   df$vs = as.factor(df$vs)
   rf <- randomForest(am ~ ., data = df, ntree = 5L)
   mod = Predictor$new(rf, df)
-  wi = WhatIf$new(mod)
-  oneinst = head(subset(df, select = -am), n = 1L)
   n = 5L
-  wi$find_counterfactuals(oneinst, "0", n = n, n_cores = 1L)
+  wi = WhatIf$new(mod, n_counterfactuals = n, n_cores = 1L)
+  oneinst = head(subset(df, select = -am), n = 1L)
+  wi$find_counterfactuals(oneinst, "0")
   res = wi$results
   expect_list(res, len = 2L)
   cfs = res$counterfactuals
@@ -73,10 +73,11 @@ test_that("Returns correct output format for factor and numeric columns", {
 
 test_that("Parallelization leads to same results as sequential execution", {
   oneinst = head(subset(iris_sub, select = -Species), 1)
-  wi = WhatIf$new(mod_class)
-  wi$find_counterfactuals(oneinst, "virginica", n = 10L, n_cores = parallel::detectCores() - 1L)
+  wi = WhatIf$new(mod_class, n_counterfactuals = 10L, n_cores = parallel::detectCores() - 1L)
+  wi$find_counterfactuals(oneinst, "virginica")
   res_par = wi$results
-  wi$find_counterfactuals(oneinst, "virginica", n = 10L, n_cores = 1L)
+  wi = WhatIf$new(mod_class, n_counterfactuals = 10L, n_cores = parallel::detectCores() - 1L)
+  wi$find_counterfactuals(oneinst, "virginica")
   res_seq = wi$results
   expect_identical(res_par, res_seq)
 })

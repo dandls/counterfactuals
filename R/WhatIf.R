@@ -7,7 +7,7 @@ WhatIf = R6Class("WhatIf",
     y_hat = NULL,
     X_desired_outcome = NULL,
     dist_vector = NULL,
-    n = NULL,
+    n_counterfactuals = NULL,
     n_cores = NULL,
     
     preprocess = function() {
@@ -25,7 +25,7 @@ WhatIf = R6Class("WhatIf",
       X_temp = private$X_desired_outcome
       X_temp[, c("dist_x_interest", "pred") := list(private$dist_vector, private$desired_outcome)]
       
-      cfactuals = head(data.table::setorder(X_temp, dist_x_interest), private$n)
+      cfactuals = head(data.table::setorder(X_temp, dist_x_interest), private$n_counterfactuals)
       n_changes = private$count_changes(cfactuals[, names(private$x_interest), with = FALSE])
       cfactuals[, "nr_changed" := n_changes]
       
@@ -53,27 +53,37 @@ WhatIf = R6Class("WhatIf",
   
   public = list(
     
-    initialize = function(predictor, X = NULL, x_interest = NULL) {
+    # Should also run `find_counterfactuals` when x_interest etc, is set
+    initialize = function(predictor, X = NULL, n_counterfactuals = 1L, 
+                          n_cores = parallel::detectCores() - 1, x_interest = NULL, 
+                          desired_outcome = NULL) {
+                          
       
       # TODO: Check if y is in X -> if yes remove and message
-      
       private$predictor = predictor
       private$X = data.table::setDT(private$infer_X(X))
+      private$n_counterfactuals = n_counterfactuals
+      private$n_cores = n_cores
+      
       y_hat_raw = predictor$predict(private$X)
       private$check_that_classif_task(y_hat_raw)
       y_hat_one_col = private$one_hot_to_one_col(y_hat_raw)
       private$y_hat = y_hat_one_col
+      
+      run_method = !is.null(x_interest) & !is.null(desired_outcome)
+      if (run_method) {
+        self$find_counterfactuals(x_interest, desired_outcome)
+      }
+      
     },
     
-    find_counterfactuals = function(x_interest, desired_outcome, n = 1L, 
-                                    n_cores = parallel::detectCores() - 1) {
+    find_counterfactuals = function(x_interest, desired_outcome) {
       
       # TODO: Check if desired_outcome is in private$y_hat
       
       private$x_interest = data.table::setDT(x_interest)
       private$desired_outcome = desired_outcome
-      private$n = n
-      private$n_cores = n_cores
+
       private$run()
     }
   )
