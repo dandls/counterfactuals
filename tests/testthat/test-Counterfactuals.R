@@ -10,7 +10,7 @@ cfactuals$dist_x_interest = gower_dist(x_interst, cfactuals, n_cores = 1L)
 desired_outcome = "1"
 ci = Counterfactuals$new()
 ci$.__enclos_env__$private$x_interest = x_interst
-ci$.__enclos_env__$private$desired_outcome = "1"
+ci$.__enclos_env__$private$desired_outcome = 1
 
 test_that("make_results_list methods returns correct output for mixed cf variable types", {
   res = ci$.__enclos_env__$private$make_results_list(cfactuals)
@@ -51,8 +51,43 @@ test_that("count_changes method computes changes correctly", {
 })
 
 
-
-
+test_that("$plot_surface() creates correct plot", {
+  set.seed(54654654)
+  train_data = data.frame(
+    col_a = rep(c(1, 3), 6L),
+    col_b = rep(1:4, 3L),
+    col_c = as.factor(rep(c("a", "b", "c"), 4L))
+  )
+  x_interest = data.table(col_a = 2, col_b = 2)
+  rf = randomForest::randomForest(col_c ~ ., data = train_data)
+  mod = Predictor$new(rf, data = train_data, type = "class", class = "b")
+  cfs = data.table(subset(train_data, col_c == "c", -col_c))
+  cfs_diff = data.table(sweep(as.matrix(cfs), 2L, as.matrix(x_interest)))
+  
+  ci = Counterfactuals$new()
+  ci$.__enclos_env__$private$x_interest = x_interest
+  ci$.__enclos_env__$private$desired_outcome = 1
+  ps = ParamHelpers::makeParamSet(params = make_paramlist(train_data))
+  ci$.__enclos_env__$private$param_set = ps
+  ci$.__enclos_env__$private$predictor = mod
+  res_list = list("counterfactuals" = cfs, "counterfactuals_diff" = cfs_diff)
+  nr_changed = ci$.__enclos_env__$private$count_changes(cfs) 
+  res_list[[1]]$nr_changed = nr_changed  
+  res_list[[2]]$nr_changed = nr_changed
+  ci$.__enclos_env__$private$.results = res_list
+  
+  save_png <- function(code, width = 400, height = 400) {
+    path <- tempfile(fileext = ".png")
+    png(path, width = width, height = height)
+    on.exit(dev.off())
+    code
+    path
+  }
+  
+  plot = ci$plot_surface(names(data)[1:2])
+  expect_snapshot_file(save_png(plot), "plot.png")
+  
+})
 
 
 

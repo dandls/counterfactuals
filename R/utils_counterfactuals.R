@@ -34,18 +34,15 @@ make_paramlist = function(data, lower = NULL, upper = NULL, use_orig = TRUE) {
     
     if (column_name %in% names(upper)) {
       col_upper = upper[[column_name]]
-    }
-    else {
+    } else {
       col_upper = tryCatch(max(column, na.rm = TRUE), error = function(err) NA)
     }
     
     if (is.double(column)) {
       param = ParamHelpers::makeNumericParam(column_name, lower = col_lower, upper = col_upper)
-    }
-    else if (is.integer(column)) {
+    } else if (is.integer(column)) {
       param = ParamHelpers::makeIntegerParam(column_name, lower = col_lower, upper = col_upper)
-    }
-    else {
+    } else {
       if (is.character(column)) {
         values = unique(column)
       } else {
