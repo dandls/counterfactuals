@@ -64,12 +64,15 @@ Counterfactuals = R6Class("Counterfactuals",
     plot_surface = function(n_solutions, feature_names) {
       # TODO
     },
-    plot_direction = function() {
-      # TODO:
-      # plotSuggest(tw, k = 1)
-    },
     print = function() {
       # TODO: As in InterpretationMethod R6 class
+    },
+    
+    find_counterfactuals = function(x_interest, desired_outcome) {
+      # TODO: Check if desired_outcome is in private$y_hat
+      private$x_interest = data.table::setDT(x_interest)
+      private$desired_outcome = desired_outcome
+      private$run()
     }
   )
 )

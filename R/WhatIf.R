@@ -3,16 +3,17 @@ WhatIf = R6Class("WhatIf",
   inherit = Counterfactuals,
   
   private = list(
-    X = NULL,
     y_hat = NULL,
     X_desired_outcome = NULL,
     dist_vector = NULL,
     n_counterfactuals = NULL,
     n_cores = NULL,
+    predictor = NULL,
     
     preprocess = function() {
       is_desired_outcome = (private$y_hat == private$desired_outcome)
-      private$X_desired_outcome = private$X[is_desired_outcome]
+      X = private$predictor$data$X
+      private$X_desired_outcome = X[is_desired_outcome]
     },
     
     calculate = function() {
@@ -38,15 +39,6 @@ WhatIf = R6Class("WhatIf",
     
     one_hot_to_one_col = function(df) {
       colnames(df)[apply(df, 1, which.max)]
-    },
-    
-    infer_X = function(X) {
-      if (is.null(X)) {
-        res = private$predictor$data$get.x()
-      } else {
-        res = X
-      }
-      res
     }
     
   ),
@@ -54,18 +46,15 @@ WhatIf = R6Class("WhatIf",
   public = list(
     
     # Should also run `find_counterfactuals` when x_interest etc, is set
-    initialize = function(predictor, X = NULL, n_counterfactuals = 1L, 
-                          n_cores = parallel::detectCores() - 1, x_interest = NULL, 
-                          desired_outcome = NULL) {
-                          
+    initialize = function(predictor, n_counterfactuals = 1L, n_cores = parallel::detectCores() - 1, 
+                          x_interest = NULL, desired_outcome = NULL) {
       
       # TODO: Check if y is in X -> if yes remove and message
       private$predictor = predictor
-      private$X = data.table::setDT(private$infer_X(X))
       private$n_counterfactuals = n_counterfactuals
       private$n_cores = n_cores
-      
-      y_hat_raw = predictor$predict(private$X)
+
+      y_hat_raw = predictor$predict(predictor$data$X)
       private$check_that_classif_task(y_hat_raw)
       y_hat_one_col = private$one_hot_to_one_col(y_hat_raw)
       private$y_hat = y_hat_one_col
@@ -75,16 +64,6 @@ WhatIf = R6Class("WhatIf",
         self$find_counterfactuals(x_interest, desired_outcome)
       }
       
-    },
-    
-    find_counterfactuals = function(x_interest, desired_outcome) {
-      
-      # TODO: Check if desired_outcome is in private$y_hat
-      
-      private$x_interest = data.table::setDT(x_interest)
-      private$desired_outcome = desired_outcome
-
-      private$run()
     }
   )
 )
