@@ -26,20 +26,22 @@ Imports:
     iml,
     data.table,
     doParallel
-Suggests: randomForest,
-          mlt,
-          gower,
-          glmnet,
-          partykit,
-          trtf,
-          yaImpute,
-          testthat, 
-          rpart, 
-          MASS,
-          caret,
-          e1071, 
-          knitr,
-          mlr
+Suggests: 
+    randomForest,
+    mlt,
+    gower,
+    glmnet,
+    partykit,
+    trtf,
+    yaImpute,
+    testthat,
+    rpart,
+    MASS,
+    caret,
+    e1071,
+    knitr,
+    mlr,
+    cowplot
 License: TODO
 Encoding: UTF-8
 RoxygenNote: 7.1.1

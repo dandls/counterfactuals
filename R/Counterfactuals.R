@@ -63,32 +63,29 @@ Counterfactuals = R6Class("Counterfactuals",
       # TODO
     },
     plot_surface = function(features = NULL, grid_size = 50L, epsilon = NULL) {
-      assert_character(features, null.ok = TRUE, min.len = 2L)
+      assert_character(features, null.ok = TRUE, len = 2L)
       assert_integerish(grid_size, len = 1L)
       assert_numeric(epsilon, len = 1L, null.ok = TRUE)
+ 
+      cfactuals = self$results$counterfactuals
+      n_changes = cfactuals$nr_changed
       
-      if (is.null(features)) {
-        features = private$predictor$data$feature.names
+      cfactuals_diff_rel_features = self$results$counterfactuals_diff[, ..features]
+      n_changes_in_rel_features = rowSums(cfactuals_diff_rel_features != 0)
+      has_changes_in_rel_features_only = (n_changes_in_rel_features == n_changes)
+      instances = cfactuals[which(has_changes_in_rel_features_only)]
+      
+      dist_target_col_exists = "dist_target" %in% names(cfactuals)
+      if (dist_target_col_exists & !is.null(epsilon)) {
+        instances = instances[dist_target <= epsilon]
       }
-      if (length(features) != 2L) {
-        stop("The number of features must be 2.")
-      }
-      
-      cf = self$results$counterfactuals
-      
-      change.id = which(rowSums(self$results$counterfactuals_diff[, ..features] != 0) == cf$nr_changed)
-      instances = cf[change.id, ]
-      
-      # if (!is.null(epsilon)) {
-      #   instances = instances[instances$dist.target<=epsilon, ]
-      # }
-      res = get_ice_curve_area(
-        instance = private$x_interest, features = features, predictor = private$predictor, 
-        param.set = private$param_set, grid.size = grid_size
+
+      ice_curve_area = get_ice_curve_area(
+        private$x_interest, features, private$predictor, private$param_set, grid_size
       )
                                
-      x.interest = cbind(private$x_interest, pred = private$y.hat.interest)
-      plot_ice_curve_area(res, predictor = private$predictor, instances, x.interest = x.interest)
+      x_interest_with_pred = cbind(private$x_interest, pred = private$y_hat_interest)
+      plot_ice_curve_area(ice_curve_area, private$predictor, instances, x_interest_with_pred)
                           
     },
     print = function() {

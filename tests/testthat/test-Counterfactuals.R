@@ -1,18 +1,14 @@
 library(data.table)
 
-cfactuals = data.table(
-  "col_a" = 1:3,
-  "col_b" = c("a", "b", "b"),
-  "col_c" = as.factor(month.abb)[1:3]
-)
-x_interst = data.table("col_a" = 1L, "col_b" = "b", "col_c" = as.factor(month.abb)[3])
-cfactuals$dist_x_interest = gower_dist(x_interst, cfactuals, n_cores = 1L)
-desired_outcome = "1"
-ci = Counterfactuals$new()
-ci$.__enclos_env__$private$x_interest = x_interst
-ci$.__enclos_env__$private$desired_outcome = 1
-
 test_that("make_results_list methods returns correct output for mixed cf variable types", {
+  cfactuals = data.table(
+    "col_a" = 1:3, "col_b" = c("a", "b", "b"), "col_c" = as.factor(month.abb)[1:3]
+  )
+  x_interst = data.table("col_a" = 1L, "col_b" = "b", "col_c" = as.factor(month.abb)[3])
+  cfactuals$dist_x_interest = gower_dist(x_interst, cfactuals, n_cores = 1L)
+  ci = Counterfactuals$new()
+  ci$.__enclos_env__$private$x_interest = x_interst
+  
   res = ci$.__enclos_env__$private$make_results_list(cfactuals)
   res_cfs = res$counterfactuals
   res_cfs_diffs = res$counterfactuals_diff
@@ -45,6 +41,13 @@ test_that("make_results_list methods returns correct output for mixed cf variabl
 })
 
 test_that("count_changes method computes changes correctly", {
+  cfactuals = data.table(
+    "col_a" = 1:3, "col_b" = c("a", "b", "b"), "col_c" = as.factor(month.abb)[1:3]
+  )
+  x_interst = data.table("col_a" = 1L, "col_b" = "b", "col_c" = as.factor(month.abb)[3])
+  cfactuals$dist_x_interest = gower_dist(x_interst, cfactuals, n_cores = 1L)
+  ci = Counterfactuals$new()
+  ci$.__enclos_env__$private$x_interest = x_interst
   names_x_interest = names(ci$.__enclos_env__$private$x_interest)
   nr_changed = ci$.__enclos_env__$private$count_changes(cfactuals[, ..names_x_interest])
   expect_identical(nr_changed, c(2L, 2L, 1L))
@@ -55,37 +58,39 @@ test_that("$plot_surface() creates correct plot", {
   set.seed(54654654)
   train_data = data.frame(
     col_a = rep(c(1, 3), 6L),
-    col_b = rep(1:4, 3L),
-    col_c = as.factor(rep(c("a", "b", "c"), 4L))
+    col_b = rep(1:3, each = 4),
+    col_c = rep(c("x", "y", "z"), each = 2),
+    col_d = as.factor(c(rep("a", 4L), rep("b", 4L), rep("c", 4L)))
   )
-  x_interest = data.table(col_a = 2, col_b = 2)
-  rf = randomForest::randomForest(col_c ~ ., data = train_data)
+  x_interest = data.table(col_a = 2, col_b = 1, col_c = "y")
+  
+  rf = randomForest::randomForest(col_d ~ ., data = train_data)
   mod = Predictor$new(rf, data = train_data, type = "class", class = "b")
-  cfs = data.table(subset(train_data, col_c == "c", -col_c))
-  cfs_diff = data.table(sweep(as.matrix(cfs), 2L, as.matrix(x_interest)))
+  cfs = data.table(subset(train_data, col_d == "c", -col_d))
+  cfs_diff = data.table(sweep(as.matrix(cfs[, 1:2]), 2L, as.matrix(x_interest[, 1:2])))
+  cfs_diff[, col_c := ifelse(cfs$col_c == x_interest$col_c, 0, cfs$col_c)]
   
   ci = Counterfactuals$new()
   ci$.__enclos_env__$private$x_interest = x_interest
   ci$.__enclos_env__$private$desired_outcome = 1
   ps = ParamHelpers::makeParamSet(params = make_paramlist(train_data))
+  ci$.__enclos_env__$private$y_hat_interest = 0
   ci$.__enclos_env__$private$param_set = ps
   ci$.__enclos_env__$private$predictor = mod
   res_list = list("counterfactuals" = cfs, "counterfactuals_diff" = cfs_diff)
-  nr_changed = ci$.__enclos_env__$private$count_changes(cfs) 
-  res_list[[1]]$nr_changed = nr_changed  
+  nr_changed = ci$.__enclos_env__$private$count_changes(cfs)
+  res_list[[1]]$nr_changed = nr_changed
   res_list[[2]]$nr_changed = nr_changed
   ci$.__enclos_env__$private$.results = res_list
   
   save_png <- function(code, width = 400, height = 400) {
     path <- tempfile(fileext = ".png")
-    png(path, width = width, height = height)
-    on.exit(dev.off())
-    code
+    cowplot::save_plot(path, code)
     path
   }
   
-  plot = ci$plot_surface(names(data)[1:2])
-  expect_snapshot_file(save_png(plot), "plot.png")
+  expect_snapshot_file(save_png(ci$plot_surface(c("col_a", "col_b"))), "plot_surface_num.png")
+  expect_snapshot_file(save_png(ci$plot_surface(c("col_a", "col_c"))), "plot_surface_mixed.png")
   
 })
 
