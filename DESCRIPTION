@@ -25,7 +25,8 @@ Imports:
     metR,
     iml,
     data.table,
-    doParallel
+    doParallel,
+    featureTweakR
 Suggests: 
     randomForest,
     mlt,

@@ -34,11 +34,6 @@ WhatIf = R6Class("WhatIf",
     
     compute_gower_dist = function(x_interest, X, n_cores = private$n_cores) {
       gower_dist(x_interest, X, n_cores)
-    },
-    
-    make_param_set = function(lower, upper) {
-      dt = rbind(private$predictor$data$X, private$x_interest)
-      ParamHelpers::makeParamSet(params = make_paramlist(dt, lower = lower, upper = upper))
     }
     
   ),
@@ -71,10 +66,12 @@ WhatIf = R6Class("WhatIf",
     
     find_counterfactuals = function(x_interest, desired_outcome) {
       # TODO: Check if desired_outcome is in private$y_hat
+      # if binary classification (n_col(pred) > 1) desired_outcome does not need to be specified
+      
       private$x_interest = data.table::setDT(x_interest)
       private$desired_outcome = desired_outcome
       
-      y_hat_interest_raw = private$predictor$predict(private$x_interest)[1, ]
+      y_hat_interest_raw = private$predictor$predict(private$x_interest)[1L, ]
       private$y_hat_interest = y_hat_interest_raw
       
       private$run()

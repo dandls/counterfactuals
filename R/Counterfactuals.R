@@ -13,8 +13,8 @@ Counterfactuals = R6Class("Counterfactuals",
       private$calculate()
       private$aggregate()
     },
-    preprocess = function() {NULL
-      
+    preprocess = function() {
+      NULL
     },
     calculate = function() {
       NULL
@@ -43,6 +43,11 @@ Counterfactuals = R6Class("Counterfactuals",
         err_msg = sprintf("`%s` only works for classification tasks.", class(self)[1])
         stop(err_msg)
       }
+    },
+    
+    make_param_set = function(lower, upper) {
+      dt = rbind(private$predictor$data$X, private$x_interest)
+      ParamHelpers::makeParamSet(params = make_paramlist(dt, lower = lower, upper = upper))
     }
     
   ),
