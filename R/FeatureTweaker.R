@@ -1,5 +1,7 @@
 #' @import data.table
-FeatureTweaker = R6Class("FeatureTweaker",
+#' 
+#' @export
+FeatureTweaker = R6::R6Class("FeatureTweaker",
   inherit = Counterfactuals,
   private = list(
     n_counterfactuals = NULL,
@@ -46,7 +48,7 @@ FeatureTweaker = R6Class("FeatureTweaker",
       # .dopar makes no difference as only one observation in newdata
       tweaks = featureTweakR::tweak(
         e_satisfactory, rf, newdata = private$x_interest, 
-        label.from = from, label.to = desired_outcome, .dopar = FALSE
+        label.from = from, label.to = private$desired_outcome, .dopar = FALSE
       )
       tweaks$suggest
     },

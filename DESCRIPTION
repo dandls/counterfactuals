@@ -43,6 +43,8 @@ Suggests:
     knitr,
     mlr,
     cowplot
+Remotes:
+    katokohaku/featureTweakR
 License: TODO
 Encoding: UTF-8
 RoxygenNote: 7.1.1

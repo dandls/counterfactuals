@@ -4,7 +4,7 @@
 #            If n.sample.dist is not set, the whole cartesian product between grid.dat and dist.dat is built
 # grid.dat only needs to contain the columns which are fixed. Decide here which grid points should be used.
 # dist.dat needs to contain all columns
-Conditional = R6Class(
+Conditional = R6::R6Class(
   public = list(
     feature = NULL,
     data = NULL,

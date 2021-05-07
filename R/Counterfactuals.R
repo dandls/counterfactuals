@@ -1,4 +1,4 @@
-Counterfactuals = R6Class("Counterfactuals",
+Counterfactuals = R6::R6Class("Counterfactuals",
   private = list(
     predictor = NULL,
     x_interest = NULL,
