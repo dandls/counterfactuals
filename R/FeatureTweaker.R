@@ -1,4 +1,5 @@
 #' @import data.table
+#' @import featureTweakR
 #' 
 #' @export
 FeatureTweaker = R6::R6Class("FeatureTweaker",
@@ -8,6 +9,7 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
     cfactuals = NULL,
     epsilon = NULL,
     ktree = NULL,
+    y_classes = NULL,
     preprocess = function() {
       # TODO:
     },
@@ -16,7 +18,7 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
       cfs = rbindlist(cfs_list)
       # TODO: add dist_x column
       # TODO: add pred column
-      setnames(cfs, names(cfs), names(X))
+      setnames(cfs, names(cfs), private$predictor$data$feature.names)
       cfs[, "dist_x_interest" := gower_dist(private$x_interest, cfs, n_cores = 1L)]
       private$cfactuals = cfs
     },
@@ -26,13 +28,12 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
       cfactuals = private$cfactuals
       cfactuals_feats = cfactuals[, names(private$x_interest), with = FALSE]
       pred = private$predictor$predict(cfactuals_feats)
-      
-      # TODO: replace by private field
-      is_multiclass = nrow(pred) > 1
-      if (is_multiclass) {
+ 
+      # Check if more than one column as binary classification tasks may be one-hot encoded
+      if (length(private$y_classes) > 1) {
         pred = private$one_hot_to_one_col(pred)
       }
-
+      pred = pred[[1L]]
       n_changes = private$count_changes(cfactuals_feats)
       cfactuals[, c("pred", "nr_changed") := list(pred, n_changes)]
       setorder(cfactuals, dist_x_interest)
@@ -41,19 +42,19 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
     
     # Randomness induced by resampling when extracting the rule from the rf (as long as ktree < ntree)  
     comp_counterfactual = function(i) {
+
       rf = private$predictor$model
-      from = names(private$predictor$predict(private$x_interest))
-      rules <- featureTweakR::getRules(rf, ktree = private$ktree, resample = TRUE)
-      e_satisfactory <- featureTweakR::set.eSatisfactory(rules, epsiron = private$epsilon)
+      rules = featureTweakR::getRules(rf, ktree = private$ktree, resample = TRUE)
+      e_satisfactory = featureTweakR::set.eSatisfactory(rules, epsiron = private$epsilon)
       # .dopar makes no difference as only one observation in newdata
       tweaks = featureTweakR::tweak(
         e_satisfactory, rf, newdata = private$x_interest, 
-        label.from = from, label.to = private$desired_outcome, .dopar = FALSE
+        label.from = private$y_hat_interest, label.to = private$desired_outcome, .dopar = FALSE
       )
       tweaks$suggest
     },
     one_hot_to_one_col = function(df) {
-      colnames(df)[apply(df, 1, which.max)]
+      as.data.table(colnames(df)[apply(df, 1, which.max)])
     }
 
 
@@ -86,21 +87,48 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
       private$ktree = ktree
       private$param_set = private$make_param_set(lower, upper)
       
-      # Question: Do we need scaling? -> probably not
+      # Question: Do we need scaling? -> yes, because of distance calculation
       
-      run_method = !is.null(x_interest) & !is.null(desired_outcome)
-      if (run_method) {
+      if (!is.null(x_interest)) {
         self$find_counterfactuals(x_interest, desired_outcome)
       }
       
  
     },
     
-    find_counterfactuals = function(x_interest, desired_outcome) {
+    find_counterfactuals = function(x_interest, desired_outcome = NULL) {
       # TODO: Check if desired_outcome is in predictor$data$y
+      
       private$x_interest = data.table::setDT(x_interest)
+      y_hat_interest = private$predictor$predict(private$x_interest) # [1L, ]
+      is_multiclass = ncol(y_hat_interest) > 2
+
+      private$y_classes = names(y_hat_interest)
+      # Check if more than one column as binary classification tasks may be one-hot encoded
+      if (ncol(y_hat_interest) > 1) {
+        y_hat_interest = private$one_hot_to_one_col(y_hat_interest)
+      }
+      y_hat_interest = y_hat_interest[[1]]
+
+      if (!is_multiclass) {
+        if (!is.null(desired_outcome)) {
+          message("`desired_outcome` is set to the opposite class of `x_interest` for binary classification tasks.")
+        }
+        if (length(private$y_classes) > 1) {
+          desired_outcome = setdiff(private$y_classes, y_hat_interest)
+        } else {
+          desired_outcome = private$predictor$class
+        }
+        
+      } 
+      
+      if (is.null(desired_outcome)) {
+        stop("The `desired_outcome` has to be specified for multiclass classification tasks.")
+      }
+      
+
       private$desired_outcome = desired_outcome
-      private$y_hat_interest = private$predictor$predict(private$x_interest)
+      private$y_hat_interest = y_hat_interest
       private$run()
     }
   )

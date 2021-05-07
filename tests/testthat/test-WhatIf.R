@@ -161,7 +161,7 @@ test_that("$find_counterfactuals with specified `desired_outcome` returns the sa
   res_binary = wi_binary$results$counterfactuals
   res_multiclass = wi_multiclass$results$counterfactuals
   
-  # For binary pred contains 0/1 and for multiclass the classname
+  # For binary pred contains 0/1 (if target is not a factor) and for multiclass the classname
   res_binary$pred = res_multiclass$pred = NULL
   expect_identical(res_binary, res_multiclass)
 })
@@ -172,7 +172,7 @@ test_that("`desired_outcome` is required for multiclass", {
   rf = randomForest::randomForest(Species ~ ., data = iris, ntree = 100L)
   n = 3L
   x_interest = head(subset(iris, select = -Species), 1L)
-  iris_pred_multiclass = iml::Predictor$new(rf, type = "class")
+  iris_pred_multiclass = iml::Predictor$new(rf)
   wi_multiclass = WhatIf$new(iris_pred_multiclass, n_counterfactuals = n, n_cores = 1L)
   expect_snapshot_error(wi_multiclass$find_counterfactuals(x_interest))
 })
