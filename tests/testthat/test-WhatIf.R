@@ -125,7 +125,7 @@ test_that("If `desired_outcome` is specified for binary class, it is set to the 
   expect_identical(res1, res2)
 })
 
-test_that("Can handle non-numeric classes", {
+test_that("Can handle non-numeric target classes", {
   set.seed(544564)
   test_data = data.frame(a = rnorm(10), b = rnorm(10), cl = as.factor(rep(c("pos", "neg"), each = 5)))
   rf_pima = randomForest::randomForest(cl ~ . , test_data, ntree = 2L)

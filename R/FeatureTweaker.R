@@ -77,6 +77,11 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
         stop("`FeatureTweaker` cannot be applied to randomForest models specified with a formula.")
       }
       
+      categorical_train_variables = any("categorical" %in% predictor$data$feature.types)
+      if (categorical_train_variables) {
+        stop("`FeatureTweaker` cannot handle categorical variables in the training data.")
+      }
+      
       predictor$task = predictor$model$type
       private$check_that_classif_task(predictor)
 
