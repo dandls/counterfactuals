@@ -40,7 +40,7 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
       private$.results = private$make_results_list(cfactuals)
     },
     
-    # Randomness induced by resampling when extracting the rule from the rf (as long as ktree < ntree)  
+    # Randomizing by resampling when extracting the rule from the rf (as long as ktree < ntree)  
     comp_counterfactual = function(i) {
 
       rf = private$predictor$model
@@ -64,8 +64,6 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
     initialize = function(predictor, n_counterfactuals = 1L, x_interest = NULL, 
                           desired_outcome = NULL, ktree = 30L, epsilon = 0.1, 
                           lower = NULL, upper = NULL) {
-                          
-      # TODO: does not work with "formula random forest" and ONLY with RF (not other methods) -> Check this
       
       is_randomForest = checkmate::test_multi_class(predictor$model, "randomForest")
       if (!is_randomForest) {
@@ -93,6 +91,8 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
       private$param_set = private$make_param_set(lower, upper)
       
       # Question: Do we need scaling? -> yes, because of distance calculation
+      # The training data of the random forest have to be standardized (cannot do it here)
+      # TODO: => add check
       
       if (!is.null(x_interest)) {
         self$find_counterfactuals(x_interest, desired_outcome)

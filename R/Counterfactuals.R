@@ -93,11 +93,21 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       plot_ice_curve_area(ice_curve_area, private$predictor, instances, x_interest_with_pred)
                           
     },
+    subset_results = function(n_counterfactuals = 10L) {
+      res = private$.results
+      if (n_counterfactuals > nrow(res[[1L]])) {
+        warning("`n_counterfactuals` out of range, it was set to the number of solutions in self$results")
+      }
+      lapply(private$.results, head, n_counterfactuals)
+    },
     print = function() {
       # TODO: As in InterpretationMethod R6 class
     }
   )
 )
+
+
+
 
 
 

@@ -95,5 +95,34 @@ test_that("$plot_surface() creates correct plot", {
 })
 
 
+test_that("$subset_results returns correct entries", {
+  ci = Counterfactuals$new()
+  ci$.__enclos_env__$private$.results = list(
+    counterfactuals = as.data.table(mtcars),
+    counterfactuals_diff = as.data.table(iris)
+  )
+  n = 3L
+  res = ci$subset_results(n_counterfactuals = n)
+  expect_list(res, len = 2L)
+  expect_data_table(res[[1L]], nrows = n, ncols = ncol(mtcars))
+  expect_data_table(res[[2L]], nrows = n, ncols = ncol(iris))
+})
+
+
+test_that("$subset_results returns message and all counterfactuals if `counterfactuals` out of range", {
+  ci = Counterfactuals$new()
+  ci$.__enclos_env__$private$.results = list(
+    counterfactuals = as.data.table(mtcars),
+    counterfactuals_diff = as.data.table(iris)
+  )
+  n = 1000L
+  res = expect_warning(ci$subset_results(n_counterfactuals = n), "out of range")
+  expect_list(res, len = 2L)
+  expect_data_table(res[[1L]], nrows = nrow(mtcars), ncols = ncol(mtcars))
+  expect_data_table(res[[2L]], nrows = nrow(iris), ncols = ncol(iris))
+})
+
+
+
 
 
