@@ -140,7 +140,8 @@ test_that("Can handle non-numeric target classes", {
 
 
 # Mutliclass classification ------------------------------------------------------------------------
-test_that("$find_counterfactuals with specified `desired_outcome` returns the same results as if he `desired_outcome` is set in the iml `Predictor`", {
+test_that("$find_counterfactuals with specified `desired_outcome` returns the same results as if the `desired_outcome` 
+          is set in the iml `Predictor`", {
  
   set.seed(54542142)
   rf = randomForest::randomForest(Species ~ ., data = iris, ntree = 100L)

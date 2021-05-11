@@ -9,6 +9,7 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
     cfactuals = NULL,
     epsilon = NULL,
     ktree = NULL,
+    set_n_counterfactuals_to_1 = FALSE,
 
     calculate = function() {
       cfs_list = lapply(seq_len(private$n_counterfactuals), private$comp_counterfactual)
@@ -55,63 +56,92 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
       all(have_correct_values == TRUE)
     },
     
-    get_desired_outcome_binary_class = function(y_hat_interest) {
+    get_desired_outcome_binary_class = function(is_pred_one_hot, y_hat_interest, prediction_colnames) {
       # RandomForest prediction is one-hot encoded (here this means: has more than one column). 
       # Therefore we infer the `desired_outcome` with the colnames.
       # Only if the class was specified in the iml predictor, there is only one column in the prediction
       # and we infer the `desired_outcome` with the class.
-      if (private$is_pred_one_hot) {
-        desired_outcome = setdiff(private$prediction_colnames, y_hat_interest)
+      if (is_pred_one_hot) {
+        desired_outcome = setdiff(prediction_colnames, y_hat_interest)
       } else {
         desired_outcome = private$predictor$class
       }
       desired_outcome
-    }
-
-  ),
-  public = list(
+    },
     
-    initialize = function(predictor, n_counterfactuals = 1L, x_interest = NULL, 
-                          desired_outcome = NULL, ktree = 30L, epsilon = 0.1, 
-                          lower = NULL, upper = NULL) {
-      
-      is_randomForest = checkmate::test_multi_class(predictor$model, "randomForest")
+    run_init_arg_checks = function(arg_list) {
+      # TODO: Add remaining arg checks
+      private$check_model(arg_list$predictor$model)
+      private$check_ktree(arg_list$ktree, arg_list$n_counterfactuals, arg_list$predictor$model)
+      private$check_training_data(arg_list$predictor$data)
+      task = arg_list$predictor$model$type
+      private$check_that_classif_task(task)
+    },
+    
+    check_model = function(model) {
+      is_randomForest = checkmate::test_multi_class(model, "randomForest")
       if (!is_randomForest) {
         stop("`FeatureTweaker` only works for randomForest models.")
       }
       
-      is_randomForest_formula = checkmate::test_multi_class(predictor$model, "randomForest.formula")
+      is_randomForest_formula = checkmate::test_multi_class(model, "randomForest.formula")
       if (is_randomForest_formula) {
         stop("`FeatureTweaker` cannot be applied to randomForest models specified with a formula.")
       }
-      
-      categorical_train_variables = any("categorical" %in% predictor$data$feature.types)
+    },
+    
+    check_ktree = function(ktree, n_counterfactuals, rf) {
+      checkmate::assert_integerish(ktree, len = 1L, lower = 1L, null.ok = FALSE)
+      is_ktree_out_of_range = ktree > rf$ntree
+      if (is_ktree_out_of_range) {
+        stop("`ktree` cannot be larger then the total number of trees in the random forest.")
+      }
+      is_search_deterministic = (ktree == rf$ntree)
+      if (is_search_deterministic & n_counterfactuals > 1) {
+        warning_msg = paste(
+          "The search for counterfactuals is deterministic, since `ktree` is equal to the total number of trees.",
+          "`n_counterfactuals` was set to 1.", sep = "\n"
+        )
+        warning(warning_msg)
+        private$set_n_counterfactuals_to_1 = TRUE
+      }
+    },
+    
+    check_training_data = function(data_obj) {
+      categorical_train_variables = any("categorical" %in% data_obj$feature.types)
       if (categorical_train_variables) {
         stop("`FeatureTweaker` cannot handle categorical variables in the training data.")
       }
       
-      all_features_standardized = private$check_standardization(predictor$data$X)
+      all_features_standardized = private$check_standardization(data_obj$X)
       if (!all_features_standardized) {
         stop("`FeatureTweaker` can only handle standardized features in training data.")
       }
-      
-      # TODO: Checks that ktree <= total_numer_of_trees (maybe incl warning that if equal than only 
-      # one counterfactual can be found)
-      
+    },
+    
+    assign_init_params = function(arg_list) {
+      predictor = arg_list$predictor
       predictor$task = predictor$model$type
-      private$check_that_classif_task(predictor)
+      private$predictor = arg_list$predictor
+      private$n_counterfactuals = ifelse(private$set_n_counterfactuals_to_1, 1L, arg_list$n_counterfactuals)
+      private$epsilon = arg_list$epsilon
+      private$ktree = arg_list$ktree
+      private$param_set = private$make_param_set(arg_list$lower, arg_list$upper)
+    }
+
+  ),
+  public = list(
+    initialize = function(predictor, n_counterfactuals = 1L, x_interest = NULL, desired_outcome = NULL, ktree = 30L,  
+                          epsilon = 0.1, lower = NULL, upper = NULL) {
+      arg_list = as.list(environment())
+      private$run_init_arg_checks(arg_list)
       
-      private$predictor = predictor
-      private$n_counterfactuals = n_counterfactuals
-      private$epsilon = epsilon
-      private$ktree = ktree
-      private$param_set = private$make_param_set(lower, upper)
+      private$assign_init_params(arg_list)
       
-      run_method = !is.null(x_interest)
-      if (run_method) {
+      if (!is.null(x_interest)) {
         self$find_counterfactuals(x_interest, desired_outcome)
       }
- 
+      
     }
   )
 )

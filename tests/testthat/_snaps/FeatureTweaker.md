@@ -14,6 +14,10 @@
 
     `FeatureTweaker` can only handle standardized features in training data.
 
+# Initialization returns appropriate error message if `ktree` > total number of trees
+
+    `ktree` cannot be larger then the total number of trees in the random forest.
+
 # Returns error message if categorical variables are in training data
 
     `FeatureTweaker` cannot handle categorical variables in the training data.

@@ -40,44 +40,54 @@ WhatIf = R6::R6Class("WhatIf",
       gower_dist(x_interest, X, n_cores)
     },
     
-    get_desired_outcome_binary_class = function(y_hat_interest) {
-      if (private$is_pred_one_hot) {
-        desired_outcome = setdiff(private$prediction_colnames, y_hat_interest)
+    get_desired_outcome_binary_class = function(is_pred_one_hot, y_hat_interest, prediction_colnames) {
+      if (is_pred_one_hot) {
+        desired_outcome = setdiff(prediction_colnames, y_hat_interest)
       } else {
         desired_outcome = ifelse(as.numeric(y_hat_interest) == 1, 0, 1)
       }
       desired_outcome
+    },
+    
+    run_init_arg_checks = function(arg_list) {
+      # TODO: Check if y is in X -> if yes remove and message
+      # TODO: Arg type checks
+    },
+    
+    assign_init_params = function(arg_list, y_hat) {
+      private$y_hat = y_hat
+      private$predictor = arg_list$predictor
+      private$n_counterfactuals = arg_list$n_counterfactuals
+      private$n_cores = arg_list$n_cores
+      private$param_set = private$make_param_set(arg_list$lower, arg_list$upper)
     }
     
   ),
   
   public = list(
     
-    initialize = function(predictor, n_counterfactuals = 1L, n_cores = parallel::detectCores() - 1L, 
-                          x_interest = NULL, desired_outcome = NULL, lower = NULL, upper = NULL) {
-      
-      # TODO: Check if y is in X -> if yes remove and message
-      # TODO: Arg type checks
-      private$predictor = predictor
-      private$n_counterfactuals = n_counterfactuals
-      private$n_cores = n_cores
-      private$param_set = private$make_param_set(lower, upper)
+    initialize = function(predictor, n_counterfactuals = 1L, x_interest = NULL, desired_outcome = NULL,  
+                          n_cores = parallel::detectCores() - 1L, lower = NULL, upper = NULL) {
+                          
+   
+      arg_list = as.list(environment())
+      private$run_init_arg_checks(arg_list)
       
       # If the task could not be derived from the model, the we infer it from the prediction
       if (predictor$task == "unknown") {
         predictor$task = NULL
       }
       y_hat = predictor$predict(predictor$data$X)
-      private$check_that_classif_task(predictor)
+      private$check_that_classif_task(predictor$task)
       
       private$is_pred_one_hot = (ncol(y_hat) > 1)
       if (private$is_pred_one_hot) {
         y_hat = private$one_hot_to_one_col(y_hat)
       }
-      private$y_hat = y_hat
       
-      run_method = !is.null(x_interest)
-      if (run_method) {
+      private$assign_init_params(arg_list, y_hat)
+      
+      if (!is.null(x_interest)) {
         self$find_counterfactuals(x_interest, desired_outcome)
       }
       

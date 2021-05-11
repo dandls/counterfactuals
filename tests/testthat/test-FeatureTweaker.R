@@ -11,7 +11,7 @@ test_that("Initialization returns appropriate error message if not a classificat
   )))
   rf = randomForest::randomForest(X, y, ntree = 5L)
   pred = iml::Predictor$new(rf, data = X, y = y)
-  expect_snapshot_error(FeatureTweaker$new(pred, 10L, ktree = 10L))
+  expect_snapshot_error(FeatureTweaker$new(pred, 10L, ktree = 2L))
 })
 
 test_that("Initialization returns appropriate error message if randomForest.formula class", {
@@ -23,7 +23,7 @@ test_that("Initialization returns appropriate error message if randomForest.form
   )))
   rf = randomForest::randomForest(col_c ~ ., data = test_df)
   pred = iml::Predictor$new(rf, data = test_df, y = "col_c")
-  expect_snapshot_error(FeatureTweaker$new(pred, 10L, ktree = 10L))
+  expect_snapshot_error(FeatureTweaker$new(pred, 10L, ktree = 2L))
 })
 
 test_that("Initialization returns appropriate error message if model is not randomForest", {
@@ -45,11 +45,38 @@ test_that("Initialization returns appropriate error message if training data are
     col_a = rnorm(10),
     col_b = rnorm(10)
   )
-  y = rnorm(10)
+  y = as.factor(rep(c("a", "b"), each = 5L))
+  rf = randomForest::randomForest(X, y, ntree = 5L)
+  pred = iml::Predictor$new(rf, data = X, y = y)
+  expect_snapshot_error(FeatureTweaker$new(pred, 10L, ktree = 2L))
+})
+
+test_that("Initialization returns appropriate error message if `ktree` > total number of trees", {
+  set.seed(465465)
+  X = as.data.frame(scale(data.frame(
+    col_a = rnorm(10),
+    col_b = rnorm(10)
+  )))
+  y = as.factor(rep(c("a", "b"), each = 5L))
   rf = randomForest::randomForest(X, y, ntree = 5L)
   pred = iml::Predictor$new(rf, data = X, y = y)
   expect_snapshot_error(FeatureTweaker$new(pred, 10L, ktree = 10L))
 })
+
+test_that("Initialization returns warning message if `ktree` == total number of trees and sets 
+          `n_counterfactuals` to 1", {
+  set.seed(465465)
+  X = as.data.frame(scale(data.frame(
+    col_a = rnorm(10),
+    col_b = rnorm(10)
+  )))
+  y = as.factor(rep(c("a", "b"), each = 5L))
+  rf = randomForest::randomForest(X, y, ntree = 2L)
+  pred = iml::Predictor$new(rf, data = X, y = y)
+  ft = expect_warning(FeatureTweaker$new(pred, 10L, ktree = 2L), "deterministic")
+  expect_equal(ft$.__enclos_env__$private$n_counterfactuals, 1L)
+})
+
 
 # Binary classification ----------------------------------------------------------------------------
 test_that("Returns correct output format for numeric columns only", {
@@ -98,7 +125,7 @@ test_that("Init works for classification tasks only", {
   x_interest = X[10L, ]
   n = 2L
   pred_regr = Predictor$new(rf_regr, data = X, y = y)
-  expect_snapshot_error(FeatureTweaker$new(pred_regr))
+  expect_snapshot_error(FeatureTweaker$new(pred_regr, ktree = 5L))
 })
 
 test_that("If `desired_outcome` is specified for binary class, it is set to the opposite of `x_interest`", {
@@ -140,7 +167,8 @@ test_that("Can handle non-numeric target classes", {
 })
 
 # Mutliclass classification ------------------------------------------------------------------------
-test_that("$find_counterfactuals with specified `desired_outcome` returns the same results as if he `desired_outcome` is set in the iml `Predictor`", {
+test_that("$find_counterfactuals with specified `desired_outcome` returns the same results as if 
+          the `desired_outcome` is set in the iml `Predictor`", {
 
   set.seed(54542142)
   X = get_scaled_iris_features()
@@ -175,7 +203,7 @@ test_that("`desired_outcome` is required for multiclass", {
   x_interest = X[10L, ]
   n = 2L
   iris_pred_multiclass = iml::Predictor$new(rf, data = X, y = y)
-  ft_multiclass = FeatureTweaker$new(iris_pred_multiclass, n_counterfactuals = n)
+  ft_multiclass = FeatureTweaker$new(iris_pred_multiclass, n_counterfactuals = n, ktree = 2L)
   expect_snapshot_error(ft_multiclass$find_counterfactuals(x_interest))
 })
 
