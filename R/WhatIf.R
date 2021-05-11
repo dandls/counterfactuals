@@ -2,7 +2,7 @@
 #' 
 #' @export
 WhatIf = R6::R6Class("WhatIf",
-  inherit = Counterfactuals,
+  inherit = CounterfactualsClassificationOnly,
   
   private = list(
     y_hat = NULL,
@@ -10,8 +10,6 @@ WhatIf = R6::R6Class("WhatIf",
     dist_vector = NULL,
     n_counterfactuals = NULL,
     n_cores = NULL,
-    is_pred_one_hot = NULL,
-    init_y_hat_colnames = NULL,
     
     preprocess = function() {
       y_hat = private$y_hat
@@ -42,13 +40,9 @@ WhatIf = R6::R6Class("WhatIf",
       gower_dist(x_interest, X, n_cores)
     },
     
-    one_hot_to_one_col = function(dt) {
-      as.data.table(colnames(dt)[apply(dt, 1, which.max)])
-    },
-    
     get_desired_outcome_binary_class = function(y_hat_interest) {
       if (private$is_pred_one_hot) {
-        desired_outcome = setdiff(private$init_y_hat_colnames, y_hat_interest)
+        desired_outcome = setdiff(private$prediction_colnames, y_hat_interest)
       } else {
         desired_outcome = ifelse(as.numeric(y_hat_interest) == 1, 0, 1)
       }
@@ -75,7 +69,6 @@ WhatIf = R6::R6Class("WhatIf",
       }
       y_hat = predictor$predict(predictor$data$X)
       private$check_that_classif_task(predictor)
-      private$init_y_hat_colnames = names(y_hat)
       
       private$is_pred_one_hot = (ncol(y_hat) > 1)
       if (private$is_pred_one_hot) {
@@ -88,35 +81,7 @@ WhatIf = R6::R6Class("WhatIf",
         self$find_counterfactuals(x_interest, desired_outcome)
       }
       
-    },
-    
-    find_counterfactuals = function(x_interest, desired_outcome = NULL) {
-      # TODO: Check if desired_outcome is in private$y_hat
-      # TODO: Arg type checks
-      private$x_interest = data.table::setDT(x_interest)
-      y_hat_interest = private$predictor$predict(private$x_interest)
-      is_multiclass = ncol(y_hat_interest) > 2
-
-      if (private$is_pred_one_hot) {
-        y_hat_interest = private$one_hot_to_one_col(y_hat_interest)
-      }
-      
-      if (!is_multiclass) {
-        if (!is.null(desired_outcome)) {
-          message("`desired_outcome` is set to the opposite class of `x_interest` for binary classification tasks.")
-        }
-        desired_outcome = private$get_desired_outcome_binary_class(y_hat_interest)
-      }
-      
-      if (is.null(desired_outcome)) {
-        stop("The `desired_outcome` has to be specified for multiclass classification tasks.")
-      }
-      
-      private$desired_outcome = desired_outcome
-      private$y_hat_interest = y_hat_interest
-      private$run()
-    }
-    
+    } 
   )
 
 )

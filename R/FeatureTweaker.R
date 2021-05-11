@@ -3,34 +3,28 @@
 #' 
 #' @export
 FeatureTweaker = R6::R6Class("FeatureTweaker",
-  inherit = Counterfactuals,
+  inherit = CounterfactualsClassificationOnly,
   private = list(
     n_counterfactuals = NULL,
     cfactuals = NULL,
     epsilon = NULL,
     ktree = NULL,
-    y_classes = NULL,
-    preprocess = function() {
-      # TODO:
-    },
+
     calculate = function() {
       cfs_list = lapply(seq_len(private$n_counterfactuals), private$comp_counterfactual)
       cfs = rbindlist(cfs_list)
-      # TODO: add dist_x column
-      # TODO: add pred column
       setnames(cfs, names(cfs), private$predictor$data$feature.names)
       cfs[, "dist_x_interest" := gower_dist(private$x_interest, cfs, n_cores = 1L)]
       private$cfactuals = cfs
     },
     aggregate = function() {
-      # TODO: Removed duplicates
-      # TODO: warning if less then `n_counterfactuals` cfs were found
+      # TODO: Removed duplicates?
+      # TODO: warning if less then `n_counterfactuals` cfs were found?
       cfactuals = private$cfactuals
       cfactuals_feats = cfactuals[, names(private$x_interest), with = FALSE]
       pred = private$predictor$predict(cfactuals_feats)
  
-      # Check if more than one column as binary classification tasks may be one-hot encoded
-      if (length(private$y_classes) > 1) {
+      if (private$is_pred_one_hot) {
         pred = private$one_hot_to_one_col(pred)
       }
       pred = pred[[1L]]
@@ -40,9 +34,9 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
       private$.results = private$make_results_list(cfactuals)
     },
     
-    # Randomizing by resampling when extracting the rule from the rf (as long as ktree < ntree)  
+   
     comp_counterfactual = function(i) {
-
+      # Rule extraction is a random process as long as ktree < ntree
       rf = private$predictor$model
       rules = featureTweakR::getRules(rf, ktree = private$ktree, resample = TRUE)
       e_satisfactory = featureTweakR::set.eSatisfactory(rules, epsiron = private$epsilon)
@@ -54,20 +48,29 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
       tweaks$suggest
     },
     
-    one_hot_to_one_col = function(df) {
-      as.data.table(colnames(df)[apply(df, 1, which.max)])
-    },
-    
     check_standardization = function(dt) {
       is_mean_0 = function(x) isTRUE(all.equal(mean(x, na.rm = TRUE), 0))
       is_sd_1 = function(x) isTRUE(all.equal(sd(x, na.rm = TRUE), 1))
       have_correct_values = dt[, sapply(.SD, function(x) list(is_mean_0(x), is_sd_1(x)))]
       all(have_correct_values == TRUE)
+    },
+    
+    get_desired_outcome_binary_class = function(y_hat_interest) {
+      # RandomForest prediction is one-hot encoded (here this means: has more than one column). 
+      # Therefore we infer the `desired_outcome` with the colnames.
+      # Only if the class was specified in the iml predictor, there is only one column in the prediction
+      # and we infer the `desired_outcome` with the class.
+      if (private$is_pred_one_hot) {
+        desired_outcome = setdiff(private$prediction_colnames, y_hat_interest)
+      } else {
+        desired_outcome = private$predictor$class
+      }
+      desired_outcome
     }
 
   ),
   public = list(
-    # tweak function does not allow for fixed features
+    
     initialize = function(predictor, n_counterfactuals = 1L, x_interest = NULL, 
                           desired_outcome = NULL, ktree = 30L, epsilon = 0.1, 
                           lower = NULL, upper = NULL) {
@@ -92,10 +95,11 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
         stop("`FeatureTweaker` can only handle standardized features in training data.")
       }
       
+      # TODO: Checks that ktree <= total_numer_of_trees (maybe incl warning that if equal than only 
+      # one counterfactual can be found)
       
       predictor$task = predictor$model$type
       private$check_that_classif_task(predictor)
-
       
       private$predictor = predictor
       private$n_counterfactuals = n_counterfactuals
@@ -103,51 +107,11 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
       private$ktree = ktree
       private$param_set = private$make_param_set(lower, upper)
       
-      # Question: Do we need scaling? -> yes, because of distance calculation
-      # The training data of the random forest have to be standardized (cannot do it here)
-      # TODO: => add check
-      
-      if (!is.null(x_interest)) {
+      run_method = !is.null(x_interest)
+      if (run_method) {
         self$find_counterfactuals(x_interest, desired_outcome)
       }
-      
  
-    },
-    
-    find_counterfactuals = function(x_interest, desired_outcome = NULL) {
-      # TODO: Check if desired_outcome is in predictor$data$y
-      
-      private$x_interest = data.table::setDT(x_interest)
-      y_hat_interest = private$predictor$predict(private$x_interest) # [1L, ]
-      is_multiclass = ncol(y_hat_interest) > 2
-
-      private$y_classes = names(y_hat_interest)
-      # Check if more than one column as binary classification tasks may be one-hot encoded
-      if (ncol(y_hat_interest) > 1) {
-        y_hat_interest = private$one_hot_to_one_col(y_hat_interest)
-      }
-      y_hat_interest = y_hat_interest[[1]]
-
-      if (!is_multiclass) {
-        if (!is.null(desired_outcome)) {
-          message("`desired_outcome` is set to the opposite class of `x_interest` for binary classification tasks.")
-        }
-        if (length(private$y_classes) > 1) {
-          desired_outcome = setdiff(private$y_classes, y_hat_interest)
-        } else {
-          desired_outcome = private$predictor$class
-        }
-        
-      } 
-      
-      if (is.null(desired_outcome)) {
-        stop("The `desired_outcome` has to be specified for multiclass classification tasks.")
-      }
-      
-
-      private$desired_outcome = desired_outcome
-      private$y_hat_interest = y_hat_interest
-      private$run()
     }
   )
 )

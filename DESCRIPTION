@@ -26,7 +26,8 @@ Imports:
     iml,
     data.table,
     doParallel,
-    featureTweakR
+    featureTweakR,
+    pforeach
 Suggests: 
     randomForest,
     mlt,
@@ -45,6 +46,7 @@ Suggests:
     cowplot
 Remotes:
     katokohaku/featureTweakR
+    hoxo-m/pforeach
 License: TODO
 Encoding: UTF-8
 RoxygenNote: 7.1.1

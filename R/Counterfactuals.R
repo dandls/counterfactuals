@@ -2,11 +2,14 @@ Counterfactuals = R6::R6Class("Counterfactuals",
   private = list(
     predictor = NULL,
     x_interest = NULL,
+    y_hat_interest = NULL,
     # TODO: can this be a range for all methods? (for moc it can) -> NO
     desired_outcome = NULL,
     .results = NULL,
     param_set = NULL,
-    y_hat_interest = NULL,
+    prediction_colnames = NULL,
+    is_pred_one_hot = NULL,
+    
     init_y_hat_colnames = NULL,
     
     run = function() {
@@ -39,13 +42,6 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       m_x_interest = as.matrix(private$x_interest)
       n_changes = rowSums(sweep(m_cfactuals, 2, m_x_interest, FUN = "!="), na.rm = TRUE)
       as.integer(n_changes)
-    },
-    
-    check_that_classif_task = function(predictor) {
-      if (predictor$task != "classification") {
-        err_msg = sprintf("`%s` only works for classification tasks.", class(self)[1])
-        stop(err_msg)
-      }
     },
     
     make_param_set = function(lower, upper) {
@@ -116,7 +112,10 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       if (!is.null(private$.results)) {
         print(head(private$.results))
       }
-    }
+    },
+    
+    find_counterfactuals = function() {}
+  
   )
 )
 
