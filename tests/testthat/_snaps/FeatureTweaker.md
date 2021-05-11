@@ -6,11 +6,15 @@
 
     `FeatureTweaker` cannot be applied to randomForest models specified with a formula.
 
-# Initialization returns appropriate error message when model is not randomForest
+# Initialization returns appropriate error message if model is not randomForest
 
     `FeatureTweaker` only works for randomForest models.
 
-# Returns error message if factors are in training data
+# Initialization returns appropriate error message if training data are not standardized
+
+    `FeatureTweaker` can only handle standardized features in training data.
+
+# Returns error message if categorical variables are in training data
 
     `FeatureTweaker` cannot handle categorical variables in the training data.
 

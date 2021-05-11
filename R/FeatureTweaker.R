@@ -53,10 +53,16 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
       )
       tweaks$suggest
     },
+    
     one_hot_to_one_col = function(df) {
       as.data.table(colnames(df)[apply(df, 1, which.max)])
+    },
+    
+    check_standardization = function(dt) {
+      is_mean_0 = function(x) isTRUE(all.equal(mean(x, na.rm = TRUE), 0))
+      is_sd_1 = function(x) isTRUE(all.equal(sd(x, na.rm = TRUE), 1))
+      all(dt[, sapply(.SD, function(x) list(is_mean_0(x), is_sd_1(x)))] == TRUE)
     }
-
 
   ),
   public = list(
@@ -79,6 +85,12 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
       if (categorical_train_variables) {
         stop("`FeatureTweaker` cannot handle categorical variables in the training data.")
       }
+      
+      all_features_standardized = private$check_standardization(predictor$data$X)
+      if (!all_features_standardized) {
+        stop("`FeatureTweaker` can only handle standardized features in training data.")
+      }
+      
       
       predictor$task = predictor$model$type
       private$check_that_classif_task(predictor)
