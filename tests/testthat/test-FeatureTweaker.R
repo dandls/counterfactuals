@@ -98,7 +98,7 @@ test_that("Init works for classification tasks only", {
   x_interest = X[10L, ]
   n = 2L
   pred_regr = Predictor$new(rf_regr, data = X, y = y)
-  expect_snapshot_error(FeatureTweaker$new(pred_regr))
+  expect_snapshot_error(staFeatureTweaker$new(pred_regr))
 })
 
 test_that("If `desired_outcome` is specified for binary class, it is set to the opposite of `x_interest`", {

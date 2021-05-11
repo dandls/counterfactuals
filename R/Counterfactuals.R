@@ -23,6 +23,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       NULL
     },
     
+    print_parameters = function() {},
+    
     # TODO: Think about creating an resultsListCreater class (only takes cfactuals and x_interest)
     make_results_list = function(cfactuals) {
       # TODO check that cfactuals is data.table with colnames(x_interest) as colnames subset
@@ -93,6 +95,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       plot_ice_curve_area(ice_curve_area, private$predictor, instances, x_interest_with_pred)
                           
     },
+    
     subset_results = function(n_counterfactuals = 10L) {
       res = private$.results
       if (n_counterfactuals > nrow(res[[1L]])) {
@@ -100,8 +103,18 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
       lapply(private$.results, head, n_counterfactuals)
     },
+    
     print = function() {
-      # TODO: As in InterpretationMethod R6 class
+      cat("Counterfactual Explanation method: ", class(self)[1], "\n")
+      private$print_parameters()
+      cat("\n\nAnalysed predictor: \n")
+      private$predictor$print()
+      cat("\n\nAnalysed data:\n")
+      print(private$predictor$data)
+      cat("\n\nHead of results:\n")
+      if (!is.null(private$.results)) {
+        print(head(private$.results))
+      }
     }
   )
 )
