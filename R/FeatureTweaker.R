@@ -59,8 +59,8 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
     get_desired_outcome_binary_class = function(is_pred_one_hot, y_hat_interest, prediction_colnames) {
       # RandomForest prediction is one-hot encoded (here this means: has more than one column). 
       # Therefore we infer the `desired_outcome` with the colnames.
-      # Only if the class was specified in the iml predictor, there is only one column in the prediction
-      # and we infer the `desired_outcome` with the class.
+      # Only if in the iml predictor the `class` argument was specified, there is just one column in the prediction
+      # and we obtain the `desired_outcome` with this `class` argument.
       if (is_pred_one_hot) {
         desired_outcome = setdiff(prediction_colnames, y_hat_interest)
       } else {
