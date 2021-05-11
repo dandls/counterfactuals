@@ -86,7 +86,7 @@ sdev_to_list = function(sdev, param.set) {
   return(typegroups)
 }
 
-get_ice_curve_area = function(x_interest, features, predictor, param_set, grid_size) {
+make_ice_curve_area = function(x_interest, features, predictor, param_set, grid_size) {
   
   param_set_filtered = ParamHelpers::filterParams(param_set, features)
   min_max = data.frame(

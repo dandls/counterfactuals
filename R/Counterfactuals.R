@@ -7,6 +7,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     .results = NULL,
     param_set = NULL,
     y_hat_interest = NULL,
+    init_y_hat_colnames = NULL,
     
     run = function() {
       private$preprocess()
@@ -69,26 +70,26 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     plot_parallel = function(n_solutions, feature_names) {
       # TODO
     },
-    plot_surface = function(features = NULL, grid_size = 50L, epsilon = NULL) {
-      assert_character(features, null.ok = TRUE, len = 2L)
+    plot_surface = function(feature_names = NULL, grid_size = 50L, epsilon = NULL) {
+      assert_character(feature_names, null.ok = FALSE, len = 2L)
       assert_integerish(grid_size, len = 1L)
       assert_numeric(epsilon, len = 1L, null.ok = TRUE)
  
       cfactuals = self$results$counterfactuals
       n_changes = cfactuals$nr_changed
       
-      cfactuals_diff_rel_features = self$results$counterfactuals_diff[, ..features]
-      n_changes_in_rel_features = rowSums(cfactuals_diff_rel_features != 0)
-      has_changes_in_rel_features_only = (n_changes_in_rel_features == n_changes)
-      instances = cfactuals[which(has_changes_in_rel_features_only)]
+      diff_rel_feats = self$results$counterfactuals_diff[, ..feature_names]
+      n_changes_rel_feats = rowSums(diff_rel_feats != 0)
+      has_changes_in_rel_feats_only = (n_changes_rel_feats == n_changes)
+      instances = cfactuals[which(has_changes_in_rel_feats_only)]
       
       dist_target_col_exists = "dist_target" %in% names(cfactuals)
       if (dist_target_col_exists & !is.null(epsilon)) {
         instances = instances[dist_target <= epsilon]
       }
 
-      ice_curve_area = get_ice_curve_area(
-        private$x_interest, features, private$predictor, private$param_set, grid_size
+      ice_curve_area = make_ice_curve_area(
+        private$x_interest, feature_names, private$predictor, private$param_set, grid_size
       )
                                
       x_interest_with_pred = cbind(private$x_interest, pred = private$y_hat_interest)
@@ -97,9 +98,9 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     },
     
     subset_results = function(n_counterfactuals = 10L) {
-      res = private$.results
-      if (n_counterfactuals > nrow(res[[1L]])) {
-        warning("`n_counterfactuals` out of range, it was set to the number of solutions in self$results")
+      is_out_of_range = n_counterfactuals > nrow(private$.results[[1L]])
+      if (is_out_of_range) {
+        warning("`n_counterfactuals` out of range, it was set to the number of solutions in self$results.")
       }
       lapply(private$.results, head, n_counterfactuals)
     },

@@ -12,6 +12,7 @@ gower_dist <- function(x, data, n_cores) {
   }
   
   # For numeric variables, build ranges (max-min) to be used in gower-distance.
+  # TODO: Use the paramHelpers for the ranges
   get_range_if_numeric = function(x) {
     is_numeric = checkmate::test_numeric(x)
     ifelse(is_numeric, max(x, na.rm = TRUE) - min(x, na.rm = TRUE), NA)
