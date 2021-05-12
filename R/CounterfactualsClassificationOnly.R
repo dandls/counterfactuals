@@ -34,7 +34,7 @@ CounterfactualsClassificationOnly <- R6Class("CounterfactualsClassificationOnly"
 
       x_interest = data.table::setDT(x_interest)
       y_hat_interest = private$predictor$predict(x_interest)
-      is_binary_class = ncol(y_hat_interest) <= 2
+      is_binary_class = (ncol(y_hat_interest) <= 2)
       is_pred_one_hot = (ncol(y_hat_interest) > 1)
       prediction_colnames = names(y_hat_interest)
       

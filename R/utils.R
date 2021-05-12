@@ -1,7 +1,9 @@
 #' @import doParallel
-gower_dist <- function(x, data, n_cores) {
+gower_dist = function(x, data, n_cores, param_set) {
   
-  cl <- parallel::makeCluster(n_cores)
+  ranges = gower_dist_ranges(param_set)
+  
+  cl = parallel::makeCluster(n_cores)
   registerDoParallel(cl)
   on.exit(parallel::stopCluster(cl))
   `%dopar%` = foreach::`%dopar%`
@@ -10,15 +12,6 @@ gower_dist <- function(x, data, n_cores) {
   if (floor(nrow(data) / n_cores) == 0) {
     n_cores = 1
   }
-  
-  # For numeric variables, build ranges (max-min) to be used in gower-distance.
-  # TODO: Use the paramHelpers for the ranges
-  get_range_if_numeric = function(x) {
-    is_numeric = checkmate::test_numeric(x)
-    ifelse(is_numeric, max(x, na.rm = TRUE) - min(x, na.rm = TRUE), NA)
-  }
-  datax = rbind(data, x)
-  ranges = sapply(datax, get_range_if_numeric)
   
   chunk_size = floor(nrow(data) / n_cores)
   dist_vector = foreach::foreach(
@@ -34,3 +27,17 @@ gower_dist <- function(x, data, n_cores) {
 
   dist_vector
 }
+
+
+gower_dist_ranges = function(param_set) {
+  ranges_non_discrete = ParamHelpers::getUpper(param_set) - ParamHelpers::getLower(param_set)
+  is_non_discrete = ParamHelpers::getParamTypes(param_set) != "discrete"
+  
+  ranges = rep(NA, length(param_set$pars))
+  ranges[which(is_non_discrete)] = ranges_non_discrete
+  
+  names(ranges) = ParamHelpers::getParamIds(param_set)
+  ranges
+}
+
+

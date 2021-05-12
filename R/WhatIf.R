@@ -20,7 +20,7 @@ WhatIf = R6::R6Class("WhatIf",
     
     calculate = function() {
       private$dist_vector = private$compute_gower_dist(
-        private$x_interest, private$X_desired_outcome
+        private$x_interest, private$X_desired_outcome, private$n_cores, private$param_set
       )
     },
     
@@ -35,9 +35,8 @@ WhatIf = R6::R6Class("WhatIf",
       private$.results = private$make_results_list(cfactuals)
     },
     
-    compute_gower_dist = function(x_interest, X, n_cores = private$n_cores) {
-      # TODO: Hand over lower and upper args
-      gower_dist(x_interest, X, n_cores)
+    compute_gower_dist = function(x_interest, X, n_cores, param_set) {
+      gower_dist(x_interest, X, n_cores, param_set)
     },
     
     get_desired_outcome_binary_class = function(is_pred_one_hot, y_hat_interest, prediction_colnames) {

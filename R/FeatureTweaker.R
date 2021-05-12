@@ -15,7 +15,7 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
       cfs_list = lapply(seq_len(private$n_counterfactuals), private$comp_counterfactual)
       cfs = rbindlist(cfs_list)
       setnames(cfs, names(cfs), private$predictor$data$feature.names)
-      cfs[, "dist_x_interest" := gower_dist(private$x_interest, cfs, n_cores = 1L)]
+      cfs[, "dist_x_interest" := gower_dist(private$x_interest, cfs, n_cores = 1L, param_set = private$param_set)]
       private$cfactuals = cfs
     },
     aggregate = function() {

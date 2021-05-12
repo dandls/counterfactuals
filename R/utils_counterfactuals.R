@@ -15,11 +15,10 @@
 #' 'predictor'.}
 #' }
 #' @return (list)
-make_paramlist = function(data, lower = NULL, upper = NULL, use_orig = TRUE) {
+make_paramlist = function(data, lower = NULL, upper = NULL) {
   checkmate::assert_data_frame(data)
   checkmate::assert_numeric(lower, null.ok = TRUE)
   checkmate::assert_numeric(upper, null.ok = TRUE)
-  checkmate::assert_logical(use_orig, any.missing = FALSE, len = 1L)
   checkmate::assert_true(all(names(lower) %in% names(data)))
   checkmate::assert_true(all(names(upper) %in% names(data)))
 
@@ -53,12 +52,7 @@ make_paramlist = function(data, lower = NULL, upper = NULL, use_orig = TRUE) {
     
     param
   }
-  
   paramlist = lapply(colnames(data), makeParam)
-  if (use_orig) {
-    param_origin = ParamHelpers::makeLogicalVectorParam("use_orig", len = ncol(data))
-    paramlist[[length(paramlist) + 1L]] = param_origin
-  }
   
   paramlist
 }
