@@ -6,13 +6,13 @@ CounterfactualsClassificationOnly <- R6Class("CounterfactualsClassificationOnly"
     
     check_that_classif_task = function(task) {
       if (task != "classification") {
-        err_msg = sprintf("`%s` only works for classification tasks.", class(self)[1])
+        err_msg = sprintf("`%s` only works for classification tasks.", class(self)[1L])
         stop(err_msg)
       }
     },
     
     one_hot_to_one_col = function(df) {
-      as.data.table(colnames(df)[apply(df, 1, which.max)])
+      as.data.table(colnames(df)[apply(df, 1L, which.max)])
     },
     
     check_x_interest = function(x_interest) {
@@ -34,8 +34,8 @@ CounterfactualsClassificationOnly <- R6Class("CounterfactualsClassificationOnly"
 
       x_interest = data.table::setDT(x_interest)
       y_hat_interest = private$predictor$predict(x_interest)
-      is_binary_class = (ncol(y_hat_interest) <= 2)
-      is_pred_one_hot = (ncol(y_hat_interest) > 1)
+      is_binary_class = (ncol(y_hat_interest) <= 2L)
+      is_pred_one_hot = (ncol(y_hat_interest) > 1L)
       prediction_colnames = names(y_hat_interest)
       
       if (is_pred_one_hot) {
