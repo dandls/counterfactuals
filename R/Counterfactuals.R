@@ -3,8 +3,6 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     predictor = NULL,
     x_interest = NULL,
     y_hat_interest = NULL,
-    # TODO: can this be a range for all methods? (for moc it can) -> NO
-    desired_outcome = NULL,
     .results = NULL,
     param_set = NULL,
     prediction_colnames = NULL,

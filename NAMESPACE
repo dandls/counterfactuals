@@ -3,7 +3,6 @@
 S3method(plot,Counterfactuals)
 export(CounterfactualsOLD)
 export(FeatureTweaker)
-export(WhatIf)
 export(calculate_frequency_wrapper)
 export(fit_conditionals)
 import(ParamHelpers)

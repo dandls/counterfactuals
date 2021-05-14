@@ -10,6 +10,7 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
     epsilon = NULL,
     ktree = NULL,
     set_n_counterfactuals_to_1 = FALSE,
+    
 
     calculate = function() {
       cfs_list = lapply(seq_len(private$n_counterfactuals), private$comp_counterfactual)
@@ -117,6 +118,10 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
       if (!all_features_standardized) {
         stop("`FeatureTweaker` can only handle standardized features in training data.")
       }
+    },
+    
+    one_hot_to_one_col = function(df) {
+      as.data.table(colnames(df)[apply(df, 1L, which.max)])
     },
     
     assign_init_params = function(arg_list) {
