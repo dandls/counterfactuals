@@ -26,7 +26,7 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
       pred = private$predictor$predict(cfactuals_feats)
  
       if (private$is_pred_one_hot) {
-        pred = private$one_hot_to_one_col(pred)
+        pred = private$one_hot_to_one_col(pred)  # COMMENT maybe one_hot_to_one_col shouldn't be a private class function, but should be just an utils function in util.R or so
       }
       pred = pred[[1L]]
       n_changes = private$count_changes(cfactuals_feats)
@@ -50,9 +50,9 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
     },
     
     check_standardization = function(dt) {
-      is_mean_0 = function(x) isTRUE(all.equal(mean(x, na.rm = TRUE), 0))
-      is_sd_1 = function(x) isTRUE(all.equal(sd(x, na.rm = TRUE), 1))
-      have_correct_values = dt[, sapply(.SD, function(x) list(is_mean_0(x), is_sd_1(x)))]
+      is_mean_0 = function(x) isTRUE(all.equal(mean(x, na.rm = TRUE), 0))  # COMMENT why the all.equal here? we need to check for absence of names / attributes or so?
+      is_sd_1 = function(x) isTRUE(all.equal(sd(x, na.rm = TRUE), 1))  # COMMENT as above
+      have_correct_values = dt[, sapply(.SD, function(x) list(is_mean_0(x), is_sd_1(x)))]  # COMMENT maybe use c() instead of list() here (or is there a reason why you use list?)
       all(have_correct_values == TRUE)
     },
     
@@ -66,12 +66,12 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
       } else {
         desired_outcome = private$predictor$class
       }
-      desired_outcome
+      desired_outcome  # COMMENT don't need desired_outcome here ,just do if (is_pred_one_hot) { setdiff(...) } else { private$predictor$class } (in more than one line) and it returns the result automatically
     },
     
     run_init_arg_checks = function(arg_list) {
       # TODO: Add remaining arg checks
-      private$check_model(arg_list$predictor$model)
+      private$check_model(arg_list$predictor$model)  # COMMENT maybe call the functions something besides check_xxx, because the special meaning of check_xxx in checkmate
       private$check_ktree(arg_list$ktree, arg_list$n_counterfactuals, arg_list$predictor$model)
       private$check_training_data(arg_list$predictor$data)
       task = arg_list$predictor$model$type
@@ -79,12 +79,12 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
     },
     
     check_model = function(model) {
-      is_randomForest = checkmate::test_multi_class(model, "randomForest")
+      is_randomForest = checkmate::test_multi_class(model, "randomForest")  # COMMENT why not just do assert_ ?
       if (!is_randomForest) {
         stop("`FeatureTweaker` only works for randomForest models.")
       }
       
-      is_randomForest_formula = checkmate::test_multi_class(model, "randomForest.formula")
+      is_randomForest_formula = checkmate::test_multi_class(model, "randomForest.formula")  # COMMENT as above
       if (is_randomForest_formula) {
         stop("`FeatureTweaker` cannot be applied to randomForest models specified with a formula.")
       }
@@ -99,7 +99,7 @@ FeatureTweaker = R6::R6Class("FeatureTweaker",
       is_search_deterministic = (ktree == rf$ntree)
       if (is_search_deterministic & n_counterfactuals > 1) {
         warning_msg = paste(
-          "The search for counterfactuals is deterministic, since `ktree` is equal to the total number of trees.",
+          "The search for counterfactuals is deterministic, since `ktree` is equal to the total number of trees.",  # COMMENT see my comment elsewhere, don't break output text lines, people won't find the source location otherwise
           "`n_counterfactuals` was set to 1.", sep = "\n"
         )
         warning(warning_msg)
