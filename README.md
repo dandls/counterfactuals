@@ -10,4 +10,4 @@ Please check the [contribution guidelines](CONTRIBUTING.md)
 
 # License
 
-TODO
+MIT + file LICENSE
