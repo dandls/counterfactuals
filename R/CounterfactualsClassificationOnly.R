@@ -1,13 +1,13 @@
-CounterfactualsClassificationOnly <- R6Class("CounterfactualsClassificationOnly",
+CounterfactualsClassificationOnly <- R6Class("CounterfactualsClassificationOnly",  # COMMENT maybe rethink your class naming scheme
   inherit = Counterfactuals,
   
   private = list(
-    get_desired_outcome_binary_class = function(y_hat_interest) {},
+    get_desired_outcome_binary_class = function(y_hat_interest) {},  # COMMENT some people think that private methods and variables should start with a `.`, I don't know the merit or usefulness of that, but you could consider it.
     
     check_that_classif_task = function(task) {
       if (task != "classification") {
         err_msg = sprintf("`%s` only works for classification tasks.", class(self)[1])
-        stop(err_msg)
+        stop(err_msg)  # COMMENT there is no shame in writing stop(sprintf(...))
       }
     },
     
@@ -27,7 +27,7 @@ CounterfactualsClassificationOnly <- R6Class("CounterfactualsClassificationOnly"
     }
   ),
   
-  public = list(
+  public = list(  # COMMENT most people put 'public' before 'private' in R6, maybe also do that.
     find_counterfactuals = function(x_interest, desired_outcome = NULL) {
       
       private$check_x_interest(x_interest)
@@ -44,7 +44,7 @@ CounterfactualsClassificationOnly <- R6Class("CounterfactualsClassificationOnly"
       
       if (is_binary_class) {
         if (!is.null(desired_outcome)) {
-          message(paste(
+          message(paste(  # COMMENT just make the message one line, otherwise people google / grep the error message and don't find this source code line. This is more important than line length imho.
             "For binary classification tasks, `desired_outcome` is set to the opposite class of the prediction",
             "for `x_interest`."
           ))

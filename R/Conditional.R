@@ -10,19 +10,22 @@ Conditional = R6::R6Class(
     data = NULL,
     model = NULL,
     ctrl = NULL,
+    # COMMENT Even if this class is not exported, it would be good to have documentation on the function arguments and maybe even 'assert's on them
     initialize = function(data, feature, ctrl = ctree_control()) {
       self$data = data
       self$feature = feature
       self$ctrl = ctrl
       private$fit_conditional()
     },
+    # COMMENT if csample_data and csample_parametric are only supposed to be called from within the class through csample(), consider making them private
     csample_data = function(X, size){
+      # COMMENT cmodel not being used at all here
       cmodel = self$model #SD
       X_nodes = self$cnode(X)
       if (is.null(private$data_nodes)) {
         private$data_nodes = self$cnode(self$data)
       }
-      xj_samples = lapply(1:nrow(X), function(i) {
+      xj_samples = lapply(1:nrow(X), function(i) {  # COMMENT using 1:<something> is REALLY BAD, use `seg_len(nrow(X))` instead.
         node = X_nodes[i, "node"]
         data_ids = which(private$data_nodes$node == node)
         data_ids = setdiff(data_ids, i)
@@ -36,16 +39,16 @@ Conditional = R6::R6Class(
     csample_parametric = function(X, size){
       cmodel = self$model
       x = self$data[[self$feature]]
-      if (class(self$data[[self$feature]]) %in% c("character", "factor")) {
+      if (class(self$data[[self$feature]]) %in% c("character", "factor")) {    # COMMENT bad idea to use class() here because it could return more than one element. use is.factor, is.character, is.integer etc., or use typeof()
         x = unique(x)
-      } else if (class(self$data[[self$feature]]) == "integer") {
+      } else if (class(self$data[[self$feature]]) == "integer") {  # COMMENT don't use classs() in if(), see above
         len = min(max(x)- min(x)+1, 100)
         xgrid = seq.int(min(x), max(x), length.out = len)
        } else {
         xgrid = seq(from = min(x), to = max(x), length.out = 100)
       }
       dens = self$cdens(X, xgrid)
-      xj_samples = lapply(1:nrow(X), function(irow) {
+      xj_samples = lapply(1:nrow(X), function(irow) {  # COMMENT as above, dont use 1:<something>
         dens_i = dens[dens$.id.dist == irow, , drop = FALSE]
         xj = dens_i[[self$feature]][sample.int(nrow(dens_i), size = size, prob = dens_i[[".dens"]], replace = TRUE)]
         data.frame(t(xj))
@@ -53,11 +56,11 @@ Conditional = R6::R6Class(
       rbindlist(xj_samples)
     },
     csample = function(X, size, type = "parametric"){
-      assert_number(size, lower = 1)
-      assert_character(self$feature)
+      assert_number(size, lower = 1)  # COMMENT should be assert_int, right?
+      assert_character(self$feature)  # COMMENT consider making self$feature an active binding that checks for character
       assert_data_table(X)
       assert_choice(type, c("data", "parametric"))
-      if (type == 'parametric') {
+      if (type == 'parametric') {  # COMMENT could use 'switch()' here
         self$csample_parametric(X, size)
       } else {
         self$csample_data(X, size)
@@ -65,14 +68,15 @@ Conditional = R6::R6Class(
     },
     cdens = function(X, xgrid = NULL){
       cmodel = self$model
+      # COMMENT at first looks there seems to be quite some code in common between the different cases of the following if, maybe try if you can take the common code outside of it
       if (inherits(cmodel, "trafotree")) {
-        if (class(self$data[[self$feature]]) != "integer") {
+        if (class(self$data[[self$feature]]) != "integer") {  # COMMENT don't use classs() in if(), see above
           probs.m = predict(cmodel, newdata = X, type = "logdensity", q = xgrid)
           probs.m = apply(probs.m, 2, function(col) {
             col = exp(col - max(col))
             col / sum(col)
           })
-          densities = reshape2::melt(probs.m)$value
+          densities = reshape2::melt(probs.m)$value  # COMMENT use the data.table::melt() function here and save yourself the reshape2 dependency
           densities = data.table(.dens = densities, .id.dist = rep(1:nrow(X), each = length(xgrid)),
             feature = rep(xgrid, times = nrow(X)))
         } else {
@@ -88,16 +92,16 @@ Conditional = R6::R6Class(
             dens = density(vec, n = len, from = min(xgrid), to = max(xgrid))
             prob.df = data.frame(cbind(.dens = dens$y, .id.dist = i, feature = dens$x))
           })
-          densities = do.call("rbind", probs.m)
+          densities = do.call("rbind", probs.m)  # COMMENT why not rbindlist?
           ## might not always work 
           # probs.m = diff(predict(cmodel, newdata = X, type = "distribution", q = xgrid))
           # densities = reshape2::melt(probs.m)$value
           # densities = data.table(.dens = densities, .id.dist = rep(1:nrow(X), each = length(xgrid)),
           #   feature = rep(xgrid, times = nrow(X)))
         }
-      } else if (class(self$data[[self$feature]]) %in% c("character", "factor")) {
+      } else if (class(self$data[[self$feature]]) %in% c("character", "factor")) {  # COMMENT don't use classs() in if(), see above
         probs = predict(cmodel, newdata = X, type = "prob")
-        probs.m = reshape2::melt(probs)$value
+        probs.m = reshape2::melt(probs)$value  # COMMENT see above, use data.table melt
         densities = data.table(.dens = probs.m, .id.dist = rep(1:nrow(X), each = ncol(probs)),
           feature = factor(rep(colnames(probs), times = nrow(X)), levels = levels(self$data[[self$feature]])))
       } else {
@@ -106,10 +110,10 @@ Conditional = R6::R6Class(
         res = sapply(pr, function(pr) pr(at) / sum(pr(at)))
         res = data.table(t(res))
         colnames(res) = as.character(at)
-        res.m = reshape2::melt(res, measure.vars = as.character(at))
+        res.m = reshape2::melt(res, measure.vars = as.character(at))  # COMMENT see above, use data.table melt
         densities = data.table(.dens = res.m$value, .id.dist = rep(1:nrow(X), times = length(at)), feature = rep(at, each = nrow(X)))
       }
-      colnames(densities) = c(".dens", ".id.dist", self$feature)
+      colnames(densities) = c(".dens", ".id.dist", self$feature)  # can use data.table setnames
       densities
     },
     cnode = function(X,  prob = c(0.05, 0.95)) {
@@ -121,7 +125,7 @@ Conditional = R6::R6Class(
         quants = predict(cmodel, newdata = X, type = "quantile", prob = prob)
         quants = data.frame(t(quants))
         colnames(quants) = paste0("q", prob)
-      } else if (class(self$data[[self$feature]]) %in% c("numeric", "integer")) {
+      } else if (class(self$data[[self$feature]]) %in% c("numeric", "integer")) {  # COMMENT don't use classs() in if(), see above
         # case of numerical features with few unique values
         quants = predict(cmodel, newdata = X, type = "quantile", at = prob)
         colnames(quants) = paste0("q", prob)
@@ -138,14 +142,14 @@ Conditional = R6::R6Class(
   fit_conditional = function() {
     require("trtf")
     y = self$data[[self$feature]]
-    if (class(y) %in% c("numeric", "integer") & (length(unique(y)) > 2)) {
-      yvar = numeric_var(self$feature, support = c(min(y), max(y)))
+    if (class(y) %in% c("numeric", "integer") & (length(unique(y)) > 2)) {  # COMMENT don't use classs() in if(), see above
+      yvar = numeric_var(self$feature, support = c(min(y), max(y)))  # COMMENT use range() instead of c(min, max)
       By  =  Bernstein_basis(yvar, order = 5, ui = "incr")
       m = ctm(response = By,  todistr = "Normal", data = self$data )
-      form = as.formula(sprintf("%s ~ 1 | .", self$feature))
+      form = as.formula(sprintf("%s ~ 1 | .", self$feature))  # COMMENT could also use eval(substite(x ~ 1 | ., list(x = as.symbol(self$feature)))) ; this has the advantage that it also works when self$feature contains spaces or other things that could break naive string parsing.
       part_cmod = trafotree(m, formula = form,  data = self$data, control = self$ctrl)
     } else {
-      form = as.formula(sprintf("%s ~ .", self$feature))
+      form = as.formula(sprintf("%s ~ .", self$feature))  # COMMENT see above with eval(substitute(...))
       part_cmod = ctree(form, data = self$data, control = self$ctrl)
     }
       self$model = part_cmod
@@ -166,7 +170,7 @@ Conditional = R6::R6Class(
 fit_conditionals = function(data, ctrl = ctree_control()){
   assert_data_frame(data)
   features = colnames(data)
-  cmods = lapply(features, function(fname){
+  cmods = lapply(features, function(fname){  # COMMENT can write this sapply(features, Conditional$new, data = data, ctrl = ctrl, simplify = FALSE). this gets you the names for free, you don't need names(cmods) = features then.
     Conditional$new(data, fname, ctrl = ctrl)
   })
   names(cmods) = features
@@ -186,26 +190,26 @@ pathpred = function(object, ...) {
   rules = rls[as.character(predict(object, type = "node", ...))]
   rules = gsub("&", "&\n", rules)
   
-  return(rules)
+  return(rules)  # COMMENT don't need 'return()' here, just having the last line be 'gsub(....)' would be enough.
 }
 
 
-# Copied from internal partykit function
+# Copied from internal partykit function  # COMMENT when publishing this make sure it matches with licenses; maybe you have to append the license text somewhere (or at least link to it) or mention the authors (or link to the github repo)
 list.rules.party = function (x, i = NULL, ...){
   if (is.null(i)) 
-    i <- partykit::nodeids(x, terminal = TRUE)
+    i <- partykit::nodeids(x, terminal = TRUE)  # COMMENT why not just have function(x, i = partykit::nodeids(x, terminal = TRUE), ...) ?
   if (length(i) > 1) {
     ret <- sapply(i, list.rules.party, x = x)
-    names(ret) <- if (is.character(i)) 
+    names(ret) <- if (is.character(i)) # COMMENT with if() over multiple lines always use { }.
       i
     else names(x)[i]
     return(ret)
   }
-  if (is.character(i) && !is.null(names(x))) 
+  if (is.character(i) && !is.null(names(x)))   # COMMENT use { }, see above
     i <- which(names(x) %in% i)
-  stopifnot(length(i) == 1 & is.numeric(i))
+  stopifnot(length(i) == 1 & is.numeric(i))  # COMMENT make this and the next an assert maybe
   stopifnot(i <= length(x) & i >= 1)
-  i <- as.integer(i)
+  i <- as.integer(i)  # COMMENT is this really necessary? weird if partykit doesn't accept integer-valued (but non-integer typed) numerics.
   dat <- partykit::data_party(x, i)
   if (!is.null(x$fitted)) {
     findx <- which("(fitted)" == names(dat))[1]
@@ -253,7 +257,7 @@ list.rules.party = function (x, i = NULL, ...){
       srule <- paste(srule, collapse = " & ")
     }
     rule <<- c(rule, srule)
-    return(recFun(node[[whichkid]]))
+    return(recFun(node[[whichkid]]))  # COMMENT maybe turn the tail recursion here into a normal loop, saves us the trouble with <<- etc.
   }
   node <- recFun(partykit::node_party(x))
   paste(rule, collapse = " & ")

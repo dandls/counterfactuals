@@ -9,7 +9,7 @@ make_cfactuals_diff = function(cfactuals, x_interest) {
 comp_cfactuals_diff = function(cfactuals, x_interest) {
   diff_temp = add_diff_numeric_cols(cfactuals, x_interest)
   diff = add_diff_non_numeric_cols(diff_temp, x_interest)
-  diff
+  diff  # COMMENT don't need this, just have 'add_diff_non_numeric..' be the last line here
 }
 
 add_diff_numeric_cols = function(dt, x_interest) {
@@ -25,7 +25,7 @@ add_diff_numeric_cols = function(dt, x_interest) {
 }
 
 add_diff_non_numeric_cols = function(dt, x_interest) {
-  idx_non_numeric = which(sapply(dt, function(x) !checkmate::test_numeric(x)))
+  idx_non_numeric = which(sapply(dt, function(x) !checkmate::test_numeric(x)))  # COMMENT some of the calls are with `::`, some are not. I think you should just import data.table and checkmate and use them without :: because they are used everywhere. with partykit OTOH you could still use ::
   if (length(idx_non_numeric) == 0) {
     return(dt)
   }

@@ -1,4 +1,4 @@
-#' @import data.table
+#' @import data.table  # COMMENT maybe put this in zzz.R, because data.table is used quite a lot in this package
 #' 
 #' @export
 WhatIf = R6::R6Class("WhatIf",
@@ -28,19 +28,19 @@ WhatIf = R6::R6Class("WhatIf",
       X_temp = private$X_desired_outcome
       X_temp[, c("dist_x_interest", "pred") := list(private$dist_vector, private$desired_outcome)]
       
-      cfactuals = head(data.table::setorder(X_temp, dist_x_interest), private$n_counterfactuals)
+      cfactuals = head(data.table::setorder(X_temp, dist_x_interest), private$n_counterfactuals)  # COMMENT don't need 'data.table::' here
       n_changes = private$count_changes(cfactuals[, names(private$x_interest), with = FALSE])
       cfactuals[, "nr_changed" := n_changes]
       
       private$.results = private$make_results_list(cfactuals)
     },
     
-    compute_gower_dist = function(x_interest, X, n_cores, param_set) {
+    compute_gower_dist = function(x_interest, X, n_cores, param_set) {  # COMMENT do we need this function?
       gower_dist(x_interest, X, n_cores, param_set)
     },
     
     get_desired_outcome_binary_class = function(is_pred_one_hot, y_hat_interest, prediction_colnames) {
-      if (is_pred_one_hot) {
+      if (is_pred_one_hot) {  # COMMENT see my comment elsewhere, don't need the 'desired_outcome =' here.
         desired_outcome = setdiff(prediction_colnames, y_hat_interest)
       } else {
         desired_outcome = ifelse(as.numeric(y_hat_interest) == 1, 0, 1)

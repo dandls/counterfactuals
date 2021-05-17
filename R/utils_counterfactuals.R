@@ -28,7 +28,7 @@ make_paramlist = function(data, lower = NULL, upper = NULL) {
     if (column_name %in% names(lower)) {
       col_lower = lower[[column_name]]
     } else {
-      col_lower = tryCatch(min(column, na.rm = TRUE), error = function(err) NA)
+      col_lower = tryCatch(min(column, na.rm = TRUE), error = function(err) NA)  # COMMENT maybe use if (is.numeric) instead, the tryCatch makes it hard to see what kind of error should be caught here.
     }
     
     if (column_name %in% names(upper)) {
@@ -45,7 +45,7 @@ make_paramlist = function(data, lower = NULL, upper = NULL) {
       if (is.character(column)) {
         values = unique(column)
       } else {
-        values = char_to_factor(levels(column))
+        values = char_to_factor(levels(column))  # COMMENT why not just use as.factor?
       }
       param = ParamHelpers::makeDiscreteParam(column_name, values = values)
     }
@@ -54,7 +54,7 @@ make_paramlist = function(data, lower = NULL, upper = NULL) {
   }
   paramlist = lapply(colnames(data), makeParam)
   
-  paramlist
+  paramlist  # COMMENT don't need 'paramlist =' here.
 }
 
 #' Create a list with named vectors of standard deviation
@@ -77,7 +77,7 @@ sdev_to_list = function(sdev, param.set) {
   typegroups = sapply(needed_type, function(type) {
     sdev[param.ids[paramtypes == type]]
   }, simplify = FALSE)
-  return(typegroups)
+  return(typegroups)  # COMMENT don't need 'typegroups = ' here
 }
 
 make_ice_curve_area = function(x_interest, features, predictor, param_set, grid_size) {
@@ -116,7 +116,7 @@ plot_ice_curve_area = function(grid, predictor, instances = NULL, x_interest_wit
 
   plot_feat_names = names(grid)[1:2]
   dt = predictor$data$get.x()
-  feat_types = predictor$data$feature.types
+  feat_types = predictor$data$feature.types  # COMMENT I have seen a lot of `class(..) ==` before, maybe you should use this in more places
   
   all_plot_feats_numeric = all(feat_types[plot_feat_names] %in% "numerical")
   all_plot_feats_categorical = all(feat_types[plot_feat_names] %in% "categorical")

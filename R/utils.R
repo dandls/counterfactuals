@@ -14,7 +14,7 @@ gower_dist = function(x, data, n_cores, param_set) {
   }
   
   chunk_size = floor(nrow(data) / n_cores)
-  dist_vector = foreach::foreach(
+  dist_vector = foreach::foreach(  # COMMENT why not just use parallel::mclapply?
     i = 1:n_cores, .packages = c("StatMatch"), .combine = "c", .export = "gower_dist"
   ) %dopar% {
     from = (i - 1) * chunk_size + 1
