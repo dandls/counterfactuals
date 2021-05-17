@@ -34,16 +34,16 @@ fitness_fun = function(x, x.interest, target, predictor, train.data, range = NUL
       'x.interest'")
   }
 
-  if (any(grepl("use.orig", names(x)))) {
-    x = x[, -grep("use.orig", x = names(x))]
-  }
+  if (any(grepl("use.orig", names(x)))) {  # COMMENT consider using x = x[, !grepl(...), drop = FALSE] without the if()
+    x = x[, -grep("use.orig", x = names(x))]  # COMMENT also: maybe use '^use.orig' or 'use.orig$', otherwise 'fuse.origami' will also match
+  }  # COMMENT also: use 'use\\.orig' if at all, because I believe the dot should be matched exactly
   assert_data_frame(x, ncols = ncol(x.interest))
 
   if(!all(names(x) == names(x.interest))) {
     stop("x.interest and x need same column ordering and names")
   }
   equal.type = all(mapply(x, x.interest,
-    FUN = function(x1, x2) {class(x1) == class(x2)}))
+    FUN = function(x1, x2) {class(x1) == class(x2)}))  # COMMENT don't use class() with `==` like this here, they can have more than one element. this would lead to mapply() failing to simplify and will throw an error (because all() then gets a list argument)
   if (!equal.type) {
     stop("x.interest and x need same feature types")
   }
@@ -51,14 +51,14 @@ fitness_fun = function(x, x.interest, target, predictor, train.data, range = NUL
   # Objective Functions
   pred = predictor$predict(newdata = x)[[1]]
   q1 = vapply(pred, numeric(1), FUN =  function(x) min(abs(x - target)))
-  q1 = ifelse(length(target) == 2 & (pred >= target[1]) & (pred <= target[2]),
+  q1 = ifelse(length(target) == 2 & (pred >= target[1]) & (pred <= target[2]),  # COMMENT consider putting length(target) outside the ifelse(), because while this does work, it looks confusing
     0, q1)
   q2 = StatMatch::gower.dist(data.x = x.interest, data.y = x, rngs = range,
     KR.corr = FALSE)[1,]
 
   if (identical.strategy) {
     feature.types = predictor$data$feature.types
-    x.interest.rep = x.interest[rep(row.names(x.interest), nrow(x)),]
+    x.interest.rep = x.interest[rep(row.names(x.interest), nrow(x)),]  # COMMENT are we sure we don't need drop = FALSE?
     notid = x != x.interest.rep
     id.num = predictor$data$feature.types == "numerical"
     if (sum(id.num) > 0) {
@@ -66,12 +66,12 @@ fitness_fun = function(x, x.interest, target, predictor, train.data, range = NUL
     }
     q3 = rowSums(notid)
   } else {
-    q3 = rowSums(x != x.interest[rep(row.names(x.interest), nrow(x)),])
+    q3 = rowSums(x != x.interest[rep(row.names(x.interest), nrow(x)),])  # COMMENT same, drop = FALSE maybe?
   }
   if (track.infeas) {
     q4 = apply(StatMatch::gower.dist(data.x = train.data, data.y = x, rngs = range,
       KR.corr = FALSE), MARGIN = 2, FUN = function(dist) {
-        d = sort(dist)[1:k]
+        d = sort(dist)[1:k]  # COMMENT don't use 1:<something>; here you could use data.table::first(.., k)
         if (length(d) == k) {
           if (!is.null(weights)) {
             d = weighted.mean(d, w = weights)
@@ -83,11 +83,11 @@ fitness_fun = function(x, x.interest, target, predictor, train.data, range = NUL
       })
     fitness = mapply(function(a, b, c, d) {
       c(a, b, c, d)
-    }, q1, q2, q3, q4)
+    }, q1, q2, q3, q4)  # COMMENT this looks weird, could we just use cbind or rbind here? Or is this about creating a list (in which case use Map / simplify = FALSE)? 
   } else {
     fitness = mapply(function(a, b, c) {
       c(a, b, c)
-    }, q1, q2, q3)
+    }, q1, q2, q3)  # COMMENT same as above
   }
   return(fitness)
 }
