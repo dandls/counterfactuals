@@ -30,7 +30,7 @@ Conditional = R6Class(
         xj = self$data[data_ids_sample, self$feature, with = FALSE]
         data.frame(t(xj))
       })
-      rbindlist(xj_samples)
+      data.table::rbindlist(xj_samples)
 
     },
     csample_parametric = function(X, size){
@@ -50,7 +50,7 @@ Conditional = R6Class(
         xj = dens_i[[self$feature]][sample.int(nrow(dens_i), size = size, prob = dens_i[[".dens"]], replace = TRUE)]
         data.frame(t(xj))
       })
-      rbindlist(xj_samples)
+      data.table::rbindlist(xj_samples)
     },
     csample = function(X, size, type = "parametric"){
       assert_number(size, lower = 1)
@@ -73,7 +73,7 @@ Conditional = R6Class(
             col / sum(col)
           })
           densities = reshape2::melt(probs.m)$value
-          densities = data.table(.dens = densities, .id.dist = rep(1:nrow(X), each = length(xgrid)),
+          densities = data.table::data.table(.dens = densities, .id.dist = rep(1:nrow(X), each = length(xgrid)),
             feature = rep(xgrid, times = nrow(X)))
         } else {
           if (is.null(private$data_nodes)) {
@@ -92,22 +92,22 @@ Conditional = R6Class(
           ## might not always work 
           # probs.m = diff(predict(cmodel, newdata = X, type = "distribution", q = xgrid))
           # densities = reshape2::melt(probs.m)$value
-          # densities = data.table(.dens = densities, .id.dist = rep(1:nrow(X), each = length(xgrid)),
+          # densities = data.table::data.table(.dens = densities, .id.dist = rep(1:nrow(X), each = length(xgrid)),
           #   feature = rep(xgrid, times = nrow(X)))
         }
       } else if (class(self$data[[self$feature]]) %in% c("character", "factor")) {
         probs = predict(cmodel, newdata = X, type = "prob")
         probs.m = reshape2::melt(probs)$value
-        densities = data.table(.dens = probs.m, .id.dist = rep(1:nrow(X), each = ncol(probs)),
+        densities = data.table::data.table(.dens = probs.m, .id.dist = rep(1:nrow(X), each = ncol(probs)),
           feature = factor(rep(colnames(probs), times = nrow(X)), levels = levels(self$data[[self$feature]])))
       } else {
         pr = predict(cmodel, newdata = X, type = "density")
         at = unique(self$data[[self$feature]])
         res = sapply(pr, function(pr) pr(at) / sum(pr(at)))
-        res = data.table(t(res))
+        res = data.table::data.table(t(res))
         colnames(res) = as.character(at)
         res.m = reshape2::melt(res, measure.vars = as.character(at))
-        densities = data.table(.dens = res.m$value, .id.dist = rep(1:nrow(X), times = length(at)), feature = rep(at, each = nrow(X)))
+        densities = data.table::data.table(.dens = res.m$value, .id.dist = rep(1:nrow(X), times = length(at)), feature = rep(at, each = nrow(X)))
       }
       colnames(densities) = c(".dens", ".id.dist", self$feature)
       densities
