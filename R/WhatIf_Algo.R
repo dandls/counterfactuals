@@ -24,7 +24,6 @@ WhatIf_Algo = R6Class("WhatIf",
     
     # y_hat_col: numeric with col index or character with colname
     get_results_list = function(x_interest, y_hat_col) {
-      
       pred_cfactuals_one_hot = private$predictor$predict(self$cfactuals)
       pred_cfactuals = pred_cfactuals_one_hot[[y_hat_col]]
       
@@ -33,6 +32,7 @@ WhatIf_Algo = R6Class("WhatIf",
       res_formatter$append_pred(pred_cfactuals)
       res_formatter$append_n_changes()
       res_formatter$make_results_list()
+      res_formatter$res_list
     }
  
   ),
@@ -44,7 +44,6 @@ WhatIf_Algo = R6Class("WhatIf",
     param_set = NULL,
     n_cfactuals = NULL,
     dist_x_interest = NULL,
-    
     
     get_X_search = function(y_hat, X, range) {
       is_in_range = (y_hat >= range[1L] & y_hat <= range[2L])

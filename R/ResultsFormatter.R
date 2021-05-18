@@ -52,6 +52,7 @@ ResultsFormatter <- R6Class("ResultsFormatter",
     }
   ),
   public = list(
+    # TODO: Make this an active
     res_list = NULL,
     
     initialize = function(cfactuals, x_interest) {
@@ -80,7 +81,7 @@ ResultsFormatter <- R6Class("ResultsFormatter",
     
     make_results_list = function() {
       cfactuals_diff = private$make_cfactuals_diff(private$cfactuals_appended, private$x_interest)
-      list("counterfactuals" = private$cfactuals_appended, "counterfactuals_diff" = cfactuals_diff)
+      self$res_list = list("counterfactuals" = private$cfactuals_appended, "counterfactuals_diff" = cfactuals_diff)
     }
   )
 )
