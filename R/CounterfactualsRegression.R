@@ -5,12 +5,10 @@ CounterfactualsRegression = R6::R6Class("CounterfactualsRegression",
     desired_outcome = NULL,
     
     check_that_regr_task = function(task) {},
-    check_x_interest = function(x_interest) {
+ 
+    check_desired_outcome = function(desired_outcome) {
       # TODO: Check if desired_outcome is in predictor$data$y
       # TDOO: Arg checks
-    },
-    check_desired_outcome = function(desired_outcome) {
-      # TODO:
     }
   ),
   

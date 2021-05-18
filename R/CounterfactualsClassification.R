@@ -12,11 +12,6 @@ CounterfactualsClassification = R6::R6Class("CounterfactualsClassification",
       }
     },
     
-    check_x_interest = function(x_interest) {
-      # TODO: Check if desired_outcome is in predictor$data$y
-      # TDOO: Arg checks
-    },
-    
     check_desired_class = function(desired_class, x_interest) {
       if (is.null(desired_class)) {
         rlang::abort(c(
