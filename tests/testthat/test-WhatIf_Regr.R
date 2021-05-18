@@ -1,6 +1,6 @@
 test_that("Returns correct output format for mixed columns", {
   set.seed(54542142)
-  rf = randomForest::randomForest(mpg ~ ., data = mtcars, ntree = 20L)
+  rf = get_rf_regr_mtcars()
   mtcars_pred = iml::Predictor$new(rf)
   n = 3L
   wi = WhatIf_Regr$new(mtcars_pred, n_counterfactuals = n, n_cores = 1L)

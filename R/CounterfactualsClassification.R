@@ -1,4 +1,4 @@
-CounterfactualsClassification <- R6Class("CounterfactualsClassification",
+CounterfactualsClassification = R6::R6Class("CounterfactualsClassification",
   inherit = Counterfactuals,
   
   private = list(

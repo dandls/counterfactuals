@@ -1,4 +1,4 @@
-ResultsFormatter <- R6Class("ResultsFormatter",
+ResultsFormatter = R6::R6Class("ResultsFormatter",
   private = list(
     cfactuals = NULL,
     cfactuals_appended = NULL,

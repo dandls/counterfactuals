@@ -4,6 +4,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     x_interest = NULL,
     .results = NULL,
     param_set = NULL,
+    y_hat_interest = NULL,
     
     run = function() {
       private$preprocess()
@@ -22,7 +23,11 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     
     print_parameters = function() {},
 
-    make_param_set = function(data_X, lower = NULL, upper = NULL) {
+    make_param_set = function(param_list) {
+      data_X = param_list$predictor$data$X
+      lower = param_list$lower
+      upper = param_list$upper
+      # TODO: Checks on lower and upper
       ParamHelpers::makeParamSet(params = make_paramlist(data_X, lower = lower, upper = upper))
     }
     
@@ -41,7 +46,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     log = NULL,
     
     initialize = function(param_list) {
-      # TODO: Init checks
+      # TODO: Init checks (also for data_X)
       
       predictor = param_list$predictor
       # If the task could not be derived from the model, the we infer it from the prediction of some training data
@@ -53,8 +58,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
       
       private$predictor = predictor
-      private$param_set = private$make_param_set(private$predictor$data$X)
-      
+      private$param_set = private$make_param_set(param_list)
     },
     
     plot_parallel = function(n_solutions, feature_names) {

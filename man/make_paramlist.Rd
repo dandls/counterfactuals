@@ -4,7 +4,7 @@
 \alias{make_paramlist}
 \title{Extract information about each feature from input dataset}
 \usage{
-make_paramlist(data, lower = NULL, upper = NULL, use_orig = TRUE)
+make_paramlist(data, lower = NULL, upper = NULL)
 }
 \value{
 (list)

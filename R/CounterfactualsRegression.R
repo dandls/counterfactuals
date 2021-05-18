@@ -1,4 +1,4 @@
-CounterfactualsRegression <- R6Class("CounterfactualsRegression",
+CounterfactualsRegression = R6::R6Class("CounterfactualsRegression",
   inherit = Counterfactuals,
   
   private = list(

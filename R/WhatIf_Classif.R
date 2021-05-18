@@ -35,10 +35,8 @@ WhatIf_Classif <- R6::R6Class("WhatIf_Classif",
       
       private$run_init_arg_checks(param_list)
       private$WhatIf_Algo_Obj = WhatIf_Algo$new(private$predictor, n_cores, private$param_set, n_counterfactuals)
-      
-      if (is.null(private$y_hat)) {
-        private$y_hat = as.data.table(predictor$predict(predictor$data$X))
-      }
+
+      private$y_hat = as.data.table(predictor$predict(predictor$data$X))
       
       if (!is.null(param_list$x_interest)) {
         self$find_counterfactuals(param_list$x_interest, param_list$desired_class, param_list$desired_prob)

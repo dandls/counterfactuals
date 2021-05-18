@@ -1,6 +1,5 @@
-WhatIf_Algo = R6Class("WhatIf",
+WhatIf_Algo = R6::R6Class("WhatIf",
   public = list(
-    
     cfactuals = NULL,
     
     initialize = function(predictor, n_cores, param_set, n_cfactuals) {
@@ -34,7 +33,6 @@ WhatIf_Algo = R6Class("WhatIf",
       res_formatter$make_results_list()
       res_formatter$res_list
     }
- 
   ),
 
   private = list(

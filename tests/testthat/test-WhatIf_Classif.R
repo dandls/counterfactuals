@@ -3,15 +3,39 @@ library(data.table)
 
 
 # Soft classification ----------------------------------------------------------------------------
+test_that("Returns correct output format for factor columns only", {
+  set.seed(54542142)
+  mydf = mtcars[, c("am", "vs", "cyl")]
+  mydf$am = as.factor(mydf$am)
+  mydf$vs = as.factor(mydf$vs)
+  mydf$cyl = as.factor(mydf$cyl)
+  rf = randomForest::randomForest(am ~ ., data = mydf, ntree = 5L)
+  pred = Predictor$new(rf, data = mydf, type = "prob")
+  n = 5L
+  wi2 = WhatIf_Classif$new(pred, n_counterfactuals = n, n_cores = 1L)
+  x_interest = mydf[1L, c("vs", "cyl")]
+  wi2$find_counterfactuals(x_interest, desired_class = "1")
+  res = wi2$results
+  
+  expect_list(res, len = 2L)
+  cfs = res$counterfactuals
+  cfs_diff = res$counterfactuals_diff
+  expect_data_table(cfs, nrows = n)
+  expected_cols = c(colnames(mydf)[-1L], "dist_x_interest", "pred", "nr_changed")
+  expect_true(all(colnames(cfs) == expected_cols))
+  expect_data_table(cfs_diff, nrows = n)
+  expect_true(all(colnames(cfs_diff) == expected_cols))
+})
+
 test_that("Returns correct output format for numeric columns only", {
   set.seed(54542142)
-  rf = randomForest::randomForest(Species ~ ., data = iris, ntree = 20L)
+  rf = get_rf_classif_iris()
   iris_pred = iml::Predictor$new(rf, type = "prob")
   n = 3L
   wi = WhatIf_Classif$new(iris_pred, n_counterfactuals = n, n_cores = 1L)
   x_interest = iris[1L, -5L]
   desired_prob = c(0.5, 0.8)
-  wi$find_counterfactuals(x_interest, desired_class = "versicolor",  desired_prob = desired_prob)
+  wi$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = desired_prob)
   res = wi$results
 
   expect_list(res, len = 2L)
@@ -27,28 +51,6 @@ test_that("Returns correct output format for numeric columns only", {
   expect_equal(expected_diff, wi$results$counterfactuals_diff[, 1:4])
 })
 
-test_that("Returns correct output format for factor columns only", {
-  set.seed(54542142)
-  mydf = mtcars[, c("am", "vs", "cyl")]
-  mydf$am = as.factor(mydf$am)
-  mydf$vs = as.factor(mydf$vs)
-  mydf$cyl = as.factor(mydf$cyl)
-  rf = randomForest::randomForest(am ~ ., data = mydf, ntree = 5L)
-  pred = Predictor$new(rf, data = mydf, type = "prob")
-  n = 5L
-  wi2 = WhatIf_Classif$new(pred, n_counterfactuals = n, n_cores = 1L)
-  x_interest = mydf[1L, c("vs", "cyl")]
-  wi2$find_counterfactuals(x_interest, desired_class = "1")
-  res = wi2$results
-  expect_list(res, len = 2L)
-  cfs = res$counterfactuals
-  cfs_diff = res$counterfactuals_diff
-  expect_data_table(cfs, nrows = n)
-  expected_cols = c(colnames(mydf)[-1L], "dist_x_interest", "pred", "nr_changed")
-  expect_true(all(colnames(cfs) == expected_cols))
-  expect_data_table(cfs_diff, nrows = n)
-  expect_true(all(colnames(cfs_diff) == expected_cols))
-})
 
 test_that("Returns correct output format for factor and numeric columns", {
   set.seed(54542142)
@@ -62,6 +64,7 @@ test_that("Returns correct output format for factor and numeric columns", {
   x_interest = head(subset(mydf, select = -am), n = 1L)
   wi$find_counterfactuals(x_interest, desired_class = "1")
   res = wi$results
+  
   expect_list(res, len = 2L)
   cfs = res$counterfactuals
   cfs_diff = res$counterfactuals_diff
@@ -76,12 +79,12 @@ test_that("Init works for classification tasks only", {
   set.seed(54542142)
 
   # Regression task
-  rf_regr = randomForest::randomForest(mpg ~ ., data = mtcars, ntree = 2L)
+  rf_regr = get_rf_regr_mtcars()
   pred_regr = Predictor$new(rf_regr)
   expect_error(WhatIf_Classif$new(pred_regr), "only works for classification")
 
   # Classification task
-  rf = randomForest::randomForest(Species ~ ., data = iris, ntree = 2L)
+  rf = get_rf_classif_iris()
   pred_class = iml::Predictor$new(rf, type = "class", class = "versicolor")
   expect_error(WhatIf_Classif$new(pred_class), NA)
 
@@ -98,7 +101,7 @@ test_that("Init works for classification tasks only", {
 
 test_that("Parallelization leads to same results as sequential execution", {
   set.seed(54542142)
-  rf = randomForest::randomForest(Species ~ ., data = iris, ntree = 2L)
+  rf = get_rf_classif_iris()
   iris_pred = iml::Predictor$new(rf, type = "class")
   x_interest = head(subset(iris, select = -Species), 1)
   wi = WhatIf_Classif$new(iris_pred, n_counterfactuals = 10L, n_cores = parallel::detectCores() - 1L)
@@ -124,35 +127,35 @@ test_that("Can handle non-numeric target classes", {
 })
 
 
-test_that("$find_counterfactuals with specified `desired_outcome` returns the same results as if the `desired_outcome` 
+test_that("$find_counterfactuals with specified `desired_outcome` returns the same results as if the `desired_outcome`
           is set in the iml `Predictor`", {
- 
+
   set.seed(54542142)
-  rf = randomForest::randomForest(Species ~ ., data = iris, ntree = 100L)
+  rf = get_rf_classif_iris()
   n = 3L
   x_interest = head(subset(iris, select = -Species), 1L)
   desired_class = "versicolor"
-  
+
   set.seed(54542142)
   iris_pred_binary = iml::Predictor$new(rf, type = "prob", class = desired_class)
   wi_binary = WhatIf_Classif$new(iris_pred_binary, n_counterfactuals = n, n_cores = 1L)
   expect_message(wi_binary$find_counterfactuals(x_interest), "was set to")
-  
+
   set.seed(54542142)
   iris_pred_multiclass = iml::Predictor$new(rf, type = "prob")
   wi_multiclass = WhatIf_Classif$new(iris_pred_multiclass, n_counterfactuals = n, n_cores = 1L)
   wi_multiclass$find_counterfactuals(x_interest, desired_class)
-  
+
   res_binary = wi_binary$results$counterfactuals
   res_multiclass = wi_multiclass$results$counterfactuals
-  
+
   expect_identical(res_binary, res_multiclass)
 })
 
 
 test_that("`desired_class` is required for multiclass", {
   set.seed(54542142)
-  rf = randomForest::randomForest(Species ~ ., data = iris, ntree = 100L)
+  rf = get_rf_classif_iris()
   n = 3L
   x_interest = head(subset(iris, select = -Species), 1L)
   iris_pred_multiclass = iml::Predictor$new(rf)
@@ -162,7 +165,7 @@ test_that("`desired_class` is required for multiclass", {
 
 test_that("`desired_class` needs to be in the prediction columns", {
   set.seed(54542142)
-  rf = randomForest::randomForest(Species ~ ., data = iris, ntree = 100L)
+  rf = get_rf_classif_iris()
   n = 3L
   x_interest = head(subset(iris, select = -Species), 1L)
   iris_pred_multiclass = iml::Predictor$new(rf)
@@ -174,13 +177,14 @@ test_that("`desired_class` needs to be in the prediction columns", {
 # Hard binary classification ----------------------------------------------------------------------------
 test_that("Returns correct output format for numeric columns only for hard binary classification", {
   set.seed(54542142)
-  rf = randomForest::randomForest(Species ~ ., data = iris, ntree = 20L)
+  rf = get_rf_classif_iris()
   iris_pred = iml::Predictor$new(rf, type = "class")
   n = 3L
   wi = WhatIf_Classif$new(iris_pred, n_counterfactuals = n, n_cores = 1L)
   x_interest = iris[1L, -5L]
   wi$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = 1)
   res = wi$results
+  
   expect_list(res, len = 2L)
   cfs = res$counterfactuals
   cfs_diff = res$counterfactuals_diff
