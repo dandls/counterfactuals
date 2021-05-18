@@ -4,7 +4,6 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     x_interest = NULL,
     .results = NULL,
     param_set = NULL,
-    y_hat = NULL,
     
     run = function() {
       private$preprocess()
@@ -45,10 +44,12 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       # TODO: Init checks
       
       predictor = param_list$predictor
-      # If the task could not be derived from the model, the we infer it from the prediction
+      # If the task could not be derived from the model, the we infer it from the prediction of some training data
       if (predictor$task == "unknown") {
+        # Needs to be set to NULL, as the predictor does not infer the task from prediction otherwise
+        # See: https://github.com/christophM/iml/blob/master/R/Predictor.R#L141
         predictor$task = NULL
-        private$y_hat = as.data.table(predictor$predict(predictor$data$X))
+        invisible(predictor$predict(predictor$data$X[1:2, ]))
       }
       
       private$predictor = predictor

@@ -6,6 +6,7 @@ WhatIf_Classif <- R6::R6Class("WhatIf_Classif",
   private = list(
     WhatIf_Algo_Obj = NULL,
     y_hat_desired_class = NULL,
+    y_hat = NULL,
     
     preprocess = function() {
       private$y_hat_desired_class = private$y_hat[[private$desired_class]]
@@ -16,21 +17,7 @@ WhatIf_Classif <- R6::R6Class("WhatIf_Classif",
     },
     
     aggregate = function() {
-      cfactuals = private$WhatIf_Algo_Obj$cfactuals
-      pred_cfactuals_one_hot = private$predictor$predict(cfactuals)
-      pred_cfactuals = pred_cfactuals_one_hot[[private$desired_class]]
-      
-      private$.results = private$make_results_list(
-        cfactuals, private$x_interest, private$WhatIf_Algo_Obj$dist_x_interest, pred_cfactuals
-      )
-    },
-    
-    make_results_list = function(cfactuals, x_interest, dist_x_interest, pred_cfactuals) {
-      res_formatter = ResultsFormatter$new(cfactuals, x_interest)
-      res_formatter$append_dist_x_interest(dist_x_interest)
-      res_formatter$append_pred(pred_cfactuals)
-      res_formatter$append_n_changes()
-      res_formatter$make_results_list()
+      private$.results = private$WhatIf_Algo_Obj$get_results_list(private$x_interest, private$desired_class)
     },
 
     run_init_arg_checks = function(arg_list) {
@@ -47,7 +34,7 @@ WhatIf_Classif <- R6::R6Class("WhatIf_Classif",
       super$initialize(param_list)
       
       private$run_init_arg_checks(param_list)
-      private$WhatIf_Algo_Obj = WhatIf_Algo$new(private$predictor$data$X, n_cores, private$param_set, n_counterfactuals)
+      private$WhatIf_Algo_Obj = WhatIf_Algo$new(private$predictor, n_cores, private$param_set, n_counterfactuals)
       
       if (is.null(private$y_hat)) {
         private$y_hat = as.data.table(predictor$predict(predictor$data$X))
