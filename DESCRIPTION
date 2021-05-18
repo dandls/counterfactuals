@@ -25,10 +25,8 @@ Imports:
     metR,
     iml,
     data.table,
-    doParallel,
-    featureTweakR,
-    pforeach,
-    rlang
+    rlang,
+    waldo
 Suggests: 
     randomForest,
     mlt,
@@ -45,11 +43,9 @@ Suggests:
     knitr,
     mlr,
     cowplot
-Remotes:
-    katokohaku/featureTweakR
-    hoxo-m/pforeach
 License: TODO
 Encoding: UTF-8
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+Roxygen: list(markdown = TRUE)

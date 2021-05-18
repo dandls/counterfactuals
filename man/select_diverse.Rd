@@ -34,16 +34,16 @@ algorithm parameters.}
 \item{population: }{(list)\cr Object that holds population.}
 \item{offspring: }{(list)\cr Object that holds offspring.}
 \item{fitness: }{(matrix)\cr Matrix of fitness values. Each column corresponds to
-element of `population`.}
+element of \code{population}.}
 \item{fitness.offspring: }{(matrix)\cr Matrix of fitness values. Each column corresponds to
-element of `offspring`.}
+element of \code{offspring}.}
 \item{n.select: }{(numeric(1))\cr Number of candidates, which are selected
 for next generation.}
 \item{epsilon: }{(numeric(1))\cr Soft constraint. If chosen, candidates, whose
-  distance between their prediction and target exceeds epsilon, are penalized.}
+distance between their prediction and target exceeds epsilon, are penalized.}
 \item{extract.duplicate}{(logical(1)) Whether to penalize duplicates and
 move them to the last front in nondominated sorting. Default TRUE.}
-\item{candidates}{(data.frame)\cr Data frame from which `n.select` best and most
+\item{candidates}{(data.frame)\cr Data frame from which \code{n.select} best and most
 diverse ones are chosen.}
 }
 }

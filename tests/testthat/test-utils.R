@@ -71,12 +71,26 @@ test_that("gower_dist returns equal results with and without parallelization", {
     b = factor(sample(b_levels, 1000, replace = TRUE), levels = b_levels)
   )
   ps <- ParamHelpers::makeParamSet(
-    ParamHelpers::makeNumericParam("a", lower = 0, upper = 2),
+    ParamHelpers::makeNumericParam("a", lower = 0L, upper = 2L),
     ParamHelpers::makeDiscreteParam("b", b_levels)
   )
   par = gower_dist(x, data, n_cores = parallel::detectCores() - 2L, param_set = ps)
   non_par = gower_dist(x, data, n_cores = 1L, param_set = ps)
   expect_equal(par, non_par)
 })
+
+test_that("gower_dist returns error if `x` and `data` have different column names", {
+  expect_snapshot_error(gower_dist(iris[1, ], mtcars[, 1:5]))
+})
+
+test_that("gower_dist returns error if `x` and `data` have different column types", {
+  iris_fake = iris
+  iris_fake[, 1:2] = as.character(iris_fake[, 1:2])
+  expect_snapshot_error(gower_dist(iris_fake[1L, ], iris))
+})
+
+
+
+
 
 
