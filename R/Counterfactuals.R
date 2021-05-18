@@ -2,13 +2,9 @@ Counterfactuals = R6::R6Class("Counterfactuals",
   private = list(
     predictor = NULL,
     x_interest = NULL,
-    y_hat_interest = NULL,
     .results = NULL,
     param_set = NULL,
-    prediction_colnames = NULL,
-    is_pred_one_hot = NULL,
-    
-    init_y_hat_colnames = NULL,
+    y_hat = NULL,
     
     run = function() {
       private$preprocess()
@@ -26,25 +22,9 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     },
     
     print_parameters = function() {},
-    
-    # TODO: Think about creating an resultsListCreater class (only takes cfactuals and x_interest)
-    make_results_list = function(cfactuals) {
-      # TODO check that cfactuals is data.table with colnames(x_interest) as colnames subset
-      cfactuals_diff = make_cfactuals_diff(cfactuals, private$x_interest)
-      list("counterfactuals" = cfactuals, "counterfactuals_diff" = cfactuals_diff)
-    },
-    
-    count_changes = function(cfactuals) {
-      # TODO: Check that cfactuals must have same columns as names_x_interest
-      m_cfactuals = as.matrix(cfactuals)
-      m_x_interest = as.matrix(private$x_interest)
-      n_changes = rowSums(sweep(m_cfactuals, 2, m_x_interest, FUN = "!="), na.rm = TRUE)
-      as.integer(n_changes)
-    },
-    
-    make_param_set = function(lower, upper) {
-      dt = rbind(private$predictor$data$X, private$x_interest)
-      ParamHelpers::makeParamSet(params = make_paramlist(dt, lower = lower, upper = upper))
+
+    make_param_set = function(data_X, lower = NULL, upper = NULL) {
+      ParamHelpers::makeParamSet(params = make_paramlist(data_X, lower = lower, upper = upper))
     }
     
   ),
@@ -60,7 +40,22 @@ Counterfactuals = R6::R6Class("Counterfactuals",
   public = list(
     measured_runtime = NULL,
     log = NULL,
-    # Does not require an initialize method
+    
+    initialize = function(param_list) {
+      # TODO: Init checks
+      
+      predictor = param_list$predictor
+      # If the task could not be derived from the model, the we infer it from the prediction
+      if (predictor$task == "unknown") {
+        predictor$task = NULL
+        private$y_hat = as.data.table(predictor$predict(predictor$data$X))
+      }
+      
+      private$predictor = predictor
+      private$param_set = private$make_param_set(private$predictor$data$X)
+      
+    },
+    
     plot_parallel = function(n_solutions, feature_names) {
       # TODO
     },
@@ -110,9 +105,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       if (!is.null(private$.results)) {
         print(head(private$.results))
       }
-    },
-    
-    find_counterfactuals = function() {}
+    }
   
   )
 )

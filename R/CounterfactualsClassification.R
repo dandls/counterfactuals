@@ -24,6 +24,7 @@ CounterfactualsClassification <- R6Class("CounterfactualsClassification",
           x = "The `desired_class` has to be specified."
         ))
       }
+      # Makes only sense for multiclass
       checkmate::assert_character(desired_class, len = 1L)
       y_hat_interest = private$predictor$predict(x_interest)
       colnames_pred = names(y_hat_interest)
@@ -35,6 +36,7 @@ CounterfactualsClassification <- R6Class("CounterfactualsClassification",
           i = sprintf("The colnames of the prediction are: %s", paste0("'", colnames_pred, "'", collapse = ", "))
         ))
       }
+      
     },
     check_desired_prob = function(desired_prob) {
       # TODO
@@ -42,8 +44,15 @@ CounterfactualsClassification <- R6Class("CounterfactualsClassification",
   ),
   
   public = list(
+    
+    initialize = function(param_list) {
+      # TODO: Init checks
+      super$initialize(param_list)
+      private$check_that_classif_task(private$predictor$task)
+    },
+    
     find_counterfactuals = function(x_interest, desired_class = NULL, desired_prob = c(0.5, 1)) {
- 
+
       private$check_x_interest(x_interest)
       private$check_desired_prob(desired_prob)
       
