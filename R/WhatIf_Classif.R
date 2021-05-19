@@ -17,7 +17,7 @@ WhatIf_Classif <- R6::R6Class("WhatIf_Classif",
     },
     
     aggregate = function() {
-      private$.results = private$WhatIf_Algo_Obj$get_results_list(private$x_interest, private$desired_class)
+      private$.results = private$WhatIf_Algo_Obj$get_results_list(private$desired_class)
     },
 
     run_init_arg_checks = function(arg_list) {
@@ -27,6 +27,7 @@ WhatIf_Classif <- R6::R6Class("WhatIf_Classif",
 
   ),
   public = list(
+    # for hard classification set desired_prob to 0 or 1
     initialize = function(predictor, n_counterfactuals = 1L, x_interest = NULL, desired_class = NULL,
                           desired_prob = NULL, n_cores = 1L, lower = NULL, upper = NULL) {
       

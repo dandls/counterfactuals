@@ -12,7 +12,7 @@ WhatIf_Regr = R6::R6Class("WhatIf_Regr",
     },
 
     aggregate = function() {
-      private$.results = private$WhatIf_Algo_Obj$get_results_list(private$x_interest, y_hat_col = 1L)
+      private$.results = private$WhatIf_Algo_Obj$get_results_list(y_hat_col = 1L)
     },
     
     run_init_arg_checks = function(param_list) {
