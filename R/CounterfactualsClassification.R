@@ -7,7 +7,7 @@ CounterfactualsClassification = R6::R6Class("CounterfactualsClassification",
 
     check_that_classif_task = function(task) {
       if (task != "classification") {
-        err_msg = sprintf("`%s` only works for classification tasks.", class(self)[1L])
+        err_msg = sprintf("This class only works for classification tasks.")
         stop(err_msg)
       }
     },
@@ -19,7 +19,7 @@ CounterfactualsClassification = R6::R6Class("CounterfactualsClassification",
           x = "The `desired_class` has to be specified."
         ))
       }
-      # Makes only sense for multiclass
+
       checkmate::assert_character(desired_class, len = 1L)
       y_hat_interest = private$predictor$predict(x_interest)
       colnames_pred = names(y_hat_interest)

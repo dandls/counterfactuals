@@ -4,7 +4,12 @@ CounterfactualsRegression = R6::R6Class("CounterfactualsRegression",
   private = list(
     desired_outcome = NULL,
     
-    check_that_regr_task = function(task) {},
+    check_that_regr_task = function(task) {
+      if (task != "regression") {
+        err_msg = sprintf("This class only works for regression tasks.")
+        stop(err_msg)
+      }
+    },
  
     check_desired_outcome = function(desired_outcome) {
       # TODO: Check if desired_outcome is in predictor$data$y

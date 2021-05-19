@@ -1,6 +1,6 @@
 library(checkmate)
 library(data.table)
-
+library(randomForest)
 
 # Soft classification ----------------------------------------------------------------------------
 test_that("Returns correct output format for factor columns only", {
@@ -47,8 +47,8 @@ test_that("Returns correct output format for numeric columns only", {
   expect_data_table(cfs_diff, nrows = n)
   expect_true(all(colnames(cfs_diff) == expected_cols))
   expect_numeric(cfs$pred, lower = desired_prob[1], upper = desired_prob[2L])
-  expected_diff = as.data.table(sweep(wi$results$counterfactuals[, 1:4], 2L, as.numeric(x_interest)))
-  expect_equal(expected_diff, wi$results$counterfactuals_diff[, 1:4])
+  expected_diff = as.data.table(sweep(cfs[, 1:4], 2L, as.numeric(x_interest)))
+  expect_equal(expected_diff, cfs_diff[, 1:4])
 })
 
 
@@ -75,29 +75,6 @@ test_that("Returns correct output format for factor and numeric columns", {
   expect_true(all(colnames(cfs_diff) == expected_cols))
 })
 
-test_that("Init works for classification tasks only", {
-  set.seed(54542142)
-
-  # Regression task
-  rf_regr = get_rf_regr_mtcars()
-  pred_regr = Predictor$new(rf_regr)
-  expect_error(WhatIf_Classif$new(pred_regr), "only works for classification")
-
-  # Classification task
-  rf = get_rf_classif_iris()
-  pred_class = iml::Predictor$new(rf, type = "class", class = "versicolor")
-  expect_error(WhatIf_Classif$new(pred_class), NA)
-
-  # The type of the task is inferred using the `inferTaskFromPrediction` from the iml package.
-  # The function is called internally when a Predictor object uses the method `predict`
-  # Check that possible changes to this function don't break the code.
-  invisible(pred_regr$predict(mtcars[1:2, -which(colnames(mtcars) == "mpg")]))
-  expect_identical(pred_regr$task, "regression")
-
-  invisible(pred_class$predict(iris[1:2, 1:4]))
-  expect_identical(pred_class$task, "classification")
-
-})
 
 test_that("Parallelization leads to same results as sequential execution", {
   set.seed(54542142)
@@ -150,27 +127,6 @@ test_that("$find_counterfactuals with specified `desired_outcome` returns the sa
   res_multiclass = wi_multiclass$results$counterfactuals
 
   expect_identical(res_binary, res_multiclass)
-})
-
-
-test_that("`desired_class` is required for multiclass", {
-  set.seed(54542142)
-  rf = get_rf_classif_iris()
-  n = 3L
-  x_interest = head(subset(iris, select = -Species), 1L)
-  iris_pred_multiclass = iml::Predictor$new(rf)
-  wi_multiclass = WhatIf_Classif$new(iris_pred_multiclass, n_counterfactuals = n, n_cores = 1L)
-  suppressMessages(expect_snapshot_error(wi_multiclass$find_counterfactuals(x_interest)))
-})
-
-test_that("`desired_class` needs to be in the prediction columns", {
-  set.seed(54542142)
-  rf = get_rf_classif_iris()
-  n = 3L
-  x_interest = head(subset(iris, select = -Species), 1L)
-  iris_pred_multiclass = iml::Predictor$new(rf)
-  wi_multiclass = WhatIf_Classif$new(iris_pred_multiclass, n_counterfactuals = n, n_cores = 1L)
-  expect_snapshot_error(wi_multiclass$find_counterfactuals(x_interest, desired_class = "wrong"))
 })
 
 
