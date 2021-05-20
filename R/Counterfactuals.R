@@ -11,15 +11,11 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       private$calculate()
       private$aggregate()
     },
-    preprocess = function() {
-      NULL
-    },
-    calculate = function() {
-      NULL
-    },
-    aggregate = function() {
-      NULL
-    },
+    preprocess = function() {},
+    
+    calculate = function() {},
+    
+    aggregate = function() {},
     
     print_parameters = function() {},
 
@@ -30,6 +26,15 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     
     check_x_interest = function(x_interest) {
       # TODO:
+    },
+    
+    throw_error_if_no_results = function() {
+      if (is.null(self$results)) {
+        rlang::abort(c(
+          "There are no results yet.",
+          i = "Please run `$find_counterfactuals()` first."
+        ))
+      }
     }
     
   ),
@@ -69,7 +74,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       assert_character(feature_names, null.ok = FALSE, len = 2L)
       assert_integerish(grid_size, len = 1L)
       assert_numeric(epsilon, len = 1L, null.ok = TRUE)
- 
+      private$throw_error_if_no_results()
+      
       cfactuals = self$results$counterfactuals
       n_changes = cfactuals$nr_changed
       
@@ -92,11 +98,35 @@ Counterfactuals = R6::R6Class("Counterfactuals",
                           
     },
     
+    plot_freq_of_feature_changes = function(subset_zero = FALSE) {
+      freq = self$get_freq_of_feature_changes(subset_zero)
+      df_freq = data.frame(var_name = names(freq), freq = freq)
+      ggplot(df_freq, aes(x = reorder(var_name, -freq), y = freq)) +
+        geom_bar(stat = "identity") +
+        labs(x = element_blank(), y = "Relative frequency")
+    },
+    
+    get_freq_of_feature_changes = function(subset_zero = FALSE) {
+      assert_flag(subset_zero)
+      private$throw_error_if_no_results()
+      
+      diff = self$results$counterfactuals_diff
+      feature_names = names(private$x_interest)
+      diff_features = diff[, feature_names, with = FALSE]
+      freq = colMeans(diff_features != 0, na.rm = TRUE)
+      if (subset_zero) {
+        freq = freq[freq != 0]
+      }
+      sort(freq, decreasing = TRUE)
+    },
+    
     subset_results = function(n_counterfactuals = 10L) {
+      private$throw_error_if_no_results()
       is_out_of_range = n_counterfactuals > nrow(private$.results[[1L]])
       if (is_out_of_range) {
         warning("`n_counterfactuals` out of range, it was set to the number of solutions in self$results.")
       }
+      
       lapply(private$.results, head, n_counterfactuals)
     },
     

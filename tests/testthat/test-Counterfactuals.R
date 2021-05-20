@@ -28,8 +28,8 @@ test_that("$plot_surface() creates correct plot", {
   res_list[[2]]$nr_changed = nr_changed
   ci$.__enclos_env__$private$.results = res_list
 
-  save_png <- function(code, width = 400, height = 400) {
-    path <- tempfile(fileext = ".png")
+  save_png = function(code, width = 400, height = 400) {
+    path = tempfile(fileext = ".png")
     cowplot::save_plot(path, code)
     path
   }
@@ -71,6 +71,74 @@ test_that("$subset_results returns message and all counterfactuals if `counterfa
   expect_data_table(res[[1L]], nrows = nrow(mtcars), ncols = ncol(mtcars))
   expect_data_table(res[[2L]], nrows = nrow(iris), ncols = ncol(iris))
 })
+
+# $get_freq_of_feature_changes() ---------------------------------------------------------------------------------------
+test_that("$get_freq_of_feature_changes returns error if there are not results yet.", {
+  rf = get_rf_regr_mtcars()
+  pred = Predictor$new(rf)
+  param_list = list(predictor = pred)
+  ci = Counterfactuals$new(param_list)
+  expect_snapshot_error(ci$get_freq_of_feature_changes())
+})
+
+
+test_that("$get_freq_of_feature_changes returns correct frequencies", {
+  rf = get_rf_regr_mtcars()
+  pred = Predictor$new(rf)
+  param_list = list(predictor = pred)
+  ci = Counterfactuals$new(param_list)
+  test_diff = data.table(feature_a = 0, feature_b = c("0", "2", "1"), feature_c = c(3L, 1L, 2L))
+  x_interest = rep(NA, 3L)
+  names(x_interest) = names(test_diff)
+  
+  ci$.__enclos_env__$private$x_interest = x_interest
+  ci$.__enclos_env__$private$.results = list(counterfactuals_diff = test_diff)
+  
+  freq_with_zero = ci$get_freq_of_feature_changes(subset_zero = FALSE)
+  exp_results = c(feature_c = 1, feature_b = 2/3, feature_a = 0)
+  expect_identical(freq_with_zero, exp_results)
+  
+  freq_no_zero = ci$get_freq_of_feature_changes(subset_zero = TRUE)
+  exp_results = c(feature_c = 1, feature_b = 2/3)
+  expect_identical(freq_no_zero, exp_results)
+  
+})
+
+# $plot_freq_of_feature_changes() ---------------------------------------------------------------------------------------
+
+test_that("$plot_freq_of_feature_changes() creates correct plot", {
+  rf = get_rf_regr_mtcars()
+  pred = Predictor$new(rf)
+  param_list = list(predictor = pred)
+  ci = Counterfactuals$new(param_list)
+  test_diff = data.table(feature_a = 0, feature_b = c("0", "2", "1"), feature_c = c(3L, 1L, 2L))
+  x_interest = rep(NA, 3L)
+  names(x_interest) = names(test_diff)
+  
+  ci$.__enclos_env__$private$x_interest = x_interest
+  ci$.__enclos_env__$private$.results = list(counterfactuals_diff = test_diff)
+  
+  save_png = function(code, width = 400, height = 400) {
+    path = tempfile(fileext = ".png")
+    cowplot::save_plot(path, code)
+    path
+  }
+  
+  expect_snapshot_file(
+    save_png(ci$plot_freq_of_feature_changes()), 
+    "plot_freq_of_feature_changes_zero.png"
+  )
+  
+  expect_snapshot_file(
+    save_png(ci$plot_freq_of_feature_changes(subset_zero = TRUE)), 
+    "plot_freq_of_feature_changes_no_zero.png"
+  )
+  
+})
+
+
+
+
 
 
 
