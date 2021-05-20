@@ -50,7 +50,7 @@ jobs:
         
       - name: Install XQuartz on macOS
         if: runner.os == 'macOS'
-        run: brew cask install xquartz
+        run: brew install --cask xquartz
 
       - name: Restore R package cache
         if: runner.os != 'Windows'

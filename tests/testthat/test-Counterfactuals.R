@@ -42,6 +42,7 @@ test_that("$private$check_x_interest() returns error if x_interest feature value
 
 # $plot_surface() ------------------------------------------------------------------------------------------------------
 test_that("$plot_surface() creates correct plot", {
+  skip_on_ci()
   set.seed(54654654)
   train_data = data.frame(
     col_a = rep(c(1, 3), 6L),
@@ -145,6 +146,7 @@ test_that("$get_freq_of_feature_changes returns correct frequencies", {
 
 # $plot_freq_of_feature_changes() ---------------------------------------------------------------------------------------
 test_that("$plot_freq_of_feature_changes() creates correct plot", {
+  skip_on_ci()
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
   param_list = list(predictor = pred)
