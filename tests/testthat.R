@@ -1,6 +1,6 @@
 library(testthat)
 library(checkmate)
-library(iml)
+library(counterfactuals)
 
-test_check("iml")
+test_check("counterfactuals")
 

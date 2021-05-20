@@ -4,7 +4,7 @@
 \alias{ParamSetMaker}
 \title{ParamSetMaker R6 Class}
 \description{
-Extract information about each feature from input dataset
+Extracts information about each feature from input dataset
 }
 \details{
 Based on a data set and optionally specified lower and upper bounds for each feature, it creates a

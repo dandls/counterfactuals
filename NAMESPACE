@@ -2,7 +2,6 @@
 
 export(WhatIf_Classif)
 export(WhatIf_Regr)
-export(fit_conditionals)
 import(ParamHelpers)
 import(R6)
 import(checkmate)
@@ -10,4 +9,3 @@ import(data.table)
 import(ggplot2)
 import(iml)
 import(mosmafs)
-importFrom(partykit,ctree_control)
