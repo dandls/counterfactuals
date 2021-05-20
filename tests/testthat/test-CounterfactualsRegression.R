@@ -1,5 +1,6 @@
 library(randomForest)
 
+# $initialization ------------------------------------------------------------------------------------------------------
 test_that("Init works for regression tasks only", {
   set.seed(54542142)
   
@@ -22,3 +23,18 @@ test_that("Init works for regression tasks only", {
   expect_identical(pred_regr$task, "regression")
   
 })
+
+# $check_desired_outcome -----------------------------------------------------------------------------------------------
+test_that("$check_desired_outcome returns error message if desired_outcome has incorrect formats", {
+  set.seed(54542142)
+  rf = get_rf_regr_mtcars()
+  pred_regr = Predictor$new(rf)
+  param_list = list(predictor = pred_regr)
+  cr = CounterfactualsRegression$new(param_list)
+  expect_error(cr$.__enclos_env__$private$check_desired_outcome(c("a", "b")), "Must be of type")
+  expect_error(cr$.__enclos_env__$private$check_desired_outcome(1:3), "Must have length")
+  expect_error(cr$.__enclos_env__$private$check_desired_outcome(NA), "missing")
+  expect_snapshot_error(cr$.__enclos_env__$private$check_desired_outcome(c(4, 2)))
+})
+
+

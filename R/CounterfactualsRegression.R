@@ -12,8 +12,16 @@ CounterfactualsRegression = R6::R6Class("CounterfactualsRegression",
     },
  
     check_desired_outcome = function(desired_outcome) {
-      # TODO: Check if desired_outcome is in predictor$data$y
-      # TDOO: Arg checks
+      assert_numeric(desired_outcome, any.missing = FALSE, min.len = 1L, max.len = 2L)
+      has_upper_lower_bounds = length(desired_outcome) == 2
+      if (has_upper_lower_bounds) {
+        if (desired_outcome[2L] < desired_outcome[1L]) {
+          rlang::abort(c(
+            "`desired_outcome` is invalid.",
+            x = "The lower bound of `desired_outcome` cannot be higher than the upper bound."
+          ))
+        }
+      }
     }
   ),
   
