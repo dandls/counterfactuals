@@ -35,6 +35,7 @@ CounterfactualsRegression = R6::R6Class("CounterfactualsRegression",
       }
       
       private$x_interest = data.table::setDT(x_interest)
+      private$y_hat_interest = as.data.table(private$predictor$predict(private$x_interest))
       private$desired_outcome = desired_outcome
       private$run()
     }

@@ -55,4 +55,9 @@ gower_dist_ranges = function(param_set) {
 }
 
 
-
+#' Transmit levels of factor variable to parameter set
+#'
+#' @param levels [[character()]] \cr Character vector of feature class labels.
+char_to_factor = function(levels){
+  sapply(as.character(levels), function(x) factor(x, levels = levels), simplify = FALSE)
+}

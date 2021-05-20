@@ -1,62 +1,5 @@
 ###### Utils Counterfactual #####
 
-#' Extract information about each feature from input dataset
-#'
-#' Results in a list as input for ParamHelpers::makeParamSet.
-#'
-#' @section Arguments:
-#' \describe{
-#' \item{data:}{(data.frame)\cr Training data}
-#' \item{lower: }{numeric\cr Vector of minimal values for numeric features.
-#' If NULL lower is extracted from input data specified in field 'data' of
-#' 'predictor'.}
-#' \item{upper: }{numeric\cr Vector of maximal values for numeric features.
-#' If NULL upper is extracted from input data specified in field 'data' of
-#' 'predictor'.}
-#' }
-#' @return (list)
-make_paramlist = function(data, lower = NULL, upper = NULL) {
-  checkmate::assert_data_frame(data)
-  checkmate::assert_numeric(lower, null.ok = TRUE)
-  checkmate::assert_numeric(upper, null.ok = TRUE)
-  checkmate::assert_true(all(names(lower) %in% names(data)))
-  checkmate::assert_true(all(names(upper) %in% names(data)))
-
-  makeParam = function(column_name) {
-    column = data[[column_name]]
-    
-    if (column_name %in% names(lower)) {
-      col_lower = lower[[column_name]]
-    } else {
-      col_lower = tryCatch(min(column, na.rm = TRUE), error = function(err) NA)
-    }
-    
-    if (column_name %in% names(upper)) {
-      col_upper = upper[[column_name]]
-    } else {
-      col_upper = tryCatch(max(column, na.rm = TRUE), error = function(err) NA)
-    }
-    
-    if (is.double(column)) {
-      param = ParamHelpers::makeNumericParam(column_name, lower = col_lower, upper = col_upper)
-    } else if (is.integer(column)) {
-      param = ParamHelpers::makeIntegerParam(column_name, lower = col_lower, upper = col_upper)
-    } else {
-      if (is.character(column)) {
-        values = unique(column)
-      } else {
-        values = char_to_factor(levels(column))
-      }
-      param = ParamHelpers::makeDiscreteParam(column_name, values = values)
-    }
-    
-    param
-  }
-  paramlist = lapply(colnames(data), makeParam)
-  
-  paramlist
-}
-
 #' Create a list with named vectors of standard deviation
 #'
 #' Will be grouped by the feature type extracted from param.set.
@@ -322,17 +265,7 @@ transform_to_orig = function(x, x.interest, delete.use.orig = FALSE,
   return(x)
 }
 
-#' Transmit levels of factor variable to parameter set
-#'
-#' @section Arguments:
-#' \describe{
-#' \item{levels: }{(character)\cr Character vector of feature class labels.}
-#' }
-char_to_factor= function(levels){
-  sapply(as.character(levels), function(x)
-    factor(x, levels=levels),
-    simplify = FALSE)
-}
+
 
 #' Round numeric elements in data frame
 #' @section Arguments:

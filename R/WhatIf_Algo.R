@@ -1,4 +1,4 @@
-WhatIf_Algo = R6::R6Class("WhatIf",
+WhatIf_Algo = R6::R6Class("WhatIf_Algo",
   public = list(
     cfactuals = NULL,
     

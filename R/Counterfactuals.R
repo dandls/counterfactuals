@@ -24,11 +24,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     print_parameters = function() {},
 
     make_param_set = function(param_list) {
-      data_X = param_list$predictor$data$X
-      lower = param_list$lower
-      upper = param_list$upper
-      # TODO: Checks on lower and upper
-      ParamHelpers::makeParamSet(params = make_paramlist(data_X, lower = lower, upper = upper))
+      ps_maker = ParamSetMaker$new(param_list$predictor$data$X, param_list$lower, param_list$upper)
+      ps_maker$make_param_set()
     },
     
     check_x_interest = function(x_interest) {

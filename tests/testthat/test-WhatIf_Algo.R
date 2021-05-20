@@ -12,7 +12,8 @@ test_that("Returns correct output format for factor columns only", {
   desired_class = "1"
   X = df[, c("vs", "cyl")]
   y_hat = pred$predict(X)[[desired_class]]
-  ps = ParamHelpers::makeParamSet(params = make_paramlist(X))
+  ps_maker = ParamSetMaker$new(X)
+  ps = ps_maker$make_param_set()
   x_interest = X[1L, ]
   desired_range = c(0.5, 1)
   n = 5L
@@ -38,7 +39,8 @@ test_that("Returns correct output format for numeric columns only", {
   desired_class = "versicolor"
   X = iris[, -5L]
   y_hat = pred$predict(X)[[desired_class]]
-  ps = ParamHelpers::makeParamSet(params = make_paramlist(X))
+  ps_maker = ParamSetMaker$new(X)
+  ps = ps_maker$make_param_set()
   x_interest = X[1L, ]
   desired_range = c(0.5, 1)
   n = 5L
@@ -69,7 +71,9 @@ test_that("Returns correct output format for factor and numeric columns", {
   desired_class = "1"
   X = subset(df, select = -am)
   y_hat = pred$predict(X)[[desired_class]]
-  ps = ParamHelpers::makeParamSet(params = make_paramlist(X))
+  
+  ps_maker = ParamSetMaker$new(X)
+  ps = ps_maker$make_param_set()
   x_interest = X[1L, ]
   desired_range = c(0.5, 1)
   n = 5L
@@ -95,7 +99,8 @@ test_that("Parallelization leads to same results as sequential execution", {
   desired_class = "versicolor"
   X = iris[, -5L]
   y_hat = pred$predict(X)[[desired_class]]
-  ps = ParamHelpers::makeParamSet(params = make_paramlist(X))
+  ps_maker = ParamSetMaker$new(X)
+  ps = ps_maker$make_param_set()
   x_interest = X[1L, ]
   desired_range = c(0.5, 1)
   n = 8L
@@ -116,8 +121,10 @@ test_that("Throws warning if too few counterfactuals were found and fills $resul
   set.seed(54542142)
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
-  y_hat = pred$predict(mtcars[, -1L])[[1L]]
-  ps = ParamHelpers::makeParamSet(params = make_paramlist(mtcars))
+  X = subset(mtcars, select = -mpg)
+  y_hat = pred$predict(X)[[1L]]
+  ps_maker = ParamSetMaker$new(X)
+  ps = ps_maker$make_param_set()
   x_interest = mtcars[1L, -1L]
   desired_range = c(15, 17.5)
   

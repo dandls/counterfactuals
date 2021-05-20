@@ -62,6 +62,7 @@ CounterfactualsClassification = R6::R6Class("CounterfactualsClassification",
       private$check_desired_class(desired_class, x_interest)
       
       private$x_interest = data.table::setDT(x_interest)
+      private$y_hat_interest = as.data.table(private$predictor$predict(private$x_interest))
       private$desired_class = desired_class
       private$desired_prob = desired_prob
       private$run()

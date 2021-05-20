@@ -21,12 +21,11 @@ ResultsFormatter = R6::R6Class("ResultsFormatter",
     
     comp_cfactuals_diff = function(cfactuals, x_interest) {
       diff_temp = private$add_diff_numeric_cols(cfactuals, x_interest)
-      diff = private$add_diff_non_numeric_cols(diff_temp, x_interest)
-      diff
+      private$add_diff_non_numeric_cols(diff_temp, x_interest)
     },
     
     add_diff_numeric_cols = function(dt, x_interest) {
-      idx_numeric = which(sapply(dt, checkmate::test_numeric))
+      idx_numeric = which(sapply(dt, test_numeric))
       if (length(idx_numeric) == 0) {
         return(dt)
       }
@@ -38,7 +37,7 @@ ResultsFormatter = R6::R6Class("ResultsFormatter",
     },
     
     add_diff_non_numeric_cols = function(dt, x_interest) {
-      idx_non_numeric = which(sapply(dt, function(x) !checkmate::test_numeric(x)))
+      idx_non_numeric = which(sapply(dt, function(x) !test_numeric(x)))
       if (length(idx_non_numeric) == 0) {
         return(dt)
       }

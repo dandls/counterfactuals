@@ -20,10 +20,8 @@ test_that("$plot_surface() creates correct plot", {
 
   ci = Counterfactuals$new(param_list)
   ci$.__enclos_env__$private$x_interest = x_interest
-  ps = ParamHelpers::makeParamSet(params = make_paramlist(train_data))
   ci$.__enclos_env__$private$y_hat_interest = 0
-  ci$.__enclos_env__$private$param_set = ps
-  ci$.__enclos_env__$private$predictor = mod
+
   res_list = list("counterfactuals" = cfs, "counterfactuals_diff" = cfs_diff)
   nr_changed = c(2L, 2L, 3L, 3L)
   res_list[[1]]$nr_changed = nr_changed
