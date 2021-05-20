@@ -41,7 +41,8 @@ Suggests:
     e1071,
     knitr,
     mlr,
-    cowplot
+    cowplot,
+    covr
 License: TODO
 Encoding: UTF-8
 RoxygenNote: 7.1.1
