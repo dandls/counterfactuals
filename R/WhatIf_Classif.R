@@ -1,6 +1,3 @@
-#' @import data.table
-#'
-#' @export
 WhatIf_Classif <- R6::R6Class("WhatIf_Classif",
   inherit = CounterfactualsClassification,
   private = list(

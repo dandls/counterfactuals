@@ -7,17 +7,17 @@
 gower_dist(x, data, n_cores = 1L, param_set = NULL)
 }
 \arguments{
-\item{x}{[\link{data.frame(1)}] \cr An observation.}
+\item{x}{(\code{data.frame(1)}) \cr An observation.}
 
-\item{data}{[\code{\link[=data.frame]{data.frame()}}] \cr A data set.}
+\item{data}{(\code{data.frame()}) \cr A data set.}
 
-\item{n_cores}{[\link{numeric(1)}] \cr The number of cores to be used.}
+\item{n_cores}{(\code{numeric(1)}) \cr The number of cores to be used.}
 
-\item{param_set}{[\link[ParamHelpers:makeParamSet]{ParamHelpers::ParamSet}) \cr
+\item{param_set}{(\link[ParamHelpers:makeParamSet]{ParamHelpers::ParamSet}) \cr
 Meta information about the features. Used for the \code{rngs} argument in \link[StatMatch:gower.dist]{StatMatch::gower.dist}.}
 }
 \value{
-
+(\code{\link[=numeric]{numeric()}}) with the computed distances.
 }
 \description{
 Computes the gower distance between an observation \code{x} and each row of a data set \code{data}.

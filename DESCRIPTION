@@ -4,7 +4,8 @@ Title: Counterfactual Explanations
 Version: 0.9.0
 Date: 2019-02-01
 Authors@R: c(
-        person("Susanne", "Dandl", email = "dandl.susanne@googlemail.com", role = c("aut", "cre"))
+        person("Susanne", "Dandl", email = "dandl.susanne@googlemail.com", role = c("aut", "cre")),
+        person("Andreas", "Hofheinz", email = "andreas.hofheinz@outlook.com", role = c("aut"))
     )
 Maintainer: Susanne Dandl <dandl.susanne@googlemail.com>
 Description: Counterfactuals as described in <doi:DOI>.
@@ -19,14 +20,15 @@ Imports:
     mosmafs,
     ecr,
     StatMatch,
-    ggplot2,
     GGally,
     ggExtra,
     metR,
     iml,
     data.table,
     rlang,
-    waldo
+    waldo,
+    future,
+    future.apply
 Suggests: 
     randomForest,
     mlt,
@@ -43,7 +45,7 @@ Suggests:
     mlr,
     cowplot,
     covr
-License: TODO
+License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr

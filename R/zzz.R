@@ -5,4 +5,5 @@
 #' @import ParamHelpers
 #' @import ggplot2
 #' @import iml
+#' @import data.table
 NULL

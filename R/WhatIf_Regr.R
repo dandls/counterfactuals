@@ -1,6 +1,3 @@
-#' @import data.table
-#'
-#' @export
 WhatIf_Regr = R6::R6Class("WhatIf_Regr",
   inherit = CounterfactualsRegression,
   private = list(

@@ -1,12 +1,12 @@
 #' Computes the gower distance between an observation `x` and each row of a data set `data`.
 #' 
-#' @param x [[data.frame(1)]] \cr An observation.
-#' @param data [[data.frame()]] \cr A data set. 
-#' @param n_cores [[numeric(1)]] \cr The number of cores to be used. 
-#' @param param_set [[ParamHelpers::ParamSet]) \cr 
+#' @param x (`data.frame(1)`) \cr An observation.
+#' @param data (`data.frame()`) \cr A data set. 
+#' @param n_cores (`numeric(1)`) \cr The number of cores to be used. 
+#' @param param_set ([ParamHelpers::ParamSet]) \cr 
 #' Meta information about the features. Used for the `rngs` argument in [StatMatch::gower.dist].
 #' 
-#' @return 
+#' @return ([numeric()]) with the computed distances.
 gower_dist = function(x, data, n_cores = 1L, param_set = NULL) {
   checkmate::assert_data_frame(x, nrows = 1L)
   checkmate::assert_data_frame(data, min.rows = 1L)
