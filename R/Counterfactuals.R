@@ -12,9 +12,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       private$aggregate()
     },
     preprocess = function() {},
-    
     calculate = function() {},
-    
     aggregate = function() {},
     
     print_parameters = function() {},
@@ -25,7 +23,44 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     },
     
     check_x_interest = function(x_interest) {
-      # TODO:
+      checkmate::assert_data_frame(x_interest, nrows = 1L)
+      data = private$predictor$data$X
+      if (any(names(x_interest) != names(data))) {
+        rlang::abort(c(
+          "`x_interest` is invalid.",
+          x = "`x_interest` and `predictor$data$X` must have the same columns.",
+          i = waldo::compare(names(x_interest), names(data), x_arg = "x_interest", y_arg = "predictor$data$X")
+        ))
+      }
+      
+      col_types_x_interest = sapply(x_interest, typeof)
+      col_data = sapply(data, typeof)
+      if (any(col_types_x_interest != col_data)) {
+        rlang::abort(c(
+          "`x_interest` is invalid.",
+          x = "`x_interest` and `predictor$data$X` must have the same column types.",
+          i = waldo::compare(col_types_x_interest, col_data, x_arg = "x_interest", y_arg = "predictor$data$X")
+        ))
+      }
+      
+      feat_vals_outside_range = !ParamHelpers::isFeasible(private$param_set, as.list(x_interest))
+      if (feat_vals_outside_range) {
+        rlang::abort(c(
+          "`x_interest` is invalid.",
+          x = "Feature values of `x_interest` outside of range of `predictor$data$X` or given arguments `lower` or `upper`.",
+          i = "Please modify arguments `lower` or `upper` accordingly."
+        ))
+      }
+    },
+    
+    check_predictor = function(predictor) {
+      if (is.null(predictor)) {
+        rlang::abort(c(
+          "`predictor` is invalid.",
+          x = "The `predictor` has to be specified."
+        ))
+      }
+      assert_class(predictor, "Predictor")
     },
     
     throw_error_if_no_results = function() {
@@ -52,13 +87,15 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     log = NULL,
     
     initialize = function(param_list) {
-      # TODO: Init checks (also for data_X)
-      
+
       predictor = param_list$predictor
+      private$check_predictor(predictor)
+      
       # If the task could not be derived from the model, the we infer it from the prediction of some training data
       if (predictor$task == "unknown") {
         # Needs to be set to NULL, as the predictor does not infer the task from prediction otherwise
         # See: https://github.com/christophM/iml/blob/master/R/Predictor.R#L141
+        # The task is then checked by Counterfactuals_Regr or Counterfactuals_Classif
         predictor$task = NULL
         invisible(predictor$predict(predictor$data$X[1:2, ]))
       }

@@ -1,5 +1,46 @@
-library(data.table)
+library(randomForest)
 
+# $initialize() --------------------------------------------------------------------------------------------------------
+test_that("$initialize() returns error if no predictor is specified", {
+  expect_snapshot_error(Counterfactuals$new(list()))
+})
+
+test_that("$initialize() returns error if predictor given does not have the correct class", {
+  expect_snapshot_error(Counterfactuals$new(list(predictor = "wrong")))
+})
+
+# $private$check_x_interest --------------------------------------------------------------------------------------------
+test_that("$private$check_x_interest() returns error if x_interest column do not match X of predictor", {
+  rf = get_rf_regr_mtcars()
+  pred = Predictor$new(rf)
+  param_list = list(predictor = pred)
+  ci = Counterfactuals$new(param_list)
+  expect_snapshot_error(ci$.__enclos_env__$private$check_x_interest(iris[1L, ]))
+})
+
+test_that("$private$check_x_interest() returns error if x_interest column types do not match types of X of predictor", {
+  rf = get_rf_regr_mtcars()
+  pred = Predictor$new(rf)
+  param_list = list(predictor = pred)
+  ci = Counterfactuals$new(param_list)
+  x_interest = head(subset(mtcars, select = -mpg), 1L)
+  x_interest$am = as.factor(x_interest$am)
+  
+  expect_snapshot_error(ci$.__enclos_env__$private$check_x_interest(x_interest))
+})
+
+test_that("$private$check_x_interest() returns error if x_interest feature values are outside range of predictor data", {
+  rf = get_rf_regr_mtcars()
+  pred = Predictor$new(rf)
+  param_list = list(predictor = pred)
+  ci = Counterfactuals$new(param_list)
+  x_interest = head(subset(mtcars, select = -mpg), 1L)
+  x_interest$am = 10
+  
+  expect_snapshot_error(ci$.__enclos_env__$private$check_x_interest(x_interest))
+})
+
+# $plot_surface() ------------------------------------------------------------------------------------------------------
 test_that("$plot_surface() creates correct plot", {
   set.seed(54654654)
   train_data = data.frame(
@@ -10,7 +51,7 @@ test_that("$plot_surface() creates correct plot", {
   )
   x_interest = data.table(col_a = 2, col_b = 1, col_c = "y")
 
-  rf = randomForest::randomForest(col_d ~ ., data = train_data)
+  rf = randomForest(col_d ~ ., data = train_data)
   mod = Predictor$new(rf, data = train_data, type = "class", class = "b")
   param_list = list(predictor = mod)
   
@@ -38,7 +79,7 @@ test_that("$plot_surface() creates correct plot", {
   expect_snapshot_file(save_png(ci$plot_surface(c("col_a", "col_c"))), "plot_surface_mixed.png")
 })
 
-
+# $subset_results() ----------------------------------------------------------------------------------------------------
 test_that("$subset_results returns correct entries", {
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
@@ -54,7 +95,6 @@ test_that("$subset_results returns correct entries", {
   expect_data_table(res[[1L]], nrows = n, ncols = ncol(mtcars))
   expect_data_table(res[[2L]], nrows = n, ncols = ncol(iris))
 })
-
 
 test_that("$subset_results returns message and all counterfactuals if `counterfactuals` out of range", {
   rf = get_rf_regr_mtcars()
@@ -81,7 +121,6 @@ test_that("$get_freq_of_feature_changes returns error if there are not results y
   expect_snapshot_error(ci$get_freq_of_feature_changes())
 })
 
-
 test_that("$get_freq_of_feature_changes returns correct frequencies", {
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
@@ -105,7 +144,6 @@ test_that("$get_freq_of_feature_changes returns correct frequencies", {
 })
 
 # $plot_freq_of_feature_changes() ---------------------------------------------------------------------------------------
-
 test_that("$plot_freq_of_feature_changes() creates correct plot", {
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
