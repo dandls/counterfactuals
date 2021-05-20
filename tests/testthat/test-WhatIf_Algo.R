@@ -93,6 +93,7 @@ test_that("Returns correct output format for factor and numeric columns", {
 })
 
 test_that("Parallelization leads to same results as sequential execution", {
+  skip_if_not(parallel::detectCores() > 1L)
   set.seed(54542142)
   rf = get_rf_classif_iris()
   pred = Predictor$new(rf, type = "prob")

@@ -63,6 +63,7 @@ test_that("gower_dist returns correct values for mixed values", {
 
 
 test_that("gower_dist returns equal results with and without parallelization", {
+  skip_if_not(parallel::detectCores() > 1L)
   set.seed(54542142)
   b_levels = c("sunny", "rainy")
   x <- data.table(a = 0.5, b = factor("rainy", levels = b_levels))
@@ -74,7 +75,7 @@ test_that("gower_dist returns equal results with and without parallelization", {
     ParamHelpers::makeNumericParam("a", lower = 0L, upper = 2L),
     ParamHelpers::makeDiscreteParam("b", b_levels)
   )
-  par = gower_dist(x, data, n_cores = parallel::detectCores() - 2L, param_set = ps)
+  par = gower_dist(x, data, n_cores = parallel::detectCores() - 1L, param_set = ps)
   non_par = gower_dist(x, data, n_cores = 1L, param_set = ps)
   expect_equal(par, non_par)
 })
