@@ -28,7 +28,6 @@ CounterfactualsRegression = R6::R6Class("CounterfactualsRegression",
   public = list(
     
     initialize = function(param_list) {
-      # TODO: Init checks
       super$initialize(param_list)
       private$check_that_regr_task(private$predictor$task)
     },

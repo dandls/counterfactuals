@@ -1,25 +1,6 @@
 library(randomForest)
-test_that("`desired_class` is required for multiclass", {
-  set.seed(54542142)
-  rf = get_rf_classif_iris()
-  n = 3L
-  x_interest = head(subset(iris, select = -Species), 1L)
-  iris_pred_multiclass = iml::Predictor$new(rf)
-  wi_multiclass = WhatIf_Classif$new(iris_pred_multiclass, n_counterfactuals = n, n_cores = 1L)
-  suppressMessages(expect_snapshot_error(wi_multiclass$find_counterfactuals(x_interest)))
-})
 
-test_that("`desired_class` needs to be in the prediction columns", {
-  set.seed(54542142)
-  rf = get_rf_classif_iris()
-  n = 3L
-  x_interest = head(subset(iris, select = -Species), 1L)
-  iris_pred_multiclass = iml::Predictor$new(rf)
-  wi_multiclass = WhatIf_Classif$new(iris_pred_multiclass, n_counterfactuals = n, n_cores = 1L)
-  expect_snapshot_error(wi_multiclass$find_counterfactuals(x_interest, desired_class = "wrong"))
-})
-
-
+# $initialization ------------------------------------------------------------------------------------------------------
 test_that("Init works for classification tasks only", {
   set.seed(54542142)
   
@@ -43,3 +24,38 @@ test_that("Init works for classification tasks only", {
   expect_identical(pred_class$task, "classification")
   
 })
+
+# $check_desired_class -------------------------------------------------------------------------------------------------------
+test_that("`desired_class` needs to be in the prediction columns", {
+  set.seed(54542142)
+  rf = get_rf_classif_iris()
+  pred = Predictor$new(rf)
+  param_list = list(predictor = pred)
+  cc = CounterfactualsClassification$new(param_list)
+  cc$.__enclos_env__$private$y_hat_interest = pred$predict(iris[1L, ])
+  expect_snapshot_error(cc$.__enclos_env__$private$check_desired_class("wrong_column"))
+})
+
+test_that("`desired_class` is required for multiclass", {
+  set.seed(54542142)
+  rf = get_rf_classif_iris()
+  pred = Predictor$new(rf)
+  param_list = list(predictor = pred)
+  cc = CounterfactualsClassification$new(param_list)
+  expect_snapshot_error(cc$find_counterfactuals(x_interest = iris[1L, -5L]))
+})
+
+# $check_desired_prob --------------------------------------------------------------------------------------------------
+test_that("$check_desired_prob returns error message if desired_outcome has incorrect formats", {
+  set.seed(54542142)
+  rf = get_rf_classif_iris()
+  pred = Predictor$new(rf)
+  param_list = list(predictor = pred)
+  cc = CounterfactualsClassification$new(param_list)
+  expect_error(cc$.__enclos_env__$private$check_desired_prob(c("a", "b")), "Must be of type")
+  expect_error(cc$.__enclos_env__$private$check_desired_prob(1:3), "Must have length")
+  expect_error(cc$.__enclos_env__$private$check_desired_prob(NA), "missing")
+  expect_snapshot_error(cc$.__enclos_env__$private$check_desired_prob(c(0.8, 0.2)))
+})
+
+
