@@ -31,7 +31,7 @@ WhatIf_Regr = R6::R6Class("WhatIf_Regr",
       private$y_hat = as.data.table(predictor$predict(predictor$data$X))
       
       if (!is.null(param_list$x_interest)) {
-        self$find_counterfactuals(param_list$x_interest, param_list$desired_class, param_list$desired_prob)
+        self$find_counterfactuals(param_list$x_interest, param_list$desired_outcome)
       }
     }
   )
