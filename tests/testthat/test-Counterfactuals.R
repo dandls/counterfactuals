@@ -80,6 +80,25 @@ test_that("$plot_surface() creates correct plot", {
   expect_snapshot_file(save_png(ci$plot_surface(c("col_a", "col_c"))), "plot_surface_mixed.png")
 })
 
+test_that("$plot_surface() returns error message if `feature_names` are not in data", {
+  set.seed(54654654)
+  train_data = data.frame(
+    col_a = rep(c(1, 3), 6L),
+    col_b = rep(1:3, each = 4),
+    col_c = rep(c("x", "y", "z"), each = 2),
+    col_d = as.factor(c(rep("a", 4L), rep("b", 4L), rep("c", 4L)))
+  )
+  x_interest = data.table(col_a = 2, col_b = 1, col_c = "y")
+  
+  rf = randomForest(col_d ~ ., data = train_data)
+  mod = Predictor$new(rf, data = train_data, type = "class", class = "b")
+  param_list = list(predictor = mod)
+  
+  ci = Counterfactuals$new(param_list)
+  expect_snapshot_error(ci$plot_surface(c("not_in_data", "col_b")))
+})
+
+
 # $subset_results() ----------------------------------------------------------------------------------------------------
 test_that("$subset_results returns correct entries", {
   rf = get_rf_regr_mtcars()

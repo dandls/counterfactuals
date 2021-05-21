@@ -70,6 +70,19 @@ Counterfactuals = R6::R6Class("Counterfactuals",
           i = "Please run `$find_counterfactuals()` first."
         ))
       }
+    },
+    
+    check_feature_names = function(feature_names) {
+      assert_character(feature_names, null.ok = FALSE, len = 2L)
+      names_data = names(private$predictor$data$X)
+      if (!all(feature_names %in% names_data)) {
+        rlang::abort(c(
+          "`feature_names` is invalid.",
+          x = "The `feature_names` are not in the training data.",
+          i = sprintf("The colnames of the training data are: %s.", paste0("'", names_data, "'", collapse = ", ")),
+          i = sprintf("`feature_names` are: %s.", paste0("'", feature_names, "'", collapse = ", "))
+        ))
+      }
     }
     
   ),
@@ -108,7 +121,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       # TODO
     },
     plot_surface = function(feature_names = NULL, grid_size = 50L, epsilon = NULL) {
-      assert_character(feature_names, null.ok = FALSE, len = 2L)
+      private$check_feature_names(feature_names)
       assert_integerish(grid_size, len = 1L)
       assert_numeric(epsilon, len = 1L, null.ok = TRUE)
       private$throw_error_if_no_results()
@@ -146,7 +159,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     get_freq_of_feature_changes = function(subset_zero = FALSE) {
       assert_flag(subset_zero)
       private$throw_error_if_no_results()
-      
+
       diff = self$results$counterfactuals_diff
       feature_names = names(private$x_interest)
       diff_features = diff[, feature_names, with = FALSE]

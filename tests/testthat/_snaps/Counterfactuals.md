@@ -42,6 +42,13 @@
     x Feature values of `x_interest` outside of range of `predictor$data$X` or given arguments `lower` or `upper`.
     i Please modify arguments `lower` or `upper` accordingly.
 
+# $plot_surface() returns error message if `feature_names` are not in data
+
+    `feature_names` is invalid.
+    x The `feature_names` are not in the training data.
+    i The colnames of the training data are: 'col_a', 'col_b', 'col_c'.
+    i `feature_names` are: 'not_in_data', 'col_b'.
+
 # $get_freq_of_feature_changes returns error if there are not results yet.
 
     There are no results yet.
