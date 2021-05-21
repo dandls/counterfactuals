@@ -45,10 +45,9 @@ gower_dist = function(x, data, n_cores = 1L, param_set = NULL) {
 #' @return [[numeric()]] Ranges of all features.
 gower_dist_ranges = function(param_set) {
   ranges = as.numeric(rep(NA, length(param_set$pars)))
-  
-  ranges_non_discrete = ParamHelpers::getUpper(param_set) - ParamHelpers::getLower(param_set)
-  is_non_discrete = ParamHelpers::getParamTypes(param_set) != "discrete"
-  ranges[which(is_non_discrete)] = ranges_non_discrete
+  ranges_num_and_int = ParamHelpers::getUpper(param_set) - ParamHelpers::getLower(param_set)
+  is_num_or_int = (ParamHelpers::getParamTypes(param_set) %in% c("numeric", "integer"))
+  ranges[which(is_num_or_int)] = ranges_num_and_int
   
   names(ranges) = ParamHelpers::getParamIds(param_set)
   ranges
