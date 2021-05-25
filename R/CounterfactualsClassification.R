@@ -43,7 +43,12 @@ CounterfactualsClassification = R6::R6Class("CounterfactualsClassification",
           ))
         }
       }
+    },
+    
+    get_pred_column = function() {
+      private$desired_class
     }
+    
   ),
   
   public = list(

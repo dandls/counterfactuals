@@ -21,3 +21,9 @@ get_rf_classif_iris = function() {
   }
   readRDS(file_path)
 }
+
+save_test_png = function(code, width = 400, height = 400) {
+  path = tempfile(fileext = ".png")
+  cowplot::save_plot(path, code)
+  path
+}

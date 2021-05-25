@@ -22,6 +22,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       ps_maker$make_param_set()
     },
     
+    get_pred_column = function() {},
+    
     check_x_interest = function(x_interest) {
       checkmate::assert_data_frame(x_interest, nrows = 1L)
       data = private$predictor$data$X
@@ -120,32 +122,15 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     plot_parallel = function(n_solutions, feature_names) {
       # TODO
     },
-    plot_surface = function(feature_names = NULL, grid_size = 50L, epsilon = NULL) {
-      private$check_feature_names(feature_names)
-      assert_integerish(grid_size, len = 1L)
-      assert_numeric(epsilon, len = 1L, null.ok = TRUE)
-      private$throw_error_if_no_results()
-      
-      cfactuals = self$results$counterfactuals
-      n_changes = cfactuals$nr_changed
-      
-      diff_rel_feats = self$results$counterfactuals_diff[, ..feature_names]
-      n_changes_rel_feats = rowSums(diff_rel_feats != 0)
-      has_changes_in_rel_feats_only = (n_changes_rel_feats == n_changes)
-      instances = cfactuals[which(has_changes_in_rel_feats_only)]
-      
-      dist_target_col_exists = "dist_target" %in% names(cfactuals)
-      if (dist_target_col_exists & !is.null(epsilon)) {
-        instances = instances[dist_target <= epsilon]
-      }
-
-      ice_curve_area = make_ice_curve_area(
-        private$x_interest, feature_names, private$predictor, private$param_set, grid_size
+    
+    plot_surface = function(feature_names, grid_size = 50L, epsilon = NULL) {
+      arg_list = list(
+        "feature_names" = feature_names, "grid_size" = grid_size, "epsilon" = epsilon, "results" = self$results,
+        "predictor" = private$predictor, "x_interest" = private$x_interest, "param_set" = private$param_set, 
+        "y_hat_interest" = private$y_hat_interest, pred_column = private$get_pred_column()
       )
-                               
-      x_interest_with_pred = cbind(private$x_interest, pred = private$y_hat_interest)
-      plot_ice_curve_area(ice_curve_area, private$predictor, instances, x_interest_with_pred)
-                          
+      surface_plot = SurfacePlot$new(arg_list)
+      surface_plot$plot()
     },
     
     plot_freq_of_feature_changes = function(subset_zero = FALSE) {

@@ -22,7 +22,12 @@ CounterfactualsRegression = R6::R6Class("CounterfactualsRegression",
           ))
         }
       }
+    },
+    
+    get_pred_column = function() {
+      names(private$y_hat_interest)[[1L]]
     }
+    
   ),
   
   public = list(
@@ -46,5 +51,6 @@ CounterfactualsRegression = R6::R6Class("CounterfactualsRegression",
       private$desired_outcome = desired_outcome
       private$run()
     }
+    
   )
 )

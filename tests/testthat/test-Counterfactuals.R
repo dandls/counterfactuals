@@ -40,46 +40,6 @@ test_that("$private$check_x_interest() returns error if x_interest feature value
   expect_snapshot_error(ci$.__enclos_env__$private$check_x_interest(x_interest))
 })
 
-# $plot_surface() ------------------------------------------------------------------------------------------------------
-test_that("$plot_surface() creates correct plot", {
-  skip_on_ci()
-  set.seed(54654654)
-  train_data = data.frame(
-    col_a = rep(c(1, 3), 6L),
-    col_b = rep(1:3, each = 4),
-    col_c = rep(c("x", "y", "z"), each = 2),
-    col_d = as.factor(c(rep("a", 4L), rep("b", 4L), rep("c", 4L)))
-  )
-  x_interest = data.table(col_a = 2, col_b = 1, col_c = "y")
-
-  rf = randomForest(col_d ~ ., data = train_data)
-  mod = Predictor$new(rf, data = train_data, type = "class", class = "b")
-  param_list = list(predictor = mod)
-  
-  cfs = data.table(subset(train_data, col_d == "c", -col_d))
-  cfs_diff = data.table(sweep(as.matrix(cfs[, 1:2]), 2L, as.matrix(x_interest[, 1:2])))
-  cfs_diff[, col_c := ifelse(cfs$col_c == x_interest$col_c, 0, cfs$col_c)]
-
-  ci = Counterfactuals$new(param_list)
-  ci$.__enclos_env__$private$x_interest = x_interest
-  ci$.__enclos_env__$private$y_hat_interest = 0
-
-  res_list = list("counterfactuals" = cfs, "counterfactuals_diff" = cfs_diff)
-  nr_changed = c(2L, 2L, 3L, 3L)
-  res_list[[1]]$nr_changed = nr_changed
-  res_list[[2]]$nr_changed = nr_changed
-  ci$.__enclos_env__$private$.results = res_list
-
-  save_png = function(code, width = 400, height = 400) {
-    path = tempfile(fileext = ".png")
-    cowplot::save_plot(path, code)
-    path
-  }
-
-  expect_snapshot_file(save_png(ci$plot_surface(c("col_a", "col_b"))), "plot_surface_num.png")
-  expect_snapshot_file(save_png(ci$plot_surface(c("col_a", "col_c"))), "plot_surface_mixed.png")
-})
-
 test_that("$plot_surface() returns error message if `feature_names` are not in data", {
   set.seed(54654654)
   train_data = data.frame(
