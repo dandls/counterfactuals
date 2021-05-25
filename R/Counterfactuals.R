@@ -124,6 +124,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     },
     
     plot_surface = function(feature_names, grid_size = 50L, epsilon = NULL) {
+      private$check_feature_names(feature_names)
+      private$throw_error_if_no_results()
       arg_list = list(
         "feature_names" = feature_names, "grid_size" = grid_size, "epsilon" = epsilon, "results" = self$results,
         "predictor" = private$predictor, "x_interest" = private$x_interest, "param_set" = private$param_set, 

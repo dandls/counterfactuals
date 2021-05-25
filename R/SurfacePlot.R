@@ -20,26 +20,12 @@ SurfacePlot = R6::R6Class("SurfacePlot",
     arg_list = NULL,
     
     run_init_arg_checks = function(arg_list) {
-      private$check_feature_names(arg_list)
       # assert_integerish(grid_size, len = 1L)
       # assert_numeric(epsilon, len = 1L, null.ok = TRUE)
       # private$throw_error_if_no_results()
       # TODO: Also check that nr_changed in results$counterfactuals_diff
     },
-    check_feature_names = function(arg_list) {
-      feature_names = arg_list$feature_names
-      predictor = arg_list$predictor
-      assert_character(feature_names, null.ok = FALSE, len = 2L)
-      names_data = names(predictor$data$X)
-      if (!all(feature_names %in% names_data)) {
-        rlang::abort(c(
-          "`feature_names` is invalid.",
-          x = "The `feature_names` are not in the training data.",
-          i = sprintf("The colnames of the training data are: %s.", paste0("'", names_data, "'", collapse = ", ")),
-          i = sprintf("`feature_names` are: %s.", paste0("'", feature_names, "'", collapse = ", "))
-        ))
-      }
-    },
+   
     
     get_cfactuals_plotted = function() {
       arg_list = private$arg_list
