@@ -3,7 +3,7 @@ WhatIf_Algo = R6::R6Class("WhatIf_Algo",
     cfactuals = NULL,
     
     initialize = function(predictor, n_cores, param_set, n_cfactuals) {
-      # TODO: Checks
+      # TODO: Checks + arg_list = as.list(environment()) logic
       private$predictor = predictor
       private$n_cores = n_cores
       private$param_set = param_set
@@ -17,7 +17,7 @@ WhatIf_Algo = R6::R6Class("WhatIf_Algo",
       dist_vector = gower_dist(x_interest, data_X_search, private$n_cores, private$param_set)
       
       if (length(dist_vector) < private$n_cfactuals) {
-        private$warning_to_few_cfs(length(dist_vector), private$n_cfactuals)
+        private$warning_too_few_cfs(length(dist_vector), private$n_cfactuals)
       }
       
       indexes = sort(dist_vector, index.return = TRUE, na.last = TRUE)$ix
@@ -55,7 +55,7 @@ WhatIf_Algo = R6::R6Class("WhatIf_Algo",
       X[is_in_range, ]
     },
     
-    warning_to_few_cfs = function(n_found, n_desired) {
+    warning_too_few_cfs = function(n_found, n_desired) {
       rlang::warn(c(
         sprintf("Could only find %s counterfactual(s).", n_found),
         i = sprintf("The remaining %s row(s) in `$results` are filled with `NA`s.", n_desired - n_found)
