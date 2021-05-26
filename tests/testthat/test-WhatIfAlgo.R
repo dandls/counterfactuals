@@ -18,7 +18,7 @@ test_that("Returns correct output format for factor columns only", {
   desired_range = c(0.5, 1)
   n = 5L
   
-  wi_a = WhatIf_Algo$new(pred, n_cores = 1L, param_set = ps, n_cfactuals = n)
+  wi_a = WhatIfAlgo$new(pred, n_cores = 1L, param_set = ps, n_cfactuals = n)
   wi_a$run(x_interest, y_hat, desired_range)
   res = wi_a$get_results_list(desired_class)
   
@@ -45,7 +45,7 @@ test_that("Returns correct output format for numeric columns only", {
   desired_range = c(0.5, 1)
   n = 5L
   
-  wi_a = WhatIf_Algo$new(pred, n_cores = 1L, param_set = ps, n_cfactuals = n)
+  wi_a = WhatIfAlgo$new(pred, n_cores = 1L, param_set = ps, n_cfactuals = n)
   wi_a$run(x_interest, y_hat, desired_range)
   res = wi_a$get_results_list(desired_class)
   
@@ -78,7 +78,7 @@ test_that("Returns correct output format for factor and numeric columns", {
   desired_range = c(0.5, 1)
   n = 5L
   
-  wi_a = WhatIf_Algo$new(pred, n_cores = 1L, param_set = ps, n_cfactuals = n)
+  wi_a = WhatIfAlgo$new(pred, n_cores = 1L, param_set = ps, n_cfactuals = n)
   wi_a$run(x_interest, y_hat, desired_range)
   res = wi_a$get_results_list(desired_class)
   
@@ -106,11 +106,11 @@ test_that("Parallelization leads to same results as sequential execution", {
   desired_range = c(0.5, 1)
   n = 8L
   
-  wi_a = WhatIf_Algo$new(pred, n_cores = parallel::detectCores() - 1L, param_set = ps, n_cfactuals = n)
+  wi_a = WhatIfAlgo$new(pred, n_cores = parallel::detectCores() - 1L, param_set = ps, n_cfactuals = n)
   wi_a$run(x_interest, y_hat, desired_range)
   res_par = wi_a$get_results_list(desired_class)
   
-  wi_a = WhatIf_Algo$new(pred, n_cores = 1L, param_set = ps, n_cfactuals = n)
+  wi_a = WhatIfAlgo$new(pred, n_cores = 1L, param_set = ps, n_cfactuals = n)
   wi_a$run(x_interest, y_hat, desired_range)
   res_seq = wi_a$get_results_list(desired_class)
 
@@ -129,7 +129,7 @@ test_that("Throws warning if too few counterfactuals were found and fills $resul
   x_interest = mtcars[1L, -1L]
   desired_range = c(15, 17.5)
   
-  wi_a = WhatIf_Algo$new(pred, n_cores = 1L, param_set = ps, n_cfactuals = 20L)
+  wi_a = WhatIfAlgo$new(pred, n_cores = 1L, param_set = ps, n_cfactuals = 20L)
   expect_snapshot(wi_a$run(x_interest, y_hat, desired_range))
   
   res = wi_a$get_results_list("pred")[[1L]]

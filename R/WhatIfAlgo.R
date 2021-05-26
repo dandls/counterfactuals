@@ -1,4 +1,4 @@
-WhatIf_Algo = R6::R6Class("WhatIf_Algo",
+WhatIfAlgo = R6::R6Class("WhatIfAlgo",
   public = list(
     
     initialize = function(predictor, n_cores, param_set, n_cfactuals) {

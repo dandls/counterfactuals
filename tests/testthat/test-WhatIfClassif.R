@@ -7,7 +7,7 @@ test_that("Returns correct output format for soft binary classification", {
   rf = randomForest::randomForest(am ~ ., data = mydf, ntree = 5L)
   pred = Predictor$new(rf, data = mydf, type = "class")
   n = 5L
-  wi = WhatIf_Classif$new(pred, n_counterfactuals = n, n_cores = 1L)
+  wi = WhatIfClassif$new(pred, n_counterfactuals = n, n_cores = 1L)
   x_interest = head(subset(mydf, select = -am), n = 1L)
   wi$find_counterfactuals(x_interest, desired_class = "1")
   res = wi$results
@@ -27,7 +27,7 @@ test_that("Returns correct output format for hard binary classification", {
   rf = get_rf_classif_iris()
   iris_pred = iml::Predictor$new(rf, type = "class")
   n = 3L
-  wi = WhatIf_Classif$new(iris_pred, n_counterfactuals = n, n_cores = 1L)
+  wi = WhatIfClassif$new(iris_pred, n_counterfactuals = n, n_cores = 1L)
   x_interest = iris[1L, -5L]
   wi$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = 1)
   res = wi$results
@@ -52,7 +52,7 @@ test_that("Can handle non-numeric target classes", {
   n = 2L
   x_interest = head(subset(test_data, select = -cl), 1L)
   set.seed(544564)
-  wi = WhatIf_Classif$new(pred, n_counterfactuals = n, n_cores = 1L)
+  wi = WhatIfClassif$new(pred, n_counterfactuals = n, n_cores = 1L)
   wi$find_counterfactuals(x_interest, desired_class = "pos")
   expect_data_table(wi$results$counterfactuals, nrows = n)
 })
@@ -68,12 +68,12 @@ test_that("$find_counterfactuals with specified `desired_outcome` returns the sa
 
   set.seed(54542142)
   iris_pred_binary = iml::Predictor$new(rf, type = "prob", class = desired_class)
-  wi_binary = WhatIf_Classif$new(iris_pred_binary, n_counterfactuals = n, n_cores = 1L)
+  wi_binary = WhatIfClassif$new(iris_pred_binary, n_counterfactuals = n, n_cores = 1L)
   expect_message(wi_binary$find_counterfactuals(x_interest), "was set to")
 
   set.seed(54542142)
   iris_pred_multiclass = iml::Predictor$new(rf, type = "prob")
-  wi_multiclass = WhatIf_Classif$new(iris_pred_multiclass, n_counterfactuals = n, n_cores = 1L)
+  wi_multiclass = WhatIfClassif$new(iris_pred_multiclass, n_counterfactuals = n, n_cores = 1L)
   wi_multiclass$find_counterfactuals(x_interest, desired_class)
 
   res_binary = wi_binary$results$counterfactuals
