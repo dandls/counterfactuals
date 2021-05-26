@@ -6,7 +6,8 @@ WhatIf_Classif <- R6::R6Class("WhatIf_Classif",
     y_hat = NULL,
     
     preprocess = function() {
-      private$y_hat_desired_class = private$y_hat[[private$desired_class]]
+      pred_column = private$get_pred_column()
+      private$y_hat_desired_class = private$y_hat[[pred_column]]
     },
     
     calculate = function() {
@@ -14,7 +15,8 @@ WhatIf_Classif <- R6::R6Class("WhatIf_Classif",
     },
     
     aggregate = function() {
-      private$.results = private$WhatIf_Algo_Obj$get_results_list(private$desired_class)
+      pred_column = private$get_pred_column()
+      private$.results = private$WhatIf_Algo_Obj$get_results_list(pred_column)
     },
 
     run_init_arg_checks = function(arg_list) {

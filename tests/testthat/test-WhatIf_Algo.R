@@ -132,7 +132,7 @@ test_that("Throws warning if too few counterfactuals were found and fills $resul
   wi_a = WhatIf_Algo$new(pred, n_cores = 1L, param_set = ps, n_cfactuals = 20L)
   expect_snapshot(wi_a$run(x_interest, y_hat, desired_range))
   
-  res = wi_a$get_results_list(y_hat_col = 1L)[[1L]]
-  rem_rows_filled_with_na = all(!complete.cases(res[12:20]))
-  expect_true(rem_rows_filled_with_na)
+  res = wi_a$get_results_list("pred")[[1L]]
+  remaining_rows_are_filled_with_na = all(!complete.cases(res[12:20]))
+  expect_true(remaining_rows_are_filled_with_na)
 })

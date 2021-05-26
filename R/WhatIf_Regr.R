@@ -5,11 +5,13 @@ WhatIf_Regr = R6::R6Class("WhatIf_Regr",
     y_hat = NULL,
     
     calculate = function() {
-      private$WhatIf_Algo_Obj$run(private$x_interest, private$y_hat[[1L]], private$desired_outcome)
+      pred_column = private$get_pred_column()
+      private$WhatIf_Algo_Obj$run(private$x_interest, private$y_hat[[pred_column]], private$desired_outcome)
     },
 
     aggregate = function() {
-      private$.results = private$WhatIf_Algo_Obj$get_results_list(y_hat_col = 1L)
+      pred_column = private$get_pred_column()
+      private$.results = private$WhatIf_Algo_Obj$get_results_list(pred_column)
     },
     
     run_init_arg_checks = function(param_list) {
@@ -20,7 +22,7 @@ WhatIf_Regr = R6::R6Class("WhatIf_Regr",
   ),
   public = list(
     initialize = function(predictor, n_counterfactuals = 1L, x_interest = NULL, desired_outcome = NULL,
-                          n_cores = parallel::detectCores() - 1L, lower = NULL, upper = NULL) {
+                          n_cores = 1L, lower = NULL, upper = NULL) {
       
       param_list = as.list(environment())
       super$initialize(param_list)
