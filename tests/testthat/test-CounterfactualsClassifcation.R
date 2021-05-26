@@ -56,7 +56,7 @@ test_that("$check_desired_prob returns error message if desired_outcome has inco
   cc = CounterfactualsClassification$new(param_list)
   expect_error(cc$.__enclos_env__$private$check_desired_prob(c("a", "b")), "Must be of type")
   expect_error(cc$.__enclos_env__$private$check_desired_prob(1:3), "Must have length")
-  expect_error(cc$.__enclos_env__$private$check_desired_prob(NA), "missing")
+  expect_error(cc$.__enclos_env__$private$check_desired_prob(c(NA, NA)), "missing")
   expect_snapshot_error(cc$.__enclos_env__$private$check_desired_prob(c(0.8, 0.2)))
 })
 
