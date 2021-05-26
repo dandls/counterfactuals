@@ -1,7 +1,7 @@
 WhatIfClassif = R6::R6Class("WhatIfClassif",
   inherit = CounterfactualsClassification,
   private = list(
-    WhatIfAlgo_Obj = NULL,
+    WhatIfAlgoObj = NULL,
     y_hat_desired_class = NULL,
     y_hat = NULL,
     
@@ -11,12 +11,12 @@ WhatIfClassif = R6::R6Class("WhatIfClassif",
     },
     
     calculate = function() {
-      private$WhatIfAlgo_Obj$run(private$x_interest, private$y_hat_desired_class, private$desired_prob)
+      private$WhatIfAlgoObj$run(private$x_interest, private$y_hat_desired_class, private$desired_prob)
     },
     
     aggregate = function() {
       pred_column = private$get_pred_column()
-      private$.results = private$WhatIfAlgo_Obj$get_results_list(pred_column)
+      private$.results = private$WhatIfAlgoObj$get_results_list(pred_column)
     },
 
     run_init_arg_checks = function(arg_list) {
@@ -34,7 +34,7 @@ WhatIfClassif = R6::R6Class("WhatIfClassif",
       super$initialize(param_list)
       
       private$run_init_arg_checks(param_list)
-      private$WhatIfAlgo_Obj = WhatIfAlgo$new(private$predictor, n_cores, private$param_set, n_counterfactuals)
+      private$WhatIfAlgoObj = WhatIfAlgo$new(private$predictor, n_cores, private$param_set, n_counterfactuals)
 
       private$y_hat = as.data.table(predictor$predict(predictor$data$X))
       

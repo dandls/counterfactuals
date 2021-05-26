@@ -1,17 +1,17 @@
 WhatIfRegr = R6::R6Class("WhatIfRegr",
   inherit = CounterfactualsRegression,
   private = list(
-    WhatIfAlgo_Obj = NULL,
+    WhatIfAlgoObj = NULL,
     y_hat = NULL,
     
     calculate = function() {
       pred_column = private$get_pred_column()
-      private$WhatIfAlgo_Obj$run(private$x_interest, private$y_hat[[pred_column]], private$desired_outcome)
+      private$WhatIfAlgoObj$run(private$x_interest, private$y_hat[[pred_column]], private$desired_outcome)
     },
 
     aggregate = function() {
       pred_column = private$get_pred_column()
-      private$.results = private$WhatIfAlgo_Obj$get_results_list(pred_column)
+      private$.results = private$WhatIfAlgoObj$get_results_list(pred_column)
     },
     
     run_init_arg_checks = function(param_list) {
@@ -28,7 +28,7 @@ WhatIfRegr = R6::R6Class("WhatIfRegr",
       super$initialize(param_list)
 
       private$run_init_arg_checks(param_list)
-      private$WhatIfAlgo_Obj = WhatIfAlgo$new(private$predictor, n_cores, private$param_set, n_counterfactuals)
+      private$WhatIfAlgoObj = WhatIfAlgo$new(private$predictor, n_cores, private$param_set, n_counterfactuals)
 
       private$y_hat = as.data.table(predictor$predict(predictor$data$X))
       
