@@ -13,7 +13,7 @@ test_that("$plot() creates correct plot", {
   x_interest = data.table(col_a = 2, col_b = 1, col_c = "y")
   rf = randomForest(col_d ~ ., data = train_data)
   mod = Predictor$new(rf, data = train_data, type = "class", class = "b")
-  param_list = list(predictor = mod)
+  arg_list = list(predictor = mod)
   cfs = data.table(subset(train_data, col_d == "c", -col_d))
   cfs_diff = data.table(sweep(as.matrix(cfs[, 1:2]), 2L, as.matrix(x_interest[, 1:2])))
   cfs_diff[, col_c := ifelse(cfs$col_c == x_interest$col_c, 0, cfs$col_c)]

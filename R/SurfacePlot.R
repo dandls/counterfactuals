@@ -20,12 +20,19 @@ SurfacePlot = R6::R6Class("SurfacePlot",
     arg_list = NULL,
     
     run_init_arg_checks = function(arg_list) {
-      # assert_integerish(grid_size, len = 1L)
-      # assert_numeric(epsilon, len = 1L, null.ok = TRUE)
-      # private$throw_error_if_no_results()
-      # TODO: Also check that nr_changed in results$counterfactuals_diff
+      assert_character(arg_list$feature_names, len = 2L, any.missing = FALSE)
+      assert_integerish(arg_list$grid_size, len = 1L, lower = 1L, any.missing = FALSE)
+      assert_numeric(arg_list$epsilon, len = 1L, null.ok = TRUE, lower = 0)
+      assert_list(arg_list$results, len = 2L)
+      assert_data_table(arg_list$results$counterfactuals)
+      assert_data_table(arg_list$results$counterfactuals_diff)
+      assert_true("nr_changed" %in% names(arg_list$results$counterfactuals_diff))
+      assert_class(arg_list$predictor, "Predictor")
+      assert_data_frame(arg_list$x_interest, nrows = 1L)
+      assert_class(arg_list$param_set, "ParamSet")
+      assert_data_frame(arg_list$y_hat_interest, types = c("numeric"))
+      assert_character(arg_list$pred_column, len = 1L, any.missing = FALSE)
     },
-   
     
     get_cfactuals_plotted = function() {
       arg_list = private$arg_list
