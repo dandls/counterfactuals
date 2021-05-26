@@ -8,8 +8,8 @@
 #' 
 #' @return ([numeric()]) with the computed distances.
 gower_dist = function(x, data, n_cores = 1L, param_set = NULL) {
-  checkmate::assert_data_frame(x, nrows = 1L)
-  checkmate::assert_data_frame(data, min.rows = 1L)
+  assert_data_frame(x, nrows = 1L)
+  assert_data_frame(data, min.rows = 1L)
   if (any(names(x) != names(data))) {
     rlang::abort(c(
       "The gower distance cannot be computed for different features.",
@@ -26,8 +26,8 @@ gower_dist = function(x, data, n_cores = 1L, param_set = NULL) {
       i = waldo::compare(col_types_x, col_data, x_arg = "x", y_arg = "data", max_diffs = 3L)
     ))
   }
-  checkmate::assert_integerish(n_cores, lower = 1L, any.missing = FALSE)
-  checkmate::assert_class(param_set, "ParamSet")
+  assert_integerish(n_cores, lower = 1L, any.missing = FALSE)
+  assert_class(param_set, "ParamSet")
   
   ranges = gower_dist_ranges(param_set)
   future::plan(future::multisession, workers = n_cores)
