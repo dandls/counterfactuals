@@ -17,8 +17,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     
     print_parameters = function() {},
 
-    make_param_set = function(param_list) {
-      ps_maker = ParamSetMaker$new(param_list$predictor$data$X, param_list$lower, param_list$upper)
+    make_param_set = function(arg_list) {
+      ps_maker = ParamSetMaker$new(arg_list$predictor$data$X, arg_list$lower, arg_list$upper)
       ps_maker$make_param_set()
     },
     
@@ -101,9 +101,9 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     measured_runtime = NULL,
     log = NULL,
     
-    initialize = function(param_list) {
+    initialize = function(arg_list) {
 
-      predictor = param_list$predictor
+      predictor = arg_list$predictor
       private$check_predictor(predictor)
       
       # If the task could not be derived from the model, the we infer it from the prediction of some training data
@@ -116,7 +116,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
       
       private$predictor = predictor
-      private$param_set = private$make_param_set(param_list)
+      private$param_set = private$make_param_set(arg_list)
     },
     
     plot_parallel = function(n_solutions, feature_names) {
