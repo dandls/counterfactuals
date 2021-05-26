@@ -1,4 +1,39 @@
 ResultsFormatter = R6::R6Class("ResultsFormatter",
+ 
+  public = list(
+    # TODO: Make this an active
+    res_list = NULL,
+    
+    initialize = function(cfactuals, x_interest) {
+      # TODO: check that cfactuals is data.frame with colnames(x_interest) as colnames subset
+      cfactuals = as.data.table(cfactuals)
+      x_interest = as.data.table(x_interest)
+      private$cfactuals = cfactuals
+      private$cfactuals_appended = data.table::copy(private$cfactuals)
+      private$x_interest = x_interest
+    },
+    
+    append_dist_x_interest = function(dist_vector) {
+      private$cfactuals_appended[, "dist_x_interest" := dist_vector]
+    },
+    
+    append_pred = function(pred) {
+      private$cfactuals_appended[, "pred" := pred]
+    },
+    
+    append_n_changes = function() {
+      # Check that x_interest has same columns as cfactuals
+      n_changes = private$count_changes()
+      private$cfactuals_appended[, "nr_changed" := n_changes]
+ 
+    },
+    
+    make_results_list = function() {
+      cfactuals_diff = private$make_cfactuals_diff(private$cfactuals_appended, private$x_interest)
+      self$res_list = list("counterfactuals" = private$cfactuals_appended, "counterfactuals_diff" = cfactuals_diff)
+    }
+  ),
+  
   private = list(
     cfactuals = NULL,
     cfactuals_appended = NULL,
@@ -48,39 +83,6 @@ ResultsFormatter = R6::R6Class("ResultsFormatter",
       diff_char = data.table::as.data.table(m_char)
       data.table::set(dt, j = idx_non_numeric, value = diff_char)
       dt
-    }
-  ),
-  public = list(
-    # TODO: Make this an active
-    res_list = NULL,
-    
-    initialize = function(cfactuals, x_interest) {
-      # TODO: check that cfactuals is data.frame with colnames(x_interest) as colnames subset
-      cfactuals = as.data.table(cfactuals)
-      x_interest = as.data.table(x_interest)
-      private$cfactuals = cfactuals
-      private$cfactuals_appended = data.table::copy(private$cfactuals)
-      private$x_interest = x_interest
-    },
-    
-    append_dist_x_interest = function(dist_vector) {
-      private$cfactuals_appended[, "dist_x_interest" := dist_vector]
-    },
-    
-    append_pred = function(pred) {
-      private$cfactuals_appended[, "pred" := pred]
-    },
-    
-    append_n_changes = function() {
-      # Check that x_interest has same columns as cfactuals
-      n_changes = private$count_changes()
-      private$cfactuals_appended[, "nr_changed" := n_changes]
- 
-    },
-    
-    make_results_list = function() {
-      cfactuals_diff = private$make_cfactuals_diff(private$cfactuals_appended, private$x_interest)
-      self$res_list = list("counterfactuals" = private$cfactuals_appended, "counterfactuals_diff" = cfactuals_diff)
     }
   )
 )

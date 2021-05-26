@@ -1,53 +1,6 @@
 CounterfactualsClassification = R6::R6Class("CounterfactualsClassification",
   inherit = Counterfactuals,
   
-  private = list(
-    desired_prob = NULL,
-    desired_class = NULL,
-
-    check_that_classif_task = function(task) {
-      if (task != "classification") {
-        err_msg = sprintf("This class only works for classification tasks.")
-        stop(err_msg)
-      }
-    },
-    
-    check_desired_class = function(desired_class) {
-      if (is.null(desired_class)) {
-        rlang::abort(c(
-          "`desired_class` is invalid.",
-          x = "The `desired_class` has to be specified."
-        ))
-      }
-
-      checkmate::assert_character(desired_class, len = 1L)
-      colnames_pred = names(private$y_hat_interest)
-      if (!desired_class %in% colnames_pred) {
-        rlang::abort(c(
-          "`desired_class` is invalid.",
-          x = "The `desired_class` needs to be a colname of the prediction.",
-          i = sprintf("`desired_class` is: %s.", paste0("'", desired_class, "'")),
-          i = sprintf("The colnames of the prediction are: %s.", paste0("'", colnames_pred, "'", collapse = ", "))
-        ))
-      }
-      
-    },
-    check_desired_prob = function(desired_prob) {
-      assert_numeric(desired_prob, any.missing = FALSE, len = 2L, lower = 0, upper = 1)
-      if (desired_prob[2L] < desired_prob[1L]) {
-        rlang::abort(c(
-          "`desired_prob` is invalid.",
-          x = "The lower bound of `desired_prob` cannot be higher than the upper bound."
-        ))
-      }
-    },
-    
-    get_pred_column = function() {
-      private$desired_class
-    }
-    
-  ),
-  
   public = list(
     
     initialize = function(arg_list) {
@@ -76,5 +29,52 @@ CounterfactualsClassification = R6::R6Class("CounterfactualsClassification",
       private$desired_prob = desired_prob
       private$run()
     }
+  ),
+  
+  private = list(
+    desired_prob = NULL,
+    desired_class = NULL,
+    
+    check_that_classif_task = function(task) {
+      if (task != "classification") {
+        err_msg = sprintf("This class only works for classification tasks.")
+        stop(err_msg)
+      }
+    },
+    
+    check_desired_class = function(desired_class) {
+      if (is.null(desired_class)) {
+        rlang::abort(c(
+          "`desired_class` is invalid.",
+          x = "The `desired_class` has to be specified."
+        ))
+      }
+      
+      checkmate::assert_character(desired_class, len = 1L)
+      colnames_pred = names(private$y_hat_interest)
+      if (!desired_class %in% colnames_pred) {
+        rlang::abort(c(
+          "`desired_class` is invalid.",
+          x = "The `desired_class` needs to be a colname of the prediction.",
+          i = sprintf("`desired_class` is: %s.", paste0("'", desired_class, "'")),
+          i = sprintf("The colnames of the prediction are: %s.", paste0("'", colnames_pred, "'", collapse = ", "))
+        ))
+      }
+      
+    },
+    check_desired_prob = function(desired_prob) {
+      assert_numeric(desired_prob, any.missing = FALSE, len = 2L, lower = 0, upper = 1)
+      if (desired_prob[2L] < desired_prob[1L]) {
+        rlang::abort(c(
+          "`desired_prob` is invalid.",
+          x = "The lower bound of `desired_prob` cannot be higher than the upper bound."
+        ))
+      }
+    },
+    
+    get_pred_column = function() {
+      private$desired_class
+    }
+    
   )
 )
