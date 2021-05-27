@@ -1,5 +1,5 @@
 WhatIfClassif = R6::R6Class("WhatIfClassif",
-  inherit = CounterfactualsClassification,
+  inherit = CounterfactualsClassif,
   
   public = list(
     # TODO: for hard classification set desired_prob to 0 or 1

@@ -1,5 +1,5 @@
 WhatIfRegr = R6::R6Class("WhatIfRegr",
-  inherit = CounterfactualsRegression,
+  inherit = CounterfactualsRegr,
   public = list(
     initialize = function(predictor, n_counterfactuals = 1L, x_interest = NULL, desired_outcome = NULL,
                           n_cores = 1L, lower = NULL, upper = NULL) {

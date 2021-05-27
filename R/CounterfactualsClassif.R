@@ -1,4 +1,4 @@
-CounterfactualsClassification = R6::R6Class("CounterfactualsClassification",
+CounterfactualsClassif = R6::R6Class("CounterfactualsClassif",
   inherit = Counterfactuals,
   
   public = list(
