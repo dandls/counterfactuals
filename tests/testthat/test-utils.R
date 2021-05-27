@@ -1,21 +1,21 @@
 library(data.table)
 test_that("gower_dist_ranges returns correct ranges", {
-  ps <- ParamHelpers::makeParamSet(
+  ps = ParamHelpers::makeParamSet(
     ParamHelpers::makeNumericParam("a", lower = 0, upper = 2),
     ParamHelpers::makeIntegerParam("b", lower = 0, upper = 20),
     ParamHelpers::makeDiscreteParam("c", values = 1:2)
   )
-  ranges <- gower_dist_ranges(ps)
-  exp_outcome <- c(2, 20, NA)
-  names(exp_outcome) <- c("a", "b", "c")
+  ranges = gower_dist_ranges(ps)
+  exp_outcome = c(2, 20, NA)
+  names(exp_outcome) = c("a", "b", "c")
   expect_equal(ranges, exp_outcome)
 })
 
 
 test_that("gower_dist returns correct values for numeric values only", {
-  x <- data.table(a = 1.5, b = 10)
-  data <- data.table(a = c(0, 2), b = c(0, 15))
-  ps <- ParamHelpers::makeParamSet(
+  x = data.table(a = 1.5, b = 10)
+  data = data.table(a = c(0, 2), b = c(0, 15))
+  ps = ParamHelpers::makeParamSet(
     ParamHelpers::makeNumericParam("a", lower = 0, upper = 2),
     ParamHelpers::makeIntegerParam("b", lower = 0, upper = 20)
   )
@@ -28,12 +28,12 @@ test_that("gower_dist returns correct values for numeric values only", {
 test_that("gower_dist returns correct values for discrete values only", {
   a_levels = c("cold", "warm")
   b_levels = c("sunny", "rainy")
-  x <- data.table(a = factor("cold", levels = a_levels), b = factor("rainy", levels = b_levels))
-  data <- data.table(
+  x = data.table(a = factor("cold", levels = a_levels), b = factor("rainy", levels = b_levels))
+  data = data.table(
     a = factor(c("warm", "cold"), levels = a_levels),
     b = factor(c("sunny", "rainy"), levels = b_levels)
   )
-  ps <- ParamHelpers::makeParamSet(
+  ps = ParamHelpers::makeParamSet(
     ParamHelpers::makeDiscreteParam("a", a_levels),
     ParamHelpers::makeDiscreteParam("b", b_levels)
   )
@@ -46,12 +46,12 @@ test_that("gower_dist returns correct values for discrete values only", {
 
 test_that("gower_dist returns correct values for mixed values", {
   b_levels = c("sunny", "rainy")
-  x <- data.table(a = 1.5, b = factor("rainy", levels = b_levels))
-  data <- data.table(
+  x = data.table(a = 1.5, b = factor("rainy", levels = b_levels))
+  data = data.table(
     a = c(0, 2),
     b = factor(c("sunny", "rainy"), levels = b_levels)
   )
-  ps <- ParamHelpers::makeParamSet(
+  ps = ParamHelpers::makeParamSet(
     ParamHelpers::makeNumericParam("a", lower = 0, upper = 2),
     ParamHelpers::makeDiscreteParam("b", b_levels)
   )
@@ -66,12 +66,12 @@ test_that("gower_dist returns equal results with and without parallelization", {
   skip_if_not(parallel::detectCores() > 1L)
   set.seed(54542142)
   b_levels = c("sunny", "rainy")
-  x <- data.table(a = 0.5, b = factor("rainy", levels = b_levels))
-  data <- data.table(
+  x = data.table(a = 0.5, b = factor("rainy", levels = b_levels))
+  data = data.table(
     a = rnorm(1000L),
     b = factor(sample(b_levels, 1000, replace = TRUE), levels = b_levels)
   )
-  ps <- ParamHelpers::makeParamSet(
+  ps = ParamHelpers::makeParamSet(
     ParamHelpers::makeNumericParam("a", lower = 0L, upper = 2L),
     ParamHelpers::makeDiscreteParam("b", b_levels)
   )

@@ -30,10 +30,7 @@ WhatIfAlgo = R6::R6Class("WhatIfAlgo",
       n_found = length(which(!is.na(private$dist_x_interest)))
       n_desired = private$n_cfactuals
       if (n_found < n_desired) {
-        rlang::warn(c(
-          sprintf("Could only find %s counterfactual(s).", n_found),
-          i = sprintf("The remaining %s row(s) in `$results` are filled with `NA`s.", n_desired - n_found)
-        ))
+        warning(sprintf("Could only find %s counterfactual(s). The remaining %s row(s) in `$results` are filled with `NA`s.", n_found, n_desired - n_found))
       }
     },
     

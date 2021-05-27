@@ -6,12 +6,6 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     
     initialize = function(predictor, lower, upper) {
 
-      if (is.null(predictor)) {
-        rlang::abort(c(
-          "`predictor` is invalid.",
-          x = "The `predictor` has to be specified."
-        ))
-      }
       assert_class(predictor, "Predictor")
       
       # If the task could not be derived from the model, then we infer it from the prediction of some training data
@@ -32,22 +26,10 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     },
     
     plot_surface = function(feature_names, grid_size = 50L, epsilon = NULL) {
-
-      names_data = names(private$predictor$data$X)
-      if (!all(feature_names %in% names_data)) {
-        rlang::abort(c(
-          "`feature_names` is invalid.",
-          x = "The `feature_names` are not in the training data.",
-          i = sprintf("The colnames of the training data are: %s.", paste0("'", names_data, "'", collapse = ", ")),
-          i = sprintf("`feature_names` are: %s.", paste0("'", feature_names, "'", collapse = ", "))
-        ))
-      }
-
+      
+      assert_names(feature_names, subset.of = names(private$predictor$data$X))
       if (is.null(self$results)) {
-        rlang::abort(c(
-          "There are no results yet.",
-          i = "Please run `$find_counterfactuals()` first."
-        ))
+        stop("There are no results for plotting yet. Run `$find_counterfactuals()` first.")
       }
       
       arg_list = list(
@@ -60,21 +42,21 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     },
     
     plot_freq_of_feature_changes = function(subset_zero = FALSE) {
+      if (!requireNamespace("ggplot2", quietly = TRUE)) {
+        stop("Package \"ggplot2\" needed for this function to work. Please install it.", call. = FALSE)
+      }
+      
       freq = self$get_freq_of_feature_changes(subset_zero)
       df_freq = data.frame(var_name = names(freq), freq = freq)
-      ggplot(df_freq, aes(x = reorder(var_name, -freq), y = freq)) +
-        geom_bar(stat = "identity") +
-        labs(x = element_blank(), y = "Relative frequency")
+      ggplot2::ggplot(df_freq, ggplot2::aes(x = reorder(var_name, -freq), y = freq)) +
+        ggplot2::geom_bar(stat = "identity") +
+        ggplot2::labs(x = ggplot2::element_blank(), y = "Relative frequency")
     },
     
     get_freq_of_feature_changes = function(subset_zero = FALSE) {
       assert_flag(subset_zero)
-
       if (is.null(self$results)) {
-        rlang::abort(c(
-          "There are no results yet.",
-          i = "Please run `$find_counterfactuals()` first."
-        ))
+        stop("There are no results for plotting yet. Run `$find_counterfactuals()` first.")
       }
 
       diff = self$results$counterfactuals_diff
@@ -89,12 +71,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     
     subset_results = function(n_counterfactuals = 10L) {
       if (is.null(self$results)) {
-        rlang::abort(c(
-          "There are no results yet.",
-          i = "Please run `$find_counterfactuals()` first."
-        ))
+        stop("There are no results for plotting yet. Run `$find_counterfactuals()` first.")
       }
-      
       
       is_out_of_range = n_counterfactuals > nrow(private$.results[[1L]])
       if (is_out_of_range) {

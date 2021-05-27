@@ -14,23 +14,20 @@ BugReports: https://github.com/TODO/issues
 Imports: 
     R6,
     checkmate,
-    ggplot2,
     Metrics,
     ParamHelpers,
     mosmafs,
     ecr,
     StatMatch,
-    GGally,
-    ggExtra,
-    metR,
     iml,
     data.table,
-    rlang,
-    waldo,
     future,
     future.apply
 Suggests: 
     randomForest,
+    GGally,
+    ggExtra,
+    metR,
     mlt,
     gower,
     glmnet,
@@ -44,7 +41,8 @@ Suggests:
     knitr,
     mlr,
     cowplot,
-    covr
+    covr,
+    ggplot2
 License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.1.1

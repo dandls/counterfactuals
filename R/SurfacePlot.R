@@ -6,6 +6,9 @@ SurfacePlot = R6::R6Class("SurfacePlot",
     },
 
     plot = function() {
+      if (!requireNamespace("ggplot2", quietly = TRUE)) {
+        stop("Package \"ggplot2\" needed for this function to work. Please install it.", call. = FALSE)
+      }
       cfactuals_plotted = private$get_cfactuals_plotted() 
       
       ice_curve_area = private$make_ice_curve_area()
@@ -106,40 +109,40 @@ SurfacePlot = R6::R6Class("SurfacePlot",
         x_feat_name = plot_feat_names[1L]
         y_feat_name = plot_feat_names[2L]
         
-        p = ggplot()  +
-          geom_point(
+        p = ggplot2::ggplot()  +
+          ggplot2::geom_point(
             data = dt,
-            mapping = aes_string(x = x_feat_name, y = y_feat_name),
+            mapping = ggplot2::aes_string(x = x_feat_name, y = y_feat_name),
             color = "white"
           ) +
-          theme_bw() +
-          geom_tile(
+          ggplot2::theme_bw() +
+          ggplot2::geom_tile(
             data = grid,
-            mapping = aes_string(x = x_feat_name, y = y_feat_name, fill = "pred")
+            mapping = ggplot2::aes_string(x = x_feat_name, y = y_feat_name, fill = "pred")
           ) +
-          stat_contour(
-            mapping = aes_string(x = x_feat_name, y = y_feat_name, z = "pred"), 
+          ggplot2::stat_contour(
+            mapping = ggplot2::aes_string(x = x_feat_name, y = y_feat_name, z = "pred"), 
             data = grid, 
             colour = "white"
           ) +
           metR::geom_text_contour(
             data = grid, 
-            mapping = aes_string(x = x_feat_name, y = y_feat_name, z = "pred"),
+            mapping = ggplot2::aes_string(x = x_feat_name, y = y_feat_name, z = "pred"),
             colour = "white"
           )
         
         if (nrow(instances) > 0L) {
           p = p + 
-            geom_point(
+            ggplot2::geom_point(
               data = instances, 
-              mapping = aes_string(x = x_feat_name, y = y_feat_name), 
+              mapping = ggplot2::aes_string(x = x_feat_name, y = y_feat_name), 
               colour = "black"
             )
         }
         p = p + 
-          geom_point(
+          ggplot2::geom_point(
             data = x_interest_with_pred, 
-            mapping = aes_string(x = x_feat_name, y = y_feat_name), 
+            mapping = ggplot2::aes_string(x = x_feat_name, y = y_feat_name), 
             colour = "white"
           )
         p = ggExtra::ggMarginal(p, type = "histogram")
@@ -150,30 +153,30 @@ SurfacePlot = R6::R6Class("SurfacePlot",
         cat_feature = plot_feat_names[feat_types[plot_feat_names] == "categorical"]
         num_feature = setdiff(plot_feat_names[1:2], cat_feature)
         
-        p = ggplot() +
-          geom_point(
+        p = ggplot2::ggplot() +
+          ggplot2::geom_point(
             data = dt,
-            mapping = aes_string(x = num_feature, y = "pred"),
+            mapping = ggplot2::aes_string(x = num_feature, y = "pred"),
             color = "white"
           ) +
-          geom_line(
+          ggplot2::geom_line(
             data = grid, 
-            mapping = aes_string(x = num_feature, y = "pred", group = cat_feature, color = cat_feature)
+            mapping = ggplot2::aes_string(x = num_feature, y = "pred", group = cat_feature, color = cat_feature)
           ) +
-          theme_bw()
+          ggplot2::theme_bw()
         
         if (nrow(instances) > 0L) {
           p = p + 
-            geom_point(
+            ggplot2::geom_point(
               data = instances, 
-              mapping = aes_string(x = num_feature, y = "pred"), colour = "black"
+              mapping = ggplot2::aes_string(x = num_feature, y = "pred"), colour = "black"
             )
         }
         
         p = p + 
-          geom_point(
+          ggplot2::geom_point(
             data = x_interest_with_pred,
-            mapping = aes_string(x = num_feature, y = "pred"), 
+            mapping = ggplot2::aes_string(x = num_feature, y = "pred"), 
             colour = "gray"
           )
         

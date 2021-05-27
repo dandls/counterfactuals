@@ -3,7 +3,6 @@
 #' @import checkmate
 #' @import mosmafs
 #' @import ParamHelpers
-#' @import ggplot2
 #' @import iml
 #' @import data.table
 NULL

@@ -10,21 +10,9 @@
 gower_dist = function(x, data, n_cores = 1L, param_set = NULL) {
   assert_data_frame(x, nrows = 1L)
   assert_data_frame(data, min.rows = 1L)
-  if (any(names(x) != names(data))) {
-    rlang::abort(c(
-      "The gower distance cannot be computed for different features.",
-      x = "`x` and `data` must have the same columns.",
-      i = waldo::compare(names(x), names(data), x_arg = "x", y_arg = "data", max_diffs = 3L)
-    ))
-  }
-  col_types_x = sapply(x, typeof)
-  col_data = sapply(data, typeof)
-  if (any(col_types_x != col_data)) {
-    rlang::abort(c(
-      "The gower distance cannot be computed for different feature types.",
-      x = "`x` and `data` must have the same column types.",
-      i = waldo::compare(col_types_x, col_data, x_arg = "x", y_arg = "data", max_diffs = 3L)
-    ))
+  assert_true(identical(names(x), names(data)))
+  if (any(sapply(x, typeof) != sapply(data, typeof))) {
+    stop("`x` and `data` must have the same column types.")
   }
   assert_integerish(n_cores, lower = 1L, any.missing = FALSE)
   assert_class(param_set, "ParamSet")
