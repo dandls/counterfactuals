@@ -24,16 +24,5 @@ test_that("Init works for regression tasks only", {
   
 })
 
-# $check_desired_outcome -----------------------------------------------------------------------------------------------
-test_that("$check_desired_outcome returns error message if desired_outcome has incorrect formats", {
-  set.seed(54542142)
-  rf = get_rf_regr_mtcars()
-  pred_regr = Predictor$new(rf)
-  cr = CounterfactualsRegression$new(predictor = pred_regr, lower = NULL, upper = NULL)
-  expect_error(cr$.__enclos_env__$private$check_desired_outcome(c("a", "b")), "Must be of type")
-  expect_error(cr$.__enclos_env__$private$check_desired_outcome(1:3), "Must have length")
-  expect_error(cr$.__enclos_env__$private$check_desired_outcome(NA), "missing")
-  expect_snapshot_error(cr$.__enclos_env__$private$check_desired_outcome(c(4, 2)))
-})
 
 

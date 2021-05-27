@@ -5,34 +5,7 @@ test_that("$initialize() returns error if predictor given does not have the corr
   expect_snapshot_error(Counterfactuals$new(predictor = "wrong", lower = NULL, upper = NULL))
 })
 
-# $private$check_x_interest --------------------------------------------------------------------------------------------
-test_that("$private$check_x_interest() returns error if x_interest column do not match X of predictor", {
-  rf = get_rf_regr_mtcars()
-  pred = Predictor$new(rf)
-  ci = Counterfactuals$new(predictor = pred, lower = NULL, upper = NULL)
-  expect_snapshot_error(ci$.__enclos_env__$private$check_x_interest(iris[1L, ]))
-})
-
-test_that("$private$check_x_interest() returns error if x_interest column types do not match types of X of predictor", {
-  rf = get_rf_regr_mtcars()
-  pred = Predictor$new(rf)
-  ci = Counterfactuals$new(predictor = pred, lower = NULL, upper = NULL)
-  x_interest = head(subset(mtcars, select = -mpg), 1L)
-  x_interest$am = as.factor(x_interest$am)
-  
-  expect_snapshot_error(ci$.__enclos_env__$private$check_x_interest(x_interest))
-})
-
-test_that("$private$check_x_interest() returns error if x_interest feature values are outside range of predictor data", {
-  rf = get_rf_regr_mtcars()
-  pred = Predictor$new(rf)
-  ci = Counterfactuals$new(predictor = pred, lower = NULL, upper = NULL)
-  x_interest = head(subset(mtcars, select = -mpg), 1L)
-  x_interest$am = 10
-  
-  expect_snapshot_error(ci$.__enclos_env__$private$check_x_interest(x_interest))
-})
-
+# $private$plot_surface --------------------------------------------------------------------------------------------
 test_that("$plot_surface() returns error message if `feature_names` are not in data", {
   set.seed(54654654)
   train_data = data.frame(

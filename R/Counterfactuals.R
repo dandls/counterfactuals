@@ -6,7 +6,13 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     
     initialize = function(predictor, lower, upper) {
 
-      private$check_predictor(predictor)
+      if (is.null(predictor)) {
+        rlang::abort(c(
+          "`predictor` is invalid.",
+          x = "The `predictor` has to be specified."
+        ))
+      }
+      assert_class(predictor, "Predictor")
       
       # If the task could not be derived from the model, then we infer it from the prediction of some training data
       if (predictor$task == "unknown") {
@@ -26,8 +32,24 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     },
     
     plot_surface = function(feature_names, grid_size = 50L, epsilon = NULL) {
-      private$check_feature_names(feature_names)
-      private$throw_error_if_no_results()
+
+      names_data = names(private$predictor$data$X)
+      if (!all(feature_names %in% names_data)) {
+        rlang::abort(c(
+          "`feature_names` is invalid.",
+          x = "The `feature_names` are not in the training data.",
+          i = sprintf("The colnames of the training data are: %s.", paste0("'", names_data, "'", collapse = ", ")),
+          i = sprintf("`feature_names` are: %s.", paste0("'", feature_names, "'", collapse = ", "))
+        ))
+      }
+
+      if (is.null(self$results)) {
+        rlang::abort(c(
+          "There are no results yet.",
+          i = "Please run `$find_counterfactuals()` first."
+        ))
+      }
+      
       arg_list = list(
         "feature_names" = feature_names, "grid_size" = grid_size, "epsilon" = epsilon, "results" = self$results,
         "predictor" = private$predictor, "x_interest" = private$x_interest, "param_set" = private$param_set, 
@@ -47,7 +69,13 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     
     get_freq_of_feature_changes = function(subset_zero = FALSE) {
       assert_flag(subset_zero)
-      private$throw_error_if_no_results()
+
+      if (is.null(self$results)) {
+        rlang::abort(c(
+          "There are no results yet.",
+          i = "Please run `$find_counterfactuals()` first."
+        ))
+      }
 
       diff = self$results$counterfactuals_diff
       feature_names = names(private$x_interest)
@@ -60,7 +88,14 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     },
     
     subset_results = function(n_counterfactuals = 10L) {
-      private$throw_error_if_no_results()
+      if (is.null(self$results)) {
+        rlang::abort(c(
+          "There are no results yet.",
+          i = "Please run `$find_counterfactuals()` first."
+        ))
+      }
+      
+      
       is_out_of_range = n_counterfactuals > nrow(private$.results[[1L]])
       if (is_out_of_range) {
         warning("`n_counterfactuals` out of range, it was set to the number of solutions in self$results.")
@@ -116,70 +151,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       ps_maker$make_param_set()
     },
     
-    get_pred_column = function() {},
-    
-    check_x_interest = function(x_interest) {
-      checkmate::assert_data_frame(x_interest, nrows = 1L)
-      data = private$predictor$data$X
-      if (any(names(x_interest) != names(data))) {
-        rlang::abort(c(
-          "`x_interest` is invalid.",
-          x = "`x_interest` and `predictor$data$X` must have the same columns.",
-          i = waldo::compare(names(x_interest), names(data), x_arg = "x_interest", y_arg = "predictor$data$X")
-        ))
-      }
-      
-      col_types_x_interest = sapply(x_interest, typeof)
-      col_data = sapply(data, typeof)
-      if (any(col_types_x_interest != col_data)) {
-        rlang::abort(c(
-          "`x_interest` is invalid.",
-          x = "`x_interest` and `predictor$data$X` must have the same column types.",
-          i = waldo::compare(col_types_x_interest, col_data, x_arg = "x_interest", y_arg = "predictor$data$X")
-        ))
-      }
-      
-      feat_vals_outside_range = !ParamHelpers::isFeasible(private$param_set, as.list(x_interest))
-      if (feat_vals_outside_range) {
-        rlang::abort(c(
-          "`x_interest` is invalid.",
-          x = "Feature values of `x_interest` outside of range of `predictor$data$X` or given arguments `lower` or `upper`.",
-          i = "Please modify arguments `lower` or `upper` accordingly."
-        ))
-      }
-    },
-    
-    check_predictor = function(predictor) {
-      if (is.null(predictor)) {
-        rlang::abort(c(
-          "`predictor` is invalid.",
-          x = "The `predictor` has to be specified."
-        ))
-      }
-      assert_class(predictor, "Predictor")
-    },
-    
-    throw_error_if_no_results = function() {
-      if (is.null(self$results)) {
-        rlang::abort(c(
-          "There are no results yet.",
-          i = "Please run `$find_counterfactuals()` first."
-        ))
-      }
-    },
-    
-    check_feature_names = function(feature_names) {
-      assert_character(feature_names, null.ok = FALSE, len = 2L)
-      names_data = names(private$predictor$data$X)
-      if (!all(feature_names %in% names_data)) {
-        rlang::abort(c(
-          "`feature_names` is invalid.",
-          x = "The `feature_names` are not in the training data.",
-          i = sprintf("The colnames of the training data are: %s.", paste0("'", names_data, "'", collapse = ", ")),
-          i = sprintf("`feature_names` are: %s.", paste0("'", feature_names, "'", collapse = ", "))
-        ))
-      }
-    }
+    get_pred_column = function() {}
+   
   )
 )
 

@@ -5,13 +5,43 @@ CounterfactualsRegression = R6::R6Class("CounterfactualsRegression",
     
     initialize = function(predictor, lower, upper) {
       super$initialize(predictor, lower, upper)
-      private$check_that_regr_task(private$predictor$task)
+      if (private$predictor$task != "regression") {
+        err_msg = sprintf("This class only works for regression tasks.")
+        stop(err_msg)
+      }
     },
     
     find_counterfactuals = function(x_interest, desired_outcome = NULL) {
       
-      private$check_x_interest(x_interest)
-      private$check_desired_outcome(desired_outcome)
+      checkmate::assert_data_frame(x_interest, nrows = 1L)
+      data = private$predictor$data$X
+      if (any(names(x_interest) != names(data))) {
+        rlang::abort(c(
+          "`x_interest` is invalid.",
+          x = "`x_interest` and `predictor$data$X` must have the same columns.",
+          i = waldo::compare(names(x_interest), names(data), x_arg = "x_interest", y_arg = "predictor$data$X")
+        ))
+      }
+      col_types_x_interest = sapply(x_interest, typeof)
+      col_data = sapply(data, typeof)
+      if (any(col_types_x_interest != col_data)) {
+        rlang::abort(c(
+          "`x_interest` is invalid.",
+          x = "`x_interest` and `predictor$data$X` must have the same column types.",
+          i = waldo::compare(col_types_x_interest, col_data, x_arg = "x_interest", y_arg = "predictor$data$X")
+        ))
+      }
+      
+      assert_numeric(desired_outcome, any.missing = FALSE, min.len = 1L, max.len = 2L)
+      has_upper_lower_bounds = length(desired_outcome) == 2
+      if (has_upper_lower_bounds) {
+        if (desired_outcome[2L] < desired_outcome[1L]) {
+          rlang::abort(c(
+            "`desired_outcome` is invalid.",
+            x = "The lower bound of `desired_outcome` cannot be higher than the upper bound."
+          ))
+        }
+      }
       
       if (length(desired_outcome) == 1) {
         desired_outcome = c(desired_outcome, desired_outcome)
@@ -26,27 +56,7 @@ CounterfactualsRegression = R6::R6Class("CounterfactualsRegression",
   
   private = list(
     desired_outcome = NULL,
-    
-    check_that_regr_task = function(task) {
-      if (task != "regression") {
-        err_msg = sprintf("This class only works for regression tasks.")
-        stop(err_msg)
-      }
-    },
  
-    check_desired_outcome = function(desired_outcome) {
-      assert_numeric(desired_outcome, any.missing = FALSE, min.len = 1L, max.len = 2L)
-      has_upper_lower_bounds = length(desired_outcome) == 2
-      if (has_upper_lower_bounds) {
-        if (desired_outcome[2L] < desired_outcome[1L]) {
-          rlang::abort(c(
-            "`desired_outcome` is invalid.",
-            x = "The lower bound of `desired_outcome` cannot be higher than the upper bound."
-          ))
-        }
-      }
-    },
-    
     get_pred_column = function() {
       names(private$y_hat_interest)[[1L]]
     }
