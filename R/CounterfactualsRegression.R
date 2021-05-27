@@ -3,8 +3,8 @@ CounterfactualsRegression = R6::R6Class("CounterfactualsRegression",
   
   public = list(
     
-    initialize = function(arg_list) {
-      super$initialize(arg_list)
+    initialize = function(predictor, lower, upper) {
+      super$initialize(predictor, lower, upper)
       private$check_that_regr_task(private$predictor$task)
     },
     

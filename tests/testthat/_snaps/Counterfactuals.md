@@ -1,8 +1,3 @@
-# $initialize() returns error if no predictor is specified
-
-    `predictor` is invalid.
-    x The `predictor` has to be specified.
-
 # $initialize() returns error if predictor given does not have the correct class
 
     Assertion on 'predictor' failed: Must inherit from class 'Predictor', but has class 'character'.

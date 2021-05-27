@@ -1,28 +1,22 @@
 library(randomForest)
 
 # $initialize() --------------------------------------------------------------------------------------------------------
-test_that("$initialize() returns error if no predictor is specified", {
-  expect_snapshot_error(Counterfactuals$new(list()))
-})
-
 test_that("$initialize() returns error if predictor given does not have the correct class", {
-  expect_snapshot_error(Counterfactuals$new(list(predictor = "wrong")))
+  expect_snapshot_error(Counterfactuals$new(predictor = "wrong", lower = NULL, upper = NULL))
 })
 
 # $private$check_x_interest --------------------------------------------------------------------------------------------
 test_that("$private$check_x_interest() returns error if x_interest column do not match X of predictor", {
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
-  arg_list = list(predictor = pred)
-  ci = Counterfactuals$new(arg_list)
+  ci = Counterfactuals$new(predictor = pred, lower = NULL, upper = NULL)
   expect_snapshot_error(ci$.__enclos_env__$private$check_x_interest(iris[1L, ]))
 })
 
 test_that("$private$check_x_interest() returns error if x_interest column types do not match types of X of predictor", {
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
-  arg_list = list(predictor = pred)
-  ci = Counterfactuals$new(arg_list)
+  ci = Counterfactuals$new(predictor = pred, lower = NULL, upper = NULL)
   x_interest = head(subset(mtcars, select = -mpg), 1L)
   x_interest$am = as.factor(x_interest$am)
   
@@ -32,8 +26,7 @@ test_that("$private$check_x_interest() returns error if x_interest column types 
 test_that("$private$check_x_interest() returns error if x_interest feature values are outside range of predictor data", {
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
-  arg_list = list(predictor = pred)
-  ci = Counterfactuals$new(arg_list)
+  ci = Counterfactuals$new(predictor = pred, lower = NULL, upper = NULL)
   x_interest = head(subset(mtcars, select = -mpg), 1L)
   x_interest$am = 10
   
@@ -52,9 +45,8 @@ test_that("$plot_surface() returns error message if `feature_names` are not in d
   
   rf = randomForest(col_d ~ ., data = train_data)
   mod = Predictor$new(rf, data = train_data, type = "class", class = "b")
-  arg_list = list(predictor = mod)
   
-  ci = Counterfactuals$new(arg_list)
+  ci = Counterfactuals$new(predictor = mod, lower = NULL, upper = NULL)
   expect_snapshot_error(ci$plot_surface(c("not_in_data", "col_b")))
 })
 
@@ -63,8 +55,7 @@ test_that("$plot_surface() returns error message if `feature_names` are not in d
 test_that("$subset_results returns correct entries", {
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
-  arg_list = list(predictor = pred)
-  ci = Counterfactuals$new(arg_list)
+  ci = Counterfactuals$new(predictor = pred, lower = NULL, upper = NULL)
   ci$.__enclos_env__$private$.results = list(
     counterfactuals = as.data.table(mtcars),
     counterfactuals_diff = as.data.table(iris)
@@ -79,8 +70,7 @@ test_that("$subset_results returns correct entries", {
 test_that("$subset_results returns message and all counterfactuals if `counterfactuals` out of range", {
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
-  arg_list = list(predictor = pred)
-  ci = Counterfactuals$new(arg_list)
+  ci = Counterfactuals$new(predictor = pred, lower = NULL, upper = NULL)
   ci$.__enclos_env__$private$.results = list(
     counterfactuals = as.data.table(mtcars),
     counterfactuals_diff = as.data.table(iris)
@@ -96,16 +86,14 @@ test_that("$subset_results returns message and all counterfactuals if `counterfa
 test_that("$get_freq_of_feature_changes returns error if there are not results yet.", {
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
-  arg_list = list(predictor = pred)
-  ci = Counterfactuals$new(arg_list)
+  ci = Counterfactuals$new(predictor = pred, lower = NULL, upper = NULL)
   expect_snapshot_error(ci$get_freq_of_feature_changes())
 })
 
 test_that("$get_freq_of_feature_changes returns correct frequencies", {
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
-  arg_list = list(predictor = pred)
-  ci = Counterfactuals$new(arg_list)
+  ci = Counterfactuals$new(predictor = pred, lower = NULL, upper = NULL)
   test_diff = data.table(feature_a = 0, feature_b = c("0", "2", "1"), feature_c = c(3L, 1L, 2L))
   x_interest = rep(NA, 3L)
   names(x_interest) = names(test_diff)
@@ -128,8 +116,7 @@ test_that("$plot_freq_of_feature_changes() creates correct plot", {
   skip_on_ci()
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
-  arg_list = list(predictor = pred)
-  ci = Counterfactuals$new(arg_list)
+  ci = Counterfactuals$new(predictor = pred, lower = NULL, upper = NULL)
   test_diff = data.table(feature_a = 0, feature_b = c("0", "2", "1"), feature_c = c(3L, 1L, 2L))
   x_interest = rep(NA, 3L)
   names(x_interest) = names(test_diff)

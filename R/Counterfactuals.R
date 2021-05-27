@@ -4,22 +4,21 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     measured_runtime = NULL,
     log = NULL,
     
-    initialize = function(arg_list) {
+    initialize = function(predictor, lower, upper) {
 
-      predictor = arg_list$predictor
       private$check_predictor(predictor)
       
-      # If the task could not be derived from the model, the we infer it from the prediction of some training data
+      # If the task could not be derived from the model, then we infer it from the prediction of some training data
       if (predictor$task == "unknown") {
         # Needs to be set to NULL, as the predictor does not infer the task from prediction otherwise
         # See: https://github.com/christophM/iml/blob/master/R/Predictor.R#L141
         # The task is then checked by Counterfactuals_Regr or Counterfactuals_Classif
         predictor$task = NULL
-        invisible(predictor$predict(predictor$data$X[1:2, ]))
+        predictor$predict(predictor$data$X[1:2, ])
       }
       
       private$predictor = predictor
-      private$param_set = private$make_param_set(arg_list)
+      private$param_set = private$make_param_set(predictor$data$X, lower, upper)
     },
     
     plot_parallel = function(n_solutions, feature_names) {
@@ -112,8 +111,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     
     print_parameters = function() {},
     
-    make_param_set = function(arg_list) {
-      ps_maker = ParamSetMaker$new(arg_list$predictor$data$X, arg_list$lower, arg_list$upper)
+    make_param_set = function(data_X, lower, upper) {
+      ps_maker = ParamSetMaker$new(data_X, lower, upper)
       ps_maker$make_param_set()
     },
     

@@ -3,8 +3,8 @@ CounterfactualsClassification = R6::R6Class("CounterfactualsClassification",
   
   public = list(
     
-    initialize = function(arg_list) {
-      super$initialize(arg_list)
+    initialize = function(predictor, lower, upper) {
+      super$initialize(predictor, lower, upper)
       private$check_that_classif_task(private$predictor$task)
     },
     

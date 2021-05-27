@@ -2,20 +2,21 @@ WhatIfAlgo = R6::R6Class("WhatIfAlgo",
   public = list(
     
     initialize = function(predictor, n_cores, param_set, n_cfactuals) {
-      init_arg_list = as.list(environment())
-      private$check_init_arg_list(init_arg_list)
-      private$init_arg_list = init_arg_list
+      private$check_init_arg_list(predictor, n_cores, param_set, n_cfactuals)
+      private$predictor = predictor
+      private$n_cores = n_cores
+      private$param_set = param_set
+      private$n_cfactuals = n_cfactuals
     },
     
     run = function(x_interest, y_hat, desired_range) {
       private$check_run_args(x_interest, y_hat, desired_range)
       
-      init_arg_list = private$init_arg_list
-      data_X_search = private$get_X_search(y_hat, init_arg_list$predictor$data$X, desired_range)
-      dist_vector = gower_dist(x_interest, data_X_search, init_arg_list$n_cores, init_arg_list$param_set)
+      data_X_search = private$get_X_search(y_hat, private$predictor$data$X, desired_range)
+      dist_vector = gower_dist(x_interest, data_X_search, private$n_cores, private$param_set)
       
       indexes = sort(dist_vector, index.return = TRUE, na.last = TRUE)$ix
-      indexes_cfactuals = indexes[1:init_arg_list$n_cfactuals]
+      indexes_cfactuals = indexes[1:private$n_cfactuals]
       
       private$x_interest = x_interest
       private$cfactuals = data_X_search[indexes_cfactuals, ]
@@ -26,7 +27,7 @@ WhatIfAlgo = R6::R6Class("WhatIfAlgo",
     get_results_list = function(y_hat_col) {
       assert_character(y_hat_col, len = 1L, any.missing = FALSE)
       
-      pred_cfactuals_one_hot = private$init_arg_list$predictor$predict(private$cfactuals)
+      pred_cfactuals_one_hot = private$predictor$predict(private$cfactuals)
       pred_cfactuals = pred_cfactuals_one_hot[[y_hat_col]]
       
       res_formatter = ResultsFormatter$new(private$cfactuals, private$x_interest)
@@ -40,7 +41,10 @@ WhatIfAlgo = R6::R6Class("WhatIfAlgo",
 
   private = list(
     y_hat = NULL,
-    init_arg_list = NULL,
+    predictor = NULL,
+    n_cores = NULL,
+    param_set = NULL,
+    n_cfactuals = NULL,
     dist_x_interest = NULL,
     x_interest = NULL,
     cfactuals = NULL,
@@ -50,11 +54,11 @@ WhatIfAlgo = R6::R6Class("WhatIfAlgo",
       X[is_in_range, ]
     },
     
-    check_init_arg_list = function(init_arg_list) {
-      assert_class(init_arg_list$predictor, "Predictor")
-      assert_integerish(init_arg_list$n_cores, lower = 1L, any.missing = FALSE, len = 1L)
-      assert_class(init_arg_list$param_set, "ParamSet")
-      assert_integerish(init_arg_list$n_cfactuals, lower = 1L, any.missing = FALSE, len = 1L)
+    check_init_arg_list = function(predictor, n_cores, param_set, n_cfactuals) {
+      assert_class(predictor, "Predictor")
+      assert_integerish(n_cores, lower = 1L, any.missing = FALSE, len = 1L)
+      assert_class(param_set, "ParamSet")
+      assert_integerish(n_cfactuals, lower = 1L, any.missing = FALSE, len = 1L)
     },
     
     check_run_args = function(x_interest, y_hat, desired_range) {
@@ -65,7 +69,7 @@ WhatIfAlgo = R6::R6Class("WhatIfAlgo",
     
     warning_if_too_few_cfs = function() {
       n_found = length(which(!is.na(private$dist_x_interest)))
-      n_desired = private$init_arg_list$n_cfactuals
+      n_desired = private$n_cfactuals
       if (n_found < n_desired) {
         rlang::warn(c(
           sprintf("Could only find %s counterfactual(s).", n_found),

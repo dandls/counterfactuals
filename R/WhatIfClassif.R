@@ -6,14 +6,13 @@ WhatIfClassif = R6::R6Class("WhatIfClassif",
     initialize = function(predictor, n_counterfactuals = 1L, x_interest = NULL, desired_class = NULL,
                           desired_prob = NULL, n_cores = 1L, lower = NULL, upper = NULL) {
       
-      arg_list = as.list(environment())
-      super$initialize(arg_list)
+      super$initialize(predictor, lower, upper)
       
       private$WhatIfAlgoObj = WhatIfAlgo$new(private$predictor, n_cores, private$param_set, n_counterfactuals)
-      private$y_hat = as.data.table(predictor$predict(predictor$data$X))
+      private$y_hat = as.data.table(predictor$predict(private$predictor$data$X))
       
-      if (!is.null(arg_list$x_interest)) {
-        self$find_counterfactuals(arg_list$x_interest, arg_list$desired_class, arg_list$desired_prob)
+      if (!is.null(x_interest)) {
+        self$find_counterfactuals(x_interest, desired_class, desired_prob)
       }
     }
   ),

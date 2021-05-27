@@ -7,14 +7,15 @@ test_that("Init works for classification tasks only", {
   # Regression task
   rf_regr = get_rf_regr_mtcars()
   pred_regr = iml::Predictor$new(rf_regr)
-  arg_list = list(predictor = pred_regr)
-  expect_error(CounterfactualsClassification$new(arg_list), "only works for classification")
+  expect_error(
+    CounterfactualsClassification$new(predictor = pred_regr, lower = NULL, upper = NULL), 
+    "only works for classification"
+  )
 
   # Classification task
   rf = get_rf_classif_iris()
   pred_class = iml::Predictor$new(rf, type = "class", class = "versicolor")
-  arg_list = list(predictor = pred_class)
-  expect_error(CounterfactualsClassification$new(arg_list), NA)
+  expect_error(CounterfactualsClassification$new(predictor = pred_class, lower = NULL, upper = NULL), NA)
 
   # The type of the task is inferred using the `inferTaskFromPrediction` from the iml package.
   # The function is called internally when a Predictor object uses the method `predict` if the task is "unkown".
@@ -30,8 +31,7 @@ test_that("`desired_class` needs to be in the prediction columns", {
   set.seed(54542142)
   rf = get_rf_classif_iris()
   pred = Predictor$new(rf)
-  arg_list = list(predictor = pred)
-  cc = CounterfactualsClassification$new(arg_list)
+  cc = CounterfactualsClassification$new(predictor = pred, lower = NULL, upper = NULL)
   cc$.__enclos_env__$private$y_hat_interest = pred$predict(iris[1L, ])
   expect_snapshot_error(cc$.__enclos_env__$private$check_desired_class("wrong_column"))
 })
@@ -40,8 +40,7 @@ test_that("`desired_class` is required for multiclass", {
   set.seed(54542142)
   rf = get_rf_classif_iris()
   pred = Predictor$new(rf)
-  arg_list = list(predictor = pred)
-  cc = CounterfactualsClassification$new(arg_list)
+  cc = CounterfactualsClassification$new(predictor = pred, lower = NULL, upper = NULL)
   suppressMessages(
     expect_snapshot_error(cc$find_counterfactuals(x_interest = iris[1L, -5L]))
   )
@@ -52,8 +51,7 @@ test_that("$check_desired_prob returns error message if desired_outcome has inco
   set.seed(54542142)
   rf = get_rf_classif_iris()
   pred = Predictor$new(rf)
-  arg_list = list(predictor = pred)
-  cc = CounterfactualsClassification$new(arg_list)
+  cc = CounterfactualsClassification$new(predictor = pred, lower = NULL, upper = NULL)
   expect_error(cc$.__enclos_env__$private$check_desired_prob(c("a", "b")), "Must be of type")
   expect_error(cc$.__enclos_env__$private$check_desired_prob(1:3), "Must have length")
   expect_error(cc$.__enclos_env__$private$check_desired_prob(c(NA, NA)), "missing")

@@ -8,12 +8,12 @@ test_that("Init works for regression tasks only", {
   # Regression task
   rf_regr = get_rf_regr_mtcars()
   pred_regr = Predictor$new(rf_regr)
-  expect_error(WhatIfRegr$new(pred_regr), NA)
+  expect_error(CounterfactualsRegression$new(predictor = pred_regr, lower = NULL, upper = NULL), NA)
 
   # Classification task
   rf = get_rf_classif_iris()
   pred_class = iml::Predictor$new(rf, type = "class", class = "versicolor")
-  expect_error(WhatIfRegr$new(pred_class), "only works for regression")
+  expect_error(CounterfactualsRegression$new(predictor = pred_class, lower = NULL, upper = NULL), "only works for regression")
   
   # The type of the task is inferred using the `inferTaskFromPrediction` from the iml package.
   # The function is called internally when a Predictor object uses the method `predict` if the task is "unkown".
@@ -29,8 +29,7 @@ test_that("$check_desired_outcome returns error message if desired_outcome has i
   set.seed(54542142)
   rf = get_rf_regr_mtcars()
   pred_regr = Predictor$new(rf)
-  arg_list = list(predictor = pred_regr)
-  cr = CounterfactualsRegression$new(arg_list)
+  cr = CounterfactualsRegression$new(predictor = pred_regr, lower = NULL, upper = NULL)
   expect_error(cr$.__enclos_env__$private$check_desired_outcome(c("a", "b")), "Must be of type")
   expect_error(cr$.__enclos_env__$private$check_desired_outcome(1:3), "Must have length")
   expect_error(cr$.__enclos_env__$private$check_desired_outcome(NA), "missing")
