@@ -69,19 +69,6 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       sort(freq, decreasing = TRUE)
     },
     
-    subset_results = function(n_counterfactuals = 10L) {
-      if (is.null(self$results)) {
-        stop("There are no results for plotting yet. Run `$find_counterfactuals()` first.")
-      }
-      
-      is_out_of_range = n_counterfactuals > nrow(private$.results[[1L]])
-      if (is_out_of_range) {
-        warning("`n_counterfactuals` out of range, it was set to the number of solutions in self$results.")
-      }
-      
-      lapply(private$.results, head, n_counterfactuals)
-    },
-    
     print = function() {
       cat("Counterfactual Explanation method: ", class(self)[1], "\n")
       private$print_parameters()

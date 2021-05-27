@@ -23,38 +23,6 @@ test_that("$plot_surface() returns error message if `feature_names` are not in d
   expect_snapshot_error(ci$plot_surface(c("not_in_data", "col_b")))
 })
 
-
-# $subset_results() ----------------------------------------------------------------------------------------------------
-test_that("$subset_results returns correct entries", {
-  rf = get_rf_regr_mtcars()
-  pred = Predictor$new(rf)
-  ci = Counterfactuals$new(predictor = pred, lower = NULL, upper = NULL)
-  ci$.__enclos_env__$private$.results = list(
-    counterfactuals = as.data.table(mtcars),
-    counterfactuals_diff = as.data.table(iris)
-  )
-  n = 3L
-  res = ci$subset_results(n_counterfactuals = n)
-  expect_list(res, len = 2L)
-  expect_data_table(res[[1L]], nrows = n, ncols = ncol(mtcars))
-  expect_data_table(res[[2L]], nrows = n, ncols = ncol(iris))
-})
-
-test_that("$subset_results returns message and all counterfactuals if `counterfactuals` out of range", {
-  rf = get_rf_regr_mtcars()
-  pred = Predictor$new(rf)
-  ci = Counterfactuals$new(predictor = pred, lower = NULL, upper = NULL)
-  ci$.__enclos_env__$private$.results = list(
-    counterfactuals = as.data.table(mtcars),
-    counterfactuals_diff = as.data.table(iris)
-  )
-  n = 1000L
-  res = expect_warning(ci$subset_results(n_counterfactuals = n), "out of range")
-  expect_list(res, len = 2L)
-  expect_data_table(res[[1L]], nrows = nrow(mtcars), ncols = ncol(mtcars))
-  expect_data_table(res[[2L]], nrows = nrow(iris), ncols = ncol(iris))
-})
-
 # $get_freq_of_feature_changes() ---------------------------------------------------------------------------------------
 test_that("$get_freq_of_feature_changes returns error if there are not results yet.", {
   rf = get_rf_regr_mtcars()
