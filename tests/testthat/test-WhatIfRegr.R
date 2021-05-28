@@ -10,7 +10,7 @@ test_that("Returns correct output format for mixed columns", {
   rf = randomForest(mpg ~ ., data = mydf, ntree = 5L)
   pred = iml::Predictor$new(rf, data = mydf, y = "mpg")
   n = 3L
-  wi = WhatIfRegr$new(pred, n_counterfactuals = n, n_cores = 1L)
+  wi = WhatIfRegr$new(pred, n_counterfactuals = n)
   x_interest = head(subset(mydf, select = -mpg), 1)
   desired_outcome = c(15, 18)
   wi$find_counterfactuals(x_interest, desired_outcome)

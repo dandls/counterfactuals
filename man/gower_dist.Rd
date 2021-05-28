@@ -4,14 +4,12 @@
 \alias{gower_dist}
 \title{Computes the gower distance between an observation \code{x} and each row of a data set \code{data}.}
 \usage{
-gower_dist(x, data, n_cores = 1L, param_set = NULL)
+gower_dist(x, data, param_set = NULL)
 }
 \arguments{
 \item{x}{(\code{data.frame(1)}) \cr An observation.}
 
 \item{data}{(\code{data.frame()}) \cr A data set.}
-
-\item{n_cores}{(\code{numeric(1)}) \cr The number of cores to be used.}
 
 \item{param_set}{(\link[ParamHelpers:makeParamSet]{ParamHelpers::ParamSet}) \cr
 Meta information about the features. Used for the \code{rngs} argument in \link[StatMatch:gower.dist]{StatMatch::gower.dist}.}

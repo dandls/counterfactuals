@@ -19,9 +19,9 @@ test_that("gower_dist returns correct values for numeric values only", {
     ParamHelpers::makeNumericParam("a", lower = 0, upper = 2),
     ParamHelpers::makeIntegerParam("b", lower = 0, upper = 20)
   )
-  expect_equal(gower_dist(x, x, n_cores = 1L, param_set = ps), 0)
+  expect_equal(gower_dist(x, x, param_set = ps), 0)
   res1 = as.vector(StatMatch::gower.dist(x, data, rngs = c(2, 20)))
-  res2 = gower_dist(x, data, n_cores = 1L, param_set = ps)
+  res2 = gower_dist(x, data, param_set = ps)
   expect_equal(res1, res2)
 })
 
@@ -37,9 +37,9 @@ test_that("gower_dist returns correct values for discrete values only", {
     ParamHelpers::makeDiscreteParam("a", a_levels),
     ParamHelpers::makeDiscreteParam("b", b_levels)
   )
-  expect_equal(gower_dist(x, x, n_cores = 1L, param_set = ps), 0)
+  expect_equal(gower_dist(x, x, param_set = ps), 0)
   res1 = as.vector(StatMatch::gower.dist(x, data, rngs = c(NA, NA)))
-  res2 = gower_dist(x, data, n_cores = 1L, param_set = ps)
+  res2 = gower_dist(x, data, param_set = ps)
   expect_equal(res1, res2)
 })
 
@@ -55,9 +55,9 @@ test_that("gower_dist returns correct values for mixed values", {
     ParamHelpers::makeNumericParam("a", lower = 0, upper = 2),
     ParamHelpers::makeDiscreteParam("b", b_levels)
   )
-  expect_equal(gower_dist(x, x, n_cores = 1L, param_set = ps), 0)
+  expect_equal(gower_dist(x, x, param_set = ps), 0)
   res1 = as.vector(StatMatch::gower.dist(x, data, rngs = c(2L, NA)))
-  res2 = gower_dist(x, data, n_cores = 1L, param_set = ps)
+  res2 = gower_dist(x, data, param_set = ps)
   expect_equal(res1, res2)
 })
 
@@ -75,9 +75,11 @@ test_that("gower_dist returns equal results with and without parallelization", {
     ParamHelpers::makeNumericParam("a", lower = 0L, upper = 2L),
     ParamHelpers::makeDiscreteParam("b", b_levels)
   )
-  par = gower_dist(x, data, n_cores = parallel::detectCores() - 1L, param_set = ps)
-  non_par = gower_dist(x, data, n_cores = 1L, param_set = ps)
-  expect_equal(par, non_par)
+  future::plan(future::multisession, workers = parallel::detectCores() - 1L)
+  par = gower_dist(x, data, param_set = ps)
+  future::plan(future::sequential)
+  sequ = gower_dist(x, data, param_set = ps)
+  expect_equal(par, sequ)
 })
 
 test_that("gower_dist returns error if `x` and `data` have different column names", {

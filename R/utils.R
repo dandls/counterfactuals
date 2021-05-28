@@ -2,23 +2,20 @@
 #' 
 #' @param x (`data.frame(1)`) \cr An observation.
 #' @param data (`data.frame()`) \cr A data set. 
-#' @param n_cores (`numeric(1)`) \cr The number of cores to be used. 
 #' @param param_set ([ParamHelpers::ParamSet]) \cr 
 #' Meta information about the features. Used for the `rngs` argument in [StatMatch::gower.dist].
 #' 
 #' @return ([numeric()]) with the computed distances.
-gower_dist = function(x, data, n_cores = 1L, param_set = NULL) {
+gower_dist = function(x, data, param_set = NULL) {
   assert_data_frame(x, nrows = 1L)
   assert_data_frame(data, min.rows = 1L)
   assert_true(identical(names(x), names(data)))
   if (any(sapply(x, typeof) != sapply(data, typeof))) {
     stop("`x` and `data` must have the same column types.")
   }
-  assert_integerish(n_cores, lower = 1L, any.missing = FALSE)
   assert_class(param_set, "ParamSet")
   
   ranges = gower_dist_ranges(param_set)
-  future::plan(future::multisession, workers = n_cores)
   data_list = split(data, seq(nrow(data)))
   future.apply::future_vapply(data_list, StatMatch::gower.dist, FUN.VALUE = numeric(1L), x, ranges, USE.NAMES = FALSE)
 }
