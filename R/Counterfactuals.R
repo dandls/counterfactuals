@@ -1,11 +1,7 @@
 Counterfactuals = R6::R6Class("Counterfactuals",
   
   public = list(
-    measured_runtime = NULL,
-    log = NULL,
-    
     initialize = function(predictor, lower, upper) {
-
       assert_class(predictor, "Predictor")
       
       # If the task could not be derived from the model, then we infer it from the prediction of some training data
@@ -18,7 +14,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
       
       private$predictor = predictor
-      private$param_set = private$make_param_set(predictor$data$X, lower, upper)
+      # TODO: Replace with paradox
+      private$param_set = ParamSetMaker$new(predictor$data$X, lower, upper)$make_param_set()
     },
     
     plot_parallel = function(n_solutions, feature_names) {
@@ -76,8 +73,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       private$predictor$print()
       cat("\n\nAnalysed data:\n")
       print(private$predictor$data)
-      cat("\n\nHead of results:\n")
       if (!is.null(private$.results)) {
+      cat("\n\nHead of results:\n")
         print(head(private$.results))
       }
     }
@@ -102,18 +99,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     
     run = function() stop("abstract"),
     
-    print_parameters = function() {},
-    
-    make_param_set = function(data_X, lower, upper) {
-      ps_maker = ParamSetMaker$new(data_X, lower, upper)
-      ps_maker$make_param_set()
-    }
-   
+    print_parameters = function() {}
   )
 )
-
-
-
-
 
 
