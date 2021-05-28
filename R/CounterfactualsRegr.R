@@ -20,10 +20,7 @@ CounterfactualsRegr = R6::R6Class("CounterfactualsRegr",
       if (any(sapply(x_interest, typeof) != sapply(private$predictor$data$X, typeof))) {
         stop("Columns that appear in `x_interest` and `predictor$data$X` must have the same types.")
       }
-      feat_vals_outside_range = !ParamHelpers::isFeasible(private$param_set, as.list(x_interest))
-      if (feat_vals_outside_range) {
-        stop("Feature values of `x_interest` outside of range of `predictor$data$X` or given arguments `lower` or `upper`. Please modify arguments `lower` or `upper` accordingly.")
-      }
+      private$param_set$check_dt(x_interest)
       
       # Checks desired_outcome
       assert_numeric(desired_outcome, any.missing = FALSE, min.len = 1L,  max.len = 2L)

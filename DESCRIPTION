@@ -15,14 +15,14 @@ Imports:
     R6,
     checkmate,
     Metrics,
-    ParamHelpers,
     mosmafs,
     ecr,
     StatMatch,
     iml,
     data.table,
     future,
-    future.apply
+    future.apply,
+    paradox
 Suggests: 
     randomForest,
     GGally,

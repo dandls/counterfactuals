@@ -21,10 +21,7 @@ CounterfactualsClassif = R6::R6Class("CounterfactualsClassif",
       if (any(sapply(x_interest, typeof) != sapply(private$predictor$data$X, typeof))) {
         stop("Columns that appear in `x_interest` and `predictor$data$X` must have the same types.")
       }
-      feat_vals_outside_range = !ParamHelpers::isFeasible(private$param_set, as.list(x_interest))
-      if (feat_vals_outside_range) {
-        stop("Feature values of `x_interest` outside of range of `predictor$data$X` or given arguments `lower` or `upper`. Please modify arguments `lower` or `upper` accordingly.")
-      }
+      private$param_set$check_dt(x_interest)
       
       # Checks desired_prob
       assert_numeric(desired_prob, any.missing = FALSE, min.len = 1L,  max.len = 2L, lower = 0, upper = 1)
@@ -46,7 +43,6 @@ CounterfactualsClassif = R6::R6Class("CounterfactualsClassif",
       assert_character(desired_class, len = 1L, any.missing = FALSE)
       y_hat_interest = as.data.table(private$predictor$predict(x_interest))
       assert_choice(desired_class, names(y_hat_interest))
-      
       
       private$y_hat_interest = y_hat_interest
       private$x_interest = x_interest
