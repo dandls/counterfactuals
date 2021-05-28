@@ -15,7 +15,7 @@ CounterfactualsRegr = R6::R6Class("CounterfactualsRegr",
       
       # Checks x_interest
       assert_data_frame(x_interest, nrows = 1L)
-      assert_names(names(x_interest), subset.of = names(private$predictor$data$X))
+      assert_names(names(x_interest), must.include = names(private$predictor$data$X))
       x_interest = setDT(x_interest)[, names(private$predictor$data$X), with = FALSE]
       if (any(sapply(x_interest, typeof) != sapply(private$predictor$data$X, typeof))) {
         stop("Columns that appear in `x_interest` and `predictor$data$X` must have the same types.")
