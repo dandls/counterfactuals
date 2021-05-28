@@ -100,23 +100,14 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     param_set = NULL,
     y_hat_interest = NULL,
     
-    run = function() {
-      private$preprocess()
-      private$calculate()
-      private$aggregate()
-    },
-    preprocess = function() {},
-    calculate = function() {},
-    aggregate = function() {},
+    run = function() stop("abstract"),
     
     print_parameters = function() {},
     
     make_param_set = function(data_X, lower, upper) {
       ps_maker = ParamSetMaker$new(data_X, lower, upper)
       ps_maker$make_param_set()
-    },
-    
-    get_pred_column = function() {}
+    }
    
   )
 )

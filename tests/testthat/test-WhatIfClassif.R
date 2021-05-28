@@ -12,14 +12,8 @@ test_that("Returns correct output format for soft binary classification", {
   wi$find_counterfactuals(x_interest, desired_class = "1")
   res = wi$results
   
-  expect_list(res, len = 2L)
-  cfs = res$counterfactuals
-  cfs_diff = res$counterfactuals_diff
-  expect_data_table(cfs, nrows = n)
-  expected_cols = c(colnames(x_interest), "dist_x_interest", "pred", "nr_changed")
-  expect_true(all(colnames(cfs) == expected_cols))
-  expect_data_table(cfs_diff, nrows = n)
-  expect_true(all(colnames(cfs_diff) == expected_cols))
+  expect_data_table(res, nrows = n, col.names = "named", types = sapply(x_interest, class))
+  expect_names(names(res), identical.to = names(x_interest))
 })
 
 test_that("Returns correct output format for hard binary classification", {
@@ -32,16 +26,8 @@ test_that("Returns correct output format for hard binary classification", {
   wi$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = 1)
   res = wi$results
   
-  expect_list(res, len = 2L)
-  cfs = res$counterfactuals
-  cfs_diff = res$counterfactuals_diff
-  expect_data_table(cfs, nrows = n)
-  expected_cols = c(colnames(iris)[-5], "dist_x_interest", "pred", "nr_changed")
-  expect_true(all(colnames(cfs) == expected_cols))
-  expect_data_table(cfs_diff, nrows = n)
-  expect_true(all(colnames(cfs_diff) == expected_cols))
-  expected_diff = as.data.table(sweep(wi$results$counterfactuals[, 1:4], 2, as.numeric(x_interest)))
-  expect_equal(expected_diff, wi$results$counterfactuals_diff[, 1:4])
+  expect_data_table(res, nrows = n, col.names = "named", types = sapply(x_interest, class))
+  expect_names(names(res), identical.to = names(x_interest))
 })
 
 test_that("Can handle non-numeric target classes", {
@@ -54,7 +40,10 @@ test_that("Can handle non-numeric target classes", {
   set.seed(544564)
   wi = WhatIfClassif$new(pred, n_counterfactuals = n, n_cores = 1L)
   wi$find_counterfactuals(x_interest, desired_class = "pos")
-  expect_data_table(wi$results$counterfactuals, nrows = n)
+  res = wi$results
+  
+  expect_data_table(res, nrows = n, col.names = "named", types = sapply(x_interest, class))
+  expect_names(names(res), identical.to = names(x_interest))
 })
 
 test_that("$find_counterfactuals with specified `desired_outcome` returns the same results as if the `desired_outcome`
@@ -76,8 +65,8 @@ test_that("$find_counterfactuals with specified `desired_outcome` returns the sa
   wi_multiclass = WhatIfClassif$new(iris_pred_multiclass, n_counterfactuals = n, n_cores = 1L)
   wi_multiclass$find_counterfactuals(x_interest, desired_class)
 
-  res_binary = wi_binary$results$counterfactuals
-  res_multiclass = wi_multiclass$results$counterfactuals
+  res_binary = wi_binary$results
+  res_multiclass = wi_multiclass$results
 
   expect_identical(res_binary, res_multiclass)
 })
