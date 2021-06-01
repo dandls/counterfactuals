@@ -1,4 +1,4 @@
-Counterfactuals = R6::R6Class("Counterfactuals",
+CounterfactualMethod = R6::R6Class("CounterfactualMethod",
   
   public = list(
     initialize = function(predictor, lower, upper) {
@@ -13,7 +13,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       if (predictor$task == "unknown") {
         # Needs to be set to NULL, as the predictor does not infer the task from prediction otherwise
         # See: https://github.com/christophM/iml/blob/master/R/Predictor.R#L141
-        # The task is then checked by Counterfactuals_Regr or Counterfactuals_Classif
+        # The task is then checked by CounterfactualMethodRegr or CounterfactualMethodClassif
         predictor$task = NULL
         predictor$predict(data_X[1:2, ])
       }

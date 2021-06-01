@@ -7,12 +7,12 @@ test_that("Init works for regression tasks only", {
   # Regression task
   rf_regr = get_rf_regr_mtcars()
   pred_regr = Predictor$new(rf_regr)
-  expect_error(CounterfactualsRegr$new(predictor = pred_regr, lower = NULL, upper = NULL), NA)
+  expect_error(CounterfactualMethodRegr$new(predictor = pred_regr, lower = NULL, upper = NULL), NA)
 
   # Classification task
   rf_classif = get_rf_classif_iris()
   pred_classif = iml::Predictor$new(rf_classif, type = "class", class = "versicolor")
-  expect_error(CounterfactualsRegr$new(predictor = pred_classif, lower = NULL, upper = NULL), "only works for regression")
+  expect_error(CounterfactualMethodRegr$new(predictor = pred_classif, lower = NULL, upper = NULL), "only works for regression")
   
   # The type of the task is inferred using the `inferTaskFromPrediction` from the iml package.
   # The function is called internally when a Predictor object uses the method `predict` if the task is "unkown".
@@ -28,7 +28,7 @@ test_that("$find_counterfactuals returns meaningful error if x_interest does not
   set.seed(54542142)
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
-  cr = CounterfactualsRegr$new(predictor = pred, lower = NULL, upper = NULL)
+  cr = CounterfactualMethodRegr$new(predictor = pred, lower = NULL, upper = NULL)
   
   expect_snapshot_error(cr$find_counterfactuals(iris[1L, ]))
 })
@@ -37,7 +37,7 @@ test_that("x_interest may contain addtional columns to those of predictor$data$X
   set.seed(54542142)
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
-  cr = CounterfactualsRegr$new(predictor = pred, lower = NULL, upper = NULL)
+  cr = CounterfactualMethodRegr$new(predictor = pred, lower = NULL, upper = NULL)
   
   # Expect error due to abstract $run method. But for testing purposes this is sufficient here.
   suppressMessages(expect_error(cr$find_counterfactuals(mtcars[1L, ], c(0, 10))))
@@ -52,7 +52,7 @@ test_that("$find_counterfactuals returns meaningful error if x_interest has unex
   set.seed(54542142)
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
-  cr = CounterfactualsRegr$new(predictor = pred, lower = NULL, upper = NULL)
+  cr = CounterfactualMethodRegr$new(predictor = pred, lower = NULL, upper = NULL)
   
   x_interest = mtcars[1L, ]
   x_interest$disp = as.factor(x_interest$disp)

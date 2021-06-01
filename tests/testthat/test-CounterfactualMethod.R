@@ -2,7 +2,7 @@ library(randomForest)
 
 # $initialize() --------------------------------------------------------------------------------------------------------
 test_that("$initialize() returns error if predictor given does not have the correct class", {
-  expect_snapshot_error(Counterfactuals$new(predictor = "wrong", lower = NULL, upper = NULL))
+  expect_snapshot_error(CounterfactualMethod$new(predictor = "wrong", lower = NULL, upper = NULL))
 })
 
 # $private$plot_surface --------------------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ test_that("$plot_surface() returns error message if `feature_names` are not in d
   rf = randomForest(col_d ~ ., data = train_data)
   mod = Predictor$new(rf, data = train_data, type = "class", class = "b")
   
-  ci = Counterfactuals$new(predictor = mod, lower = NULL, upper = NULL)
+  ci = CounterfactualMethod$new(predictor = mod, lower = NULL, upper = NULL)
   expect_snapshot_error(ci$plot_surface(c("not_in_data", "col_b")))
 })
 
@@ -27,14 +27,14 @@ test_that("$plot_surface() returns error message if `feature_names` are not in d
 test_that("$get_freq_of_feature_changes returns error if there are not results yet.", {
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
-  ci = Counterfactuals$new(predictor = pred, lower = NULL, upper = NULL)
+  ci = CounterfactualMethod$new(predictor = pred, lower = NULL, upper = NULL)
   expect_snapshot_error(ci$get_freq_of_feature_changes())
 })
 
 test_that("$get_freq_of_feature_changes returns correct frequencies", {
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
-  ci = Counterfactuals$new(predictor = pred, lower = NULL, upper = NULL)
+  ci = CounterfactualMethod$new(predictor = pred, lower = NULL, upper = NULL)
   test_diff = data.table(feature_a = 0, feature_b = c("0", "2", "1"), feature_c = c(3L, 1L, 2L))
   x_interest = rep(NA, 3L)
   names(x_interest) = names(test_diff)
@@ -57,7 +57,7 @@ test_that("$plot_freq_of_feature_changes() creates correct plot", {
   skip_on_ci()
   rf = get_rf_regr_mtcars()
   pred = Predictor$new(rf)
-  ci = Counterfactuals$new(predictor = pred, lower = NULL, upper = NULL)
+  ci = CounterfactualMethod$new(predictor = pred, lower = NULL, upper = NULL)
   test_diff = data.table(feature_a = 0, feature_b = c("0", "2", "1"), feature_c = c(3L, 1L, 2L))
   x_interest = rep(NA, 3L)
   names(x_interest) = names(test_diff)

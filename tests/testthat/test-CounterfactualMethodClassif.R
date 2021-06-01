@@ -8,14 +8,14 @@ test_that("Init works for classification tasks only", {
   rf_regr = get_rf_regr_mtcars()
   pred_regr = iml::Predictor$new(rf_regr)
   expect_error(
-    CounterfactualsClassif$new(predictor = pred_regr, lower = NULL, upper = NULL), 
+    CounterfactualMethodClassif$new(predictor = pred_regr, lower = NULL, upper = NULL), 
     "only works for classification"
   )
 
   # Classification task
   rf = get_rf_classif_iris()
   pred_class = iml::Predictor$new(rf, type = "class", class = "versicolor")
-  expect_error(CounterfactualsClassif$new(predictor = pred_class, lower = NULL, upper = NULL), NA)
+  expect_error(CounterfactualMethodClassif$new(predictor = pred_class, lower = NULL, upper = NULL), NA)
 
   # The type of the task is inferred using the `inferTaskFromPrediction` from the iml package.
   # The function is called internally when a Predictor object uses the method `predict` if the task is "unkown".
@@ -30,7 +30,7 @@ test_that("$find_counterfactuals returns meaningful error if x_interest does not
   set.seed(54542142)
   rf = get_rf_classif_iris()
   pred_class = iml::Predictor$new(rf, type = "class", class = "versicolor")
-  cc = CounterfactualsClassif$new(predictor = pred_class, lower = NULL, upper = NULL)
+  cc = CounterfactualMethodClassif$new(predictor = pred_class, lower = NULL, upper = NULL)
   
   expect_snapshot_error(cc$find_counterfactuals(mtcars[1L, ]))
 })
@@ -39,7 +39,7 @@ test_that("x_interest may contain addtional columns to those of predictor$data$X
   set.seed(54542142)
   rf = get_rf_classif_iris()
   pred_class = iml::Predictor$new(rf, type = "class", class = "versicolor")
-  cc = CounterfactualsClassif$new(predictor = pred_class, lower = NULL, upper = NULL)
+  cc = CounterfactualMethodClassif$new(predictor = pred_class, lower = NULL, upper = NULL)
   
   # Expect error due to abstract $run method. But for testing purposes this is sufficient here.
   suppressMessages(expect_error(cc$find_counterfactuals(iris[1L, ])))
@@ -54,7 +54,7 @@ test_that("$find_counterfactuals returns meaningful error if x_interest has unex
   set.seed(54542142)
   rf = get_rf_classif_iris()
   pred_class = iml::Predictor$new(rf, type = "class", class = "versicolor")
-  cc = CounterfactualsClassif$new(predictor = pred_class, lower = NULL, upper = NULL)
+  cc = CounterfactualMethodClassif$new(predictor = pred_class, lower = NULL, upper = NULL)
   
   x_interest = iris[1L, ]
   x_interest$Sepal.Width = as.character(x_interest$Sepal.Width)

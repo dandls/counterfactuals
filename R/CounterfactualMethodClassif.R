@@ -1,5 +1,5 @@
 CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif",
-  inherit = CounterfactualMethod,
+  inherit = Counterfactuals,
   
   public = list(
     
