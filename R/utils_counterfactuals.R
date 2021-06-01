@@ -32,3 +32,11 @@ add_diff_non_numeric_cols = function(dt, x_interest) {
   data.table::set(dt, j = idx_non_numeric, value = diff_char)
   dt
 }
+
+
+count_changes = function(cfactuals, x_interest) {
+  m_cfactuals = as.matrix(cfactuals[, names(x_interest), with = FALSE])
+  m_x_interest = as.matrix(x_interest)
+  n_changes = rowSums(sweep(m_cfactuals, 2L, m_x_interest, FUN = "!="), na.rm = TRUE)
+  as.integer(n_changes)
+}

@@ -26,22 +26,6 @@ CounterfactualMethod = R6::R6Class("CounterfactualMethod",
       # TODO
     },
     
-    plot_surface = function(feature_names, grid_size = 50L, epsilon = NULL) {
-      
-      assert_names(feature_names, subset.of = names(private$predictor$data$X))
-      if (is.null(self$results)) {
-        stop("There are no results for plotting yet. Run `$find_counterfactuals()` first.")
-      }
-      
-      arg_list = list(
-        "feature_names" = feature_names, "grid_size" = grid_size, "epsilon" = epsilon, "results" = self$results,
-        "predictor" = private$predictor, "x_interest" = private$x_interest, "param_set" = private$param_set, 
-        "y_hat_interest" = private$y_hat_interest, pred_column = private$get_pred_column()
-      )
-      surface_plot = SurfacePlot$new(arg_list)
-      surface_plot$plot()
-    },
-    
     print = function() {
       cat("Counterfactual Explanation method: ", class(self)[1], "\n")
       private$print_parameters()

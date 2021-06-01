@@ -1,20 +1,18 @@
 Counterfactuals = R6::R6Class("Counterfactuals",
 
   public = list(
-    initialize = function(cfactuals, prediction.function, x_interest, param_set, desired) {
-      self$values = cfactuals
-      private$prediction.function = prediction.function
-      self$x_interest = x_interest
+    # TODO: Add task and then add private$pred_column 
+    initialize = function(cfactuals, prediction_function, x_interest, param_set, desired, task) {
+      private$prediction_function = prediction_function
       private$param_set = param_set
+      private$task = task
+      self$values = cfactuals
+      self$x_interest = x_interest
       self$desired = desired
     },
     desired = NULL, # list with either one value (desired_outcome) for regression or two values (desired_probs and class) for classif
     values = NULL,
     x_interest = NULL,
-    
-    
-    
-    plot_surface = function() stop("tbd"),
 
     plot_parallel = function() stop("tbd"),
 
@@ -52,16 +50,45 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
       sort(freq, decreasing = TRUE)
     },
-
+    
+    # TODO: Plot for mixed and categorical values only
+    # para, grid_size only used for two numeric features
+    plot_surface = function(feature_names, grid_size = 50L) {
+      assert_names(feature_names, subset.of = names(self$values))
+    
+      if (is.null(private$diff)) {
+        private$diff = make_cfactuals_diff(self$values, self$x_interest)
+      }
+      diff_rel_feats = private$diff[, ..feature_names]
+      n_changes_total = count_changes(self$values, self$x_interest)
+      n_changes_rel_feats = rowSums(diff_rel_feats != 0)
+      has_changes_in_rel_feats_only = (n_changes_rel_feats == n_changes_total)
+      cfactuals_plotted = self$values[which(has_changes_in_rel_feats_only)]
+      
+      plot_ice_curve_area(
+        grid_size, private$param_set, cfactuals_plotted, self$x_interest, private$prediction_function, feature_names, 
+        private$get_pred_column()
+      )
+    },
+    
     evaluate = function() stop("tbd"),
     
-    predict = function() private$prediction.function(self$values)
+    predict = function() private$prediction_function(self$values)
 
   ),
   private = list(
-    prediction.function = NULL,
+    prediction_function = NULL,
     param_set = NULL, # (maybe upper and lower is enough..)
-    diff = NULL
+    diff = NULL,
+    task = NULL, 
+    
+    get_pred_column = function() {
+      if (private$task == "classification") {
+        self$desired$desired_class
+      } else {
+        1L
+      }
+    }
   )
 )
 
