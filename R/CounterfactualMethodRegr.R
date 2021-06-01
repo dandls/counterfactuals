@@ -35,6 +35,7 @@ CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr",
       private$y_hat_interest = as.data.table(private$predictor$predict(x_interest))
       private$desired_outcome = desired_outcome
       private$run()
+      # Counterfactuals$new(...., desired = list(desired_outcome))
     }
   ),
   

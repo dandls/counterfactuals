@@ -1,55 +1,38 @@
-make_param_set = function(dt, lower, upper) {
-  param_list = lapply(names(dt), function(col_name){
-    column = dt[[col_name]]
-    
-    # lower bound
-    if (col_name %in% names(lower)) {
-      lb = lower[[col_name]]
-    } else {
-      lb = ifelse(is.numeric(column), min(column, na.rm = TRUE), NA)
-    }
-    
-    # upper bound
-    if (col_name %in% names(upper)) {
-      ub = upper[[col_name]]
-    } else {
-      ub = ifelse(is.numeric(column), max(column, na.rm = TRUE), NA)
-    }
-    
-    # make param
-    if (is.double(column)) {
-      param = paradox::ParamDbl$new(col_name, lower = lb, upper = ub)
-    } else if (is.integer(column)) {
-      param = paradox::ParamInt$new(col_name, lower = lb, upper = ub)
-    } else {
-      if (is.character(column)) {
-        levels = unique(column)
-      } else {
-        levels = levels(column)
-      }
-      param = paradox::ParamFct$new(col_name, levels = levels)
-    }
-    
-    param
-  })
-
-  paradox::ParamSet$new(param_list)
+make_cfactuals_diff = function(cfactuals, x_interest) {
+  names_x_interest = names(x_interest)
+  diff = comp_cfactuals_diff(cfactuals[, ..names_x_interest], x_interest)
+  cfactuals_diff = data.table::copy(cfactuals)
+  data.table::set(cfactuals_diff, j = names_x_interest, value = diff)
+  cfactuals_diff
 }
 
+comp_cfactuals_diff = function(cfactuals, x_interest) {
+  diff_temp = add_diff_numeric_cols(cfactuals, x_interest)
+  add_diff_non_numeric_cols(diff_temp, x_interest)
+}
 
-# 1D Grid
-equidistant.grid = function(feature, grid_size, integer = FALSE) {
-  if (is.numeric(feature)) {
-    feature = feature[is.finite(feature)]
-    if (!length(feature)) stop("Feature without any finite values")
-    gr <- seq(from = min(feature), to = max(feature), length.out = grid_size)
-    if (integer) {
-      gr <- unique(as.integer(gr))
-    }
-    data.frame(grid = gr)
-  } else {
-    data.frame(grid = unique(feature))
+add_diff_numeric_cols = function(dt, x_interest) {
+  idx_numeric = which(sapply(dt, test_numeric))
+  if (length(idx_numeric) == 0) {
+    return(dt)
   }
+  m_num = as.matrix(dt[, ..idx_numeric])
+  x_interest_num = as.numeric(x_interest[1L , ..idx_numeric])
+  diff_num = data.table::as.data.table(sweep(m_num, 2, x_interest_num))
+  data.table::set(dt, j = idx_numeric, value = diff_num)
+  dt
 }
 
-
+add_diff_non_numeric_cols = function(dt, x_interest) {
+  idx_non_numeric = which(sapply(dt, function(x) !test_numeric(x)))
+  if (length(idx_non_numeric) == 0) {
+    return(dt)
+  }
+  m_char = as.matrix(dt[, ..idx_non_numeric])
+  x_interest_char = as.matrix(x_interest[1L , ..idx_non_numeric])
+  no_diff = sweep(m_char, 2, x_interest_char, FUN = "==")
+  m_char[no_diff] = "0"
+  diff_char = data.table::as.data.table(m_char)
+  data.table::set(dt, j = idx_non_numeric, value = diff_char)
+  dt
+}

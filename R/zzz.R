@@ -2,7 +2,7 @@
 #' @import mosmafs
 #' @import checkmate
 #' @import mosmafs
-#' @import ParamHelpers
+#' @import paradox
 #' @import iml
 #' @import data.table
 NULL

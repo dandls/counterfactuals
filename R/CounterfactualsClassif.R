@@ -49,6 +49,7 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif",
       private$desired_class = desired_class
       private$desired_prob = desired_prob
       private$run()
+      # Counterfactuals$new(...., desired = list(desired_class, desired_probs))
     }
   ),
   
