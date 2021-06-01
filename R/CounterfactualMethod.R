@@ -42,34 +42,6 @@ CounterfactualMethod = R6::R6Class("CounterfactualMethod",
       surface_plot$plot()
     },
     
-    plot_freq_of_feature_changes = function(subset_zero = FALSE) {
-      if (!requireNamespace("ggplot2", quietly = TRUE)) {
-        stop("Package \"ggplot2\" needed for this function to work. Please install it.", call. = FALSE)
-      }
-      
-      freq = self$get_freq_of_feature_changes(subset_zero)
-      df_freq = data.frame(var_name = names(freq), freq = freq)
-      ggplot2::ggplot(df_freq, ggplot2::aes(x = reorder(var_name, -freq), y = freq)) +
-        ggplot2::geom_bar(stat = "identity") +
-        ggplot2::labs(x = ggplot2::element_blank(), y = "Relative frequency")
-    },
-    
-    get_freq_of_feature_changes = function(subset_zero = FALSE) {
-      assert_flag(subset_zero)
-      if (is.null(self$results)) {
-        stop("There are no results for plotting yet. Run `$find_counterfactuals()` first.")
-      }
-
-      diff = self$results$counterfactuals_diff
-      feature_names = names(private$x_interest)
-      diff_features = diff[, feature_names, with = FALSE]
-      freq = colMeans(diff_features != 0, na.rm = TRUE)
-      if (subset_zero) {
-        freq = freq[freq != 0]
-      }
-      sort(freq, decreasing = TRUE)
-    },
-    
     print = function() {
       cat("Counterfactual Explanation method: ", class(self)[1], "\n")
       private$print_parameters()

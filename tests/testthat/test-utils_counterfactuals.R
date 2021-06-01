@@ -1,4 +1,4 @@
-test_that("make_results_list methods returns correct output for mixed cf variable types", {
+test_that("make_cfactuals_diff returns correct output for mixed cf variable types", {
   cfactuals = data.table(
     "col_a" = 1:3, "col_b" = c("a", "b", "b"), "col_c" = as.factor(month.abb)[1:3]
   )
@@ -9,7 +9,7 @@ test_that("make_results_list methods returns correct output for mixed cf variabl
   expect_names(names(cfactuals_diff), identical.to = names(cfactuals))
   expect_identical(diag(as.matrix(cfactuals_diff[, 1:3])), rep("0", 3))
   expect_identical(
-    as.numeric(as.numeric(x_interst[, "col_a"]) + as.matrix(cfactuals_diff[, "col_a"])),
+    as.numeric(as.numeric(x_interest[, "col_a"]) + as.matrix(cfactuals_diff[, "col_a"])),
     as.numeric(as.matrix(cfactuals[, "col_a"]))
   )
 })

@@ -1,14 +1,10 @@
 make_cfactuals_diff = function(cfactuals, x_interest) {
   names_x_interest = names(x_interest)
-  diff = comp_cfactuals_diff(cfactuals[, ..names_x_interest], x_interest)
+  diff_temp = add_diff_numeric_cols(cfactuals[, ..names_x_interest], x_interest)
+  diff = add_diff_non_numeric_cols(diff_temp, x_interest)
   cfactuals_diff = data.table::copy(cfactuals)
   data.table::set(cfactuals_diff, j = names_x_interest, value = diff)
   cfactuals_diff
-}
-
-comp_cfactuals_diff = function(cfactuals, x_interest) {
-  diff_temp = add_diff_numeric_cols(cfactuals, x_interest)
-  add_diff_non_numeric_cols(diff_temp, x_interest)
 }
 
 add_diff_numeric_cols = function(dt, x_interest) {
