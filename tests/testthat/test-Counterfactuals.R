@@ -18,7 +18,7 @@ test_that("$predict method returns correct prediction", {
   ))
   
   cf = Counterfactuals$new(
-    X, mod$prediction.function, x_interest, ps, desired = list(desired_outcome = 67.2), "regression"
+    as.data.table(X), mod$prediction.function, x_interest, ps, desired = list(desired_outcome = 67.2), "regression"
   )
   expect_identical(cf$predict(), mod$prediction.function(X))
 })

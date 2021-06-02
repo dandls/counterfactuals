@@ -13,11 +13,10 @@ test_that("Returns correct output format for mixed columns", {
   wi = WhatIfRegr$new(pred, n_counterfactuals = n)
   x_interest = head(subset(mydf, select = -mpg), 1)
   desired_outcome = c(15, 18)
-  wi$find_counterfactuals(x_interest, desired_outcome)
-  res = wi$results
+  cfactuals = wi$find_counterfactuals(x_interest, desired_outcome)
   
-  expect_data_table(res, nrows = n, col.names = "named", types = sapply(x_interest, class))
-  expect_names(names(res), identical.to = names(x_interest))
+  expect_data_table(cfactuals$data, nrows = n, col.names = "named", types = sapply(x_interest, class))
+  expect_names(names(cfactuals$data), identical.to = names(x_interest))
 })
 
 

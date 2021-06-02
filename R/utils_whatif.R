@@ -1,5 +1,7 @@
-whatif_algo = function(X, param_set, n_cfactuals, x_interest, y_hat, desired_y_hat_range) {
+whatif_algo = function(predictor, param_set, n_cfactuals, x_interest, pred_column, desired_y_hat_range) {
   
+  X = predictor$data$X
+  y_hat = setDT(predictor$predict(X))[[pred_column]]
   X_search = setDT(X)[y_hat %between% desired_y_hat_range]
 
   if (nrow(X_search) < n_cfactuals) {

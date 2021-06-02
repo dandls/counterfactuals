@@ -22,10 +22,6 @@ CounterfactualMethod = R6::R6Class("CounterfactualMethod",
       private$param_set = make_param_set(data_X, lower, upper)
     },
     
-    plot_parallel = function(n_solutions, feature_names) {
-      # TODO
-    },
-    
     print = function() {
       cat("Counterfactual Explanation method: ", class(self)[1], "\n")
       private$print_parameters()
@@ -33,29 +29,13 @@ CounterfactualMethod = R6::R6Class("CounterfactualMethod",
       private$predictor$print()
       cat("\n\nAnalysed data:\n")
       print(private$predictor$data)
-      if (!is.null(private$.results)) {
-      cat("\n\nHead of results:\n")
-        print(head(private$.results))
-      }
-    }
-  ),
-  
-  active = list(
-    results = function(value) {
-      if (missing(value)) {
-        private$.results
-      } else {
-        stop("`$results` is read only", call. = FALSE)
-      }
     }
   ),
   
   private = list(
     predictor = NULL,
     x_interest = NULL,
-    .results = NULL,
     param_set = NULL,
-    y_hat_interest = NULL,
     
     run = function() stop("abstract"),
     

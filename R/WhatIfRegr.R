@@ -1,5 +1,5 @@
-WhatIfRegr = R6::R6Class("WhatIfRegr",
-  inherit = CounterfactualMethodRegr,
+WhatIfRegr = R6::R6Class("WhatIfRegr", inherit = CounterfactualMethodRegr,
+                         
   public = list(
     initialize = function(predictor, n_counterfactuals = 1L, x_interest = NULL, desired_outcome = NULL,
                           lower = NULL, upper = NULL) {
@@ -19,10 +19,8 @@ WhatIfRegr = R6::R6Class("WhatIfRegr",
     
     run = function() {
       pred_column = private$get_pred_column()
-      y_hat = setDT(private$predictor$predict(private$predictor$data$X))[[pred_column]]
-
-      private$.results = whatif_algo(
-        private$predictor$data$X, private$param_set, private$n_counterfactuals, private$x_interest, y_hat,
+      whatif_algo(
+        private$predictor, private$param_set, private$n_counterfactuals, private$x_interest, pred_column,
         private$desired_outcome
       )
     }

@@ -1,5 +1,4 @@
-CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif",
-  inherit = Counterfactuals,
+CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit = CounterfactualMethod,
   
   public = list(
     
@@ -13,7 +12,6 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif",
     
     # For hard classification desired_prob can be set to 0 or 1, respectively.
     find_counterfactuals = function(x_interest, desired_class = NULL, desired_prob = c(0.5, 1)) {
- 
       # Checks x_interest
       assert_data_frame(x_interest, nrows = 1L)
       assert_names(names(x_interest), must.include = names(private$predictor$data$X))
@@ -44,11 +42,19 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif",
       y_hat_interest = as.data.table(private$predictor$predict(x_interest))
       assert_choice(desired_class, names(y_hat_interest))
       
-      private$y_hat_interest = y_hat_interest
       private$x_interest = x_interest
       private$desired_class = desired_class
       private$desired_prob = desired_prob
-      private$run()
+      cfactuals = private$run()
+      
+      Counterfactuals$new(
+        cfactuals = cfactuals, 
+        prediction_function = private$predictor$prediction.function,
+        x_interest = private$x_interest, 
+        param_set = private$param_set,   
+        desired = list("desired_class" = desired_class, "desired_prob" = desired_prob),
+        task = "classification"
+      )
     }
   ),
   
@@ -56,8 +62,7 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif",
     desired_prob = NULL,
     desired_class = NULL,
 
-    get_pred_column = function() {
-      private$desired_class
-    }
+    get_pred_column = function() {private$desired_class}
   )
 )
+

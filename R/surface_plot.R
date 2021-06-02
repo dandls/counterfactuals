@@ -7,6 +7,7 @@ make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest
   y_feat_name = feature_names[2L]
   
   if (param_set_sub$all_numeric) {
+    # TODO: adapt this for hard classification
     p = ggplot2::ggplot(data = dt_grid) +
       ggplot2::geom_contour_filled(ggplot2::aes_string(x = x_feat_name, y = y_feat_name, z = "pred")) +
       ggplot2::geom_point(ggplot2::aes_string(x = x_feat_name, y = y_feat_name), x_interest, colour = "white") +
@@ -24,7 +25,6 @@ make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest
   } else if (param_set_sub$all_categorical) {
     p = ggplot2::ggplot(dt_grid, ggplot2::aes_string(x_feat_name, y_feat_name)) +
       ggplot2::geom_tile(ggplot2::aes_string(fill = "pred")) +
-      
       ggplot2::geom_point(ggplot2::aes_string(x_feat_name, y_feat_name), x_interest, color = "white") +
       ggplot2::guides(fill = ggplot2::guide_legend(title = "pred")) +
       ggplot2::theme_bw()

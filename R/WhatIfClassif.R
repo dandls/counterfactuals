@@ -1,5 +1,4 @@
-WhatIfClassif = R6::R6Class("WhatIfClassif",
-  inherit = CounterfactualMethodClassif,
+WhatIfClassif = R6::R6Class("WhatIfClassif", inherit = CounterfactualMethodClassif,
   
   public = list(
     # TODO: for hard classification set desired_prob to 0 or 1
@@ -21,10 +20,8 @@ WhatIfClassif = R6::R6Class("WhatIfClassif",
     
     run = function() {
       pred_column = private$get_pred_column()
-      y_hat = setDT(private$predictor$predict(private$predictor$data$X))[[pred_column]]
-      
-      private$.results = whatif_algo(
-        private$predictor$data$X, private$param_set, private$n_counterfactuals, private$x_interest, y_hat, 
+      whatif_algo(
+        private$predictor, private$param_set, private$n_counterfactuals, private$x_interest, pred_column, 
         private$desired_prob
       )
     }

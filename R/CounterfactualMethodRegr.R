@@ -1,5 +1,4 @@
-CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr",
-  inherit = CounterfactualMethod,
+CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = CounterfactualMethod,
   
   public = list(
     
@@ -32,18 +31,22 @@ CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr",
       }
       
       private$x_interest = x_interest
-      private$y_hat_interest = as.data.table(private$predictor$predict(x_interest))
       private$desired_outcome = desired_outcome
-      private$run()
-      # Counterfactuals$new(...., desired = list(desired_outcome))
+      cfactuals = private$run()
+      Counterfactuals$new(
+        cfactuals = cfactuals, 
+        prediction_function = private$predictor$prediction.function,
+        x_interest = private$x_interest, 
+        param_set = private$param_set,   
+        desired = list("desired_outcome" = desired_outcome),
+        task = "regression"
+      )
     }
   ),
   
   private = list(
     desired_outcome = NULL,
  
-    get_pred_column = function() {
-      names(private$y_hat_interest)[[1L]]
-    }
+    get_pred_column = function() {1L}
   )
 )
