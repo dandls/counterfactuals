@@ -27,7 +27,6 @@ Suggests:
     randomForest,
     GGally,
     ggExtra,
-    metR,
     mlt,
     gower,
     glmnet,

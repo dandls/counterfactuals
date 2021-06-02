@@ -79,7 +79,7 @@ test_that("$plot_freq_of_feature_changes() creates correct plot", {
 
 
 # $plot_surface() ---------------------------------------------------------------------------------------
-test_that("plot_surface creates correct plot", {
+test_that("plot_surface creates correct plot for numerical features", {
   skip_on_ci()
   set.seed(45748)
   dt = data.table(
@@ -105,3 +105,62 @@ test_that("plot_surface creates correct plot", {
     "plot_surface_all_numeric.png"
   )
 })
+
+test_that("plot_surface creates correct plot for categorical features", {
+  skip_on_ci()
+  set.seed(45748)
+  dt = data.table(
+    var_1 = rep(c(1.5, 1.7)), 
+    var_2 = as.factor(sample(c("a", "b", "c"), 5L, replace = TRUE)),
+    var_3 = as.factor(sample(c("d", "e", "f"), 5L, replace = TRUE)), 
+    var_4 = rnorm(10L, mean = 50, sd = 10)
+  )
+  X = dt[, 1:3]
+  x_interest = X[1L, ]
+  rf = randomForest(var_4 ~ ., data = dt)
+  mod = Predictor$new(rf, data = X)
+  ps = ParamSet$new(list(
+    var_1 = ParamDbl$new(id = "var_1", lower = -5, upper = 5),
+    var_2 = ParamFct$new(id = "var_2", levels = levels(dt$var_2)),
+    var_3 = ParamFct$new(id = "var_3", levels = levels(dt$var_3))
+  ))
+  
+  cf = Counterfactuals$new(
+    as.data.table(X), mod$prediction.function, x_interest, ps, desired = list(desired_outcome = 67.2), "regression"
+  )
+  
+  expect_snapshot_file(
+    save_test_png(cf$plot_surface(c("var_2", "var_3"))), 
+    "plot_surface_all_cat.png"
+  )
+})
+
+test_that("plot_surface creates correct plot for mixed features", {
+  skip_on_ci()
+  set.seed(45748)
+  dt = data.table(
+    var_1 = rnorm(10L),
+    var_2 = as.factor(sample(c("a", "b", "c"), 5L, replace = TRUE)),
+    var_3 = as.factor(sample(c("d", "e", "f"), 5L, replace = TRUE)),
+    var_4 = rnorm(10L, mean = 50, sd = 10)
+  )
+  X = dt[, 1:3]
+  x_interest = X[1L, ]
+  rf = randomForest(var_4 ~ ., data = dt)
+  mod = Predictor$new(rf, data = X)
+  ps = ParamSet$new(list(
+    var_1 = ParamDbl$new(id = "var_1", lower = -5, upper = 5),
+    var_2 = ParamFct$new(id = "var_2", levels = levels(dt$var_2)),
+    var_3 = ParamFct$new(id = "var_3", levels = levels(dt$var_3))
+  ))
+
+  cf = Counterfactuals$new(
+    as.data.table(X), mod$prediction.function, x_interest, ps, desired = list(desired_outcome = 67.2), "regression"
+  )
+
+  expect_snapshot_file(
+    save_test_png(cf$plot_surface(c("var_1", "var_3"))),
+    "plot_surface_mixed.png"
+  )
+})
+

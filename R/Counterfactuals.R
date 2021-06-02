@@ -51,11 +51,10 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       sort(freq, decreasing = TRUE)
     },
     
-    # TODO: Plot for mixed and categorical values only
-    # para, grid_size only used for two numeric features
+
+    # para, grid_size not used for two categorical features
     plot_surface = function(feature_names, grid_size = 50L) {
       assert_names(feature_names, subset.of = names(self$values))
-    
       if (is.null(private$diff)) {
         private$diff = make_cfactuals_diff(self$values, self$x_interest)
       }
@@ -65,7 +64,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       has_changes_in_rel_feats_only = (n_changes_rel_feats == n_changes_total)
       cfactuals_plotted = self$values[which(has_changes_in_rel_feats_only)]
       
-      plot_ice_curve_area(
+      make_surface_plot(
         grid_size, private$param_set, cfactuals_plotted, self$x_interest, private$prediction_function, feature_names, 
         private$get_pred_column()
       )
