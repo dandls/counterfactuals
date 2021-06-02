@@ -1,3 +1,4 @@
+#' @export
 WhatIfRegr = R6::R6Class("WhatIfRegr", inherit = CounterfactualMethodRegr,
                          
   public = list(

@@ -1,3 +1,4 @@
+#' @export
 WhatIfClassif = R6::R6Class("WhatIfClassif", inherit = CounterfactualMethodClassif,
   
   public = list(
