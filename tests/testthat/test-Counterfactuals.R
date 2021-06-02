@@ -2,75 +2,22 @@ library(randomForest)
 
 # $predict() -----------------------------------------------------------------------------------------------------------
 test_that("$predict method returns correct prediction", {
-  set.seed(45748)
-  dt = data.table(
-    var_1 = rnorm(10L), var_2 = rbinom(10L, 5L, 0.5), var_3 = as.factor(rbinom(10L, 2L, 0.2)), 
-    var_4 = rnorm(10L, mean = 50, sd = 10)
-  )
-  X = dt[, 1:3]
-  x_interest = X[1L, ]
-  rf = randomForest(var_4 ~ ., data = dt)
-  mod = Predictor$new(rf, data = X)
-  ps = ParamSet$new(list(
-    var_1 = ParamDbl$new(id = "var_1", lower = -5, upper = 5),
-    var_2 = ParamInt$new(id = "var_2", lower = 0, upper = 5),
-    var_3 = ParamFct$new(id = "var_3", levels = levels(dt$var_3))
-  ))
-  
-  cf = Counterfactuals$new(
-    as.data.table(X), mod$prediction.function, x_interest, ps, desired = list(desired_outcome = 67.2), "regression"
-  )
-  expect_identical(cf$predict(), mod$prediction.function(X))
+  cf = make_counterfactual_test_obj()
+  expect_identical(cf$predict(), cf$.__enclos_env__$private$prediction_function(cf$data))
 })
 
 # $get_freq_of_feature_changes() ---------------------------------------------------------------------------------------
 test_that("$get_freq_of_feature_changes returns correct frequencies", {
-  set.seed(45748)
-  dt = data.table(
-    var_1 = rnorm(10L), var_2 = rbinom(10L, 5L, 0.5), var_3 = as.factor(rbinom(10L, 2L, 0.2)), 
-    var_4 = rnorm(10L, mean = 50, sd = 10)
-  )
-  X = dt[, 1:3]
-  x_interest = X[1L, ]
-  rf = randomForest(var_4 ~ ., data = dt)
-  mod = Predictor$new(rf, data = X)
-  ps = ParamSet$new(list(
-    var_1 = ParamDbl$new(id = "var_1", lower = -5, upper = 5),
-    var_2 = ParamInt$new(id = "var_2", lower = 0, upper = 5),
-    var_3 = ParamFct$new(id = "var_3", levels = levels(dt$var_3))
-  ))
-  
-  cf = Counterfactuals$new(
-    as.data.table(X), mod$prediction.function, x_interest, ps, desired = list(desired_outcome = 67.2), "regression"
-  )
+  cf = make_counterfactual_test_obj()
   freq = cf$get_freq_of_feature_changes()
-  expect_equal(freq[["var_1"]], 1 - mean(x_interest[["var_1"]] == dt[["var_1"]]))
-  expect_equal(freq[["var_2"]], 1 - mean(x_interest[["var_2"]] == dt[["var_2"]]))
-  expect_equal(freq[["var_3"]], 1 - mean(x_interest[["var_3"]] == dt[["var_3"]]))
+  expect_equal(freq[["var_num_1"]], 1 - mean(cf$x_interest[["var_num_1"]] == cf$data[["var_num_1"]]))
+  expect_equal(freq[["var_fact_1"]], 1 - mean(cf$x_interest[["var_fact_1"]] == cf$data[["var_fact_1"]]))
 })
 
 # $plot_freq_of_feature_changes() ---------------------------------------------------------------------------------------
 test_that("$plot_freq_of_feature_changes() creates correct plot", {
   skip_on_ci()
-  set.seed(45748)
-  dt = data.table(
-    var_1 = rnorm(10L), var_2 = rbinom(10L, 5L, 0.5), var_3 = as.factor(rbinom(10L, 2L, 0.2)), 
-    var_4 = rnorm(10L, mean = 50, sd = 10)
-  )
-  X = dt[, 1:3]
-  x_interest = X[1L, ]
-  rf = randomForest(var_4 ~ ., data = dt)
-  mod = Predictor$new(rf, data = X)
-  ps = ParamSet$new(list(
-    var_1 = ParamDbl$new(id = "var_1", lower = -5, upper = 5),
-    var_2 = ParamInt$new(id = "var_2", lower = 0, upper = 5),
-    var_3 = ParamFct$new(id = "var_3", levels = levels(dt$var_3))
-  ))
-  
-  cf = Counterfactuals$new(
-    as.data.table(X), mod$prediction.function, x_interest, ps, desired = list(desired_outcome = 67.2), "regression"
-  )
-  
+  cf = make_counterfactual_test_obj()
   expect_snapshot_file(
     save_test_png(cf$plot_freq_of_feature_changes()), 
     "plot_freq_of_feature_changes_zero.png"
@@ -78,89 +25,60 @@ test_that("$plot_freq_of_feature_changes() creates correct plot", {
 })
 
 
-# $plot_surface() ---------------------------------------------------------------------------------------
+# $plot_surface() ------------------------------------------------------------------------------------------------------
 test_that("plot_surface creates correct plot for numerical features", {
   skip_on_ci()
-  set.seed(45748)
-  dt = data.table(
-    var_1 = rnorm(10L), var_2 = rbinom(10L, 5L, 0.5), var_3 = as.factor(rbinom(10L, 2L, 0.2)), 
-    var_4 = rnorm(10L, mean = 50, sd = 10)
-  )
-  X = dt[, 1:3]
-  x_interest = X[1L, ]
-  rf = randomForest(var_4 ~ ., data = dt)
-  mod = Predictor$new(rf, data = X)
-  ps = ParamSet$new(list(
-    var_1 = ParamDbl$new(id = "var_1", lower = -5, upper = 5),
-    var_2 = ParamInt$new(id = "var_2", lower = 0, upper = 5),
-    var_3 = ParamFct$new(id = "var_3", levels = levels(dt$var_3))
-  ))
-  
-  cf = Counterfactuals$new(
-    as.data.table(X), mod$prediction.function, x_interest, ps, desired = list(desired_outcome = 67.2), "regression"
-  )
-  
+  cf = make_counterfactual_test_obj()
   expect_snapshot_file(
-    save_test_png(cf$plot_surface(names(x_interest)[1:2])), 
+    save_test_png(cf$plot_surface(c("var_num_1", "var_num_2"))), 
     "plot_surface_all_numeric.png"
   )
 })
 
 test_that("plot_surface creates correct plot for categorical features", {
   skip_on_ci()
-  set.seed(45748)
-  dt = data.table(
-    var_1 = rep(c(1.5, 1.7)), 
-    var_2 = as.factor(sample(c("a", "b", "c"), 5L, replace = TRUE)),
-    var_3 = as.factor(sample(c("d", "e", "f"), 5L, replace = TRUE)), 
-    var_4 = rnorm(10L, mean = 50, sd = 10)
-  )
-  X = dt[, 1:3]
-  x_interest = X[1L, ]
-  rf = randomForest(var_4 ~ ., data = dt)
-  mod = Predictor$new(rf, data = X)
-  ps = ParamSet$new(list(
-    var_1 = ParamDbl$new(id = "var_1", lower = -5, upper = 5),
-    var_2 = ParamFct$new(id = "var_2", levels = levels(dt$var_2)),
-    var_3 = ParamFct$new(id = "var_3", levels = levels(dt$var_3))
-  ))
-  
-  cf = Counterfactuals$new(
-    as.data.table(X), mod$prediction.function, x_interest, ps, desired = list(desired_outcome = 67.2), "regression"
-  )
-  
+  cf = make_counterfactual_test_obj()
   expect_snapshot_file(
-    save_test_png(cf$plot_surface(c("var_2", "var_3"))), 
+    save_test_png(cf$plot_surface(c("var_fact_1", "var_fact_2"))), 
     "plot_surface_all_cat.png"
   )
 })
 
 test_that("plot_surface creates correct plot for mixed features", {
   skip_on_ci()
-  set.seed(45748)
-  dt = data.table(
-    var_1 = rnorm(10L),
-    var_2 = as.factor(sample(c("a", "b", "c"), 5L, replace = TRUE)),
-    var_3 = as.factor(sample(c("d", "e", "f"), 5L, replace = TRUE)),
-    var_4 = rnorm(10L, mean = 50, sd = 10)
-  )
-  X = dt[, 1:3]
-  x_interest = X[1L, ]
-  rf = randomForest(var_4 ~ ., data = dt)
-  mod = Predictor$new(rf, data = X)
-  ps = ParamSet$new(list(
-    var_1 = ParamDbl$new(id = "var_1", lower = -5, upper = 5),
-    var_2 = ParamFct$new(id = "var_2", levels = levels(dt$var_2)),
-    var_3 = ParamFct$new(id = "var_3", levels = levels(dt$var_3))
-  ))
-
-  cf = Counterfactuals$new(
-    as.data.table(X), mod$prediction.function, x_interest, ps, desired = list(desired_outcome = 67.2), "regression"
-  )
-
+  cf = make_counterfactual_test_obj()
   expect_snapshot_file(
-    save_test_png(cf$plot_surface(c("var_1", "var_3"))),
+    save_test_png(cf$plot_surface(c("var_num_1", "var_fact_1"))),
     "plot_surface_mixed.png"
   )
 })
+
+
+# $evaluate() ----------------------------------------------------------------------------------------------------------
+test_that("evaluate returns error if measures are not known", {
+  skip_on_ci()
+  cf = make_counterfactual_test_obj()
+  expect_snapshot_error(cf$evaluate(c("wrong_measure")))
+})
+
+
+test_that("evaluate returns correct results", {
+  skip_on_ci()
+  cf = make_counterfactual_test_obj()
+  
+  cf_eval = cf$evaluate()
+  expect_data_table(cf_eval, nrows = nrow(cf$data), ncols = ncol(cf$data) + 3L)
+  expect_identical(cf_eval$nr_changed, count_changes(cf$data, cf$x_interest))
+  expect_identical(
+    cf_eval$dist_target, 
+    cf$desired$desired_outcome - cf$.__enclos_env__$private$prediction_function(cf$data)[[1L]]
+  )
+  ps = cf$.__enclos_env__$private$param_set
+  expect_identical(
+    cf_eval$dist_x_interest, 
+    as.vector(StatMatch::gower.dist(cf$data, cf$x_interest, rngs = ps$upper - ps$lower))
+  )
+})
+
+
 

@@ -61,7 +61,37 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       )
     },
     
-    evaluate = function() stop("tbd"),
+    evaluate = function(measures = c("dist_x_interest", "dist_target", "nr_changed")) {
+      assert_character(measures)
+      assert_names(measures, subset.of = c("dist_x_interest", "dist_target", "nr_changed"))
+      evals = self$data
+      
+      if ("dist_x_interest" %in% measures) {
+        ranges = private$param_set$upper - private$param_set$lower 
+        X_list = split(self$data, seq(nrow(self$data)))
+        dist_vector = future.apply::future_vapply(
+          X_list, StatMatch::gower.dist, FUN.VALUE = numeric(1L), self$x_interest, ranges, USE.NAMES = FALSE
+        )
+        evals$dist_x_interest = dist_vector
+      }
+      
+      if ("dist_target" %in% measures) {
+        pred_column = private$get_pred_column()
+        pred = as.matrix(self$predict()[[pred_column]])
+        if (private$task == "classification") {
+          target = self$desired$desired_prob
+        } else {
+          target = self$desired$desired_outcome
+        }
+        evals$dist_target = apply(pred, 1L, function(x) min(abs(x - target)))
+      }
+      
+      if ("nr_changed" %in% measures) {
+        evals$nr_changed = count_changes(self$data, self$x_interest)
+      }
+      
+      evals
+    },
     
     predict = function() private$prediction_function(self$data)
 
