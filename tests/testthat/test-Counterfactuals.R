@@ -38,6 +38,7 @@ test_that("plot_surface creates correct plot for numerical features", {
 test_that("plot_surface creates correct plot for categorical features", {
   skip_on_ci()
   cf = make_counterfactual_test_obj()
+  set.seed(4574541)
   expect_snapshot_file(
     save_test_png(cf$plot_surface(c("var_fact_1", "var_fact_2"))), 
     "plot_surface_all_cat.png"

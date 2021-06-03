@@ -7,7 +7,7 @@ whatif_algo = function(predictor, param_set, n_cfactuals, x_interest, pred_colum
   if (nrow(X_search) < n_cfactuals) {
     warning(sprintf("Could only find %s counterfactual(s)", nrow(X_search)))
   }
-  if (nrow(X_search) == 0) {
+  if (nrow(X_search) == 0L) {
     return(X_search)
   }
   

@@ -1,38 +1,32 @@
 make_cfactuals_diff = function(cfactuals, x_interest) {
-  names_x_interest = names(x_interest)
-  diff_temp = add_diff_numeric_cols(cfactuals[, ..names_x_interest], x_interest)
-  diff = add_diff_non_numeric_cols(diff_temp, x_interest)
-  cfactuals_diff = data.table::copy(cfactuals)
-  data.table::set(cfactuals_diff, j = names_x_interest, value = diff)
+  cfactuals_diff = as.data.table(matrix(nrow = nrow(cfactuals), ncol = ncol(cfactuals)))
+  setnames(cfactuals_diff, old = names(cfactuals_diff), new = names(cfactuals))
+  if (nrow(cfactuals_diff) == 0) {
+    return(cfactuals_diff)
+  }
+  
+  is_numeric_col = sapply(cfactuals, test_numeric)
+  idx_numeric = which(is_numeric_col)
+  idx_non_numeric = which(!is_numeric_col)
+  
+  if (length(idx_numeric) > 0) {
+    m_num = as.matrix(cfactuals[, ..idx_numeric])
+    x_interest_num = as.numeric(x_interest[1L , ..idx_numeric])
+    diff_num = data.table::as.data.table(sweep(m_num, 2, x_interest_num))
+    data.table::set(cfactuals_diff, j = idx_numeric, value = diff_num)
+  }
+  
+  if (length(idx_non_numeric) > 0) {
+    m_char = as.matrix(cfactuals[, ..idx_non_numeric])
+    x_interest_char = as.matrix(x_interest[1L , ..idx_non_numeric])
+    no_diff = sweep(m_char, 2, x_interest_char, FUN = "==")
+    m_char[no_diff] = "0"
+    diff_char = data.table::as.data.table(m_char)
+    data.table::set(cfactuals_diff, j = idx_non_numeric, value = diff_char)
+  }
+  
   cfactuals_diff
 }
-
-add_diff_numeric_cols = function(dt, x_interest) {
-  idx_numeric = which(sapply(dt, test_numeric))
-  if (length(idx_numeric) == 0) {
-    return(dt)
-  }
-  m_num = as.matrix(dt[, ..idx_numeric])
-  x_interest_num = as.numeric(x_interest[1L , ..idx_numeric])
-  diff_num = data.table::as.data.table(sweep(m_num, 2, x_interest_num))
-  data.table::set(dt, j = idx_numeric, value = diff_num)
-  dt
-}
-
-add_diff_non_numeric_cols = function(dt, x_interest) {
-  idx_non_numeric = which(sapply(dt, function(x) !test_numeric(x)))
-  if (length(idx_non_numeric) == 0) {
-    return(dt)
-  }
-  m_char = as.matrix(dt[, ..idx_non_numeric])
-  x_interest_char = as.matrix(x_interest[1L , ..idx_non_numeric])
-  no_diff = sweep(m_char, 2, x_interest_char, FUN = "==")
-  m_char[no_diff] = "0"
-  diff_char = data.table::as.data.table(m_char)
-  data.table::set(dt, j = idx_non_numeric, value = diff_char)
-  dt
-}
-
 
 count_changes = function(cfactuals, x_interest) {
   m_cfactuals = as.matrix(cfactuals[, names(x_interest), with = FALSE])

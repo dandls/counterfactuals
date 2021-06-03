@@ -5,8 +5,7 @@ CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = Cou
     initialize = function(predictor, lower, upper) {
       super$initialize(predictor, lower, upper)
       if (private$predictor$task != "regression") {
-        err_msg = sprintf("This class only works for regression tasks.")
-        stop(err_msg)
+        stop(sprintf("%s only works for regression tasks.", class(self)[1]))
       }
     },
     
@@ -19,7 +18,9 @@ CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = Cou
       if (any(sapply(x_interest, typeof) != sapply(private$predictor$data$X, typeof))) {
         stop("Columns that appear in `x_interest` and `predictor$data$X` must have the same types.")
       }
-      private$param_set$check_dt(x_interest)
+      # TODO: Custom error message (adopt upper and lower)
+      # Assertion on 'x_interest' failed: cyl: Must be element of set {'4','6','8'}, but types do not match (factor != character).
+      # private$param_set$assert_dt(x_interest)
       
       # Checks desired_outcome
       assert_numeric(desired_outcome, any.missing = FALSE, min.len = 1L,  max.len = 2L)

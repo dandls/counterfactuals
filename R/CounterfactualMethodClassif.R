@@ -5,8 +5,7 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit
     initialize = function(predictor, lower, upper) {
       super$initialize(predictor, lower, upper)
       if (private$predictor$task != "classification") {
-        err_msg = sprintf("This class only works for classification tasks.")
-        stop(err_msg)
+        stop(sprintf("%s only works for classification tasks.", class(self)[1]))
       }
     },
     
@@ -19,7 +18,9 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit
       if (any(sapply(x_interest, typeof) != sapply(private$predictor$data$X, typeof))) {
         stop("Columns that appear in `x_interest` and `predictor$data$X` must have the same types.")
       }
-      private$param_set$check_dt(x_interest)
+      # TODO: Custom error message (adopt upper and lower); also problem with factors:
+      # Assertion on 'x_interest' failed: cyl: Must be element of set {'4','6','8'}, but types do not match (factor != character).
+      # private$param_set$assert_dt(x_interest)
       
       # Checks desired_prob
       assert_numeric(desired_prob, any.missing = FALSE, min.len = 1L,  max.len = 2L, lower = 0, upper = 1)
@@ -27,7 +28,7 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit
         desired_prob = c(desired_prob, desired_prob)
       }
       if (desired_prob[2L] < desired_prob[1L]) {
-        stop("The lower bound of `desired_prob` cannot be higher than the upper bound.")
+        stop("The lower bound of `desired_prob` cannot be greater than the upper bound.")
       }
       
       # Checks desired_class
@@ -40,7 +41,7 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit
       }
       assert_character(desired_class, len = 1L, any.missing = FALSE)
       y_hat_interest = as.data.table(private$predictor$predict(x_interest))
-      assert_choice(desired_class, names(y_hat_interest))
+      assert_choice(desired_class, choices = names(y_hat_interest))
       
       private$x_interest = x_interest
       private$desired_class = desired_class
