@@ -18,9 +18,12 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit
       if (any(sapply(x_interest, typeof) != sapply(private$predictor$data$X, typeof))) {
         stop("Columns that appear in `x_interest` and `predictor$data$X` must have the same types.")
       }
-      # TODO: Custom error message (adopt upper and lower); also problem with factors:
-      # Assertion on 'x_interest' failed: cyl: Must be element of set {'4','6','8'}, but types do not match (factor != character).
-      # private$param_set$assert_dt(x_interest)
+      temp = copy(x_interest)
+      factor_cols = names(temp)[sapply(temp, is.factor)]
+      if (length(factor_cols) > 0) {
+        temp[, (factor_cols) := lapply(.SD, as.character), .SDcols = factor_cols]
+      }
+      private$param_set$assert_dt(temp)
       
       # Checks desired_prob
       assert_numeric(desired_prob, any.missing = FALSE, min.len = 1L,  max.len = 2L, lower = 0, upper = 1)
