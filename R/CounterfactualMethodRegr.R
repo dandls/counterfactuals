@@ -28,7 +28,7 @@ CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = Cou
         desired_outcome = c(desired_outcome, desired_outcome)
       }
       if (desired_outcome[2L] < desired_outcome[1L]) {
-        stop("The lower bound of `desired_outcome` cannot be higher than the upper bound.")
+        stop("The lower bound of `desired_outcome` cannot be greater than the upper bound.")
       }
       
       private$x_interest = x_interest

@@ -40,8 +40,7 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit
         message(sprintf("The `desired_class` was set to `predictor$class` which is %s.", desired_class))
       }
       assert_character(desired_class, len = 1L, any.missing = FALSE)
-      y_hat_interest = as.data.table(private$predictor$predict(x_interest))
-      assert_choice(desired_class, choices = names(y_hat_interest))
+      assert_choice(desired_class, choices = names(private$predictor$predict(x_interest)))
       
       private$x_interest = x_interest
       private$desired_class = desired_class
