@@ -54,9 +54,7 @@ make_counterfactual_test_obj = function() {
       var_fact_2 = ParamFct$new(id = "var_fact_2", levels = levels(dt$var_fact_2))
     ))
     
-    cf = Counterfactuals$new(
-      as.data.table(X), mod$prediction.function, x_interest, ps, desired = list(desired_outcome = c(42, 44)), "regression"
-    )
+    cf = Counterfactuals$new(as.data.table(X), mod, x_interest, ps, desired = list(desired_outcome = c(42, 44)))
     saveRDS(cf, file = file_path) 
   }
   readRDS(file_path)

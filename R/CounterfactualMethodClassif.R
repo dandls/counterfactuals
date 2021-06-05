@@ -52,11 +52,10 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit
       
       Counterfactuals$new(
         cfactuals = cfactuals, 
-        prediction_function = private$predictor$prediction.function,
+        predictor = private$predictor,
         x_interest = private$x_interest, 
         param_set = private$param_set,   
-        desired = list("desired_class" = desired_class, "desired_prob" = desired_prob),
-        task = "classification"
+        desired = list("desired_class" = desired_class, "desired_prob" = desired_prob)
       )
     }
   ),

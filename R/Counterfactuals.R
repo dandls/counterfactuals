@@ -2,18 +2,16 @@ Counterfactuals = R6::R6Class("Counterfactuals",
 
   public = list(
     
-    initialize = function(cfactuals, prediction_function, x_interest, param_set, desired, task) {
+    initialize = function(cfactuals, predictor, x_interest, param_set, desired) {
       assert_data_table(cfactuals)
-      assert_function(prediction_function)
+      assert_class(predictor, "Predictor")
       assert_data_table(x_interest, nrows = 1L)
       assert_true(ncol(cfactuals) == ncol(x_interest))
       assert_class(param_set, "ParamSet")
       assert_list(desired, min.len = 1L, max.len = 2L)
-      assert_choice(task, choices = c("regression", "classification"))
       
-      private$prediction_function = prediction_function
+      private$predictor = predictor
       private$param_set = param_set
-      private$task = task
       private$diff = make_cfactuals_diff(cfactuals, x_interest)
       private$.data = cfactuals
       private$.x_interest = x_interest
@@ -39,7 +37,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       if ("dist_target" %in% measures) {
         pred_column = private$get_pred_column()
         pred = as.matrix(self$predict()[[pred_column]])
-        if (private$task == "classification") {
+        if (private$predictor$task == "classification") {
           target = private$.desired$desired_prob
         } else {
           target = private$.desired$desired_outcome
@@ -57,7 +55,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     },
     
     predict = function() {
-      private$prediction_function(private$.data) 
+      private$predictor$predict(private$.data) 
     },
     
     plot_parallel = function(n_solutions, feature_names) {
@@ -97,15 +95,15 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         stop("Package 'ggExtra' needed for this function to work. Please install it.", call. = FALSE)
       }
       assert_names(feature_names, subset.of = names(private$.data))
-      
+
       diff_rel_feats = private$diff[, ..feature_names]
       n_changes_total = count_changes(private$.data, private$.x_interest)
       n_changes_rel_feats = rowSums(diff_rel_feats != 0)
       has_changes_in_rel_feats_only = (n_changes_rel_feats == n_changes_total)
       cfactuals_plotted = private$.data[which(has_changes_in_rel_feats_only)]
-      
+ 
       make_surface_plot(
-        grid_size, private$param_set, cfactuals_plotted, private$.x_interest, private$prediction_function, feature_names, 
+        grid_size, private$param_set, cfactuals_plotted, private$.x_interest, private$predictor, feature_names, 
         private$get_pred_column()
       )
     }
@@ -135,7 +133,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     }
   ),
   private = list(
-    prediction_function = NULL,
+    predictor = NULL,
     param_set = NULL,
     diff = NULL,
     task = NULL, 
@@ -144,7 +142,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     .x_interest = NULL,
     
     get_pred_column = function() {
-      if (private$task == "classification") {
+      if (private$predictor$task == "classification") {
         private$.desired$desired_class
       } else {
         1L

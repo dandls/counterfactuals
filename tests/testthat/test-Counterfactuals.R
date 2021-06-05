@@ -3,7 +3,7 @@ library(randomForest)
 # $predict() -----------------------------------------------------------------------------------------------------------
 test_that("$predict method returns correct prediction", {
   cf = make_counterfactual_test_obj()
-  expect_identical(cf$predict(), cf$.__enclos_env__$private$prediction_function(cf$data))
+  expect_identical(cf$predict(), cf$.__enclos_env__$private$predictor$predict(cf$data))
 })
 
 # $get_freq_of_feature_changes() ---------------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ test_that("evaluate returns error if measures are not known", {
 test_that("evaluate returns correct results", {
   skip_on_ci()
   cf = make_counterfactual_test_obj()
-  
+
   cf_eval = cf$evaluate()
   expect_data_table(cf_eval, nrows = nrow(cf$data), ncols = ncol(cf$data) + 3L)
   expect_identical(cf_eval$nr_changed, count_changes(cf$data, cf$x_interest))

@@ -1,8 +1,8 @@
-make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest, prediction_function, feature_names,
+make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest, predictor, feature_names, 
                              pred_column) {
   
   param_set_sub = param_set$clone()$subset(feature_names)
-  dt_grid = make_ice_curve_area(prediction_function, x_interest, grid_size, param_set_sub, pred_column)
+  dt_grid = make_ice_curve_area(predictor, x_interest, grid_size, param_set_sub, pred_column)
   x_feat_name = feature_names[1L]
   y_feat_name = feature_names[2L]
   
@@ -37,8 +37,8 @@ make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest
   } else {
     cat_feature = feature_names[param_set_sub$is_categ]
     num_feature = setdiff(feature_names[1:2], cat_feature)
-    cfactuals_plotted$pred = prediction_function(cfactuals_plotted)[[pred_column]]
-    y_hat_interest = prediction_function(x_interest)
+    cfactuals_plotted$pred = predictor$predict(cfactuals_plotted)[[pred_column]]
+    y_hat_interest = predictor$predict(x_interest)
     x_interest_with_pred = cbind(x_interest, pred = y_hat_interest[[pred_column]])
     
     p = ggplot2::ggplot() +
@@ -61,7 +61,7 @@ make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest
 }
 
 
-make_ice_curve_area = function(prediction_function, x_interest, grid_size, ps, pred_column) {
+make_ice_curve_area = function(predictor, x_interest, grid_size, ps, pred_column) {
   exp_grid = generate_design_grid(ps, grid_size)$data
   feat1_name = names(ps$class)[1L]
   if (is.factor(x_interest[[feat1_name]])) {
@@ -76,6 +76,6 @@ make_ice_curve_area = function(prediction_function, x_interest, grid_size, ps, p
   instance_dt = x_interest_sub[rep(1:nrow(x_interest_sub), nrow(exp_grid))]
   
   grid_df = cbind(instance_dt, exp_grid)
-  pred = prediction_function(grid_df)[[pred_column]]
+  pred = predictor$predict(grid_df)[[pred_column]]
   cbind(grid_df, pred)
 }

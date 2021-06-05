@@ -39,11 +39,10 @@ CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = Cou
       cfactuals = private$run()
       Counterfactuals$new(
         cfactuals = cfactuals, 
-        prediction_function = private$predictor$prediction.function,
+        predictor = private$predictor,
         x_interest = private$x_interest, 
         param_set = private$param_set,   
-        desired = list("desired_outcome" = desired_outcome),
-        task = "regression"
+        desired = list("desired_outcome" = desired_outcome)
       )
     }
   ),
