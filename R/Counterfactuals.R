@@ -44,7 +44,9 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         } else {
           target = private$.desired$desired_outcome
         }
-        evals$dist_target = apply(pred, 1L, function(x) min(abs(x - target)))
+        evals$dist_target = apply(
+          pred, 1L, function(x) ifelse(between(x, target[1L], target[2L]), 0, min(abs(x - target)))
+        )
       }
       
       if ("nr_changed" %in% measures) {
