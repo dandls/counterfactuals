@@ -22,8 +22,11 @@ WhatIfClassif = R6::R6Class("WhatIfClassif", inherit = CounterfactualMethodClass
     run = function() {
       pred_column = private$get_pred_column()
       whatif_algo(
-        private$predictor, private$param_set, private$n_counterfactuals, private$x_interest, pred_column, 
-        private$desired_prob
+        predictor = private$predictor, 
+        n_cfactuals = private$n_counterfactuals, 
+        x_interest = private$x_interest, 
+        pred_column = pred_column, 
+        desired_y_hat_range = private$desired_prob
       )
     },
     

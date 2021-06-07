@@ -21,8 +21,11 @@ WhatIfRegr = R6::R6Class("WhatIfRegr", inherit = CounterfactualMethodRegr,
     run = function() {
       pred_column = private$get_pred_column()
       whatif_algo(
-        private$predictor, private$param_set, private$n_counterfactuals, private$x_interest, pred_column,
-        private$desired_outcome
+        predictor = private$predictor, 
+        n_cfactuals = private$n_counterfactuals, 
+        x_interest = private$x_interest, 
+        pred_column = pred_column, 
+        desired_y_hat_range = private$desired_outcome
       )
     },
     
