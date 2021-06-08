@@ -2,17 +2,11 @@
 WhatIfClassif = R6::R6Class("WhatIfClassif", inherit = CounterfactualMethodClassif,
   
   public = list(
-    # TODO: for hard classification set desired_prob to 0 or 1
-    initialize = function(predictor, n_counterfactuals = 1L, x_interest = NULL, desired_class = NULL,
-                          desired_prob = NULL, lower = NULL, upper = NULL) {
-      
+    # TODO: Explain that for hard classification set desired_prob to 0 or 1 in roxyxgen documentation
+    initialize = function(predictor, n_counterfactuals = 1L, lower = NULL, upper = NULL) {
       super$initialize(predictor, lower, upper)
       assert_integerish(n_counterfactuals, lower = 1L, any.missing = FALSE, len = 1L)
       private$n_counterfactuals = n_counterfactuals
-      
-      if (!is.null(x_interest)) {
-        self$find_counterfactuals(x_interest, desired_class, desired_prob)
-      }
     }
   ),
   
