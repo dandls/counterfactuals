@@ -36,15 +36,13 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       
       if ("dist_target" %in% measures) {
         pred_column = private$get_pred_column()
-        pred = as.matrix(self$predict()[[pred_column]])
+        pred = self$predict()[[pred_column]]
         if (private$predictor$task == "classification") {
           target = private$.desired$desired_prob
         } else {
           target = private$.desired$desired_outcome
         }
-        evals$dist_target = apply(
-          pred, 1L, function(x) ifelse(between(x, target[1L], target[2L]), 0, min(abs(x - target)))
-        )
+        evals$dist_target = pmax(0, pmin(pred - target[1L], target[2L] - pred))
       }
       
       if ("nr_changed" %in% measures) {
