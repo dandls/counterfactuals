@@ -89,7 +89,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
         stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)
       }
-      if (!requireNamespace("ggplot2", quietly = TRUE)) {
+      if (!requireNamespace("ggExtra", quietly = TRUE)) {
         stop("Package 'ggExtra' needed for this function to work. Please install it.", call. = FALSE)
       }
       assert_names(feature_names, subset.of = names(private$.data))
