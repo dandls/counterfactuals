@@ -58,8 +58,55 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       private$predictor$predict(private$.data) 
     },
     
-    plot_parallel = function(n_solutions, feature_names) {
-      stop("tbd")
+    plot_parallel = function(feature_names = NULL, row_ids = NULL) {
+      
+      if (!requireNamespace("ggplot2", quietly = TRUE)) {
+        stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)
+      }
+      
+      if (!requireNamespace("GGally", quietly = TRUE)) {
+        stop("Package 'GGally' needed for this function to work. Please install it.", call. = FALSE)
+      }
+      
+      if (is.null(feature_names)) {
+        feature_names = names(private$.data)
+      }
+      assert_names(feature_names, subset.of = names(private$.data))
+      
+      if (is.null(row_ids)) {
+        row_ids = 1:nrow(private$.data)
+      }
+      assert_integerish(row_ids, lower = 0, upper = nrow(private$.data))
+      
+      cfactuals = private$.data[row_ids, ..feature_names]
+      dt = rbind(cfactuals, self$x_interest[, ..feature_names])
+      
+
+      is_numeric_col = sapply(dt, function(x) is.numeric(x))
+      numeric_cols = names(dt)[is_numeric_col]
+      non_numeric_cols = names(dt)[!is_numeric_col]
+      if (length(non_numeric_cols) > 0L) {
+        dt[, (non_numeric_cols) := NULL]
+        warning("Can only consider numeric features for parallel plot. Non-numeric features have been removed.")
+      }
+      
+      line_colors = c(gray.colors(nrow(cfactuals), start = 0.2, end = 0.8, gamma = 2.2), "blue")
+      names(line_colors) <- rownames(dt)
+      dt[, rn := rownames(dt)]
+ 
+      GGally::ggparcoord(dt, 1:length(numeric_cols), groupColumn = "rn", scale = "uniminmax", showPoints = TRUE) +
+        ggplot2::theme_bw() +
+        ggplot2::ylim(c(-0.1, 1.1)) +
+        ggplot2::theme(legend.position = "none") +
+        ggplot2::ylab("Scaled feature values") +
+        ggplot2::scale_colour_manual(name = "rows", values = line_colors) +
+        ggplot2::annotate(
+          "text", x = 1:length(numeric_cols), y = 1.05, label = private$param_set$upper[numeric_cols]
+        ) +
+        ggplot2::annotate(
+          "text", x = 1:length(numeric_cols), y = -0.05, label = private$param_set$lower[numeric_cols]
+        )
+      
     },
     
     plot_freq_of_feature_changes = function(subset_zero = FALSE) {
