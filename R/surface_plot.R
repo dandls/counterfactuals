@@ -8,19 +8,19 @@ make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest
   
   if (param_set_sub$all_numeric) {
     # TODO: adapt this for hard classification
-    p = ggplot2::ggplot(data = dt_grid) +
-      ggplot2::geom_contour_filled(ggplot2::aes_string(x = x_feat_name, y = y_feat_name, z = "pred")) +
+    p = ggplot2::ggplot(data = dt_grid, ggplot2::aes_string(x = x_feat_name, y = y_feat_name)) + 
+      ggplot2::geom_raster(ggplot2::aes_string(fill = "pred")) +
+      ggplot2::geom_contour(ggplot2::aes_string(z = "pred"), colour = "white") +
       ggplot2::geom_point(ggplot2::aes_string(x = x_feat_name, y = y_feat_name), x_interest, colour = "white") +
-      ggplot2::guides(fill = ggplot2::guide_legend(title = "pred")) +
+      ggplot2::guides(z = ggplot2::guide_legend(title = "pred")) +
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position = "left")
-    
+
     if (nrow(cfactuals_plotted) > 0L) {
       p = p + 
-        ggplot2::geom_point(ggplot2::aes_string(x = x_feat_name, y = y_feat_name), cfactuals_plotted, colour = "black")
+        ggplot2::geom_point(ggplot2::aes_string(x = x_feat_name, y = y_feat_name), cfactuals_plotted, colour = "black") +
+        ggplot2::geom_rug(ggplot2::aes_string(x = x_feat_name, y = y_feat_name), cfactuals_plotted)
     }
-    
-    p = ggExtra::ggMarginal(p, type = "histogram")
     
   } else if (param_set_sub$all_categorical) {
     p = ggplot2::ggplot(dt_grid, ggplot2::aes_string(x_feat_name, y_feat_name)) +
@@ -49,12 +49,12 @@ make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest
     
     if (nrow(cfactuals_plotted) > 0L) {
       p = p +
-        ggplot2::geom_point(ggplot2::aes_string(x = num_feature, y = "pred"), cfactuals_plotted, colour = "black")
+        ggplot2::geom_point(ggplot2::aes_string(x = num_feature, y = "pred"), cfactuals_plotted, colour = "black") +
+        ggplot2::geom_rug(ggplot2::aes_string(x = x_feat_name, y = "pred"), cfactuals_plotted)
     }
     
     p = p +
-      ggplot2::geom_point(ggplot2::aes_string(x = num_feature, y = "pred"), x_interest_with_pred, colour = "gray")
-    p = ggExtra::ggMarginal(p, type = "histogram", margins = "x")
+      ggplot2::geom_point(ggplot2::aes_string(x = num_feature, y = "pred"), x_interest_with_pred, colour = "grey")
     
   }
   p
