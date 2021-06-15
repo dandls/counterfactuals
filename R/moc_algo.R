@@ -20,10 +20,10 @@ moc_algo = function(predictor, x_interest, pred_column, desired_y_hat_range, par
     ref_point[1L] = diff(c(min(pred), max(pred))) # maybe just max(pred) - min(pred)?
   }
   
-  param_range = param_set$upper - param_set$lower
-  param_range = param_range[names(param_range) != "use_orig"]
+  param_set_flex = param_set$clone()
+  flex_cols = setdiff(names(x_interest), fixed_features)
+  param_set_flex$subset(flex_cols)
   
-  # Set codomain
   codomain = ParamSet$new(list(
     ParamDbl$new("dist_target", tags = "minimize"),
     ParamDbl$new("dist_x_interest", tags = "minimize"),
@@ -34,57 +34,73 @@ moc_algo = function(predictor, x_interest, pred_column, desired_y_hat_range, par
     codomain$add(ParamDbl$new("dist_train", tags = "minimize"))
   } 
   
-  
+  param_range = param_set$upper - param_set$lower
   fitness_function = make_fitness_function(
-    predictor, x_interest, param_range, obj_names, pred_column, desired_y_hat_range, track_infeas, weights, k
+    predictor, x_interest, param_range, obj_names, pred_column, desired_y_hat_range, track_infeas, weights, k,
+    fixed_features
   )
-  
   
   objective = bbotk::ObjectiveRFunDt$new(
     fun = fitness_function,
-    domain = param_set,
+    domain = param_set_flex,
     codomain = codomain
   )
   
-  
   oi = bbotk::OptimInstanceMultiCrit$new(
     objective, 
-    terminator = bbotk::trm("evals", n_evals = generations)
+    terminator = bbotk::trm("evals", n_evals = generations * 10)
   )
-  
   
   # Mutator
   ops_m_list = list()
-  if ("ParamDbl" %in% param_set$class) {
-    ops_m_list = c(ops_m_list, "ParamDbl" = miesmuschel::mut("gauss", sdev = sdevs_num_feats))
+  if ("ParamDbl" %in% param_set_flex$class) {
+    ops_m_list[["ParamDbl"]] = miesmuschel::mut(
+      "maybe", miesmuschel::mut("gauss", sdev = sdevs_num_feats), miesmuschel::mut("null"), p = p_mut_gen
+    )
   }
-  if ("ParamLgl" %in% param_set$class) {
-    ops_m_list = c(ops_m_list, "ParamLgl" = miesmuschel::mut("unif", can_mutate_to_same = FALSE))
+  if ("ParamInt" %in% param_set_flex$class) {
+    ops_m_list[["ParamInt"]] = miesmuschel::mut(
+      "maybe", miesmuschel::mut("gauss"), miesmuschel::mut("null"), p = p_mut_gen
+    )
   }
-  if ("ParamFct" %in% param_set$class) {
-    ops_m_list = c(ops_m_list, "ParamFct" = miesmuschel::mut("unif", can_mutate_to_same = FALSE))
+  if ("ParamFct" %in% param_set_flex$class) {
+    n_facts = sum("ParamFct" == param_set_flex$class)
+    ls_op_factor = rep(list(miesmuschel::mut("unif", can_mutate_to_same = FALSE)), n_facts)
+    names(ls_op_factor) = param_set_flex$ids()[which(param_set_flex$class == "ParamFct")]
+    ops_m_list = c(ops_m_list, ls_op_factor)
   }
-  op_m = miesmuschel::mut("combine", operators = ops_m_list)
+  
+  op_m_seq1 = miesmuschel::mut("combine", operators = ops_m_list)
+  op_m_seq2 = MutatorReset$new(x_interest, p_mut_use_orig, max_changed = 2L)
+  op_m = miesmuschel::mut("sequential", list(op_m_seq1, op_m_seq2))
+
   
   # Recombinator
+  # TODO: DO we need probs here?
   ops_r_list = list()
-  if ("ParamDbl" %in% param_set$class) {
+  if ("ParamDbl" %in% param_set_flex$class) {
     # TODO: Replace this with "simulated binary crossover recombinator"
-    ops_r_list = c(ops_r_list, "ParamDbl" = miesmuschel::rec("xounif", p = p_rec_gen))
+    ops_r_list[["ParamDbl"]] = miesmuschel::rec("xounif")
   }
-  if ("ParamLgl" %in% param_set$class) {
-    ops_r_list = c(ops_r_list, "ParamLgl" = miesmuschel::rec("xounif", p = p_rec_gen))
+  
+  if ("ParamInt" %in% param_set_flex$class) {
+    ops_r_list[["ParamInt"]] = miesmuschel::rec("xounif")
   }
-  if ("ParamFct" %in% param_set$class) {
-    ops_r_list = c(ops_r_list, "ParamFct" = miesmuschel::rec("xounif", p = p_rec_gen))
+  
+  if ("ParamFct" %in% param_set_flex$class) {
+    n_facts = sum("ParamFct" == param_set_flex$class)
+    ls_op_factor = rep(list(miesmuschel::rec("xounif")), n_facts)
+    names(ls_op_factor) = names(param_set_flex$class)[which(param_set_flex$class == "ParamFct")]
+    ops_r_list = c(ops_r_list, ls_op_factor)
   }
-  op_r = miesmuschel::rec("combine", operators = ops_r_list)
+  op_r_seq_1 = miesmuschel::rec("combine", operators = ops_r_list)
+  op_r_seq_2 = RecombinatorReset$new(x_interest, p_mut_use_orig, max_changed = 2L)
+  op_r = miesmuschel::rec("sequential", list(op_r_seq_1, op_r_seq_2))
   
   # TODO: Replace this by tournament selection
   op_parent = miesmuschel::sel("best")
   # TODO: Is crowding distance included?
   op_survival = miesmuschel::sel("best", miesmuschel::scl("nondom"))                                 
-  
   
   mies = bbotk::opt(
     "mies", 
@@ -97,10 +113,20 @@ moc_algo = function(predictor, x_interest, pred_column, desired_y_hat_range, par
   )
   
   mies$optimize(oi)
+  
   factor_cols = names(predictor$data$X)[sapply(predictor$data$X, is.factor)]
   for (factor_col in factor_cols) {
     oi$result[, (factor_col) := factor(oi$result[[factor_col]], levels = levels(predictor$data$X[[factor_col]]))]
   }
+  int_cols = names(predictor$data$X)[sapply(predictor$data$X, is.integer)]
+  for (int_col in int_cols) {
+    oi$result[, (int_col) := as.integer(oi$result[[int_col]])]
+  }
+  
+  if (!is.null(fixed_features)) {
+    oi$result[, (fixed_features) := x_interest[, fixed_features, with = FALSE]]
+  }
+  
   oi$result[, names(x_interest), with = FALSE]
   
 }
