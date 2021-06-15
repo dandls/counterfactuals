@@ -15,18 +15,17 @@ Imports:
     R6,
     checkmate,
     Metrics,
-    mosmafs,
-    ecr,
     StatMatch,
     iml,
     data.table,
     future,
     future.apply,
-    paradox
+    paradox,
+    miesmuschel,
+    bbotk
 Suggests: 
     randomForest,
     GGally,
-    ggExtra,
     mlt,
     gower,
     glmnet,
@@ -41,7 +40,8 @@ Suggests:
     mlr,
     cowplot,
     covr,
-    ggplot2
+    ggplot2,
+    keras
 License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.1.1

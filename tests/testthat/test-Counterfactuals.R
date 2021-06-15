@@ -54,6 +54,29 @@ test_that("plot_surface creates correct plot for mixed features", {
   )
 })
 
+# $plot_surface() ------------------------------------------------------------------------------------------------------
+test_that("plot_parallel creates correct plot for numerical features", {
+  skip_on_ci()
+  cf = make_counterfactual_test_obj()
+  expect_snapshot_file(
+    save_test_png(cf$plot_parallel(c("var_num_1", "var_num_2"))), 
+    "plot_parallel.png"
+  )
+})
+
+test_that("plot_surface returns warning if non-numerical features", {
+  skip_on_ci()
+  cf = make_counterfactual_test_obj()
+  set.seed(4574541)
+  expect_warning(cf$plot_parallel(), "removed")
+})
+
+test_that("plot_surface returns error for unknown feature names", {
+  skip_on_ci()
+  cf = make_counterfactual_test_obj()
+  expect_snapshot_error(cf$plot_surface(c("non_in_data1", "non_in_data2")))
+})
+
 
 # $evaluate() ----------------------------------------------------------------------------------------------------------
 test_that("evaluate returns error if measures are not known", {

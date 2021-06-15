@@ -42,8 +42,9 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         } else {
           target = private$.desired$desired_outcome
         }
-        evals$dist_target = ifelse(
-          between(pred, target[1L], target[2L]), 0, min(abs(pred - target[1L]), abs(pred - target[2L]))
+
+        evals$dist_target = sapply(
+          pred, function(x) ifelse(between(x, target[1L], target[2L]), 0, min(abs(x - target)))
         )
       }
       
@@ -101,10 +102,10 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         ggplot2::ylab("Scaled feature values") +
         ggplot2::scale_colour_manual(name = "rows", values = line_colors) +
         ggplot2::annotate(
-          "text", x = 1:length(numeric_cols), y = 1.05, label = private$param_set$upper[numeric_cols]
+          "text", x = 1:length(numeric_cols), y = 1.05, label = sapply(dt[, ..numeric_cols], max, na.rm = TRUE)
         ) +
         ggplot2::annotate(
-          "text", x = 1:length(numeric_cols), y = -0.05, label = private$param_set$lower[numeric_cols]
+          "text", x = 1:length(numeric_cols), y = -0.05, label = sapply(dt[, ..numeric_cols], min, na.rm = TRUE)
         )
       
     },
