@@ -29,8 +29,11 @@ make_cfactuals_diff = function(cfactuals, x_interest) {
 }
 
 count_changes = function(cfactuals, x_interest) {
-  m_cfactuals = as.matrix(cfactuals[, names(x_interest), with = FALSE])
-  m_x_interest = as.matrix(x_interest)
-  n_changes = rowSums(sweep(m_cfactuals, 2L, m_x_interest, FUN = "!="), na.rm = TRUE)
+  n_changes = rep(NA, nrow(cfactuals))
+  for (i in 1:nrow(cfactuals)) {
+    n_changes[i] = sum(cfactuals[i, ] != x_interest, na.rm = TRUE)
+  }
   as.integer(n_changes)
 }
+
+
