@@ -22,7 +22,9 @@ make_fitness_function = function(predictor, x_interest, param_range, obj_names, 
 
     # objective criteria
     tg = desired_y_hat_range
-    q1 = ifelse(data.table::between(pred, tg[1L], tg[2L]), 0, min(abs(pred - tg[1L]), abs(pred - tg[2L])))
+    q1 = sapply(
+      pred, function(x) ifelse(between(x, tg[1L], tg[2L]), 0, min(abs(x - tg)))
+    )
     q2 = as.vector(StatMatch::gower.dist(x_interest, xdt, rngs = param_range, KR.corr = FALSE))
     q3 = rowSums(xdt != x_interest[rep(seq_len(nrow(x_interest)), nrow(xdt)), ])
     q_dt = data.table(cbind(q1, q2, q3))
@@ -50,7 +52,8 @@ make_fitness_function = function(predictor, x_interest, param_range, obj_names, 
 }
 
 
-MutatorReset = R6::R6Class("MutatorReset", inherit = miesmuschel::Mutator,
+MutatorReset = R6::R6Class("MutatorReset",
+  inherit = miesmuschel::Mutator,
   public = list(
     initialize = function(x_interest, p_mut_use_orig, max_changed) {
       private$.x_interest = assert_data_table(x_interest)
@@ -95,16 +98,25 @@ MutatorReset = R6::R6Class("MutatorReset", inherit = miesmuschel::Mutator,
         )
         n_true = sum(draws)
         if (n_true > 0L) {
-          if (!is.null(max_changed) && sum(draws) > max_changed) {
-            to_be_reverted = sample(which(draws), size = sum(draws) - max_changed)
-            draws[to_be_reverted] = FALSE
-          }
-
           origin_cols = names(values_mutated)[draws]
           values_mutated[i, (origin_cols) := private$.x_interest[, (origin_cols), with = FALSE]]
         }
-      }
 
+        x_interest_sub = private$.x_interest[, names(values_mutated), with = FALSE]
+
+        n_changes = count_changes(values_mutated[i, ], x_interest_sub)
+
+        if (!is.null(max_changed)) {
+          if (n_changes > max_changed) {
+            pos_diff = which(values_mutated[i, ] != x_interest_sub)
+            to_be_reverted = sample(pos_diff, size = n_changes - max_changed)
+            to_be_reverted = names(values_mutated)[to_be_reverted]
+            values_mutated[i, (to_be_reverted) := x_interest_sub[, to_be_reverted, with = FALSE]]
+          }
+        }
+
+      }
+      # print(counterfactuals:::count_changes(values_mutated, private$.x_interest))
       values_mutated
     }
   )
@@ -112,7 +124,9 @@ MutatorReset = R6::R6Class("MutatorReset", inherit = miesmuschel::Mutator,
 
 
 
-RecombinatorReset = R6::R6Class("RecombinatorReset", inherit = miesmuschel::Recombinator,
+# Recmobuinator
+RecombinatorReset = R6::R6Class("RecombinatorReset",
+  inherit = miesmuschel::Recombinator,
   public = list(
     initialize = function(x_interest, p_mut_use_orig, max_changed) {
       private$.x_interest = assert_data_table(x_interest)
@@ -147,15 +161,22 @@ RecombinatorReset = R6::R6Class("RecombinatorReset", inherit = miesmuschel::Reco
           size = ncol(values_rec), replace = TRUE, prob = c(p_mut_use_orig, 1 - p_mut_use_orig)
         )
         n_true = sum(draws)
-        if (!is.null(max_changed) && n_true > 0L) {
-          if (sum(draws) > max_changed) {
-            to_be_reverted = sample(which(draws), size = sum(draws) - max_changed)
-            draws[to_be_reverted] = FALSE
-          }
-
+        if (n_true > 0L) {
           origin_cols = names(values_rec)[draws]
           values_rec[i, (origin_cols) := private$.x_interest[, (origin_cols), with = FALSE]]
         }
+
+        x_interest_sub = private$.x_interest[, names(values_rec), with = FALSE]
+        n_changes = counterfactuals:::count_changes(values_rec[i, ], x_interest_sub)
+        if (!is.null(max_changed)) {
+          if (n_changes > max_changed) {
+            pos_diff = which(values_rec[i, ] != x_interest_sub)
+            to_be_reverted = sample(pos_diff, size = n_changes - max_changed)
+            to_be_reverted = names(values_rec)[to_be_reverted]
+            values_rec[i, (to_be_reverted) := x_interest_sub[, to_be_reverted, with = FALSE]]
+          }
+        }
+
       }
 
       values_rec
