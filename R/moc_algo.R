@@ -71,7 +71,7 @@ moc_algo = function(predictor, x_interest, pred_column, desired_y_hat_range, par
   }
   
   op_m_seq1 = miesmuschel::mut("combine", operators = ops_m_list)
-  op_m_seq2 = MutatorReset$new(x_interest, p_mut_use_orig, max_changed = 2L)
+  op_m_seq2 = MutatorReset$new(x_interest, p_mut_use_orig, max_changed)
   op_m = miesmuschel::mut("sequential", list(op_m_seq1, op_m_seq2))
 
   
@@ -94,7 +94,7 @@ moc_algo = function(predictor, x_interest, pred_column, desired_y_hat_range, par
     ops_r_list = c(ops_r_list, ls_op_factor)
   }
   op_r_seq_1 = miesmuschel::rec("combine", operators = ops_r_list)
-  op_r_seq_2 = RecombinatorReset$new(x_interest, p_mut_use_orig, max_changed = 2L)
+  op_r_seq_2 = RecombinatorReset$new(x_interest, p_mut_use_orig, max_changed)
   op_r = miesmuschel::rec("sequential", list(op_r_seq_1, op_r_seq_2))
   
   # TODO: Replace this by tournament selection
@@ -102,8 +102,29 @@ moc_algo = function(predictor, x_interest, pred_column, desired_y_hat_range, par
   # TODO: Is crowding distance included?
   op_survival = miesmuschel::sel("best", miesmuschel::scl("nondom"))                                 
   
+  if (is.null(max_changed)) {
+    pop_initializer = paradox::generate_design_random
+  } else {
+    pop_initializer = function(param_set, n) {
+      my_design = paradox::SamplerUnif$new(param_set_flex)$sample(n)
+      x_interest_reorderd = x_interest[, names(my_design$data), with = FALSE]
+      n_changes = count_changes(my_design$data, x_interest_reorderd)
+      
+      for (i in 1:nrow(my_design$data)) {
+        if (n_changes[i] > max_changed) {
+          pos_diff = which(my_design$data[i, ] != x_interest_reorderd)
+          to_be_reverted = sample(pos_diff, size = n_changes[i] - max_changed)
+          to_be_reverted = names(my_design$data)[to_be_reverted]
+          my_design$data[i, (to_be_reverted) := x_interest_reorderd[, to_be_reverted, with = FALSE]]
+        }
+      }
+      
+      my_design
+    }
+  }
+  
   miesmuschel::mies_prime_operators(oi$search_space, list(op_m), list(op_r), list(op_parent, op_survival))
-  miesmuschel::mies_init_population(oi, mu)
+  miesmuschel::mies_init_population(oi, mu, initializer = pop_initializer)
   offspring = miesmuschel::mies_generate_offspring(oi, lambda = 10L, op_parent, op_m, op_r)
   miesmuschel::mies_evaluate_offspring(oi, offspring)
   miesmuschel::mies_survival_plus(oi, mu, op_survival)
