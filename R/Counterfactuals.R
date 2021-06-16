@@ -9,6 +9,10 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       assert_true(ncol(cfactuals) == ncol(x_interest))
       assert_class(param_set, "ParamSet")
       assert_list(desired, min.len = 1L, max.len = 2L)
+      assert_true(all(names(cfactuals) == names(predictor$data$X)))
+      if (any(sapply(cfactuals, typeof) != sapply(predictor$data$X, typeof))) {
+        stop("Columns of `cfactuals` and `predictor$data$X` must have the same types.")
+      }
       
       private$predictor = predictor
       private$param_set = param_set

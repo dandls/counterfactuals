@@ -1,5 +1,27 @@
 library(randomForest)
 
+# $init() --------------------------------------------------------------------------------------------------------------
+test_that("$init method returns error if coltypes of cfactuals are different from coltypes of predictor$data$X", {
+  dt = data.table(
+    var_num_1 = rep(c(0.5, 5.3)), 
+    var_fact_1 = as.factor(sample(c("a", "b", "c"), size = 10L, replace = TRUE)), 
+    var_target = rnorm(10L, mean = 50, sd = 10)
+  )
+  X = dt[, 1:(ncol(dt) - 1L)]
+  x_interest = X[1L, ]
+  rf = randomForest(var_target ~ ., data = dt)
+  mod = Predictor$new(rf, data = X)
+  ps = ParamSet$new(list(
+    var_num_1 = ParamDbl$new(id = "var_num_1", lower = -5, upper = 5),
+    var_fact_1 = ParamFct$new(id = "var_fact_1", levels = levels(dt$var_fact_1))
+  ))
+  X$var_num_1 = as.character(X$var_num_1)
+  
+  expect_snapshot_error(
+    Counterfactuals$new(as.data.table(X), mod, x_interest, ps, desired = list(desired_outcome = c(42, 44)))
+  )
+})
+
 # $predict() -----------------------------------------------------------------------------------------------------------
 test_that("$predict method returns correct prediction", {
   cf = make_counterfactual_test_obj()
