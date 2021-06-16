@@ -29,11 +29,13 @@ make_cfactuals_diff = function(cfactuals, x_interest) {
 }
 
 count_changes = function(cfactuals, x_interest) {
-  n_changes = rep(NA, nrow(cfactuals))
-  for (i in 1:nrow(cfactuals)) {
-    n_changes[i] = sum(cfactuals[i, ] != x_interest, na.rm = TRUE)
-  }
-  as.integer(n_changes)
+  assert_data_table(cfactuals)
+  assert_data_table(x_interest, nrows = 1L)
+  assert_true(ncol(cfactuals) == ncol(x_interest))
+  assert_true(all(names(cfactuals) == names(x_interest)))
+  cfactuals_temp = copy(cfactuals)
+  cfactuals_temp[, n_changes := sum(.SD != x_interest), by = seq_len(nrow(cfactuals_temp))]
+  as.integer(cfactuals_temp$n_changes)
 }
 
 
