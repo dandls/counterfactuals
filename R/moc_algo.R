@@ -102,17 +102,21 @@ moc_algo = function(predictor, x_interest, pred_column, desired_y_hat_range, par
   # TODO: Is crowding distance included?
   op_survival = miesmuschel::sel("best", miesmuschel::scl("nondom"))                                 
   
-  mies = bbotk::opt(
-    "mies", 
-    mutator = op_m, 
-    recombinator = op_r, 
-    parent_selector = op_parent, 
-    survival_selector = op_survival,
-    mu = mu, 
-    lambda = 10L
-  )
+  miesmuschel::mies_prime_operators(oi$search_space, list(op_m), list(op_r), list(op_parent, op_survival))
+  miesmuschel::mies_init_population(oi, mu)
+  offspring = miesmuschel::mies_generate_offspring(oi, lambda = 10L, op_parent, op_m, op_r)
+  miesmuschel::mies_evaluate_offspring(oi, offspring)
+  miesmuschel::mies_survival_plus(oi, mu, op_survival)
   
-  mies$optimize(oi)
+  tryCatch({
+    repeat {
+      offspring = miesmuschel::mies_generate_offspring(oi, lambda = 10L, op_parent, op_m, op_r)
+      miesmuschel::mies_evaluate_offspring(oi, offspring)
+      miesmuschel::mies_survival_plus(oi, mu, op_survival)
+    }
+  }, terminated_error = function(cond) {
+  })
+  bbotk::assign_result_default(oi)
   
   factor_cols = names(predictor$data$X)[sapply(predictor$data$X, is.factor)]
   for (factor_col in factor_cols) {

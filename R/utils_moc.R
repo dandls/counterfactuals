@@ -50,7 +50,7 @@ make_fitness_function = function(predictor, x_interest, param_range, obj_names, 
 }
 
 
-MutatorReset = R6::R6Class("MutatorReset", inherit = Mutator,
+MutatorReset = R6::R6Class("MutatorReset", inherit = miesmuschel::Mutator,
   public = list(
     initialize = function(x_interest, p_mut_use_orig, max_changed) {
       private$.x_interest = assert_data_table(x_interest)
@@ -112,7 +112,7 @@ MutatorReset = R6::R6Class("MutatorReset", inherit = Mutator,
 
 
 
-RecombinatorReset = R6::R6Class("RecombinatorReset", inherit = Recombinator,
+RecombinatorReset = R6::R6Class("RecombinatorReset", inherit = miesmuschel::Recombinator,
   public = list(
     initialize = function(x_interest, p_mut_use_orig, max_changed) {
       private$.x_interest = assert_data_table(x_interest)
