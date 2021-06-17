@@ -1,7 +1,6 @@
 moc_algo = function(predictor, x_interest, pred_column, desired_y_hat_range, param_set, lower, upper, sdevs_num_feats, 
                     epsilon,  fixed_features, max_changed, mu, generations, p_rec, p_rec_gen, p_rec_use_orig, p_mut,  
-                    p_mut_gen, p_mut_use_orig, k, weights, conditionals, initialization, track_infeas) {
-  
+                    p_mut_gen, p_mut_use_orig, k, weights, conditionals, init_strategy, track_infeas) {
   y_hat_interest = predictor$predict(x_interest)
   ref_point = c(min(abs(y_hat_interest - desired_y_hat_range)), 1, ncol(x_interest))
   obj_names = c("dist_target", "dist_x_interest", "nr_changed")   
@@ -48,19 +47,19 @@ moc_algo = function(predictor, x_interest, pred_column, desired_y_hat_range, par
     objective, 
     terminator = bbotk::trm("evals", n_evals = generations * 20)
   )
-  
+
   op_m = make_moc_mutator(param_set_flex, max_changed, sdevs_num_feats, p_mut_gen, p_mut_use_orig)
   op_r = make_moc_recombinator(param_set_flex, max_changed, sdevs_num_feats, p_rec_use_orig)
   # TODO: Replace this by tournament selection
   op_parent = miesmuschel::sel("best")
   # TODO: Is crowding distance included?
-  op_survival = miesmuschel::sel("best", miesmuschel::scl("nondom"))                
+  op_survival = miesmuschel::sel("best", miesmuschel::scl("nondom"))                   
   
-  
-  pop_initializer = make_moc_pop_initializer(param_set_flex, x_interest, max_changed)
+  pop_initializer = make_moc_pop_initializer(param_set_flex, x_interest, max_changed, init_strategy, flex_cols,
+                                             sdevs_num_feats, lower, upper, predictor)
   miesmuschel::mies_prime_operators(oi$search_space, list(op_m), list(op_r), list(op_parent, op_survival))
   miesmuschel::mies_init_population(oi, mu, initializer = pop_initializer)
-
+  
   tryCatch({
     repeat {
       offspring = miesmuschel::mies_generate_offspring(oi, lambda = 10L, op_parent, op_m, op_r)
@@ -82,6 +81,7 @@ moc_algo = function(predictor, x_interest, pred_column, desired_y_hat_range, par
     oi$result[, (int_col) := as.integer(oi$result[[int_col]])]
   }
   
+  # Re-attach fixed features
   if (!is.null(fixed_features)) {
     oi$result[, (fixed_features) := x_interest[, fixed_features, with = FALSE]]
   }

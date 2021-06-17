@@ -5,7 +5,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, 
                           mu = 50L, generations = 50L, p_rec = 0.9, p_rec_gen = 0.7, p_rec_use_orig = 0.7, p_mut = 0.2, 
                           p_mut_gen = 0.5, p_mut_use_orig = 0.2, k = 1L, weights = NULL, lower = NULL, upper = NULL, 
-                          conditionals = FALSE, initialization = "random", track_infeas = TRUE) {
+                          conditionals = FALSE, init_strategy = "random", track_infeas = TRUE) {
       
       super$initialize(predictor, lower, upper)
       
@@ -40,7 +40,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
       private$k = k
       private$weights = weights
       private$conditionals = conditionals
-      private$initialization = initialization
+      private$init_strategy = init_strategy
       private$track_infeas = track_infeas
       sdevs_num_feats = apply(Filter(is.double, private$predictor$data$X), 2L, sd)
       private$sdevs_num_feats = sdevs_num_feats[!names(sdevs_num_feats) %in% fixed_features]
@@ -64,7 +64,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     k = NULL,
     weights = NULL,
     conditionals = NULL,
-    initialization = NULL,
+    init_strategy = NULL,
     track_infeas = NULL,
     sdevs_num_feats = NULL,
     lower = NULL,
@@ -73,15 +73,14 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     
     run = function() {
       pred_column = private$get_pred_column()
-
       moc_algo(
         predictor = private$predictor,
         x_interest = private$x_interest,
         pred_column = pred_column,
         desired_y_hat_range = private$desired_outcome,
         param_set = private$param_set,
-        lower = lower,
-        upper = upper,
+        lower = private$lower,
+        upper = private$upper,
         sdevs_num_feats = private$sdevs_num_feats,
         epsilon = private$epsilon,
         fixed_features = private$fixed_features,
@@ -97,7 +96,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
         k = private$k,
         weights = private$weights,
         conditionals = private$conditionals,
-        initialization = private$initialization,
+        init_strategy = private$init_strategy,
         track_infeas = private$track_infeas
       )
     
