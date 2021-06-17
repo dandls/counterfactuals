@@ -104,7 +104,7 @@ MutatorReset = R6::R6Class("MutatorReset",
 
         x_interest_sub = private$.x_interest[, names(values_mutated), with = FALSE]
 
-        n_changes = counterfactuals:::count_changes(values_mutated[i, ], x_interest_sub)
+        n_changes = count_changes(values_mutated[i, ], x_interest_sub)
 
         if (!is.null(max_changed)) {
           if (n_changes > max_changed) {
@@ -166,7 +166,7 @@ RecombinatorReset = R6::R6Class("RecombinatorReset",
         }
 
         x_interest_sub = private$.x_interest[, names(values_rec), with = FALSE]
-        n_changes = counterfactuals:::count_changes(values_rec[i, ], x_interest_sub)
+        n_changes = count_changes(values_rec[i, ], x_interest_sub)
         if (!is.null(max_changed)) {
           if (n_changes > max_changed) {
             pos_diff = which(values_rec[i, ] != x_interest_sub)
@@ -232,15 +232,82 @@ make_moc_recombinator = function(ps, max_changed, sdevs_num_feats, p_rec_use_ori
 }
 
 
-make_moc_pop_initializer = function(ps, x_interest, max_changed) {
-  if (is.null(max_changed)) {
-    pop_initializer = paradox::generate_design_random
-  } else {
-    pop_initializer = function(param_set, n) {
-      my_design = paradox::SamplerUnif$new(ps)$sample(n)
-      x_interest_reorderd = x_interest[, names(my_design$data), with = FALSE]
-      n_changes = counterfactuals:::count_changes(my_design$data, x_interest_reorderd)
+make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, flex_cols, sdevs_num_feats,
+                                    lower, upper, predictor) {
+  function(param_set, n) {
 
+    if (init_strategy == "random") {
+      f_design = function(ps, n) {
+        paradox::SamplerUnif$new(ps)$sample(n)
+      }
+    } else if (init_strategy == "sd") {
+
+      if (length(sdevs_num_feats) == 0L) {
+        f_design = function(ps, n) paradox::SamplerUnif$new(ps)$sample(n)
+      } else {
+        make_f_design = function(X, x_interest, sdevs_num_feats, lower, upper) {
+          
+          x_interest_num = x_interest[, names(sdevs_num_feats), with = FALSE]
+          lower_sdev = x_interest_num - sdevs_num_feats
+          upper_sdev = x_interest_num + sdevs_num_feats
+
+          lower_bound = pmax(ps$lower[names(sdevs_num_feats)], lower_sdev)
+          upper_bound = pmin(ps$upper[names(sdevs_num_feats)], upper_sdev)
+
+          lower_bound[names(lower)] = lower
+          upper_bound[names(upper)] = upper
+
+          param_set_init = make_param_set(X, lower = lower_bound, upper = upper_bound)
+          function(ps, n) {
+            paradox::SamplerUnif$new(param_set_init)$sample(n)
+          }
+        }
+   
+        f_design = make_f_design(predictor$data$X[, ..flex_cols], x_interest, sdevs_num_feats, lower, upper)
+      }
+    } else if (init_strategy == "icecurve") {
+
+
+      make_f_design = function(X, flex_cols, x_interest, sdevs_num_feats) {
+        function(ps, n) {
+
+          param_set = make_param_set(X, lower = NULL, upper = NULL)
+          mydesign = paradox::SamplerUnif$new(param_set)$sample(n)
+
+          ice_sds = get_ICE_sd(x_interest, predictor, param_set)
+          p_differs = (ice_sds - min(ice_sds)) * (0.99 - 0.01) / (max(ice_sds) - min(ice_sds)) + 0.01
+          
+          x_interest_sub = copy(x_interest)
+          fixed_cols = which(!names(mydesign$data) %in% flex_cols)
+          if (length(fixed_cols) > 0L) {
+            mydesign$data[, (fixed_cols) := NULL]
+            x_interest_sub = x_interest_sub[, ..flex_cols]
+          }
+          
+          factor_cols = names(x_interest_sub)[sapply(x_interest_sub, is.factor)]
+          if (length(factor_cols)) {
+            x_interest_sub[, (factor_cols) := lapply(.SD, as.character), .SDcols = factor_cols]
+          }
+
+          for (j in 1:ncol(mydesign$data)) {
+            p = p_differs[j]
+            use_orig = which(sample(c(TRUE, FALSE), size = ncol(mydesign$data), replace = TRUE, prob = cbind(1 - p, p)))
+            set(mydesign$data, use_orig, j, x_interest_sub[[j]])
+          }
+          mydesign
+        }
+      }
+
+      f_design = make_f_design(predictor$data$X, flex_cols, x_interest, sdevs_num_feats)
+
+
+    }
+
+    my_design = f_design(param_set, n)
+    x_interest_reorderd = x_interest[, names(my_design$data), with = FALSE]
+    n_changes = count_changes(my_design$data, x_interest_reorderd)
+
+    if (!is.null(max_changed)) {
       for (i in 1:nrow(my_design$data)) {
         if (n_changes[i] > max_changed) {
           pos_diff = which(my_design$data[i, ] != x_interest_reorderd)
@@ -249,8 +316,36 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed) {
           my_design$data[i, (to_be_reverted) := x_interest_reorderd[, to_be_reverted, with = FALSE]]
         }
       }
-      my_design
     }
+
+    my_design
   }
-  pop_initializer
+
+}
+
+
+#' Calculate ice curve standard deviation for all features
+#'
+#' @section Arguments:
+#' \describe{
+#' \item{x_interest: }{(data.frame)\cr Data point, for which ice curves
+#' should be calculated.}
+#' \item{predictor: }{(Predictor)\cr Object, that holds the prediction model and dataset.}
+#' \item{param_set: }{(ParamSet)\cr Parameter set of features in dataset.}
+#' }
+#' @return (numeric) Vector with standard deviations for each feature.
+get_ICE_sd = function(x_interest, predictor, param_set) {
+  vapply(names(x_interest), function(i_name) {
+    ps_sub = param_set$clone()
+    ps_sub$subset(i_name)
+    grid1d = generate_design_grid(ps_sub, resolution = 20L)$data
+    if (is.factor(x_interest[[i_name]])) {
+      grid1d[, (i_name) := factor(grid1d[[i_name]], levels = levels(x_interest[[i_name]]))]
+    }
+    x_interest_sub = copy(x_interest)
+    x_interest_sub[, (i_name) := NULL]
+    dt = data.table(cbind(grid1d, x_interest_sub))
+    pred = predictor$predict(dt)
+    sd(pred[[1L]])
+  }, FUN.VALUE = numeric(1L))
 }
