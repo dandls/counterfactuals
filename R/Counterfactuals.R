@@ -130,7 +130,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       assert_flag(subset_zero)
       feature_names = names(private$.x_interest)
       diff_features = private$diff[, feature_names, with = FALSE]
-      freq = colMeans(diff_features != 0, na.rm = TRUE)
+      freq = colMeans(!is.na(diff_features), na.rm = TRUE)
       if (subset_zero) {
         freq = freq[freq != 0]
       }
@@ -150,7 +150,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
 
       diff_rel_feats = private$diff[, ..feature_names]
       n_changes_total = count_changes(private$.data, private$.x_interest)
-      n_changes_rel_feats = rowSums(diff_rel_feats != 0)
+      n_changes_rel_feats = rowSums(!is.na(diff_rel_feats))
       has_changes_in_rel_feats_only = (n_changes_rel_feats == n_changes_total)
       cfactuals_plotted = private$.data[which(has_changes_in_rel_feats_only)]
  

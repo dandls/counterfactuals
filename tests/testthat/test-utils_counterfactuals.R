@@ -7,10 +7,10 @@ test_that("make_cfactuals_diff returns correct output for mixed cf variable type
   cfactuals_diff = make_cfactuals_diff(cfactuals, x_interest)
   expect_data_table(cfactuals_diff, nrows = nrow(cfactuals), ncols = ncol(cfactuals))
   expect_names(names(cfactuals_diff), identical.to = names(cfactuals))
-  expect_identical(diag(as.matrix(cfactuals_diff[, 1:3])), rep("0", 3))
+  expect_identical(diag(as.matrix(cfactuals_diff[, 1:3])), rep("NA", 3))
   expect_identical(
     as.numeric(as.numeric(x_interest[, "col_a"]) + as.matrix(cfactuals_diff[, "col_a"])),
-    as.numeric(as.matrix(cfactuals[, "col_a"]))
+    c(NA, as.numeric(as.matrix(cfactuals[, "col_a"]))[2:3])
   )
 })
 
