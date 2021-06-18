@@ -183,6 +183,65 @@ RecombinatorReset = R6::R6Class("RecombinatorReset",
   )
 )
 
+# Slightly adaptapred from miesmuschel::ScalorNondom
+ScalorNondomPenalized <- R6::R6Class("ScalorNondomPenalized",
+  inherit = miesmuschel::Scalor,
+  public = list(
+    #' @description
+    #' Initialize the `ScalorNondomPenalized` object.
+    initialize = function(epsilon) {
+      param_set <- ps(
+        epsilon = p_dbl(lower = 0, tags = "required"),
+        scale_output = p_lgl(tags = "required"),
+        jitter = p_lgl(tags = "required"),
+        tiebreak = p_fct(c("crowding-dist", "hv-contrib", "domcount", "none"))
+      )
+
+      if (is.null(epsilon)) epsilon = Inf
+      param_set$values <- list(epsilon = epsilon, scale_output = FALSE, jitter = TRUE, tiebreak = "crowding-dist")
+      super$initialize(param_set = param_set, dict_entry = "nondom")
+    }
+  ),
+  private = list(
+    .scale = function(values, fitnesses, context) {
+
+      params <- self$param_set$get_values(context = context)
+      if (params$jitter) {
+        fitnesses <- fitnesses *
+          (1 + runif(length(fitnesses)) * sqrt(.Machine$double.eps))
+      }
+      # Add penalization for individuals with -dist_target lower than -epsilon (shifted up by one front)
+      epsilon = params$epsilon
+      is_penalized = fitnesses[colnames(fitnesses) == "dist_target"] < -epsilon
+      sorted = miesmuschel::order_nondominated(fitnesses)$fronts
+      sorted[is_penalized] = sorted[is_penalized] + 1L
+      front_indexes = sort(unique(sorted))
+      sorted = switch(params$tiebreak,
+        `crowding-dist` = {
+          fronts <- lapply(split(as.data.frame(fitnesses), sorted), as.matrix)
+          subranks <- lapply(fronts, function(x) rank(miesmuschel::dist_crowding(x)) / (length(x) + 1))
+          for (i in seq_along(subranks)) {
+            sr <- subranks[[i]]
+            # There may be empty fronts in very few cases due to penalization
+            front_index = front_indexes[i]
+            if (length(sorted[sorted == front_index]) != length(front_index + sr)) {
+              browser()
+            }
+            sorted[sorted == front_index] <- front_index + sr
+          }
+          sorted
+        },
+        `hv-contrib` = stop("not supported yet"),
+        domcount = stop("not supported yet"),
+        none = sorted
+      )
+
+      sorted = max(sorted) + 1 - sorted # want high front values for high fitnesses, so reverse ordering here
+
+    }
+  )
+)
+
 make_moc_mutator = function(ps, max_changed, sdevs_num_feats, p_mut_gen, p_mut_use_orig) {
   ops_m_list = list()
   if ("ParamDbl" %in% ps$class) {
@@ -233,7 +292,7 @@ make_moc_recombinator = function(ps, max_changed, sdevs_num_feats, p_rec_use_ori
 
 
 make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, flex_cols, sdevs_num_feats,
-                                    lower, upper, predictor) {
+  lower, upper, predictor) {
   function(param_set, n) {
 
     if (init_strategy == "random") {
@@ -246,7 +305,7 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
         f_design = function(ps, n) paradox::SamplerUnif$new(ps)$sample(n)
       } else {
         make_f_design = function(X, x_interest, sdevs_num_feats, lower, upper) {
-          
+
           x_interest_num = x_interest[, names(sdevs_num_feats), with = FALSE]
           lower_sdev = x_interest_num - sdevs_num_feats
           upper_sdev = x_interest_num + sdevs_num_feats
@@ -262,7 +321,7 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
             paradox::SamplerUnif$new(param_set_init)$sample(n)
           }
         }
-   
+
         f_design = make_f_design(predictor$data$X[, ..flex_cols], x_interest, sdevs_num_feats, lower, upper)
       }
     } else if (init_strategy == "icecurve") {
@@ -276,14 +335,14 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
 
           ice_sds = get_ICE_sd(x_interest, predictor, param_set)
           p_differs = (ice_sds - min(ice_sds)) * (0.99 - 0.01) / (max(ice_sds) - min(ice_sds)) + 0.01
-          
+
           x_interest_sub = copy(x_interest)
           fixed_cols = which(!names(mydesign$data) %in% flex_cols)
           if (length(fixed_cols) > 0L) {
             mydesign$data[, (fixed_cols) := NULL]
             x_interest_sub = x_interest_sub[, ..flex_cols]
           }
-          
+
           factor_cols = names(x_interest_sub)[sapply(x_interest_sub, is.factor)]
           if (length(factor_cols)) {
             x_interest_sub[, (factor_cols) := lapply(.SD, as.character), .SDcols = factor_cols]
