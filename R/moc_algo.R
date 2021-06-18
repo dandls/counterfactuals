@@ -53,7 +53,8 @@ moc_algo = function(predictor, x_interest, pred_column, desired_y_hat_range, par
   # TODO: Replace this by tournament selection
   op_parent = miesmuschel::sel("best")
   # TODO: Is crowding distance included?
-  op_survival = miesmuschel::sel("best", miesmuschel::scl("nondom"))                   
+  sel_nondom_penalized = ScalorNondomPenalized$new(epsilon)
+  op_survival = miesmuschel::sel("best", sel_nondom_penalized)                  
   
   pop_initializer = make_moc_pop_initializer(param_set_flex, x_interest, max_changed, init_strategy, flex_cols,
                                              sdevs_num_feats, lower, upper, predictor)
