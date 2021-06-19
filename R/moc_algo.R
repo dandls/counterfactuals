@@ -50,10 +50,10 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
   )
 
   # TODO: Replace this by tournament selection
-  op_parent = miesmuschel::sel("best")
+  op_parent = sel("best")
   
   sel_nondom_penalized = ScalorNondomPenalized$new(epsilon)
-  op_survival = miesmuschel::sel("best", sel_nondom_penalized)   
+  op_survival = sel("best", sel_nondom_penalized)   
   
   pop_initializer = make_moc_pop_initializer(
     ps = param_set_flex, 
@@ -67,22 +67,22 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
     predictor = predictor
   )
   
-  miesmuschel::mies_prime_operators(
+  mies_prime_operators(
     search_space = oi$search_space, 
     mutators = list(op_m), 
     recombinators = list(op_r),
     selectors = list(op_parent, op_survival)
   )
-  miesmuschel::mies_init_population(
+  mies_init_population(
     inst = oi, 
     mu = mu, 
     initializer = pop_initializer
   )
   tryCatch({
     repeat {
-      offspring = miesmuschel::mies_generate_offspring(oi, lambda = 10L, op_parent, op_m, op_r)
-      miesmuschel::mies_evaluate_offspring(oi, offspring)
-      miesmuschel::mies_survival_plus(oi, mu, op_survival)
+      offspring = mies_generate_offspring(oi, lambda = 10L, op_parent, op_m, op_r)
+      mies_evaluate_offspring(oi, offspring)
+      mies_survival_plus(oi, mu, op_survival)
     }
   }, terminated_error = function(cond) {
   })
