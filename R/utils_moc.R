@@ -12,7 +12,7 @@ make_fitness_function = function(predictor, x_interest, param_set, pred_column, 
       set(xdt, j = int_cols, value = as.integer(xdt[[int_cols]]))
     }
     
-    # Temporarily add values of fixed_features for prediction
+    # Add values of fixed_features just for prediction
     if (!is.null(fixed_features)) {
       xdt[, (fixed_features) := x_interest[, fixed_features, with = FALSE]]
     }
@@ -41,7 +41,7 @@ make_fitness_function = function(predictor, x_interest, param_set, pred_column, 
 
 # Reset mutated feature values to feature value of x_interest with prop p_use_orig and controls that maximum
 # `max_changed` features are changed
-MutatorReset = R6::R6Class("MutatorReset", inherit = miesmuschel::Mutator,
+MutatorReset = R6::R6Class("MutatorReset", inherit = Mutator,
   public = list(
     initialize = function(x_interest, p_use_orig, max_changed) {
       assert_data_table(x_interest)
@@ -78,7 +78,7 @@ MutatorReset = R6::R6Class("MutatorReset", inherit = miesmuschel::Mutator,
 
 # Recombinator recombinated values to feature value of x_interest with prop p_use_orig and controls that maximum
 # `max_changed` features are changed
-RecombinatorReset = R6::R6Class("RecombinatorReset", inherit = miesmuschel::Recombinator,
+RecombinatorReset = R6::R6Class("RecombinatorReset", inherit = Recombinator,
   
   public = list(
     initialize = function(x_interest, p_use_orig, max_changed) {
@@ -108,7 +108,7 @@ RecombinatorReset = R6::R6Class("RecombinatorReset", inherit = miesmuschel::Reco
   )
 )
 
-# TODO: split this in reset_columns (with prop) and limit_changes (with n_changes)
+
 reset_columns = function(values, p_use_orig, max_changed, x_interest) {
   values_reset = copy(values)
   for (i in seq_len(nrow(values_reset))) {
@@ -135,9 +135,9 @@ reset_columns = function(values, p_use_orig, max_changed, x_interest) {
   values_reset
 }
 
-# Slightly adapted from miesmuschel::ScalorNondom
-ScalorNondomPenalized = R6::R6Class("ScalorNondomPenalized",
-  inherit = miesmuschel::Scalor,
+# Slightly adapted from ScalorNondom
+ScalorNondomPenalized = R6::R6Class("ScalorNondomPenalized", inherit = Scalor,
+  
   public = list(
     #' @description
     #' Initialize the `ScalorNondomPenalized` object.
@@ -159,7 +159,7 @@ ScalorNondomPenalized = R6::R6Class("ScalorNondomPenalized",
       if (params$jitter) {
         fitnesses <- fitnesses * (1 + runif(length(fitnesses)) * sqrt(.Machine$double.eps))
       }
-      sorted = miesmuschel::order_nondominated(fitnesses)$fronts
+      sorted = order_nondominated(fitnesses)$fronts
       
       # Add penalization for individuals with -dist_target lower than -epsilon (shifted up by one front)
       epsilon = params$epsilon
@@ -169,11 +169,11 @@ ScalorNondomPenalized = R6::R6Class("ScalorNondomPenalized",
       front_indexes = sort(unique(sorted))
       
       fronts <- lapply(split(as.data.frame(fitnesses), sorted), as.matrix)
-      subranks <- lapply(fronts, function(x) rank(miesmuschel::dist_crowding(x)) / (length(x) + 1))
+      subranks <- lapply(fronts, function(x) rank(dist_crowding(x)) / (length(x) + 1))
       for (i in seq_along(subranks)) {
         sr <- subranks[[i]]
         # There may be empty fronts in very few cases due to penalization. Therefore this is slightly adapted from 
-        # original miesmuschel::ScalorNondom
+        # original ScalorNondom
         front_index = front_indexes[i]
         sorted[sorted == front_index] <- front_index + sr
       }
@@ -187,31 +187,25 @@ ScalorNondomPenalized = R6::R6Class("ScalorNondomPenalized",
 make_moc_mutator = function(ps, x_interest, max_changed, sdevs, p_mut, p_mut_gen, p_mut_use_orig) {
   ops_list = list()
   if ("ParamDbl" %in% ps$class) {
-    ops_list[["ParamDbl"]] = miesmuschel::mut(
-      "maybe", miesmuschel::mut("gauss", sdev = sdevs), miesmuschel::mut("null"), p = p_mut_gen
-    )
+    ops_list[["ParamDbl"]] = mut("maybe", mut("gauss", sdev = sdevs), mut("null"), p = p_mut_gen)
   }
   if ("ParamInt" %in% ps$class) {
-    ops_list[["ParamInt"]] = miesmuschel::mut(
-      "maybe", miesmuschel::mut("gauss"), miesmuschel::mut("null"), p = p_mut_gen
-    )
+    ops_list[["ParamInt"]] = mut("maybe", mut("gauss"), mut("null"), p = p_mut_gen)
   }
   if ("ParamFct" %in% ps$class) {
     idx_facts = which("ParamFct" == ps$class)
-    mut_maybe_unif = miesmuschel::mut(
-      "maybe", miesmuschel::mut("unif", can_mutate_to_same = FALSE), miesmuschel::mut("null"), p = p_mut_gen
-    )
+    mut_maybe_unif = mut("maybe", mut("unif", can_mutate_to_same = FALSE), mut("null"), p = p_mut_gen)
     ls_op_factor = rep(list(mut_maybe_unif), length(idx_facts))
     names(ls_op_factor) = ps$ids()[idx_facts]
     ops_list = c(ops_list, ls_op_factor)
   }
   
-  op_seq1_mut = miesmuschel::mut("combine", operators = ops_list)
-  op_seq1_no_mut = miesmuschel::mut("null")
-  op_seq1 = miesmuschel::mut("maybe", op_seq1_mut, op_seq1_no_mut, p = p_mut)
+  op_seq1_mut = mut("combine", operators = ops_list)
+  op_seq1_no_mut = mut("null")
+  op_seq1 = mut("maybe", op_seq1_mut, op_seq1_no_mut, p = p_mut)
   
   op_seq2 = MutatorReset$new(x_interest, p_mut_use_orig, max_changed)
-  miesmuschel::mut("sequential", list(op_seq1, op_seq2))
+  mut("sequential", list(op_seq1, op_seq2))
 }
 
 
@@ -231,11 +225,11 @@ make_moc_recombinator = function(ps, x_interest, max_changed, p_rec, p_rec_gen, 
     ops_list[["ParamFct"]] = rec_fact_int
   }
   
-  op_seq1_rec = miesmuschel::rec("combine", operators = ops_list)
-  op_seq1_no_rec = miesmuschel::rec("null", n_indivs_in = 2L, n_indivs_out = 2L)
-  op_r_seq_1 = miesmuschel::rec("maybe", op_seq1_rec, op_seq1_no_rec, p = p_rec_gen)
+  op_seq1_rec = rec("combine", operators = ops_list)
+  op_seq1_no_rec = rec("null", n_indivs_in = 2L, n_indivs_out = 2L)
+  op_r_seq_1 = rec("maybe", op_seq1_rec, op_seq1_no_rec, p = p_rec_gen)
   op_r_seq_2 = RecombinatorReset$new(x_interest, p_rec_use_orig, max_changed)
-  miesmuschel::rec("sequential", list(op_r_seq_1, op_r_seq_2))
+  rec("sequential", list(op_r_seq_1, op_r_seq_2))
 }
 
 
@@ -245,13 +239,13 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
 
     if (init_strategy == "random") {
       f_design = function(ps, n) {
-        paradox::SamplerUnif$new(ps)$sample(n)
+        SamplerUnif$new(ps)$sample(n)
       }
     } else if (init_strategy == "sd") {
 
       if (length(sdevs) == 0L) {
         f_design = function(ps, n) {
-          paradox::SamplerUnif$new(ps)$sample(n)
+          SamplerUnif$new(ps)$sample(n)
         }
       } else {
         make_f_design = function(X, x_interest, sdevs, lower, upper) {
@@ -263,7 +257,7 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
 
           param_set_init = make_param_set(X, lower = lower_bounds, upper = upper_bounds)
           function(ps, n) {
-            paradox::SamplerUnif$new(param_set_init)$sample(n)
+            SamplerUnif$new(param_set_init)$sample(n)
           }
         }
 
@@ -279,7 +273,7 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
       make_f_design = function(X, flex_cols, x_interest, sdevs_num_feats) {
         function(ps, n) {
           param_set = make_param_set(X, lower = NULL, upper = NULL)
-          mydesign = paradox::SamplerUnif$new(param_set)$sample(n)
+          mydesign = SamplerUnif$new(param_set)$sample(n)
 
           ice_sds = get_ICE_sd(x_interest, predictor, param_set)
           
