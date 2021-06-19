@@ -55,7 +55,7 @@ make_counterfactual_test_obj = function() {
 
 
 
-quiet <- function(x) { 
+quiet = function(x) { 
   sink(tempfile()) 
   on.exit(sink()) 
   invisible(force(x)) 
