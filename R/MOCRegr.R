@@ -2,6 +2,8 @@
 MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
   
   public = list(
+    optimizer = NULL,
+    
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, 
                           mu = 50L, n_generations = 50L, p_rec = 0.9, p_rec_gen = 0.7, p_rec_use_orig = 0.7, p_mut = 0.8,
                           p_mut_gen = 0.5, p_mut_use_orig = 0.2, k = 1L, weights = NULL, lower = NULL, upper = NULL, 
@@ -67,7 +69,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     
     run = function() {
       pred_column = private$get_pred_column()
-      oi = moc_algo(
+      self$optimizer = moc_algo(
         predictor = private$predictor,
         x_interest = private$x_interest,
         pred_column = pred_column,
@@ -92,7 +94,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
         init_strategy = private$init_strategy
       )
       
-      unique(oi$result[, names(private$x_interest), with = FALSE])
+      unique(self$optimizer$result[, names(private$x_interest), with = FALSE])
       
     },
     

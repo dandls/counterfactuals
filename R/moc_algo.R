@@ -94,7 +94,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
   }
   int_cols = which(sapply(predictor$data$X, is.integer))
   if (length(int_cols) > 0L) {
-    set(oi$result, j = int_cols, value = as.integer(oi$result[[int_cols]]))
+    oi$result[, (int_cols) := lapply(.SD, as.integer), .SDcols = int_cols]
   }
   
   # Re-attach fixed features
