@@ -3,7 +3,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
   
   public = list(
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, 
-                          mu = 50L, n_evals = 200L, p_rec = 0.9, p_rec_gen = 0.7, p_rec_use_orig = 0.7, p_mut = 0.8,
+                          mu = 50L, n_generations = 50L, p_rec = 0.9, p_rec_gen = 0.7, p_rec_use_orig = 0.7, p_mut = 0.8,
                           p_mut_gen = 0.5, p_mut_use_orig = 0.2, k = 1L, weights = NULL, lower = NULL, upper = NULL, 
                           init_strategy = "random") {
       
@@ -15,7 +15,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
       } 
       assert_integerish(max_changed, lower = 0, len = 1L, null.ok = TRUE)
       assert_integerish(mu, lower = 0, len = 1L)
-      assert_integerish(n_evals, lower = 0, len = 1L)
+      assert_integerish(n_generations, lower = 0, len = 1L)
       assert_number(p_rec, lower = 0, upper = 1)
       assert_number(p_rec_gen, lower = 0, upper = 1)
       assert_number(p_rec_use_orig, lower = 0, upper = 1)
@@ -30,7 +30,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
       private$fixed_features = fixed_features
       private$max_changed = max_changed
       private$mu = mu
-      private$n_evals = n_evals
+      private$n_generations = n_generations
       private$p_rec = p_rec
       private$p_rec_gen = p_rec_gen
       private$p_rec_use_orig = p_rec_use_orig
@@ -51,7 +51,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     fixed_features = NULL,
     max_changed = NULL,
     mu = NULL,
-    n_evals = NULL,
+    n_generations = NULL,
     p_rec = NULL,
     p_rec_gen = NULL,
     p_rec_use_orig = NULL,
@@ -80,7 +80,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
         fixed_features = private$fixed_features,
         max_changed = private$max_changed,
         mu = private$mu,
-        n_evals = private$n_evals,
+        n_generations = private$n_generations,
         p_rec = private$p_rec,
         p_rec_gen = private$p_rec_gen,
         p_rec_use_orig = private$p_rec_use_orig,
