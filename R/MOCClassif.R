@@ -2,7 +2,6 @@
 MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
 
   public = list(
-    optimizer = NULL, # TODO: Make this an active
     
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL,
       mu = 50L, n_generations = 50L, p_rec = 0.9, p_rec_gen = 0.7, p_rec_use_orig = 0.7, p_mut = 0.8,
@@ -63,6 +62,17 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       comp_domhv_all_gen(fitness_values, private$ref_point)
     }
   ),
+  
+  active = list(
+    optimizer = function(value) {
+      if (missing(value)) {
+        private$.optimizer
+      } else {
+        stop("`$optimizer` is read only", call. = FALSE)
+      }
+    }
+  ),
+  
   private = list(
     epsilon = NULL,
     fixed_features = NULL,
@@ -82,13 +92,14 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     lower = NULL,
     upper = NULL,
     ref_point = NULL,
+    .optimizer = NULL,
 
     run = function() {
       pred_column = private$get_pred_column()
       y_hat_interest = private$predictor$predict(private$x_interest)
       private$ref_point = c(min(abs(y_hat_interest - private$desired_prob)), 1, ncol(private$x_interest), 1)
       
-      self$optimizer = moc_algo(
+      private$.optimizer = moc_algo(
         predictor = private$predictor,
         x_interest = private$x_interest,
         pred_column = pred_column,
@@ -113,7 +124,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
         init_strategy = private$init_strategy
       )
 
-      unique(self$optimizer$result[, names(private$x_interest), with = FALSE])
+      unique(private$.optimizer$result[, names(private$x_interest), with = FALSE])
     },
 
     print_parameters = function() {

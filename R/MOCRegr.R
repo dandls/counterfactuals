@@ -2,7 +2,6 @@
 MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
   
   public = list(
-    optimizer = NULL,
     
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, 
                           mu = 50L, n_generations = 50L, p_rec = 0.9, p_rec_gen = 0.7, p_rec_use_orig = 0.7, p_mut = 0.2,
@@ -64,6 +63,17 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     }
     
   ),
+  
+  active = list(
+    optimizer = function(value) {
+      if (missing(value)) {
+        private$.optimizer
+      } else {
+        stop("`$optimizer` is read only", call. = FALSE)
+      }
+    }
+  ),
+  
   private = list(
     epsilon = NULL,
     fixed_features = NULL,
@@ -83,13 +93,14 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     lower = NULL,
     upper = NULL,
     ref_point = NULL,
+    .optimizer = NULL,
     
     run = function() {
       pred_column = private$get_pred_column()
       y_hat_interest = private$predictor$predict(private$x_interest)
       private$ref_point = c(min(abs(y_hat_interest - private$desired_outcome)), 1, ncol(private$x_interest), 1)
       
-      self$optimizer = moc_algo(
+      private$.optimizer = moc_algo(
         predictor = private$predictor,
         x_interest = private$x_interest,
         pred_column = pred_column,
@@ -114,7 +125,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
         init_strategy = private$init_strategy
       )
       
-      unique(self$optimizer$result[, names(private$x_interest), with = FALSE])
+      unique(private$.optimizer$result[, names(private$x_interest), with = FALSE])
       
     },
     
