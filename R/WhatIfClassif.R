@@ -25,7 +25,7 @@ WhatIfClassif = R6::R6Class("WhatIfClassif", inherit = CounterfactualMethodClass
     },
     
     print_parameters = function() {
-      cat("\t", "n_counterfactuals: ", private$n_counterfactuals)
+      cat(" - n_counterfactuals: ", private$n_counterfactuals)
     }
   )
 )
