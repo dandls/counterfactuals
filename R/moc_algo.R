@@ -1,6 +1,5 @@
-
 moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower, upper, sdevs_dbl_feats, 
-                    epsilon,  fixed_features, max_changed, mu, n_evals, p_rec, p_rec_gen, p_rec_use_orig,
+                    epsilon,  fixed_features, max_changed, mu, n_generations, p_rec, p_rec_gen, p_rec_use_orig,
                     p_mut, p_mut_gen, p_mut_use_orig, k, weights, init_strategy) {
   
   codomain = ParamSet$new(list(
@@ -27,7 +26,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
   
   oi = bbotk::OptimInstanceMultiCrit$new(
     objective, 
-    terminator = bbotk::trm("evals", n_evals = n_evals)
+    terminator = bbotk::trm("gens", generations = n_generations)
   )
 
   op_m = make_moc_mutator(
@@ -80,7 +79,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
   )
   tryCatch({
     repeat {
-      offspring = mies_generate_offspring(oi, lambda = 10L, op_parent, op_m, op_r)
+      offspring = mies_generate_offspring(oi, lambda = mu, op_parent, op_m, op_r)
       mies_evaluate_offspring(oi, offspring)
       mies_survival_plus(oi, mu, op_survival)
     }
