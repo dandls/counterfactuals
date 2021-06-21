@@ -52,31 +52,11 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
         stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)
       }
       
-      # TODO: Check that $find_counterfactuals has been excecuted
-      
-      obj_names = c("dist_target", "dist_x_interest", "nr_changed", "dist_train")
-      dt = self$optimizer$archive$data[, c("batch_nr", obj_names), with = FALSE]
-      dt_agg_mean = dt[, lapply(.SD, mean), by = .(batch_nr), .SDcols = obj_names]
-      dt_agg_mean = melt(dt_agg_mean, id.vars = "batch_nr", measure.vars = obj_names)
-      dt_agg_min = dt[, lapply(.SD, min), by = .(batch_nr), .SDcols = obj_names]
-      dt_agg_min = melt(dt_agg_min, id.vars = "batch_nr", measure.vars = obj_names)
-
-      gg_mean = ggplot2::ggplot(dt_agg_mean) + 
-        ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value, color = variable)) +
-        ggplot2::xlab("generations") +
-        ggplot2::ggtitle("Mean objective values for each generation") +
-        ggplot2::guides(color = ggplot2::guide_legend(title = "objectives")) +
-        ggplot2::theme_bw()
-      
-      gg_min = ggplot2::ggplot(dt_agg_min) + 
-        ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value, color = variable)) +
-        ggplot2::xlab("generations") +
-        ggplot2::ggtitle("Minimum objective values for each generation") +
-        ggplot2::guides(color = ggplot2::guide_legend(title = "objectives")) +
-        ggplot2::theme_bw()
-      
-      list(gg_mean, gg_min)
-      
+      if (is.null(self$optimizer)) {
+        stop("There are no results yet. Please run `$find_counterfactuals` first.")
+      }
+      y_hat_interest = private$predictor$predict(private$x_interest)
+      make_moc_statistics_plots(self$optimizer$archive$data, x_interest, y_hat_interest, private$desired_prob)
     }
   ),
   private = list(

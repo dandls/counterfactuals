@@ -351,3 +351,50 @@ get_ICE_sd = function(x_interest, predictor, param_set) {
     sd(pred[[1L]])
   }, FUN.VALUE = numeric(1L))
 }
+
+
+make_moc_statistics_plots = function(data, x_interest, y_hat_interest, target) {
+  obj_names = c("dist_target", "dist_x_interest", "nr_changed", "dist_train")
+  dt = data[, c("batch_nr", obj_names), with = FALSE]
+  dt_agg_mean = dt[, lapply(.SD, mean), by = .(batch_nr), .SDcols = obj_names]
+  dt_agg_mean = melt(dt_agg_mean, id.vars = "batch_nr", measure.vars = obj_names)
+  dt_agg_min = dt[, lapply(.SD, min), by = .(batch_nr), .SDcols = obj_names]
+  dt_agg_min = melt(dt_agg_min, id.vars = "batch_nr", measure.vars = obj_names)
+  
+  ref_point = c(min(abs(y_hat_interest - target)), 1, ncol(x_interest), 1)
+  hvs = vapply(
+    seq_len(max(dt$batch_nr)), 
+    # TODO: Replace this with miesmuschel:::domhv
+    function(i) emoa::dominated_hypervolume(t(as.matrix(dt[batch_nr == i, -"batch_nr"])), ref = ref_point),
+    FUN.VALUE = numeric(1L)
+  )
+  dt_hv = data.table(
+    generations = seq_along(hvs),
+    hv = hvs
+  )
+  
+  gg_mean = ggplot2::ggplot(dt_agg_mean) + 
+    ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value, color = variable)) +
+    ggplot2::xlab("generations") +
+    ggplot2::ggtitle("Mean objective values for each generation") +
+    ggplot2::guides(color = ggplot2::guide_legend(title = "objectives")) +
+    ggplot2::theme_bw()
+  
+  gg_min = ggplot2::ggplot(dt_agg_min) + 
+    ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value, color = variable)) +
+    ggplot2::xlab("generations") +
+    ggplot2::ggtitle("Minimum objective values for each generation") +
+    ggplot2::guides(color = ggplot2::guide_legend(title = "objectives")) +
+    ggplot2::theme_bw()
+  
+  gg_hv = ggplot2::ggplot(dt_hv) + 
+    ggplot2::geom_line(ggplot2::aes(x = generations, y = hv)) +
+    ggplot2::xlab("generations") +
+    ggplot2::ggtitle("Dominated hypervolumne for each generation") +
+    ggplot2::theme_bw()
+  
+  list(gg_mean, gg_min, gg_hv)
+}
+
+
+
