@@ -5,7 +5,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     optimizer = NULL,
     
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, 
-                          mu = 50L, n_generations = 50L, p_rec = 0.9, p_rec_gen = 0.7, p_rec_use_orig = 0.7, p_mut = 0.8,
+                          mu = 50L, n_generations = 50L, p_rec = 0.9, p_rec_gen = 0.7, p_rec_use_orig = 0.7, p_mut = 0.2,
                           p_mut_gen = 0.5, p_mut_use_orig = 0.2, k = 1L, weights = NULL, lower = NULL, upper = NULL, 
                           init_strategy = "random") {
       
@@ -45,7 +45,18 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
       private$sdevs_dbl_feats = apply(Filter(is.double, private$predictor$data$X), 2L, sd)
       private$lower = lower
       private$upper = upper
-  
+    },
+    
+    plot_statistics = function() {
+      if (!requireNamespace("ggplot2", quietly = TRUE)) {
+        stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)
+      }
+      
+      if (is.null(self$optimizer)) {
+        stop("There are no results yet. Please run `$find_counterfactuals` first.")
+      }
+      y_hat_interest = private$predictor$predict(private$x_interest)
+      make_moc_statistics_plots(self$optimizer$archive$data, x_interest, y_hat_interest, private$desired_outcome)
     }
   ),
   private = list(
