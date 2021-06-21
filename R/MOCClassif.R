@@ -92,6 +92,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     lower = NULL,
     upper = NULL,
     ref_point = NULL,
+
     .optimizer = NULL,
 
     run = function() {
