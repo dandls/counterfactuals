@@ -51,12 +51,16 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
         stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)
       }
-      
       if (is.null(self$optimizer)) {
         stop("There are no results yet. Please run `$find_counterfactuals` first.")
       }
-      y_hat_interest = private$predictor$predict(private$x_interest)
-      make_moc_statistics_plots(self$optimizer$archive$data, x_interest, y_hat_interest, private$desired_prob)
+      make_moc_statistics_plots(self$optimizer$archive$data, private$ref_point)
+    },
+    
+    get_dominated_hv = function() {
+      rel_cols = c("batch_nr", "dist_target", "dist_x_interest", "nr_changed", "dist_train")
+      fitness_values = self$optimizer$archive$data[, ..rel_cols]
+      comp_domhv_all_gen(fitness_values, private$ref_point)
     }
   ),
   private = list(
@@ -77,9 +81,13 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     sdevs_dbl_feats = NULL,
     lower = NULL,
     upper = NULL,
+    ref_point = NULL,
 
     run = function() {
       pred_column = private$get_pred_column()
+      y_hat_interest = private$predictor$predict(private$x_interest)
+      private$ref_point = c(min(abs(y_hat_interest - private$desired_prob)), 1, ncol(private$x_interest), 1)
+      
       self$optimizer = moc_algo(
         predictor = private$predictor,
         x_interest = private$x_interest,

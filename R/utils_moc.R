@@ -353,26 +353,15 @@ get_ICE_sd = function(x_interest, predictor, param_set) {
 }
 
 
-make_moc_statistics_plots = function(data, x_interest, y_hat_interest, target) {
+make_moc_statistics_plots = function(data, ref_point) {
   obj_names = c("dist_target", "dist_x_interest", "nr_changed", "dist_train")
   dt = data[, c("batch_nr", obj_names), with = FALSE]
   dt_agg_mean = dt[, lapply(.SD, mean), by = .(batch_nr), .SDcols = obj_names]
   dt_agg_mean = melt(dt_agg_mean, id.vars = "batch_nr", measure.vars = obj_names)
   dt_agg_min = dt[, lapply(.SD, min), by = .(batch_nr), .SDcols = obj_names]
   dt_agg_min = melt(dt_agg_min, id.vars = "batch_nr", measure.vars = obj_names)
-  
-  ref_point = c(min(abs(y_hat_interest - target)), 1, ncol(x_interest), 1)
-  hvs = vapply(
-    seq_len(max(dt$batch_nr)), 
-    # TODO: Replace this with miesmuschel:::domhv
-    function(i) emoa::dominated_hypervolume(t(as.matrix(dt[batch_nr == i, -"batch_nr"])), ref = ref_point),
-    FUN.VALUE = numeric(1L)
-  )
-  dt_hv = data.table(
-    generations = seq_along(hvs),
-    hv = hvs
-  )
-  
+  dt_hv = comp_domhv_all_gen(dt, ref_point)
+
   gg_mean = ggplot2::ggplot(dt_agg_mean) + 
     ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value, color = variable)) +
     ggplot2::xlab("generations") +
@@ -396,5 +385,14 @@ make_moc_statistics_plots = function(data, x_interest, y_hat_interest, target) {
   list(gg_mean, gg_min, gg_hv)
 }
 
-
-
+comp_domhv_all_gen = function(fitness_values, ref_point) {
+  data.table(
+    generations = unique(fitness_values$batch_nr), 
+    hv = vapply(
+      seq_len(max(fitness_values$batch_nr)), 
+      # TODO: Replace this with miesmuschel:::domhv
+      function(i) emoa::dominated_hypervolume(t(as.matrix(fitness_values[batch_nr == i, -"batch_nr"])), ref = ref_point),
+      FUN.VALUE = numeric(1L)
+    )
+  )
+}
