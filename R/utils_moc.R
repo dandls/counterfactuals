@@ -2,14 +2,13 @@ make_fitness_function = function(predictor, x_interest, param_set, pred_column, 
   
   param_range = param_set$upper - param_set$lower
   function(xdt) {
-    
     factor_cols = which(sapply(predictor$data$X, is.factor))
     for (factor_col in factor_cols) {
       set(xdt, j = factor_col, value = factor(xdt[[factor_col]], levels = levels(predictor$data$X[[factor_col]])))
     }
     int_cols = which(sapply(predictor$data$X, is.integer))
     if (length(int_cols) > 0L) {
-      set(xdt, j = int_cols, value = as.integer(xdt[[int_cols]]))
+      xdt[,(int_cols) := lapply(.SD, as.integer), .SDcols = int_cols]
     }
     
     # Add values of fixed_features just for prediction

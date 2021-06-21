@@ -2,7 +2,7 @@
 MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
 
   public = list(
-    optimizer = NULL,
+    optimizer = NULL, # TODO: Make this an active
     
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL,
       mu = 50L, n_generations = 50L, p_rec = 0.9, p_rec_gen = 0.7, p_rec_use_orig = 0.7, p_mut = 0.8,
@@ -45,7 +45,38 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       private$sdevs_dbl_feats = apply(Filter(is.double, private$predictor$data$X), 2L, sd)
       private$lower = lower
       private$upper = upper
+    },
+    
+    plot_statistics = function() {
+      if (!requireNamespace("ggplot2", quietly = TRUE)) {
+        stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)
+      }
+      
+      # TODO: Check that $find_counterfactuals has been excecuted
+      
+      obj_names = c("dist_target", "dist_x_interest", "nr_changed", "dist_train")
+      dt = self$optimizer$archive$data[, c("batch_nr", obj_names), with = FALSE]
+      dt_agg_mean = dt[, lapply(.SD, mean), by = .(batch_nr), .SDcols = obj_names]
+      dt_agg_mean = melt(dt_agg_mean, id.vars = "batch_nr", measure.vars = obj_names)
+      dt_agg_min = dt[, lapply(.SD, min), by = .(batch_nr), .SDcols = obj_names]
+      dt_agg_min = melt(dt_agg_min, id.vars = "batch_nr", measure.vars = obj_names)
 
+      gg_mean = ggplot2::ggplot(dt_agg_mean) + 
+        ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value, color = variable)) +
+        ggplot2::xlab("generations") +
+        ggplot2::ggtitle("Mean objective values for each generation") +
+        ggplot2::guides(color = ggplot2::guide_legend(title = "objectives")) +
+        ggplot2::theme_bw()
+      
+      gg_min = ggplot2::ggplot(dt_agg_min) + 
+        ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value, color = variable)) +
+        ggplot2::xlab("generations") +
+        ggplot2::ggtitle("Minimum objective values for each generation") +
+        ggplot2::guides(color = ggplot2::guide_legend(title = "objectives")) +
+        ggplot2::theme_bw()
+      
+      list(gg_mean, gg_min)
+      
     }
   ),
   private = list(
