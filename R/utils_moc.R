@@ -2,20 +2,22 @@ make_fitness_function = function(predictor, x_interest, param_set, pred_column, 
   
   param_range = param_set$upper - param_set$lower
   function(xdt) {
-    factor_cols = which(sapply(predictor$data$X, is.factor))
-    for (factor_col in factor_cols) {
-      set(xdt, j = factor_col, value = factor(xdt[[factor_col]], levels = levels(predictor$data$X[[factor_col]])))
-    }
-    int_cols = which(sapply(predictor$data$X, is.integer))
-    if (length(int_cols) > 0L) {
-      xdt[,(int_cols) := lapply(.SD, as.integer), .SDcols = int_cols]
-    }
-    
     # Add values of fixed_features just for prediction
     if (!is.null(fixed_features)) {
       xdt[, (fixed_features) := x_interest[, fixed_features, with = FALSE]]
     }
     xdt = xdt[, names(x_interest), with = FALSE]
+    
+    factor_cols = names(which(sapply(predictor$data$X, is.factor)))
+    for (factor_col in factor_cols) {
+      fact_col_pred = predictor$data$X[[factor_col]]
+      value =  factor(xdt[[factor_col]], levels = levels(fact_col_pred), ordered = is.ordered(fact_col_pred))
+      set(xdt, j = factor_col, value = value)
+    }
+    int_cols = names(which(sapply(predictor$data$X, is.integer)))
+    if (length(int_cols) > 0L) {
+      xdt[,(int_cols) := lapply(.SD, as.integer), .SDcols = int_cols]
+    }
     pred = predictor$predict(xdt)[[pred_column]]
     
     dist_target = sapply(pred, function(x) ifelse(between(x, target[1L], target[2L]), 0, min(abs(x - target))))
@@ -110,18 +112,28 @@ RecombinatorReset = R6::R6Class("RecombinatorReset", inherit = Recombinator,
 
 reset_columns = function(values, p_use_orig, max_changed, x_interest) {
   values_reset = copy(values)
+  
   for (i in seq_len(nrow(values_reset))) {
-    idx_reset = which(sample(
-      c(TRUE, FALSE), size = ncol(values_reset), replace = TRUE, prob = c(p_use_orig, 1 - p_use_orig)
-    ))
-    if (length(idx_reset) > 0L) {
-      set(values_reset, i, j = idx_reset, value = x_interest[, ..idx_reset])
-    }
-    
+
     # Removes fixed features from x_interest, if present, as only flex features are contained in values_reset
     x_interest_sub = x_interest[, names(values_reset), with = FALSE]
     
+    factor_cols = which(sapply(x_interest_sub, is.factor))
+    if (length(factor_cols) > 0L) {
+      x_interest_sub[, (factor_cols) := lapply(.SD, as.character), .SDcols = factor_cols]
+    }
+    
+    # Reset columns with prob p_use_orig
+    idx_reset = which(sample(
+      c(TRUE, FALSE), size = ncol(values_reset), replace = TRUE, prob = c(p_use_orig, 1 - p_use_orig)
+    ))
+    
+    if (length(idx_reset) > 0L) {
+      set(values_reset, i, j = idx_reset, value = x_interest_sub[, ..idx_reset])
+    }
+    
     # If more changes than allowed, randomly reset some features such that constraint holds
+    
     n_changes = count_changes(values_reset[i, ], x_interest_sub)
     if (!is.null(max_changed)) {
       if (n_changes > max_changed) {
@@ -235,7 +247,7 @@ make_moc_recombinator = function(ps, x_interest, max_changed, p_rec, p_rec_gen, 
 make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, flex_cols, sdevs, lower, upper, 
                                     predictor) {
   function(param_set, n) {
-
+    
     if (init_strategy == "random") {
       f_design = function(ps, n) {
         SamplerUnif$new(ps)$sample(n)
@@ -289,10 +301,10 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
           }
 
           factor_cols = names(x_interest_sub)[sapply(x_interest_sub, is.factor)]
-          if (length(factor_cols)) {
+          if (length(factor_cols) > 0L) {
             x_interest_sub[, (factor_cols) := lapply(.SD, as.character), .SDcols = factor_cols]
           }
-
+          
           for (j in seq_len(ncol(mydesign$data))) {
             p = p_differs[j]
             reset = which(sample(c(TRUE, FALSE), size = ncol(mydesign$data), replace = TRUE, prob = c(1 - p, p)))
@@ -304,14 +316,20 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
 
       f_design = make_f_design(predictor$data$X, flex_cols, x_interest, sdevs_num_feats)
     }
-
+    
     my_design = f_design(param_set, n)
     x_interest_reorderd = x_interest[, names(my_design$data), with = FALSE]
-  
+    
+    
+    factor_cols = names(x_interest_reorderd)[sapply(x_interest_reorderd, is.factor)]
+    if (length(factor_cols) > 0L) {
+      x_interest_reorderd[, (factor_cols) := lapply(.SD, as.character), .SDcols = factor_cols]
+    }
+    
     # If more changes than allowed, randomly reset some features such that constraint holds
-    n_changes = count_changes(my_design$data, x_interest_reorderd)
     if (!is.null(max_changed)) {
       for (i in seq_len(nrow(my_design$data))) {
+        n_changes = count_changes(my_design$data[i, ], x_interest_reorderd)
         if (n_changes > max_changed) {
           idx_diff = which(my_design$data[i, ] != x_interest_reorderd)
           idx_reset = sample(idx_diff, size = n_changes - max_changed)

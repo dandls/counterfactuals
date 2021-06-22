@@ -77,6 +77,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
     mu = mu, 
     initializer = pop_initializer
   )
+  
   tryCatch({
     repeat {
       offspring = mies_generate_offspring(oi, lambda = mu, op_parent, op_m, op_r)
@@ -87,19 +88,22 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
   })
   bbotk::assign_result_default(oi)
   
-  # Transform factor column w.r.t to original data
-  factor_cols = names(predictor$data$X)[sapply(predictor$data$X, is.factor)]
-  for (factor_col in factor_cols) {
-    oi$result[, (factor_col) := factor(oi$result[[factor_col]], levels = levels(predictor$data$X[[factor_col]]))]
-  }
-  int_cols = which(sapply(predictor$data$X, is.integer))
-  if (length(int_cols) > 0L) {
-    oi$result[, (int_cols) := lapply(.SD, as.integer), .SDcols = int_cols]
-  }
-  
   # Re-attach fixed features
   if (!is.null(fixed_features)) {
     oi$result[, (fixed_features) := x_interest[, fixed_features, with = FALSE]]
+  }
+  
+  # Transform factor column w.r.t to original data
+  factor_cols = names(which(sapply(predictor$data$X, is.factor)))
+  for (factor_col in factor_cols) {
+    fact_col_pred = predictor$data$X[[factor_col]]
+    value =  factor(oi$result[[factor_col]], levels = levels(fact_col_pred), ordered = is.ordered(fact_col_pred))
+    oi$result[, (factor_col) := value]
+  }
+  
+  int_cols = names(which(sapply(predictor$data$X, is.integer)))
+  if (length(int_cols) > 0L) {
+    oi$result[, (int_cols) := lapply(.SD, as.integer), .SDcols = int_cols]
   }
   
   oi

@@ -40,7 +40,20 @@ test_that("Can handle non-numeric target classes", {
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
 })
 
-
+test_that("Can handle ordered factor input columns", {
+  set.seed(5748554)
+  data("german", package = "rchallenge")
+  rf =  randomForest(credit_risk ~ ., data = german)
+  x_interest = german[991L, -ncol(german)]
+  pred_credit = iml::Predictor$new(rf, data = german, y = "credit_risk", type = "prob")
+  moc_classif = MOCClassif$new(
+    pred_credit, n_generations = 3L, fixed_features = c("personal_status_sex", "age"), max_changed = 4L
+  )
+  cfactuals = quiet(moc_classif$find_counterfactuals(x_interest, desired_class = "good", desired_prob = c(0.8 , 1)))
+  expect_data_table(cfactuals$data, col.names = "named")
+  expect_factor(cfactuals$data$installment_rate, levels = levels(german$installment_rate), ordered = TRUE)
+  expect_names(names(cfactuals$data), identical.to = names(x_interest))
+})
 
 
 
