@@ -121,9 +121,11 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       
       freq = self$get_freq_of_feature_changes(subset_zero)
       df_freq = data.frame(var_name = names(freq), freq = freq)
-      ggplot2::ggplot(df_freq, ggplot2::aes(x = reorder(var_name, -freq), y = freq)) +
+      ggplot2::ggplot(df_freq, ggplot2::aes(x = reorder(var_name, freq), y = freq)) +
         ggplot2::geom_bar(stat = "identity") +
-        ggplot2::labs(x = ggplot2::element_blank(), y = "Relative frequency")
+        ggplot2::labs(x = ggplot2::element_blank(), y = "Relative frequency") +
+        ggplot2::coord_flip() +
+        ggplot2::theme_bw()
     },
     
     get_freq_of_feature_changes = function(subset_zero = FALSE) {
@@ -139,7 +141,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     
 
     # para, grid_size not used for two categorical features
-    plot_surface = function(feature_names, grid_size = 50L) {
+    plot_surface = function(feature_names, grid_size = 250L) {
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
         stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)
       }
