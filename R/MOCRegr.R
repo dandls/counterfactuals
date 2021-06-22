@@ -57,6 +57,9 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     },
     
     get_dominated_hv = function() {
+      if (is.null(self$optimizer)) {
+        stop("There are no results yet. Please run `$find_counterfactuals` first.")
+      }
       rel_cols = c("batch_nr", "dist_target", "dist_x_interest", "nr_changed", "dist_train")
       fitness_values = self$optimizer$archive$data[, ..rel_cols]
       comp_domhv_all_gen(fitness_values, private$ref_point)
