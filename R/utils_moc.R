@@ -77,7 +77,7 @@ MutatorReset = R6::R6Class("MutatorReset", inherit = Mutator,
 
 
 
-# Recombinator recombinated values to feature value of x_interest with prop p_use_orig and controls that maximum
+# Reset recombinated values to feature value of x_interest with prop p_use_orig and controls that maximum
 # `max_changed` features are changed
 RecombinatorReset = R6::R6Class("RecombinatorReset", inherit = Recombinator,
   
@@ -153,22 +153,22 @@ ScalorNondomPenalized = R6::R6Class("ScalorNondomPenalized", inherit = Scalor,
     #' @description
     #' Initialize the `ScalorNondomPenalized` object.
     initialize = function(epsilon) {
-      param_set <- ps(
+      param_set = ps(
         epsilon = p_dbl(lower = 0, tags = "required", special_vals = list(NULL)),
         scale_output = p_lgl(tags = "required"),
         jitter = p_lgl(tags = "required"),
         tiebreak = p_fct("crowding-dist")
       )
-      param_set$values <- list(epsilon = epsilon, scale_output = FALSE, jitter = TRUE, tiebreak = "crowding-dist")
+      param_set$values = list(epsilon = epsilon, scale_output = FALSE, jitter = TRUE, tiebreak = "crowding-dist")
       super$initialize(param_set = param_set)
     }
   ),
   private = list(
     .scale = function(values, fitnesses, context) {
 
-      params <- self$param_set$get_values(context = context)
+      params = self$param_set$get_values(context = context)
       if (params$jitter) {
-        fitnesses <- fitnesses * (1 + runif(length(fitnesses)) * sqrt(.Machine$double.eps))
+        fitnesses = fitnesses * (1 + runif(length(fitnesses)) * sqrt(.Machine$double.eps))
       }
       sorted = order_nondominated(fitnesses)$fronts
       
@@ -179,14 +179,14 @@ ScalorNondomPenalized = R6::R6Class("ScalorNondomPenalized", inherit = Scalor,
       sorted[is_penalized] = sorted[is_penalized] + 1L
       front_indexes = sort(unique(sorted))
       
-      fronts <- lapply(split(as.data.frame(fitnesses), sorted), as.matrix)
-      subranks <- lapply(fronts, function(x) rank(dist_crowding(x)) / (length(x) + 1))
+      fronts = lapply(split(as.data.frame(fitnesses), sorted), as.matrix)
+      subranks = lapply(fronts, function(x) rank(dist_crowding(x)) / (length(x) + 1))
       for (i in seq_along(subranks)) {
-        sr <- subranks[[i]]
+        sr = subranks[[i]]
         # There may be empty fronts in very few cases due to penalization. Therefore this is slightly adapted from 
         # original ScalorNondom
         front_index = front_indexes[i]
-        sorted[sorted == front_index] <- front_index + sr
+        sorted[sorted == front_index] = front_index + sr
       }
       
       # want high front values for high fitnesses, so reverse ordering here
@@ -344,16 +344,7 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
 }
 
 
-#' Calculate ice curve standard deviation for all features
-#'
-#' @section Arguments:
-#' \describe{
-#' \item{x_interest: }{(data.frame)\cr Data point, for which ice curves
-#' should be calculated.}
-#' \item{predictor: }{(Predictor)\cr Object, that holds the prediction model and dataset.}
-#' \item{param_set: }{(ParamSet)\cr Parameter set of features in dataset.}
-#' }
-#' @return (numeric) Vector with standard deviations for each feature.
+# Calculate ice curve standard deviation for all features
 get_ICE_sd = function(x_interest, predictor, param_set) {
   vapply(names(x_interest), function(i_name) {
     ps_sub = param_set$clone()
