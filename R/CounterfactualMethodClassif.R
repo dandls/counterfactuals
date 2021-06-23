@@ -50,6 +50,11 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit
       private$desired_prob = desired_prob
       cfactuals = private$run()
       
+      if (nrow(merge(cfactuals, x_interest)) > 0L) {
+        cfactuals = cfactuals[!x_interest, on = names(cfactuals)]
+        message("`x_interest` was removed from results.")
+      }
+      
       Counterfactuals$new(
         cfactuals = cfactuals, 
         predictor = private$predictor,
