@@ -381,24 +381,27 @@ make_moc_statistics_plots = function(data, ref_point) {
   dt_hv = comp_domhv_all_gen(dt, ref_point)
 
   gg_mean = ggplot2::ggplot(dt_agg_mean) + 
-    ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value, color = variable)) +
+    ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value)) +
+    ggplot2::facet_wrap(ggplot2::vars(variable), scales = "free_y", nrow = 4L) +
     ggplot2::xlab("generations") +
-    ggplot2::ggtitle("Mean objective values for each generation") +
-    ggplot2::guides(color = ggplot2::guide_legend(title = "objectives")) +
-    ggplot2::theme_bw()
+    ggplot2::ggtitle("Mean objective values") +
+    ggplot2::theme_bw() +
+    ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))
   
   gg_min = ggplot2::ggplot(dt_agg_min) + 
-    ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value, color = variable)) +
+    ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value)) +
+    ggplot2::facet_wrap(ggplot2::vars(variable), scales = "free_y", nrow = 4L) +
     ggplot2::xlab("generations") +
-    ggplot2::ggtitle("Minimum objective values for each generation") +
-    ggplot2::guides(color = ggplot2::guide_legend(title = "objectives")) +
-    ggplot2::theme_bw()
+    ggplot2::ggtitle("Minimum objective values") +
+    ggplot2::theme_bw() +
+    ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))
   
   gg_hv = ggplot2::ggplot(dt_hv) + 
     ggplot2::geom_line(ggplot2::aes(x = generations, y = hv)) +
     ggplot2::xlab("generations") +
-    ggplot2::ggtitle("Dominated hypervolume for each generation") +
-    ggplot2::theme_bw()
+    ggplot2::ggtitle("Dominated hypervolume") +
+    ggplot2::theme_bw() +
+    ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))
   
   list(gg_mean, gg_min, gg_hv)
 }
