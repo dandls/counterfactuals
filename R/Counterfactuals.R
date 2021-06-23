@@ -21,21 +21,49 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       private$.x_interest = x_interest
       private$.desired = desired
     },
-
-    get_diff = function() {private$diff},
     
-    evaluate = function(measures = c("dist_x_interest", "dist_target", "nr_changed")) {
-      assert_character(measures)
-      assert_names(measures, subset.of = c("dist_x_interest", "dist_target", "nr_changed"))
-      evals = private$.data
+    evaluate = function(measures = c("dist_x_interest", "dist_target", "nr_changed"), show_diff = FALSE, k = 1, 
+                        weights = NULL) {
+      
+      assert_names(measures, subset.of = c("dist_x_interest", "dist_target", "nr_changed", "dist_train"))
+      assert_flag(show_diff)
+      assert_number(k, lower = 1, upper = nrow(private$predictor$data$X))
+      assert_numeric(weights, any.missing = FALSE, len = k, null.ok = TRUE)
+      
+      if (show_diff) {
+        evals = private$diff
+      } else {
+        evals = private$.data
+      }
       
       if ("dist_x_interest" %in% measures) {
-        ranges = private$param_set$upper - private$param_set$lower 
+        ranges = private$param_set$upper - private$param_set$lower
         X_list = split(private$.data, seq(nrow(private$.data)))
         dist_vector = future.apply::future_vapply(
           X_list, StatMatch::gower.dist, FUN.VALUE = numeric(1L), private$.x_interest, ranges, USE.NAMES = FALSE
         )
         evals$dist_x_interest = dist_vector
+      }
+      
+      if ("nr_changed" %in% measures) {
+        evals$nr_changed = count_changes(private$.data, private$.x_interest)
+      }
+      
+      if ("dist_train" %in% measures) {
+        ranges = private$param_set$upper - private$param_set$lower
+        evals$dist_train = apply(
+          StatMatch::gower.dist(private$predictor$data$X, private$.data, rngs = ranges, KR.corr = FALSE),
+          MARGIN = 2L,
+          FUN = function(dist) {
+            d = sort(dist)[1:k]
+            if (!is.null(weights)) {
+              d = weighted.mean(d, w = weights)
+            } else {
+              d = mean(d)
+            }
+            d
+          }
+        )
       }
       
       if ("dist_target" %in% measures) {
@@ -46,19 +74,16 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         } else {
           target = private$.desired$desired_outcome
         }
-
         evals$dist_target = sapply(
           pred, function(x) ifelse(between(x, target[1L], target[2L]), 0, min(abs(x - target)))
         )
+        setorder(evals, dist_target)
       }
       
-      if ("nr_changed" %in% measures) {
-        evals$nr_changed = count_changes(private$.data, private$.x_interest)
-      }
       
       evals
     },
-    
+
     predict = function() {
       private$predictor$predict(private$.data) 
     },
