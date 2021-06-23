@@ -397,7 +397,7 @@ make_moc_statistics_plots = function(data, ref_point) {
   gg_hv = ggplot2::ggplot(dt_hv) + 
     ggplot2::geom_line(ggplot2::aes(x = generations, y = hv)) +
     ggplot2::xlab("generations") +
-    ggplot2::ggtitle("Dominated hypervolumne for each generation") +
+    ggplot2::ggtitle("Dominated hypervolume for each generation") +
     ggplot2::theme_bw()
   
   list(gg_mean, gg_min, gg_hv)
