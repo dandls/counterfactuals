@@ -46,14 +46,15 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       private$upper = upper
     },
     
-    plot_statistics = function() {
+    plot_statistics = function(centered_obj = TRUE) {
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
         stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)
       }
       if (is.null(self$optimizer)) {
         stop("There are no results yet. Please run `$find_counterfactuals` first.")
       }
-      make_moc_statistics_plots(self$optimizer$archive$data, private$ref_point)
+      assert_flag(centered_obj)
+      make_moc_statistics_plots(self$optimizer$archive$data, private$ref_point, centered_obj)
     },
     
     get_dominated_hv = function() {

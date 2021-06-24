@@ -362,31 +362,54 @@ get_ICE_sd = function(x_interest, predictor, param_set) {
 }
 
 
-make_moc_statistics_plots = function(data, ref_point) {
+make_moc_statistics_plots = function(data, ref_point, normalize_objectives) {
   obj_names = c("dist_target", "dist_x_interest", "nr_changed", "dist_train")
   dt = data[, c("batch_nr", obj_names), with = FALSE]
   dt_agg_mean = dt[, lapply(.SD, mean), by = .(batch_nr), .SDcols = obj_names]
-  dt_agg_mean = melt(dt_agg_mean, id.vars = "batch_nr", measure.vars = obj_names)
   dt_agg_min = dt[, lapply(.SD, min), by = .(batch_nr), .SDcols = obj_names]
-  dt_agg_min = melt(dt_agg_min, id.vars = "batch_nr", measure.vars = obj_names)
+  if (normalize_objectives) {
+    dt_agg_mean[, (obj_names) := lapply(.SD, function(x) (x - min(x)) / (max(x) - min(x))), .SDcols = obj_names]
+    dt_agg_min[, (obj_names) := lapply(.SD, function(x)  (x - min(x)) / (max(x) - min(x))), .SDcols = obj_names]
+    dt_agg_mean = melt(dt_agg_mean, id.vars = "batch_nr", measure.vars = obj_names)
+    dt_agg_min = melt(dt_agg_min, id.vars = "batch_nr", measure.vars = obj_names)
+    
+    gg_mean = ggplot2::ggplot(dt_agg_mean) + 
+      ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value, color = variable)) +
+      ggplot2::xlab("generations") +
+      ggplot2::ggtitle("Mean objective values") +
+      ggplot2::theme_bw() +
+      ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))
+    
+    gg_min = ggplot2::ggplot(dt_agg_min) + 
+      ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value, color = variable)) +
+      ggplot2::xlab("generations") +
+      ggplot2::ggtitle("Minimum objective values") +
+      ggplot2::theme_bw() +
+      ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))
+    
+  } else {
+    dt_agg_mean = melt(dt_agg_mean, id.vars = "batch_nr", measure.vars = obj_names)
+    dt_agg_min = melt(dt_agg_min, id.vars = "batch_nr", measure.vars = obj_names)
+    
+    gg_mean = ggplot2::ggplot(dt_agg_mean) + 
+      ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value)) +
+      ggplot2::facet_wrap(ggplot2::vars(variable), scales = "free_y", nrow = 4L) +
+      ggplot2::xlab("generations") +
+      ggplot2::ggtitle("Mean objective values") +
+      ggplot2::theme_bw() +
+      ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))
+    
+    gg_min = ggplot2::ggplot(dt_agg_min) + 
+      ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value)) +
+      ggplot2::facet_wrap(ggplot2::vars(variable), scales = "free_y", nrow = 4L) +
+      ggplot2::xlab("generations") +
+      ggplot2::ggtitle("Minimum objective values") +
+      ggplot2::theme_bw() +
+      ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))
+  }
+  
+  
   dt_hv = comp_domhv_all_gen(dt, ref_point)
-
-  gg_mean = ggplot2::ggplot(dt_agg_mean) + 
-    ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value)) +
-    ggplot2::facet_wrap(ggplot2::vars(variable), scales = "free_y", nrow = 4L) +
-    ggplot2::xlab("generations") +
-    ggplot2::ggtitle("Mean objective values") +
-    ggplot2::theme_bw() +
-    ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))
-  
-  gg_min = ggplot2::ggplot(dt_agg_min) + 
-    ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value)) +
-    ggplot2::facet_wrap(ggplot2::vars(variable), scales = "free_y", nrow = 4L) +
-    ggplot2::xlab("generations") +
-    ggplot2::ggtitle("Minimum objective values") +
-    ggplot2::theme_bw() +
-    ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))
-  
   gg_hv = ggplot2::ggplot(dt_hv) + 
     ggplot2::geom_line(ggplot2::aes(x = generations, y = hv)) +
     ggplot2::xlab("generations") +
