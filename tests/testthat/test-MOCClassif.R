@@ -8,7 +8,7 @@ test_that("Returns correct output format for soft binary classification", {
   pred = Predictor$new(rf, data = mydf, type = "class")
   mocc = MOCClassif$new(pred, n_generations = 5L)
   x_interest = head(subset(mydf, select = -am), n = 1L)
-  cfactuals = quiet(mocc$find_counterfactuals(x_interest, desired_class = "1"))
+  expect_snapshot({cfactuals = quiet(mocc$find_counterfactuals(x_interest, desired_class = "1"))})
   
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
@@ -20,7 +20,9 @@ test_that("Returns correct output format for hard binary classification", {
   iris_pred = iml::Predictor$new(rf, type = "class")
   mocc = MOCClassif$new(iris_pred, n_generations = 5L)
   x_interest = iris[1L, -5L]
-  cfactuals = quiet(mocc$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = 1))
+  expect_snapshot({
+    cfactuals = quiet(mocc$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = 1))
+  })  
   
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
@@ -34,8 +36,9 @@ test_that("Can handle non-numeric target classes", {
   x_interest = head(subset(test_data, select = -cl), 1L)
   set.seed(544564)
   mocc = MOCClassif$new(pred, n_generations = 5L)
-  cfactuals = quiet(mocc$find_counterfactuals(x_interest, desired_class = "pos"))
-  
+  expect_snapshot({
+    cfactuals = quiet(mocc$find_counterfactuals(x_interest, desired_class = "pos"))
+  })
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
 })
@@ -49,7 +52,9 @@ test_that("Can handle ordered factor input columns", {
   moc_classif = MOCClassif$new(
     pred_credit, n_generations = 3L, fixed_features = c("personal_status_sex", "age"), max_changed = 4L
   )
-  cfactuals = quiet(moc_classif$find_counterfactuals(x_interest, desired_class = "good", desired_prob = c(0.8 , 1)))
+  expect_snapshot({
+    cfactuals = quiet(moc_classif$find_counterfactuals(x_interest, desired_class = "good", desired_prob = c(0.8 , 1)))
+  })
   expect_data_table(cfactuals$data, col.names = "named")
   expect_factor(cfactuals$data$installment_rate, levels = levels(german$installment_rate), ordered = TRUE)
   expect_names(names(cfactuals$data), identical.to = names(x_interest))

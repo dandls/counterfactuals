@@ -42,7 +42,8 @@ Suggests:
     covr,
     ggplot2,
     keras,
-    rchallenge
+    rchallenge,
+    partykit
 License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.1.1
