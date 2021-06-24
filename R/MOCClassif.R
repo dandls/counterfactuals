@@ -64,6 +64,17 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       rel_cols = c("batch_nr", "dist_target", "dist_x_interest", "nr_changed", "dist_train")
       fitness_values = self$optimizer$archive$data[, ..rel_cols]
       comp_domhv_all_gen(fitness_values, private$ref_point)
+    },
+    
+    plot_search = function(objectives = c("dist_target", "dist_x_interest")) {
+      if (!requireNamespace("ggplot2", quietly = TRUE)) {
+        stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)
+      }
+      if (is.null(self$optimizer)) {
+        stop("There are no results yet. Please run `$find_counterfactuals` first.")
+      }
+      assert_names(objectives, subset.of = c("dist_target", "dist_x_interest", "nr_changed", "dist_train"))
+      make_moc_search_plot(self$optimizer$archive$data, objectives)
     }
   ),
   

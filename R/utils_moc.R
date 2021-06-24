@@ -431,3 +431,14 @@ comp_domhv_all_gen = function(fitness_values, ref_point) {
     )
   )
 }
+
+
+make_moc_search_plot = function(data, objectives) {
+  ggplot2::ggplot(data, ggplot2::aes_string(x = objectives[[1L]], y = objectives[[2L]], alpha = "batch_nr")) +
+    ggplot2::geom_point(color = "black") +
+    ggplot2::scale_alpha_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1))))) +
+    ggplot2::labs(alpha = "generation") +
+    ggplot2::theme_bw()
+}
+
+
