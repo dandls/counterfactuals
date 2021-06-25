@@ -4,9 +4,9 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
   public = list(
     
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, 
-                          mu = 50L, n_generations = 50L, p_rec = 0.9, p_rec_gen = 0.7, p_rec_use_orig = 0.7, p_mut = 0.2,
+                          mu = 50L, n_generations = 20L, p_rec = 0.9, p_rec_gen = 0.7, p_rec_use_orig = 0.7, p_mut = 0.2,
                           p_mut_gen = 0.5, p_mut_use_orig = 0.2, k = 1L, weights = NULL, lower = NULL, upper = NULL, 
-                          init_strategy = "random") {
+                          init_strategy = "random", use_conditional_mutator = FALSE) {
       
       super$initialize(predictor, lower, upper)
       
@@ -26,6 +26,25 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
       assert_number(k, lower = 1, upper = nrow(private$predictor$data$X))
       assert_numeric(weights, any.missing = FALSE, len = k, null.ok = TRUE)
       assert_choice(init_strategy, choices = c("random", "sd", "icecurve"))
+      assert_flag(use_conditional_mutator)
+      
+      if (use_conditional_mutator) {
+        if (!requireNamespace("trtf", quietly = TRUE)) {
+          stop("Package 'trtf' needed for the conditional mutator to work. Please install it.", call. = FALSE)
+        }
+        if (!requireNamespace("partykit", quietly = TRUE)) {
+          stop("Package 'partykit' needed for this function to work. Please install it.", call. = FALSE)
+        }
+        if (!requireNamespace("basefun", quietly = TRUE)) {
+          stop("Package 'basefun' needed for this function to work. Please install it.", call. = FALSE)
+        }
+        
+        private$conditional_sampler = sapply(
+          names(predictor$data$X), function(fname) ConditionalSampler$new(predictor$data$X, fname),
+          simplify = FALSE, USE.NAMES = TRUE
+        )
+        names(private$conditional_sampler) = names(predictor$data$X)
+      }
       
       private$epsilon = epsilon
       private$fixed_features = fixed_features
@@ -109,6 +128,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     upper = NULL,
     ref_point = NULL,
     .optimizer = NULL,
+    conditional_sampler = NULL,
     
     run = function() {
       pred_column = private$get_pred_column()
@@ -137,7 +157,8 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
         p_mut_use_orig = private$p_mut_use_orig,
         k = private$k,
         weights = private$weights,
-        init_strategy = private$init_strategy
+        init_strategy = private$init_strategy,
+        cond_sampler = private$conditional_sampler
       )
 
       unique(private$.optimizer$result[, names(private$x_interest), with = FALSE])

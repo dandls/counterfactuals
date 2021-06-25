@@ -365,8 +365,8 @@ get_ICE_sd = function(x_interest, predictor, param_set) {
 make_moc_statistics_plots = function(data, ref_point, normalize_objectives) {
   obj_names = c("dist_target", "dist_x_interest", "nr_changed", "dist_train")
   dt = data[, c("batch_nr", obj_names), with = FALSE]
-  dt_agg_mean = dt[, lapply(.SD, mean), by = .(batch_nr), .SDcols = obj_names]
-  dt_agg_min = dt[, lapply(.SD, min), by = .(batch_nr), .SDcols = obj_names]
+  dt_agg_mean = dt[, lapply(.SD, mean, na.rm = TRUE), by = .(batch_nr), .SDcols = obj_names]
+  dt_agg_min = dt[, lapply(.SD, min, na.rm = TRUE), by = .(batch_nr), .SDcols = obj_names]
   if (normalize_objectives) {
     dt_agg_mean[, (obj_names) := lapply(.SD, function(x) (x - min(x)) / (max(x) - min(x))), .SDcols = obj_names]
     dt_agg_min[, (obj_names) := lapply(.SD, function(x)  (x - min(x)) / (max(x) - min(x))), .SDcols = obj_names]
@@ -375,14 +375,14 @@ make_moc_statistics_plots = function(data, ref_point, normalize_objectives) {
     
     gg_mean = ggplot2::ggplot(dt_agg_mean) + 
       ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value, color = variable)) +
-      ggplot2::xlab("generations") +
+      ggplot2::labs(x = "generations", y = "values (normalized)") +
       ggplot2::ggtitle("Mean objective values") +
       ggplot2::theme_bw() +
       ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))
     
     gg_min = ggplot2::ggplot(dt_agg_min) + 
       ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value, color = variable)) +
-      ggplot2::xlab("generations") +
+      ggplot2::labs(x = "generations", y = "values (normalized)") +
       ggplot2::ggtitle("Minimum objective values") +
       ggplot2::theme_bw() +
       ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))
@@ -425,8 +425,11 @@ comp_domhv_all_gen = function(fitness_values, ref_point) {
     generations = unique(fitness_values$batch_nr), 
     hv = vapply(
       seq_len(max(fitness_values$batch_nr)), 
-      # TODO: Replace this with miesmuschel:::domhv
-      function(i) emoa::dominated_hypervolume(t(as.matrix(fitness_values[batch_nr == i, -"batch_nr"])), ref = ref_point),
+      function(i) miesmuschel:::domhv(
+        -as.matrix(fitness_values[batch_nr == i, -"batch_nr"]), 
+        nadir = -ref_point,
+        on_worse_than_nadir = "quiet"      
+      ),
       FUN.VALUE = numeric(1L)
     )
   )
@@ -439,6 +442,44 @@ make_moc_search_plot = function(data, objectives) {
     ggplot2::scale_alpha_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1))))) +
     ggplot2::labs(alpha = "generation") +
     ggplot2::theme_bw()
+}
+
+
+
+# Conditional mutator as described in the package
+MutatorConditional = R6::R6Class("MutatorConditional", inherit = Mutator,
+  public = list(
+    initialize = function(cond_sampler, param_set) {
+      super$initialize()
+      assert_class(param_set, "ParamSet")
+      assert_list(cond_sampler, len = length(param_set$ids()))
+      private$param_set = param_set
+      private$cond_sampler = cond_sampler
+    }
+  ),
+  private = list(
+    cond_sampler = NULL,
+    param_set = NULL,
+    
+    .mutate = function(values, context) {
+      values_mutated = copy(values)
+      for (i in seq_len(nrow(values))) {
+        for (j in names(values)) {
+          set(values_mutated, i, j, value = private$cond_sampler[[j]]$sample(values[i, ]))
+        }
+      }
+      values_mutated
+    }
+ )
+)
+
+
+make_moc_conditional_mutator = function(ps, x_interest, max_changed, p_mut, p_mut_gen, p_mut_use_orig, cond_sampler) {
+  op_seq1_mut = mut("maybe", MutatorConditional$new(cond_sampler, ps), mut("null"), p = p_mut_gen)
+  op_seq1_no_mut = mut("null")
+  op_seq1 = mut("maybe", op_seq1_mut, op_seq1_no_mut, p = p_mut)
+  op_seq2 = MutatorReset$new(x_interest, p_mut_use_orig, max_changed)
+  mut("sequential", list(op_seq1, op_seq2))
 }
 
 

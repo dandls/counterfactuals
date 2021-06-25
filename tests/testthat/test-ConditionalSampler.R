@@ -4,6 +4,8 @@ test_that("Correct output format for double y", {
   dt$am = as.factor(dt$am)
   cs = ConditionalSampler$new(dt, feature_name = "mpg")
   samples = cs$sample(dt[2L, ], 20L)
+  cs = ConditionalSampler$new(dt, feature_name = "vs")
+  samples = cs$sample(dt[2L, ], 20L)
   expect_numeric(samples, any.missing = FALSE, len = 20L)
 })
 

@@ -1,6 +1,6 @@
 moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower, upper, sdevs_dbl_feats, 
                     epsilon,  fixed_features, max_changed, mu, n_generations, p_rec, p_rec_gen, p_rec_use_orig,
-                    p_mut, p_mut_gen, p_mut_use_orig, k, weights, init_strategy) {
+                    p_mut, p_mut_gen, p_mut_use_orig, k, weights, init_strategy, cond_sampler = NULL) {
   
   codomain = ParamSet$new(list(
     ParamDbl$new("dist_target", tags = "minimize"),
@@ -28,16 +28,29 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
     objective, 
     terminator = bbotk::trm("gens", generations = n_generations)
   )
-
-  op_m = make_moc_mutator(
-    ps = param_set_flex, 
-    x_interest = x_interest, 
-    max_changed = max_changed, 
-    sdevs = sdevs_flex_dbl_feats, 
-    p_mut = p_mut,
-    p_mut_gen = p_mut_gen, 
-    p_mut_use_orig = p_mut_use_orig
-  )
+  
+  if (is.null(cond_sampler)) {
+    op_m = make_moc_mutator(
+      ps = param_set_flex, 
+      x_interest = x_interest, 
+      max_changed = max_changed, 
+      sdevs = sdevs_flex_dbl_feats, 
+      p_mut = p_mut,
+      p_mut_gen = p_mut_gen, 
+      p_mut_use_orig = p_mut_use_orig
+    )
+  } else {
+    op_m = make_moc_conditional_mutator(
+      ps = param_set_flex, 
+      x_interest = x_interest,
+      max_changed = max_changed, 
+      p_mut = p_mut,
+      p_mut_gen = p_mut_gen, 
+      p_mut_use_orig = p_mut_use_orig,
+      cond_sampler = cond_sampler
+    )
+  }
+  
   
   op_r = make_moc_recombinator(
     ps = param_set_flex, 
