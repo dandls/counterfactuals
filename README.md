@@ -10,7 +10,16 @@
 coverage](https://codecov.io/gh/susanne-207/counterfactuals/branch/main/graph/badge.svg)](https://codecov.io/gh/susanne-207/counterfactuals?branch=main)
 <!-- badges: end -->
 
-The goal of counterfactuals is to …
+`counterfactuals` provides various counterfactual explanation methods
+via a unified and easy-to-use R6-based interface.
+
+## Available methods
+
+Currently available are the following methods:
+
+-   [Multi-Objective Counterfactual Explanations
+    (MOC)](https://arxiv.org/abs/2004.11165)
+-   [WhatIf](https://arxiv.org/abs/1907.04135)
 
 ## Installation
 
@@ -22,9 +31,12 @@ You can install the development version from
 devtools::install_github("susanne-207/counterfactuals")
 ```
 
-## Workflow
+## Get started
 
-This is a basic example which shows you how to solve a common problem:
+In this basic example, we train a `randomForest` on the `iris` dataset
+and examine how the feature values of a given `virginica` observation
+would have to change in order for it to be classified as `versicolor`
+with a prediction probability of at least 0.5.
 
 ``` r
 library(counterfactuals)
@@ -32,71 +44,100 @@ library(randomForest)
 library(iml)
 ```
 
-``` r
-data("Boston", package  = "MASS")
-rf =  randomForest(medv ~ ., data = Boston)
-X = Boston[-which(names(Boston) == "medv")]
-mod = Predictor$new(rf, data = X)
-```
+First, we train the randomForest model to predict the `Species`.
 
 ``` r
-x_interest = X[1,]
-desired_outcome = c(23, 25)
+rf = randomForest(Species ~ ., data = iris)
 ```
 
+We then create an `iml::Predictor` object, that holds the model and the
+data.
+
 ``` r
-wi_regr = WhatIfRegr$new(mod, n_counterfactuals = 5L)
-cfactuals = wi_regr$find_counterfactuals(x_interest, desired_outcome)
+predictor = Predictor$new(rf, type = "prob")
 ```
+
+Now we set up an object of the counterfactual explanations technique we
+want to use. In this example, we use `WhatIf` and since we have a
+classification task we create an `WhatIfClassif` object.
+
+``` r
+wi_classif = WhatIfClassif$new(predictor, n_counterfactuals = 5L)
+```
+
+For observation 150 (`x_interest`) the model predicts:
+
+``` r
+predictor$predict(iris[150L, ])
+#>   setosa versicolor virginica
+#> 1      0      0.042     0.958
+```
+
+We can use the `$find_counterfactuals()` method to find counterfactuals
+for `x_interest`.
+
+``` r
+cfactuals = wi_classif$find_counterfactuals(
+  x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
+)
+```
+
+The `cfactuals` object is now an isntance of class `Counterfactuals`,
+which contains the counterfactuals and provides several methods for
+evaluation and plotting.
+
+The counterfactuals can be retrieved via `$data`.
 
 ``` r
 cfactuals$data
-#>       crim zn indus chas   nox    rm  age    dis rad tax ptratio  black lstat
-#> 1: 0.05425  0  4.05    0 0.510 6.315 73.4 3.3175   5 296    16.6 395.60  6.29
-#> 2: 0.09178  0  4.05    0 0.510 6.416 84.1 2.6463   5 296    16.6 395.50  9.04
-#> 3: 0.11460 20  6.96    0 0.464 6.538 58.7 3.9175   3 223    18.6 394.96  7.73
-#> 4: 0.04462 25  4.86    0 0.426 6.619 70.4 5.4007   4 281    19.0 395.63  7.22
-#> 5: 0.33045  0  6.20    0 0.507 6.086 61.5 3.6519   8 307    17.4 376.75 10.88
+#>    Sepal.Length Sepal.Width Petal.Length Petal.Width
+#> 1:          5.9         3.2          4.8         1.8
+#> 2:          5.9         3.0          4.2         1.5
+#> 3:          6.1         3.0          4.6         1.4
+#> 4:          6.0         2.7          5.1         1.6
+#> 5:          6.0         2.9          4.5         1.5
 ```
 
-``` r
-cfactuals$predict()
-#>       pred
-#> 1 24.65492
-#> 2 23.79667
-#> 3 24.61399
-#> 4 24.51717
-#> 5 23.60016
-```
+The `$predict` method shows the predictions for the counterfactuals.
 
 ``` r
-cfactuals$get_diff()
-#>       crim  zn indus chas    nox     rm  age     dis rad tax ptratio  black lstat
-#> 1: 0.04793 -18  1.74    0 -0.028 -0.260  8.2 -0.7725   4   0     1.3  -1.30  1.31
-#> 2: 0.08546 -18  1.74    0 -0.028 -0.159 18.9 -1.4437   4   0     1.3  -1.40  4.06
-#> 3: 0.10828   2  4.65    0 -0.074 -0.037 -6.5 -0.1725   2 -73     3.3  -1.94  2.75
-#> 4: 0.03830   7  2.55    0 -0.112  0.044  5.2  1.3107   3 -15     3.7  -1.27  2.24
-#> 5: 0.32413 -18  3.89    0 -0.031 -0.489 -3.7 -0.4381   7  11     2.1 -20.15  5.90
+cbind(cfactuals$data, cfactuals$predict())
+#>    Sepal.Length Sepal.Width Petal.Length Petal.Width setosa versicolor virginica
+#> 1:          5.9         3.2          4.8         1.8  0.002      0.630     0.368
+#> 2:          5.9         3.0          4.2         1.5  0.000      1.000     0.000
+#> 3:          6.1         3.0          4.6         1.4  0.000      1.000     0.000
+#> 4:          6.0         2.7          5.1         1.6  0.000      0.666     0.334
+#> 5:          6.0         2.9          4.5         1.5  0.000      1.000     0.000
 ```
+
+We can evaluate the counterfactuals according to various quality
+criteria using the `$evaluate()` method.
 
 ``` r
 cfactuals$evaluate()
-#>       crim zn indus chas   nox    rm  age    dis rad tax ptratio  black lstat dist_x_interest dist_target nr_changed
-#> 1: 0.05425  0  4.05    0 0.510 6.315 73.4 3.3175   5 296    16.6 395.60  6.29      0.06600660   0.3450767         11
-#> 2: 0.09178  0  4.05    0 0.510 6.416 84.1 2.6463   5 296    16.6 395.50  9.04      0.08357857   0.7966700         11
-#> 3: 0.11460 20  6.96    0 0.464 6.538 58.7 3.9175   3 223    18.6 394.96  7.73      0.08398155   0.3860133         12
-#> 4: 0.04462 25  4.86    0 0.426 6.619 70.4 5.4007   4 281    19.0 395.63  7.22      0.09178619   0.4828333         12
-#> 5: 0.33045  0  6.20    0 0.507 6.086 61.5 3.6519   8 307    17.4 376.75 10.88      0.10184781   0.6001567         12
+#>    Sepal.Length Sepal.Width Petal.Length Petal.Width dist_x_interest nr_changed dist_target
+#> 1:          5.9         3.2          4.8         1.8      0.03354520          2           0
+#> 2:          5.9         3.0          4.2         1.5      0.06938559          2           0
+#> 3:          6.1         3.0          4.6         1.4      0.07674200          3           0
+#> 4:          6.0         2.7          5.1         1.6      0.05902778          3           0
+#> 5:          6.0         2.9          4.5         1.5      0.07403484          4           0
 ```
+
+To examine the frequency of changes in each feature, we can use the
+`$plot_freq_of_feature_changes()` method.
 
 ``` r
 cfactuals$plot_freq_of_feature_changes()
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-10-1.png)<!-- -->
+
+We can also create a prediction surface plot for two features that shows
+`x_interest` as white dot and all counterfactuals that only differ in
+these two features as black dots.
 
 ``` r
-cfactuals$plot_surface(names(x_interest)[1:2])
+cfactuals$plot_surface(c("Petal.Width", "Petal.Length"))
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-11-1.png)<!-- -->
