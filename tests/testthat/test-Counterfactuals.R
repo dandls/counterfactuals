@@ -114,16 +114,16 @@ test_that("evaluate returns correct results", {
 
   cf_eval = cf$evaluate()
   expect_data_table(cf_eval, nrows = nrow(cf$data), ncols = ncol(cf$data) + 3L)
-  expect_identical(cf_eval$nr_changed, count_changes(cf$data, cf$x_interest))
+  expect_identical(sort(cf_eval$nr_changed), sort(count_changes(cf$data, cf$x_interest)))
   des_outcome = cf$desired$desired_outcome
   exp_dist_target = unname(apply(cf$predict(), 1L, function(x) min(abs(x - cf$desired$desired_outcome))))
   exp_dist_target[between(cf$predict(), des_outcome[1L], des_outcome[2L])] = 0L
-  expect_identical(cf_eval$dist_target, exp_dist_target)
+  expect_identical(cf_eval$dist_target, sort(exp_dist_target))
   
   ps = cf$.__enclos_env__$private$param_set
   expect_identical(
-    cf_eval$dist_x_interest, 
-    as.vector(StatMatch::gower.dist(cf$data, cf$x_interest, rngs = ps$upper - ps$lower))
+    sort(cf_eval$dist_x_interest), 
+    sort(as.vector(StatMatch::gower.dist(cf$data, cf$x_interest, rngs = ps$upper - ps$lower)))
   )
 })
 

@@ -14,7 +14,6 @@ BugReports: https://github.com/TODO/issues
 Imports: 
     R6,
     checkmate,
-    Metrics,
     StatMatch,
     iml,
     data.table,
@@ -41,7 +40,11 @@ Suggests:
     cowplot,
     covr,
     ggplot2,
-    keras
+    keras,
+    rchallenge,
+    partykit,
+    rmarkdown,
+    basefun
 License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.1.1

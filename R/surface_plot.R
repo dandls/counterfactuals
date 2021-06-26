@@ -9,7 +9,7 @@ make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest
   if (param_set_sub$all_numeric) {
     # TODO: adapt this for hard classification
     p = ggplot2::ggplot(data = dt_grid, ggplot2::aes_string(x = x_feat_name, y = y_feat_name)) + 
-      ggplot2::geom_raster(ggplot2::aes_string(fill = "pred")) +
+      ggplot2::geom_tile(ggplot2::aes_string(fill = "pred")) +
       ggplot2::geom_contour(ggplot2::aes_string(z = "pred"), colour = "white") +
       ggplot2::guides(z = ggplot2::guide_legend(title = "pred")) +
       ggplot2::theme_bw() +
@@ -75,8 +75,16 @@ make_ice_curve_area = function(predictor, x_interest, grid_size, ps, pred_column
 
   x_interest_sub = x_interest[, !names(x_interest) %in% names(ps$class), with = FALSE]
   instance_dt = x_interest_sub[rep(1:nrow(x_interest_sub), nrow(exp_grid))]
+  grid_dt = cbind(instance_dt, exp_grid)
   
-  grid_df = cbind(instance_dt, exp_grid)
-  pred = predictor$predict(grid_df)[[pred_column]]
-  cbind(grid_df, pred)
+  # Transform factor column w.r.t to original data (required for prediction)
+  factor_cols = names(which(sapply(predictor$data$X, is.factor)))
+  for (factor_col in factor_cols) {
+    fact_col_pred = predictor$data$X[[factor_col]]
+    value =  factor(grid_dt[[factor_col]], levels = levels(fact_col_pred), ordered = is.ordered(fact_col_pred))
+    grid_dt[, (factor_col) := value]
+  }
+  
+  pred = predictor$predict(grid_dt)[[pred_column]]
+  cbind(grid_dt, pred)
 }
