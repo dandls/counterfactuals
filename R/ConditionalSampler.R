@@ -81,7 +81,7 @@ ConditionalSampler = R6::R6Class(
       y = private$y
       if (is.character(y) || is.factor(y)) {
         y_grid = unique(y)
-      } else if (check_integerish(y)) {
+      } else if (test_integerish(y)) {
         len = min(max(y) - min(y) + 1L, 100L)
         y_grid = as.integer(seq.int(min(y), max(y), length.out = len))
       } else {
