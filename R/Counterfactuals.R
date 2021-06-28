@@ -191,6 +191,33 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         grid_size, private$param_set, cfactuals_plotted, private$.x_interest, private$predictor, feature_names, 
         private$get_pred_column()
       )
+    },
+    
+    print = function() {
+      desired = private$.desired
+      cat(nrow(private$.data), "Counterfactual(s) \n \n")
+      if (private$predictor$task == "classification") {
+        cat("Desired class:", desired$desired_class, "\n")
+        if (desired$desired_prob[1L] != desired$desired_prob[2L]) {
+          cat(
+            "Desired predicted probability range: [", desired$desired_prob[1L], ", ", 
+            desired$desired_prob[2L],  "] \n \n", sep = ""
+          )
+        } else {
+          cat("Desired predicted probability:", private$.desired$desired_prob[1L], "\n \n")
+        }
+      } else {
+        if (private$.desired$desired_outcome[1L] != private$.desired$desired_outcome[2L]) {
+          cat(
+            "Desired outcome range: [", desired$desired_outcome[1L], ", ", 
+            desired$desired_outcome[2L],  "] \n \n", sep = ""
+          )
+        } else {
+          cat("Desired outcome:", private$.desired$desired_outcome[1L], "\n \n")
+        }
+      }
+      cat("Head: \n")
+      print(head(private$.data, 3L))
     }
 
   ),
