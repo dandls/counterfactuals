@@ -84,7 +84,7 @@ cfactuals = wi_classif$find_counterfactuals(
 )
 ```
 
-The `cfactuals` object is now an isntance of class `Counterfactuals`, which contains the counterfactuals and provides 
+The `cfactuals` object is now an instance of class `Counterfactuals`, which contains the counterfactuals and provides 
 several methods for evaluation and plotting.
 
 The counterfactuals can be retrieved via `$data`.

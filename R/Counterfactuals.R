@@ -1,3 +1,4 @@
+#'Counterfactuals 
 Counterfactuals = R6::R6Class("Counterfactuals",
 
   public = list(
