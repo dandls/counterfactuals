@@ -37,6 +37,11 @@ CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = Cou
       private$x_interest = x_interest
       private$desired_outcome = desired_outcome
       cfactuals = private$run()
+      if (is.data.frame(cfactuals) && nrow(merge(cfactuals, x_interest)) > 0L) {
+        cfactuals = cfactuals[!x_interest, on = names(cfactuals)]
+        message("`x_interest` was removed from results.")
+      }
+      
       Counterfactuals$new(
         cfactuals = cfactuals, 
         predictor = private$predictor,

@@ -1,3 +1,4 @@
+#'Counterfactuals 
 Counterfactuals = R6::R6Class("Counterfactuals",
 
   public = list(
@@ -9,6 +10,10 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       assert_true(ncol(cfactuals) == ncol(x_interest))
       assert_class(param_set, "ParamSet")
       assert_list(desired, min.len = 1L, max.len = 2L)
+      assert_true(all(names(cfactuals) == names(predictor$data$X)))
+      if (any(sapply(cfactuals, typeof) != sapply(predictor$data$X, typeof))) {
+        stop("Columns of `cfactuals` and `predictor$data$X` must have the same types.")
+      }
       
       private$predictor = predictor
       private$param_set = param_set
@@ -17,21 +22,49 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       private$.x_interest = x_interest
       private$.desired = desired
     },
-
-    get_diff = function() {private$diff},
     
-    evaluate = function(measures = c("dist_x_interest", "dist_target", "nr_changed")) {
-      assert_character(measures)
-      assert_names(measures, subset.of = c("dist_x_interest", "dist_target", "nr_changed"))
-      evals = private$.data
+    evaluate = function(measures = c("dist_x_interest", "dist_target", "nr_changed"), show_diff = FALSE, k = 1, 
+                        weights = NULL) {
+      
+      assert_names(measures, subset.of = c("dist_x_interest", "dist_target", "nr_changed", "dist_train"))
+      assert_flag(show_diff)
+      assert_number(k, lower = 1, upper = nrow(private$predictor$data$X))
+      assert_numeric(weights, any.missing = FALSE, len = k, null.ok = TRUE)
+      
+      if (show_diff) {
+        evals = private$diff
+      } else {
+        evals = private$.data
+      }
       
       if ("dist_x_interest" %in% measures) {
-        ranges = private$param_set$upper - private$param_set$lower 
+        ranges = private$param_set$upper - private$param_set$lower
         X_list = split(private$.data, seq(nrow(private$.data)))
         dist_vector = future.apply::future_vapply(
           X_list, StatMatch::gower.dist, FUN.VALUE = numeric(1L), private$.x_interest, ranges, USE.NAMES = FALSE
         )
         evals$dist_x_interest = dist_vector
+      }
+      
+      if ("nr_changed" %in% measures) {
+        evals$nr_changed = count_changes(private$.data, private$.x_interest)
+      }
+      
+      if ("dist_train" %in% measures) {
+        ranges = private$param_set$upper - private$param_set$lower
+        evals$dist_train = apply(
+          StatMatch::gower.dist(private$predictor$data$X, private$.data, rngs = ranges, KR.corr = FALSE),
+          MARGIN = 2L,
+          FUN = function(dist) {
+            d = sort(dist)[1:k]
+            if (!is.null(weights)) {
+              d = weighted.mean(d, w = weights)
+            } else {
+              d = mean(d)
+            }
+            d
+          }
+        )
       }
       
       if ("dist_target" %in% measures) {
@@ -42,18 +75,16 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         } else {
           target = private$.desired$desired_outcome
         }
-        evals$dist_target = ifelse(
-          between(pred, target[1L], target[2L]), 0, min(abs(pred - target[1L]), abs(pred - target[2L]))
+        evals$dist_target = sapply(
+          pred, function(x) ifelse(between(x, target[1L], target[2L]), 0, min(abs(x - target)))
         )
+        setorder(evals, dist_target)
       }
       
-      if ("nr_changed" %in% measures) {
-        evals$nr_changed = count_changes(private$.data, private$.x_interest)
-      }
       
       evals
     },
-    
+
     predict = function() {
       private$predictor$predict(private$.data) 
     },
@@ -101,10 +132,10 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         ggplot2::ylab("Scaled feature values") +
         ggplot2::scale_colour_manual(name = "rows", values = line_colors) +
         ggplot2::annotate(
-          "text", x = 1:length(numeric_cols), y = 1.05, label = private$param_set$upper[numeric_cols]
+          "text", x = 1:length(numeric_cols), y = 1.05, label = sapply(dt[, ..numeric_cols], max, na.rm = TRUE)
         ) +
         ggplot2::annotate(
-          "text", x = 1:length(numeric_cols), y = -0.05, label = private$param_set$lower[numeric_cols]
+          "text", x = 1:length(numeric_cols), y = -0.05, label = sapply(dt[, ..numeric_cols], min, na.rm = TRUE)
         )
       
     },
@@ -116,16 +147,18 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       
       freq = self$get_freq_of_feature_changes(subset_zero)
       df_freq = data.frame(var_name = names(freq), freq = freq)
-      ggplot2::ggplot(df_freq, ggplot2::aes(x = reorder(var_name, -freq), y = freq)) +
+      ggplot2::ggplot(df_freq, ggplot2::aes(x = reorder(var_name, freq), y = freq)) +
         ggplot2::geom_bar(stat = "identity") +
-        ggplot2::labs(x = ggplot2::element_blank(), y = "Relative frequency")
+        ggplot2::labs(x = ggplot2::element_blank(), y = "Relative frequency") +
+        ggplot2::coord_flip() +
+        ggplot2::theme_bw()
     },
     
     get_freq_of_feature_changes = function(subset_zero = FALSE) {
       assert_flag(subset_zero)
       feature_names = names(private$.x_interest)
       diff_features = private$diff[, feature_names, with = FALSE]
-      freq = colMeans(diff_features != 0, na.rm = TRUE)
+      freq = colMeans(!is.na(diff_features), na.rm = TRUE)
       if (subset_zero) {
         freq = freq[freq != 0]
       }
@@ -134,7 +167,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     
 
     # para, grid_size not used for two categorical features
-    plot_surface = function(feature_names, grid_size = 50L) {
+    plot_surface = function(feature_names, grid_size = 250L) {
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
         stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)
       }
@@ -145,7 +178,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
 
       diff_rel_feats = private$diff[, ..feature_names]
       n_changes_total = count_changes(private$.data, private$.x_interest)
-      n_changes_rel_feats = rowSums(diff_rel_feats != 0)
+      n_changes_rel_feats = rowSums(!is.na(diff_rel_feats))
       has_changes_in_rel_feats_only = (n_changes_rel_feats == n_changes_total)
       cfactuals_plotted = private$.data[which(has_changes_in_rel_feats_only)]
  

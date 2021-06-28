@@ -24,7 +24,7 @@ WhatIfRegr = R6::R6Class("WhatIfRegr", inherit = CounterfactualMethodRegr,
     },
     
     print_parameters = function() {
-      cat("\t", "n_counterfactuals: ", private$n_counterfactuals)
+      cat(" - n_counterfactuals: ", private$n_counterfactuals)
     }
   )
 )

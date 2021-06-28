@@ -13,6 +13,7 @@ make_cfactuals_diff = function(cfactuals, x_interest) {
     m_num = as.matrix(cfactuals[, ..idx_numeric])
     x_interest_num = as.numeric(x_interest[1L , ..idx_numeric])
     diff_num = data.table::as.data.table(sweep(m_num, 2, x_interest_num))
+    diff_num[diff_num == 0] = NA
     data.table::set(cfactuals_diff, j = idx_numeric, value = diff_num)
   }
   
@@ -20,7 +21,7 @@ make_cfactuals_diff = function(cfactuals, x_interest) {
     m_char = as.matrix(cfactuals[, ..idx_non_numeric])
     x_interest_char = as.matrix(x_interest[1L , ..idx_non_numeric])
     no_diff = sweep(m_char, 2L, x_interest_char, FUN = "==")
-    m_char[no_diff] = "0"
+    m_char[no_diff] = NA
     diff_char = data.table::as.data.table(m_char)
     data.table::set(cfactuals_diff, j = idx_non_numeric, value = diff_char)
   }
@@ -29,8 +30,13 @@ make_cfactuals_diff = function(cfactuals, x_interest) {
 }
 
 count_changes = function(cfactuals, x_interest) {
-  m_cfactuals = as.matrix(cfactuals[, names(x_interest), with = FALSE])
-  m_x_interest = as.matrix(x_interest)
-  n_changes = rowSums(sweep(m_cfactuals, 2L, m_x_interest, FUN = "!="), na.rm = TRUE)
-  as.integer(n_changes)
+  assert_data_table(cfactuals)
+  assert_data_table(x_interest, nrows = 1L)
+  assert_true(ncol(cfactuals) == ncol(x_interest))
+  assert_true(all(names(cfactuals) == names(x_interest)))
+  cfactuals_temp = copy(cfactuals)
+  cfactuals_temp[, n_changes := sum(.SD != x_interest), by = seq_len(nrow(cfactuals_temp))]
+  as.integer(cfactuals_temp$n_changes)
 }
+
+
