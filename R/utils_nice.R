@@ -1,5 +1,5 @@
 train_AE_model = function(X_train, aep) {
-  X_processed = as.matrix(aep$preprocess(X_train))
+  X_processed = aep$preprocess(X_train)
   AE = AE_model(ncol(X_processed), 2L)
   keras::fit(AE, X_processed, X_processed, batch_size = ceiling(nrow(X_train) / 10L), epochs = 20L, verbose = FALSE)
   AE

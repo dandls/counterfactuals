@@ -1,27 +1,31 @@
+#' NICE for Classification Task
 #' @export
 NICEClassif = R6::R6Class("NICEClassif",
   inherit = CounterfactualMethodClassif,
 
   public = list(
     
-    cache = list(),
+    archive = list(),
     
     # correct_classif_only: Only correctly classified observations are considered as nearest neighbor
     initialize = function(predictor, optimization = "sparsity", threshold = NULL, correct_classif_only = TRUE, 
                           lower = NULL, upper = NULL) {
       
       super$initialize(predictor, lower, upper)
-      
+
+      assert_flag(correct_classif_only)
       assert_choice(optimization, choices = c("sparsity", "proximity", "plausibility"))
       private$optimization = optimization
       private$correct_classif_only = correct_classif_only
-      
-      # TODO: If threshold set and correct_classif_only = FALSE then Message that threshold is ignored
-      # TODO: Add checks for threshold
+      private$y_hat = private$predictor$predict(predictor$data$X)
+      assert_numeric(threshold, lower = 0L, upper = 1L, any.missing = FALSE, len = ncol(private$y_hat), null.ok = TRUE)
       if (is.null(threshold)) {
-        k = nrow(unique(predictor$data$y))
-        threshold = rep(1 / k, k)
-        names(threshold) = unique(predictor$data$y)[[1L]]
+        k = ncol(private$y_hat)
+        private$threshold = rep(1 / k, k)
+        names(private$threshold) = names(private$y_hat)
+      } else {
+        assert_names(names(threshold), must.include = names(private$y_hat))
+        private$threshold = threshold[names(private$y_hat)]
       }
       
       if (private$optimization == "plausibility") {
@@ -32,32 +36,23 @@ NICEClassif = R6::R6Class("NICEClassif",
         private$ae_model = train_AE_model(predictor$data$X, private$aep)
       }
       
-      private$y_hat = private$predictor$predict(predictor$data$X)
-      private$threshold = threshold[names(private$y_hat)]
-      
-      pred_class = private$y_hat > private$threshold
-      
-      private$X_train_class = rep(NA, nrow(pred_class))
-      for (r in 1:nrow(pred_class)) {
-        if (sum(pred_class[r, ]) > 1L) {
-          private$X_train_class[r] = names(private$y_hat)[which.max(pred_class[r, ])]
-        } else if (!any(pred_class[r, ])) {
-          private$X_train_class[r] = NA
-        } else {
-          private$X_train_class[r] = names(private$y_hat)[which(pred_class[r, ])]
+      if (correct_classif_only) {
+        pred_class = private$y_hat > t(private$threshold)
+        private$X_train_class = apply(pred_class, 1L, function(x) ifelse(any(x), names(private$y_hat)[which.max(x)], NA))
+      } else {
+        if (!is.null(threshold)) {
+          message("`threshold` is ignored, when `correct_classif_only` is set to FALSE.")
         }
       }
-      
+   
     }
 
   ),
 
   private = list(
     optimization = NULL,
-    predictor = NULL,
     X_train_class = NULL,
     desired_class = NULL,
-    X_class = NULL,
     ae_model = NULL,
     aep = NULL,
     y_hat = NULL,
@@ -68,97 +63,95 @@ NICEClassif = R6::R6Class("NICEClassif",
       predictor = private$predictor
       desired_class = private$desired_class
       desired_prob = private$desired_prob
+      candidates_x_nn = predictor$data$X 
       
-      X_candidates = predictor$data$X 
-      is_correctly_classified = rep(TRUE, nrow(X_candidates))
+      is_correctly_classified = rep(TRUE, nrow(candidates_x_nn))
       if (private$correct_classif_only) {
-        
         # Converts multi-class to binary-class problem
         is_correctly_classified = ifelse(
-          predictor$data$y == desired_class, 
+          predictor$data$y[[1L]] == desired_class, 
           private$X_train_class == desired_class, 
           private$X_train_class != desired_class
         )
+
         is_correctly_classified[is.na(is_correctly_classified)] = FALSE
-        X_candidates = X_candidates[as.vector(is_correctly_classified)]
+        candidates_x_nn = candidates_x_nn[is_correctly_classified]
         
-        if (nrow(X_candidates) == 0L) {
-          message("No counterfactuals could be found. Please adapt threshold or consider switching off correct_classif_only TODO!!!")
-          return(setNames(data.table(matrix(nrow = 0L, ncol = ncol(predictor$data$X))), names(predictor$data$X)))
+        if (nrow(candidates_x_nn) == 0L) {
+          warning("No counterfactuals could be found.")
+          return(predictor$data$X[0L])
         }
       }
       
       in_desired_prob = between(
         private$y_hat[[desired_class]][is_correctly_classified], desired_prob[1L], desired_prob[2L]
       )
-      X_candidates = X_candidates[in_desired_prob]
+      candidates_x_nn = candidates_x_nn[in_desired_prob]
       
-      if (nrow(X_candidates) == 0L) {
-        message("No counterfactuals could be found. Please adapt threshold. TODO!!!")
-        return(setNames(data.table(matrix(nrow = 0L, ncol = ncol(predictor$X))), names(ncol(predictor$X))))
+      if (nrow(candidates_x_nn) == 0L) {
+        warning("No counterfactuals could be found.")
+        return(predictor$data$X[0L])
       }
       
-      
-      distance = StatMatch::gower.dist(private$x_interest, X_candidates)
-      x_nn = X_candidates[which.min(distance)]
+      distance = StatMatch::gower.dist(private$x_interest, candidates_x_nn)
+      x_nn = candidates_x_nn[which.min(distance)]
       x_current = copy(private$x_interest)
-      i = 1L
-      
-      # TODO: Check if x_nn == x_current
+      # TODO: Check if x_nn == x_current -> not required if check that x_interest already fullfills desired
       
       while (TRUE) {
         x_prev = x_current
         
         diff = which(x_prev != x_nn)
         if (length(diff) == 0) {
-          message("No counterfactuals could be found. Please adapt desired_range or consider switching off correct_classif_only TODO!!!")
-          return(setNames(data.table(matrix(nrow = 0L, ncol = ncol(predictor$X))), names(ncol(predictor$X))))
+          message("No counterfactuals could be found.")
+          return(predictor$data$X[0L])
         }
         
-        X_prune = x_prev[rep(seq_len(nrow(x_prev)), length(diff))]
+        X_candidates = x_prev[rep(seq_len(nrow(x_prev)), length(diff))]
         for (j in seq(length(diff))) {
           col_name = names(x_nn)[diff[j]]
           repl_val = x_nn[, col_name, with = FALSE]
-          X_prune[j, (col_name) := repl_val]
+          X_candidates[j, (col_name) := repl_val]
         }
         
         f_x_prev = predictor$predict(x_prev)[desired_class][[1L]]
-        f_X_prune = predictor$predict(X_prune)[desired_class][[1L]]
+        f_X_candidates = predictor$predict(X_candidates)[desired_class][[1L]]
         if (private$optimization == "sparsity") {
-          reward = abs(f_x_prev - f_X_prune)
+          reward = abs(f_x_prev - f_X_candidates)
           
         } else if (private$optimization == "proximity") {
-          d_X_prune = StatMatch::gower.dist(X_prune, private$x_interest)
+          d_X_candidates = StatMatch::gower.dist(X_candidates, private$x_interest)
           d_x_prev = as.vector(StatMatch::gower.dist(x_prev, private$x_interest))
-          reward = abs((f_x_prev - f_X_prune) / (d_X_prune - d_x_prev + sqrt(.Machine$double.eps)))
+          reward = abs((f_x_prev - f_X_candidates) / (d_X_candidates - d_x_prev + sqrt(.Machine$double.eps)))
           
         } else {
           
-          X_prune_pp = private$aep$preprocess(X_prune)
+          X_candidates_pp = private$aep$preprocess(X_candidates)
           x_prev_pp = private$aep$preprocess(x_prev)
           
-          ae_pred_X_prune = private$ae_model$predict(as.matrix(X_prune_pp))
-          AE_loss_X_prune = rowMeans((X_prune_pp - ae_pred_X_prune)^2)
+          ae_pred_X_candidates = private$ae_model$predict(as.matrix(X_candidates_pp))
+          AE_loss_X_candidates = rowMeans((X_candidates_pp - ae_pred_X_candidates)^2)
           
           ae_pred_x = private$ae_model$predict(as.matrix(x_prev_pp))
           AE_loss_x = rowMeans((x_prev_pp - ae_pred_x)^2)
-          reward = abs((f_x_prev - f_X_prune) * (AE_loss_x - AE_loss_X_prune))
+          reward = abs((f_x_prev - f_X_candidates) * (AE_loss_x - AE_loss_X_candidates))
         }
         
-        x_current = X_prune[which.max(reward)]
-        
-        self$cache[[i]] = list("X_prune" = X_prune, "reward" = reward)
-        i = i + 1L
+        x_current = X_candidates[which.max(reward)]
+        self$archive = c(
+          self$archive,
+          list(list(
+            "X_candidates" = X_candidates, 
+            "reward" = as.numeric(reward), 
+            "pred" = predictor$predict(X_candidates)
+          ))
+        )
         
         if (between(predictor$predict(x_current)[[desired_class]], desired_prob[1], desired_prob[2])) {
           counterfactuals = lapply(
-            self$cache, 
-            function(X) {
-              in_desired_prob = between(
-                predictor$predict(X$X_prune)[[desired_class]], desired_prob[1], desired_prob[2]
-              )
-              X$X_prune[in_desired_prob]
-            }
+            self$archive, function(el) {
+              el$X_candidates[between(el$pred[[desired_class]], desired_prob[1], desired_prob[2])]
+            } 
           )
           return(unique(rbindlist(counterfactuals)))
         }
@@ -167,7 +160,9 @@ NICEClassif = R6::R6Class("NICEClassif",
     },
 
     print_parameters = function() {
-      cat("\t", "n_counterfactuals: ", private$n_counterfactuals)
+      cat(" - optimization: ", private$optimization, "\n")
+      cat(" - threshold: ", paste0(names(private$threshold), ":", private$threshold), "\n")
+      cat(" - correct_classif_only: ", private$correct_classif_only, "\n")
     }
   )
 )
