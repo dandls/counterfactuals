@@ -70,7 +70,7 @@ For observation 150 (`x_interest`) the model predicts:
 ``` r
 predictor$predict(iris[150L, ])
 #>   setosa versicolor virginica
-#> 1      0      0.042     0.958
+#> 1      0      0.034     0.966
 ```
 
 We can use the `$find_counterfactuals()` method to find counterfactuals
@@ -82,7 +82,7 @@ cfactuals = wi_classif$find_counterfactuals(
 )
 ```
 
-The `cfactuals` object is now an isntance of class `Counterfactuals`,
+The `cfactuals` object is now an instance of class `Counterfactuals`,
 which contains the counterfactuals and provides several methods for
 evaluation and plotting.
 
@@ -103,11 +103,11 @@ The `$predict` method shows the predictions for the counterfactuals.
 ``` r
 cbind(cfactuals$data, cfactuals$predict())
 #>    Sepal.Length Sepal.Width Petal.Length Petal.Width setosa versicolor virginica
-#> 1:          5.9         3.2          4.8         1.8  0.002      0.630     0.368
-#> 2:          5.9         3.0          4.2         1.5  0.000      1.000     0.000
-#> 3:          6.1         3.0          4.6         1.4  0.000      1.000     0.000
-#> 4:          6.0         2.7          5.1         1.6  0.000      0.666     0.334
-#> 5:          6.0         2.9          4.5         1.5  0.000      1.000     0.000
+#> 1:          5.9         3.2          4.8         1.8      0      0.652     0.348
+#> 2:          5.9         3.0          4.2         1.5      0      1.000     0.000
+#> 3:          6.1         3.0          4.6         1.4      0      1.000     0.000
+#> 4:          6.0         2.7          5.1         1.6      0      0.678     0.322
+#> 5:          6.0         2.9          4.5         1.5      0      0.996     0.004
 ```
 
 We can evaluate the counterfactuals according to various quality
