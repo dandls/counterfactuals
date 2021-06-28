@@ -109,7 +109,6 @@ test_that("evaluate returns error if measures are not known", {
 
 
 test_that("evaluate returns correct results", {
-  skip_on_ci()
   cf = make_counterfactual_test_obj()
 
   cf_eval = cf$evaluate()
@@ -126,6 +125,17 @@ test_that("evaluate returns correct results", {
     sort(as.vector(StatMatch::gower.dist(cf$data, cf$x_interest, rngs = ps$upper - ps$lower)))
   )
 })
+
+# General
+test_that("methods that require at least one counterfactuals are blocked when no counterfactuals found", {
+  cf = make_counterfactual_test_obj()
+  cf$.__enclos_env__$private$.data = cf$data[0L]
+  expect_snapshot_error(cf$evaluate())
+  expect_snapshot_error(cf$get_freq_of_feature_changes())
+  expect_snapshot_error(cf$plot_freq_of_feature_changes())
+  expect_snapshot_error(cf$plot_parallel())
+})
+
 
 
 

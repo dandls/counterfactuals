@@ -10,3 +10,19 @@
 
     Assertion on 'measures' failed: Must be a subset of set {dist_x_interest,dist_target,nr_changed,dist_train}.
 
+# methods that require at least one counterfactuals are blocked when no counterfactuals found
+
+    Assertion on 'self$data' failed: Must have at least 1 rows, but has 0 rows.
+
+---
+
+    Assertion on 'self$data' failed: Must have at least 1 rows, but has 0 rows.
+
+---
+
+    Assertion on 'self$data' failed: Must have at least 1 rows, but has 0 rows.
+
+---
+
+    Assertion on 'self$data' failed: Must have at least 1 rows, but has 0 rows.
+

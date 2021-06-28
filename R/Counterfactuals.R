@@ -30,6 +30,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       assert_flag(show_diff)
       assert_number(k, lower = 1, upper = nrow(private$predictor$data$X))
       assert_numeric(weights, any.missing = FALSE, len = k, null.ok = TRUE)
+      assert_data_table(self$data, min.rows = 1L)
       
       if (show_diff) {
         evals = private$diff
@@ -99,6 +100,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         stop("Package 'GGally' needed for this function to work. Please install it.", call. = FALSE)
       }
       
+      assert_data_table(self$data, min.rows = 1L)
       if (is.null(feature_names)) {
         feature_names = names(private$.data)
       }
@@ -156,6 +158,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     
     get_freq_of_feature_changes = function(subset_zero = FALSE) {
       assert_flag(subset_zero)
+      assert_data_table(self$data, min.rows = 1L)
+      
       feature_names = names(private$.x_interest)
       diff_features = private$diff[, feature_names, with = FALSE]
       freq = colMeans(!is.na(diff_features), na.rm = TRUE)
@@ -174,6 +178,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       if (!requireNamespace("ggExtra", quietly = TRUE)) {
         stop("Package 'ggExtra' needed for this function to work. Please install it.", call. = FALSE)
       }
+      assert_data_table(self$data, min.rows = 1L)
       assert_names(feature_names, subset.of = names(private$.data))
 
       diff_rel_feats = private$diff[, ..feature_names]
