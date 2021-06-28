@@ -8,7 +8,7 @@ test_that("Returns correct output format for soft binary classification", {
   pred = Predictor$new(rf, data = mydf, type = "class")
   mocc = MOCClassif$new(pred, n_generations = 5L)
   x_interest = head(subset(mydf, select = -am), n = 1L)
-  expect_snapshot({cfactuals = quiet(mocc$find_counterfactuals(x_interest, desired_class = "1"))})
+  expect_snapshot({cfactuals = quiet(mocc$find_counterfactuals(x_interest, desired_class = "0"))})
   
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))

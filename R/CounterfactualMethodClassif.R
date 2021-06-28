@@ -67,7 +67,11 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit
         message(sprintf("The `desired_class` was set to `predictor$class` which is %s.", desired_class))
       }
       assert_character(desired_class, len = 1L, any.missing = FALSE)
-      assert_choice(desired_class, choices = names(private$predictor$predict(x_interest)))
+      y_hat_interest = private$predictor$predict(x_interest)
+      assert_choice(desired_class, choices = names(y_hat_interest))
+      if (between(y_hat_interest[[desired_class]], desired_prob[[1L]], desired_prob[[2L]])) {
+        stop("`x_interested` is already predicted with `desired_prob` for `desired_class`.")
+      }
       
       private$x_interest = x_interest
       private$desired_class = desired_class

@@ -59,3 +59,12 @@ test_that("$find_counterfactuals returns meaningful error if x_interest has unex
   expect_snapshot_error(cr$find_counterfactuals(x_interest))
 })
 
+test_that("$find_counterfactuals returns meaningful error if x_interest already has desired properties", {
+  set.seed(54542142)
+  rf = get_rf_regr_mtcars()
+  pred_class = iml::Predictor$new(rf, type = "class")
+  cr = CounterfactualMethodRegr$new(predictor = pred_class, lower = NULL, upper = NULL)
+  x_interest = mtcars[1L, ]
+  expect_snapshot_error(cr$find_counterfactuals(x_interest, desired_outcome = c(0, 100)))
+})
+

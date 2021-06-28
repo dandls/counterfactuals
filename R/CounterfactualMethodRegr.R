@@ -33,6 +33,9 @@ CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = Cou
       if (desired_outcome[2L] < desired_outcome[1L]) {
         stop("The lower bound of `desired_outcome` cannot be greater than the upper bound.")
       }
+      if (between(private$predictor$predict(x_interest)[[1L]], desired_outcome[[1L]], desired_outcome[[2L]])) {
+        stop("`x_interested` is already predicted with `desired_outcome`.")
+      }
       
       private$x_interest = x_interest
       private$desired_outcome = desired_outcome

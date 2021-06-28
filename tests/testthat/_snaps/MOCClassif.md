@@ -1,7 +1,7 @@
 # Returns correct output format for soft binary classification
 
     Code
-      cfactuals = quiet(mocc$find_counterfactuals(x_interest, desired_class = "1"))
+      cfactuals = quiet(mocc$find_counterfactuals(x_interest, desired_class = "0"))
     Message <simpleMessage>
       `x_interest` was removed from results.
 
