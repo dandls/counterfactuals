@@ -1,18 +1,53 @@
-#'Counterfactuals 
+#' Counterfactuals Class
+#'
+#' @description 
+#' A `Counterfactuals` object should be created by \link{CounterfactualMethodRegr} or \link{CounterfactualMethodClassif}.
+#' It contains the found counterfactuals and has several methods for their evaluation and visualization.
+#' 
+#' @references 
+#' 
+#' Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
+#' 
+#' Kaufman, L. and Rousseeuw, P.J. (1990), Finding Groups in Data: An Introduction to Cluster Analysis. Wiley, New York.
 Counterfactuals = R6::R6Class("Counterfactuals",
 
   public = list(
     
+    #' @description 
+    #' Creates a new `Counterfactuals` object.
+    #' This method should only be called within the `$find_counterfactuals` methods of \link{CounterfactualMethodRegr} 
+    #' and \link{CounterfactualMethodClassif}.
+    #' @param cfactuals (`data.table`) \cr
+    #'  The counterfactuals found. Must have the same column names and types as `predictor$data$X`.
+    #' @template lower_upper
+    #' @template x_interest
+    #' @template predictor
+    #' @param param_set (\link[paradox]{ParamSet})\cr
+    #'  A \link[paradox]{ParamSet} created by \link{make_paramset} based on `predictor$data$X`.
+    #' @param desired (`list(1)` | `list(2)`)\cr
+    #'  A `list` with the desired properties of the counterfactuals. For regression tasks it should have one 
+    #'  element `desired_outcome` (\link{CounterfactualMethodRegr}) and for classification tasks two elements 
+    #'  `desired_class` and `desired_prob` (\link{CounterfactualMethodRegr}).
     initialize = function(cfactuals, predictor, x_interest, param_set, desired) {
       assert_data_table(cfactuals)
       assert_class(predictor, "Predictor")
-      assert_data_table(x_interest, nrows = 1L)
+      assert_data_frame(x_interest, nrows = 1L)
+      setDT(x_interest)
       assert_true(ncol(cfactuals) == ncol(x_interest))
       assert_class(param_set, "ParamSet")
       assert_list(desired, min.len = 1L, max.len = 2L)
-      assert_true(all(names(cfactuals) == names(predictor$data$X)))
+      assert_names(names(cfactuals), permutation.of = names(predictor$data$X))
+      setcolorder(cfactuals, names(predictor$data$X))
       if (any(sapply(cfactuals, typeof) != sapply(predictor$data$X, typeof))) {
         stop("Columns of `cfactuals` and `predictor$data$X` must have the same types.")
+      }
+      factor_columns = names(cfactuals)[sapply(cfactuals, is.factor)]
+      if (length(factor_columns) > 0L) {
+        for (col in factor_columns) {
+          assert_factor(
+            cfactuals[[col]], levels = levels(predictor$data$X[[col]]), ordered = is.ordered(predictor$data$X[[col]])
+          )
+        }
       }
       
       private$predictor = predictor
@@ -23,8 +58,36 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       private$.desired = desired
     },
     
-    evaluate = function(measures = c("dist_x_interest", "dist_target", "nr_changed"), show_diff = FALSE, k = 1, 
-                        weights = NULL) {
+    #' @description 
+    #' Evaluates the counterfactuals. It returns the counterfactuals along with evaluation `measures` in additional 
+    #' columns.
+    #' @param measures (`character`) \cr
+    #'  The name of one or more evaluation measures.
+    #'  The following measures are available: 
+    #'   * `dist_x_interest`: The distance of a counterfactual to `x_interest`. It is measured by the extension of the 
+    #'                        Gower's distance proposed by Kaufman and Rousseeuw (1990) and implemented by 
+    #'                        \link[StatMatch]{gower.dist}.  
+    #'   * `dist_target`: The absolute distance of the prediction of a counterfactual to the `desired_outcome`
+    #'                    (regression task) or `desired_prob` (classification task).      
+    #'   * `nr_changed`: The number of feature changes w.r.t. `x_interest`.   
+    #'   * `dist_train`: The (possibly weighted) distance to the `k` nearest training points.
+    #' 
+    #' @param show_diff (`logical(1)`)\cr
+    #'  Should the counterfactuals be displayed as their differences from `x_interest`? (Default is `FALSE`.)
+    #'  If set to `TRUE`, numeric features values of `x_interest` are substracted from the corresponding feature values
+    #'  of the counterfactuals. Non-numeric features are displayed with their actual counterfactuals value. 
+    #'  No difference is indicated by `NA`.
+    #'          
+    #' @param k (`integerish(1)`) \cr
+    #'  How many nearest training points should be considered for computing the `dist_train` measure? Default is `1L`.
+    #' @param weights (`numeric(k)` | `NULL`) \cr
+    #'  How should the `k` nearest training points be weighted when computing the `dist_train` measure? If `NULL`
+    #'  (default) then all `k` points are weighted equally. If a numeric vector of length `k` is given, the i-th element
+    #'  determines the weight of the i-th closest point.
+    #'                                              
+    #' @md
+    evaluate = function(measures = c("dist_x_interest", "dist_target", "nr_changed", "dist_train"), show_diff = FALSE, 
+                        k = 1L, weights = NULL) {
       
       assert_names(measures, subset.of = c("dist_x_interest", "dist_target", "nr_changed", "dist_train"))
       assert_flag(show_diff)
@@ -85,11 +148,18 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       
       evals
     },
-
+    
+    #' @description Predicts the target values of the counterfactuals.
     predict = function() {
       private$predictor$predict(private$.data) 
     },
     
+    #' @description Plots a parallel plot of the (scaled) feature values of the counterfactuals.
+    #' 
+    #' @param feature_names (`character` | `NULL`)\cr
+    #'  The names of the (numeric) features to plot. If `NULL` (default) all features are plotted.
+    #' @param row_ids (`integerish` | `NULL`)\cr
+    #'  The row ids of the counterfactuals to plot. If `NULL` (default) all counterfactuals are plotted.
     plot_parallel = function(feature_names = NULL, row_ids = NULL) {
       
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
@@ -109,7 +179,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       if (is.null(row_ids)) {
         row_ids = 1:nrow(private$.data)
       }
-      assert_integerish(row_ids, lower = 0, upper = nrow(private$.data))
+      assert_integerish(row_ids, lower = 1L, upper = nrow(private$.data))
       
       cfactuals = private$.data[row_ids, ..feature_names]
       dt = rbind(cfactuals, self$x_interest[, ..feature_names])
@@ -142,6 +212,10 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       
     },
     
+    #' @description Plots a bar chart of the frequency of feature changes across all counterfactuals.
+    #' 
+    #' @param subset_zero (`logical(1)`)\cr
+    #'  Should features that have no changes be excluded from the plot? Default is `FALSE`.
     plot_freq_of_feature_changes = function(subset_zero = FALSE) {
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
         stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)
@@ -156,6 +230,12 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         ggplot2::theme_bw()
     },
     
+    #' @description Returns the frequency of feature changes across all counterfactuals.
+    #' 
+    #' @param subset_zero (`logical(1)`)\cr
+    #'  Should features that have no changes be excluded from the plot? Default is `FALSE`.
+    #'  
+    #' @return A (named) `numeric` vector with the frequency of feature changes.
     get_freq_of_feature_changes = function(subset_zero = FALSE) {
       assert_flag(subset_zero)
       assert_data_table(self$data, min.rows = 1L)
@@ -169,8 +249,17 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       sort(freq, decreasing = TRUE)
     },
     
-
-    # para, grid_size not used for two categorical features
+    #' @description Creates a surface plot for two features. `x_interest` is shown as bright dot and 
+    #' all counterfactuals that **only** differ from `x_interest` in those two feature are displayed as dark dots.
+    #' The exact plot appearance depends on the types of the two features:
+    #'  * (`numeric`, `numeric`): surface plot
+    #'  * (`non-numeric`, `non-numeric`): heatmap
+    #'  * (`numeric`, `non-numeric`): line graph
+    #' @param feature_names (`character(2)`)\cr
+    #'  The names of the features to plot.
+    #' @param grid_size (`integerish(1)`)\cr
+    #'  The grid size of the plot. Ignored in case of two `non-numeric` features. Default is `250L`.
+    #' @md
     plot_surface = function(feature_names, grid_size = 250L) {
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
         stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)
@@ -193,6 +282,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       )
     },
     
+    #' @description Prints the `Counterfactuals` object.
     print = function() {
       desired = private$.desired
       cat(nrow(private$.data), "Counterfactual(s) \n \n")
@@ -222,6 +312,10 @@ Counterfactuals = R6::R6Class("Counterfactuals",
 
   ),
   active = list(
+    #' @field desired (`list(1)` | `list(2)`)\cr
+    #'  A `list` with the desired properties of the counterfactuals.  
+    #'  For regression tasks it has one element `desired_outcome` (\link{CounterfactualMethodRegr}) and for 
+    #'  classification tasks two elements `desired_class` and `desired_prob` (\link{CounterfactualMethodRegr}).
     desired = function(value) {
       if (missing(value)) {
         private$.desired
@@ -229,6 +323,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         stop("`$desired` is read only", call. = FALSE)
       }
     },
+    #' @field data (`data.table`)\cr
+    #'  The counterfactuals found.
     data = function(value) {
       if (missing(value)) {
         private$.data
@@ -236,6 +332,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         stop("`$data` is read only", call. = FALSE)
       }
     },
+    #' @field x_interest (`data.table(1)`) \cr
+    #'   A single row with the observation of interest.
     x_interest = function(value) {
       if (missing(value)) {
         private$.x_interest

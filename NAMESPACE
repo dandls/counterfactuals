@@ -2,6 +2,7 @@
 
 export(MOCClassif)
 export(MOCRegr)
+export(NICEClassif)
 export(WhatIfClassif)
 export(WhatIfRegr)
 import(R6)

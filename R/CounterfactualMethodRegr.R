@@ -1,7 +1,23 @@
+#' Base class for Counterfactual Explanation Methods for Regression Tasks
+#' 
+#' @description 
+#' Abstract base class for counterfactual explanation methods for regression task.
+#' 
+#' `CounterfactualMethodRegr` can only be initialized for regression tasks. Child classes inherit the (public) 
+#' `$find_counterfactuals()` method, which calls a (private) `$run()` method. This `$run()` method should be implemented 
+#' by the child classes and return the found counterfactuals as `data.table` (preferably) or `data.frame`.
+#' TODO: Link to vignette with how to add new methods
+#' 
+#' @section Inheritance:
+#' Child classes: \link{MOCRegr}, \link{WhatIfRegr}
+#' 
 CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = CounterfactualMethod,
   
   public = list(
     
+    #' @description Creates a new CounterfactualMethodRegr object.
+    #' @template predictor
+    #' @template lower_upper
     initialize = function(predictor, lower, upper) {
       super$initialize(predictor, lower, upper)
       if (private$predictor$task != "regression") {
@@ -9,7 +25,12 @@ CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = Cou
       }
     },
     
-    find_counterfactuals = function(x_interest, desired_outcome = NULL) {
+    #' @template x_interest
+    #' @param desired_outcome (`numeric(1)` | `numeric(2)`) \cr
+    #' The desired predicted outcome. It can be a numeric scalar or a vector with two numeric values that specify an
+    #' outcome range. 
+    #' @return A \link{Counterfactuals} object containing the results.
+    find_counterfactuals = function(x_interest, desired_outcome) {
       
       # Checks x_interest
       assert_data_frame(x_interest, nrows = 1L)

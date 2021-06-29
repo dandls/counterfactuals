@@ -1,6 +1,17 @@
+#' Base class for Explanation Counterfactual Methods 
+#' 
+#' @description 
+#' Abstract base class for counterfactual explanation methods.
+#' 
+#' @section Inheritance:
+#' Child classes: \link{CounterfactualMethodClassif}, \link{CounterfactualMethodRegr}
 CounterfactualMethod = R6::R6Class("CounterfactualMethod",
   
   public = list(
+    
+    #' @description Creates a new `CounterfactualMethod` object.
+    #' @template predictor
+    #' @template lower_upper
     initialize = function(predictor, lower, upper) {
       assert_class(predictor, "Predictor")
       assert_numeric(lower, null.ok = TRUE)
@@ -21,6 +32,9 @@ CounterfactualMethod = R6::R6Class("CounterfactualMethod",
       private$param_set = make_param_set(predictor$data$X, lower, upper)
     },
     
+    #' @description 
+    #' Print a `CounterfactualMethod` object.
+    #' The method calls a (private) `$print_parameters()` method which should be implemented by the leaf classes.
     print = function() {
       cat("Counterfactual explanation method: ", class(self)[1], "\n")
       cat("Parameters:\n")

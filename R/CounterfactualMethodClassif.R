@@ -1,16 +1,23 @@
-#' Base class for Counterfactual Methods for Classification Tasks
+#' Base class for Counterfactual Explanation Methods for Classification Tasks
 #' 
 #' @description 
-#' Base class for counterfactual explanation methods for classifcation task, inheriting from \link{CounterfactualMethod}.
+#' Abstract base class for counterfactual explanation methods for classifcation task.
 #' 
 #' `CounterfactualMethodClassif` can only be initialized for classification tasks. Child classes inherit the (public) 
 #' `$find_counterfactuals()` method, which calls a (private) `$run()` method. This `$run()` method should be implemented 
 #' by the child classes and return the found counterfactuals as `data.table` (preferably) or `data.frame`.
+#' TODO: Link to vignette with how to add new methods
+#' 
+#' @section Inheritance:
+#' Child classes: \link{MOCClassif}, \link{WhatIfClassif}, \link{NICEClassif}
 #'  
 CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit = CounterfactualMethod,
   
   public = list(
     
+    #' @description Creates a new `CounterfactualMethodClassif` object.
+    #' @template predictor
+    #' @template lower_upper
     initialize = function(predictor, lower, upper) {
       super$initialize(predictor, lower, upper)
       if (private$predictor$task != "classification") {
@@ -18,22 +25,20 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit
       }
     },
     
-    # For hard classification desired_prob can be set to 0 or 1, respectively.
     #' @description 
     #' 
     #' Runs the counterfactual explanation method and returns the counterfactuals found.
     #' It searches for counterfactuals that have a predicted probability `desired_prob` for the `desired_class`.
     #' 
-    #' @param x_interest (`data.table(1)` | `data.frame(1)`) \cr
-    #'   The observation to find counterfactuals for.
+    #' @template x_interest
     #' @param desired_class (`character(1)` | `NULL`) \cr
-    #'   The desired class. If `NULL` (default) then `predictor$class` is taken as `desired` class.
+    #'   The desired class. If `NULL` (default) then `predictor$class` is taken.
     #' @param desired_prob (`numeric(1)` | `numeric(2)`) \cr
     #'   The desired predicted probability for the `desired_class`. It can be a numeric scalar or a vector with two
     #'   numeric values that specify a probability range. 
     #'   For hard classification tasks this can be set to `0` or `1`, respectively.
     #'   
-    #' @returns A \link{Counterfactuals} object containing the results.
+    #' @return A \link{Counterfactuals} object containing the results.
     find_counterfactuals = function(x_interest, desired_class = NULL, desired_prob = c(0.5, 1)) {
       # Checks x_interest
       assert_data_frame(x_interest, nrows = 1L)

@@ -9,7 +9,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  fig.height = 3.5,
+  fig.height = 3,
   fig.width = 8
 )
 options(width = 200)
@@ -30,6 +30,7 @@ R6-based interface.
 Currently available are the following methods:
 
 - [Multi-Objective Counterfactual Explanations (MOC)](https://arxiv.org/abs/2004.11165)
+- [NICE: An Algorithm for Nearest Instance Counterfactual Explanations (NICE)](https://arxiv.org/abs/2104.07411)
 - [WhatIf](https://arxiv.org/abs/1907.04135)
 
 ## Installation
@@ -87,6 +88,11 @@ cfactuals = wi_classif$find_counterfactuals(
 The `cfactuals` object is now an instance of class `Counterfactuals`, which contains the counterfactuals and provides 
 several methods for evaluation and plotting.
 
+```{r}
+cfactuals
+```
+
+
 The counterfactuals can be retrieved via `$data`.
 ```{r}
 cfactuals$data
@@ -103,18 +109,13 @@ We can evaluate the counterfactuals according to various quality criteria using 
 ```{r}
 cfactuals$evaluate()
 ```
+
 To examine the frequency of changes in each feature, we can use the `$plot_freq_of_feature_changes()` method.
 
 ```{r}
 cfactuals$plot_freq_of_feature_changes()
 ```
 
-We can also create a prediction surface plot for two features that shows `x_interest` as white dot and all counterfactuals
-that only differ in these two features as black dots. 
-
-```{r}
-cfactuals$plot_surface(c("Petal.Width", "Petal.Length"))
-```
 
 
 

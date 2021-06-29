@@ -19,6 +19,8 @@ Currently available are the following methods:
 
 -   [Multi-Objective Counterfactual Explanations
     (MOC)](https://arxiv.org/abs/2004.11165)
+-   [NICE: An Algorithm for Nearest Instance Counterfactual Explanations
+    (NICE)](https://arxiv.org/abs/2104.07411)
 -   [WhatIf](https://arxiv.org/abs/1907.04135)
 
 ## Installation
@@ -70,7 +72,7 @@ For observation 150 (`x_interest`) the model predicts:
 ``` r
 predictor$predict(iris[150L, ])
 #>   setosa versicolor virginica
-#> 1      0      0.034     0.966
+#> 1      0       0.05      0.95
 ```
 
 We can use the `$find_counterfactuals()` method to find counterfactuals
@@ -85,6 +87,20 @@ cfactuals = wi_classif$find_counterfactuals(
 The `cfactuals` object is now an instance of class `Counterfactuals`,
 which contains the counterfactuals and provides several methods for
 evaluation and plotting.
+
+``` r
+cfactuals
+#> 5 Counterfactual(s) 
+#>  
+#> Desired class: versicolor 
+#> Desired predicted probability range: [0.5, 1] 
+#>  
+#> Head: 
+#>    Sepal.Length Sepal.Width Petal.Length Petal.Width
+#> 1:          5.9         3.2          4.8         1.8
+#> 2:          5.9         3.0          4.2         1.5
+#> 3:          6.1         3.0          4.6         1.4
+```
 
 The counterfactuals can be retrieved via `$data`.
 
@@ -103,10 +119,10 @@ The `$predict` method shows the predictions for the counterfactuals.
 ``` r
 cbind(cfactuals$data, cfactuals$predict())
 #>    Sepal.Length Sepal.Width Petal.Length Petal.Width setosa versicolor virginica
-#> 1:          5.9         3.2          4.8         1.8      0      0.652     0.348
-#> 2:          5.9         3.0          4.2         1.5      0      1.000     0.000
-#> 3:          6.1         3.0          4.6         1.4      0      1.000     0.000
-#> 4:          6.0         2.7          5.1         1.6      0      0.678     0.322
+#> 1:          5.9         3.2          4.8         1.8      0      0.644     0.356
+#> 2:          5.9         3.0          4.2         1.5      0      0.998     0.002
+#> 3:          6.1         3.0          4.6         1.4      0      0.994     0.006
+#> 4:          6.0         2.7          5.1         1.6      0      0.718     0.282
 #> 5:          6.0         2.9          4.5         1.5      0      0.996     0.004
 ```
 
@@ -128,16 +144,6 @@ To examine the frequency of changes in each feature, we can use the
 
 ``` r
 cfactuals$plot_freq_of_feature_changes()
-```
-
-![](man/figures/README-unnamed-chunk-10-1.png)<!-- -->
-
-We can also create a prediction surface plot for two features that shows
-`x_interest` as white dot and all counterfactuals that only differ in
-these two features as black dots.
-
-``` r
-cfactuals$plot_surface(c("Petal.Width", "Petal.Length"))
 ```
 
 ![](man/figures/README-unnamed-chunk-11-1.png)<!-- -->
