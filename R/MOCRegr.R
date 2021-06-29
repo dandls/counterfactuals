@@ -3,9 +3,9 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
   
   public = list(
     
-    initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, 
-                          mu = 50L, n_generations = 20L, p_rec = 0.9, p_rec_gen = 0.7, p_rec_use_orig = 0.7, p_mut = 0.2,
-                          p_mut_gen = 0.5, p_mut_use_orig = 0.2, k = 1L, weights = NULL, lower = NULL, upper = NULL, 
+    initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, mu = 20L,
+                          n_generations = 30L, p_rec = 0.57, p_rec_gen = 0.85, p_rec_use_orig = 0.88, p_mut = 0.79,
+                          p_mut_gen = 0.56, p_mut_use_orig = 0.32, k = 1L, weights = NULL, lower = NULL, upper = NULL, 
                           init_strategy = "random", use_conditional_mutator = FALSE) {
       
       super$initialize(predictor, lower, upper)
