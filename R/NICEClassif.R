@@ -93,10 +93,15 @@ NICEClassif = R6::R6Class("NICEClassif",
         return(predictor$data$X[0L])
       }
       
-      distance = StatMatch::gower.dist(private$x_interest, candidates_x_nn)
+      ranges = private$param_set$upper - private$param_set$lower
+      candidates_x_nn_list = split(candidates_x_nn, seq(nrow(candidates_x_nn)))
+      distance = future.apply::future_vapply(
+        candidates_x_nn_list, StatMatch::gower.dist, FUN.VALUE = numeric(1L), private$x_interest, ranges, 
+        USE.NAMES = FALSE
+      )
+
       x_nn = candidates_x_nn[which.min(distance)]
       x_current = copy(private$x_interest)
-      # TODO: Check if x_nn == x_current -> not required if check that x_interest already fullfills desired
       
       while (TRUE) {
         x_prev = x_current
@@ -147,10 +152,10 @@ NICEClassif = R6::R6Class("NICEClassif",
           ))
         )
         
-        if (between(predictor$predict(x_current)[[desired_class]], desired_prob[1], desired_prob[2])) {
+        if (between(predictor$predict(x_current)[[desired_class]], desired_prob[1L], desired_prob[2L])) {
           counterfactuals = lapply(
             self$archive, function(el) {
-              el$X_candidates[between(el$pred[[desired_class]], desired_prob[1], desired_prob[2])]
+              el$X_candidates[between(el$pred[[desired_class]], desired_prob[1L], desired_prob[2L])]
             } 
           )
           return(unique(rbindlist(counterfactuals)))

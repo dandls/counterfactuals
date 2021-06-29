@@ -152,7 +152,20 @@ test_that("Returns warning if no counterfactuals could be found", {
 })
 
 
-
+test_that("Returns equal results with and without parallelization", {
+  skip_if_not(parallel::detectCores() > 1L)
+  set.seed(54542142)
+  rf = get_rf_classif_iris()
+  mod = Predictor$new(rf, data = iris, y = "Species")
+  x_interest = iris[1L, ]
+  desired = 
+  nice_classif = NICEClassif$new(mod, optimization = "sparsity")
+  future::plan(future::multisession, workers = parallel::detectCores() - 1L)
+  par = nice_classif$find_counterfactuals(x_interest, "versicolor", c(0.7, 1))
+  future::plan(future::sequential)
+  sequ = nice_classif$find_counterfactuals(x_interest, "versicolor", c(0.7, 1))
+  expect_equal(par, sequ)
+})
 
 
 
