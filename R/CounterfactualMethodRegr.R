@@ -11,6 +11,7 @@
 #' @section Inheritance:
 #' Child classes: \link{MOCRegr}, \link{WhatIfRegr}
 #' 
+#' @export
 CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = CounterfactualMethod,
   
   public = list(

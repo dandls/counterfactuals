@@ -84,7 +84,7 @@ A single row with the observation of interest.}
 The desired class. If \code{NULL} (default) then \code{predictor$class} is taken.}
 
 \item{\code{desired_prob}}{(\code{numeric(1)} | \code{numeric(2)}) \cr
-The desired predicted probability for the \code{desired_class}. It can be a numeric scalar or a vector with two
+The desired predicted probability of the \code{desired_class}. It can be a numeric scalar or a vector with two
 numeric values that specify a probability range.
 For hard classification tasks this can be set to \code{0} or \code{1}, respectively.}
 }

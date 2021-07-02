@@ -10,8 +10,8 @@
 coverage](https://codecov.io/gh/susanne-207/counterfactuals/branch/main/graph/badge.svg)](https://codecov.io/gh/susanne-207/counterfactuals?branch=main)
 <!-- badges: end -->
 
-`counterfactuals` provides various counterfactual explanation methods
-via a unified and easy-to-use R6-based interface.
+`counterfactuals` provides various (model-agnostic) counterfactual
+explanation methods via a unified and easy-to-use R6-based interface.
 
 ## Available methods
 
@@ -72,7 +72,7 @@ For observation 150 (`x_interest`) the model predicts:
 ``` r
 predictor$predict(iris[150L, ])
 #>   setosa versicolor virginica
-#> 1      0       0.05      0.95
+#> 1      0       0.06      0.94
 ```
 
 We can use the `$find_counterfactuals()` method to find counterfactuals
@@ -119,11 +119,11 @@ The `$predict` method shows the predictions for the counterfactuals.
 ``` r
 cbind(cfactuals$data, cfactuals$predict())
 #>    Sepal.Length Sepal.Width Petal.Length Petal.Width setosa versicolor virginica
-#> 1:          5.9         3.2          4.8         1.8      0      0.644     0.356
+#> 1:          5.9         3.2          4.8         1.8      0      0.640     0.360
 #> 2:          5.9         3.0          4.2         1.5      0      0.998     0.002
-#> 3:          6.1         3.0          4.6         1.4      0      0.994     0.006
-#> 4:          6.0         2.7          5.1         1.6      0      0.718     0.282
-#> 5:          6.0         2.9          4.5         1.5      0      0.996     0.004
+#> 3:          6.1         3.0          4.6         1.4      0      1.000     0.000
+#> 4:          6.0         2.7          5.1         1.6      0      0.648     0.352
+#> 5:          6.0         2.9          4.5         1.5      0      0.986     0.014
 ```
 
 We can evaluate the counterfactuals according to various quality
@@ -131,12 +131,12 @@ criteria using the `$evaluate()` method.
 
 ``` r
 cfactuals$evaluate()
-#>    Sepal.Length Sepal.Width Petal.Length Petal.Width dist_x_interest nr_changed dist_target
-#> 1:          5.9         3.2          4.8         1.8      0.03354520          2           0
-#> 2:          5.9         3.0          4.2         1.5      0.06938559          2           0
-#> 3:          6.1         3.0          4.6         1.4      0.07674200          3           0
-#> 4:          6.0         2.7          5.1         1.6      0.05902778          3           0
-#> 5:          6.0         2.9          4.5         1.5      0.07403484          4           0
+#>    Sepal.Length Sepal.Width Petal.Length Petal.Width dist_x_interest nr_changed dist_train dist_target
+#> 1:          5.9         3.2          4.8         1.8      0.03354520          2          0           0
+#> 2:          5.9         3.0          4.2         1.5      0.06938559          2          0           0
+#> 3:          6.1         3.0          4.6         1.4      0.07674200          3          0           0
+#> 4:          6.0         2.7          5.1         1.6      0.05902778          3          0           0
+#> 5:          6.0         2.9          4.5         1.5      0.07403484          4          0           0
 ```
 
 To examine the frequency of changes in each feature, we can use the

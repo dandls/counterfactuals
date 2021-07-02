@@ -22,7 +22,7 @@ options(width = 200)
 [![Codecov test coverage](https://codecov.io/gh/susanne-207/counterfactuals/branch/main/graph/badge.svg)](https://codecov.io/gh/susanne-207/counterfactuals?branch=main)
 <!-- badges: end -->
 
-`counterfactuals` provides various counterfactual explanation methods via a unified and easy-to-use
+`counterfactuals` provides various (model-agnostic) counterfactual explanation methods via a unified and easy-to-use
 R6-based interface.
 
 ## Available methods

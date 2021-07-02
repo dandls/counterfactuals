@@ -11,6 +11,7 @@
 #' @section Inheritance:
 #' Child classes: \link{MOCClassif}, \link{WhatIfClassif}, \link{NICEClassif}
 #'  
+#' @export
 CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit = CounterfactualMethod,
   
   public = list(
@@ -34,7 +35,7 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit
     #' @param desired_class (`character(1)` | `NULL`) \cr
     #'   The desired class. If `NULL` (default) then `predictor$class` is taken.
     #' @param desired_prob (`numeric(1)` | `numeric(2)`) \cr
-    #'   The desired predicted probability for the `desired_class`. It can be a numeric scalar or a vector with two
+    #'   The desired predicted probability of the `desired_class`. It can be a numeric scalar or a vector with two
     #'   numeric values that specify a probability range. 
     #'   For hard classification tasks this can be set to `0` or `1`, respectively.
     #'   
