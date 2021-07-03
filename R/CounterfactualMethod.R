@@ -12,7 +12,7 @@ CounterfactualMethod = R6::R6Class("CounterfactualMethod",
     #' @description Creates a new `CounterfactualMethod` object.
     #' @template predictor
     #' @template lower_upper
-    initialize = function(predictor, lower, upper) {
+    initialize = function(predictor, lower = NULL, upper = NULL) {
       assert_class(predictor, "Predictor")
       assert_numeric(lower, null.ok = TRUE)
       assert_numeric(upper, null.ok = TRUE)
