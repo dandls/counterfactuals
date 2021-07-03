@@ -368,8 +368,9 @@ make_moc_statistics_plots = function(data, ref_point, normalize_objectives) {
   dt_agg_mean = dt[, lapply(.SD, mean, na.rm = TRUE), by = .(batch_nr), .SDcols = obj_names]
   dt_agg_min = dt[, lapply(.SD, min, na.rm = TRUE), by = .(batch_nr), .SDcols = obj_names]
   if (normalize_objectives) {
-    dt_agg_mean[, (obj_names) := lapply(.SD, function(x) (x - min(x)) / (max(x) - min(x))), .SDcols = obj_names]
-    dt_agg_min[, (obj_names) := lapply(.SD, function(x)  (x - min(x)) / (max(x) - min(x))), .SDcols = obj_names]
+    eps = .Machine$double.eps
+    dt_agg_mean[, (obj_names) := lapply(.SD, function(x) (x - min(x)) / (max(x) - min(x) + eps)), .SDcols = obj_names]
+    dt_agg_min[, (obj_names) := lapply(.SD, function(x)  (x - min(x)) / (max(x) - min(x) + eps)), .SDcols = obj_names]
     dt_agg_mean = melt(dt_agg_mean, id.vars = "batch_nr", measure.vars = obj_names)
     dt_agg_min = melt(dt_agg_min, id.vars = "batch_nr", measure.vars = obj_names)
     
