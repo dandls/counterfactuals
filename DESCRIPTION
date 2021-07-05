@@ -25,18 +25,10 @@ Imports:
 Suggests: 
     randomForest,
     GGally,
-    mlt,
-    gower,
-    glmnet,
     trtf,
-    yaImpute,
     testthat,
-    rpart,
     MASS,
-    caret,
-    e1071,
     knitr,
-    mlr,
     cowplot,
     covr,
     ggplot2,
@@ -44,10 +36,20 @@ Suggests:
     rchallenge,
     partykit,
     rmarkdown,
-    basefun
+    basefun,
+    featureTweakR
 License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.1.1
-VignetteBuilder: knitr
+VignetteBuilder: 
+    knitr, 
+    randomForest,
+    featureTweakR
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
+Remotes:
+    mlr-org/miesmuschel@multiobjective_hb
+    katokohaku/featureTweakR
+
+
+

@@ -36,8 +36,6 @@ counterfactual explanations later.
 library(counterfactuals)
 library(randomForest)
 library(iml)
-library(kableExtra)
-library(magrittr)
 idx_x_interest = 998L
 x_interest = german[idx_x_interest, ]
 train_data = german[-idx_x_interest, ]
@@ -77,10 +75,7 @@ mocc$plot_search()
 # Results
 
 ```{r}
-cfactuals$data %>% 
-  kbl() %>% 
-  kable_styling(c("striped", "hover", "responsive"), font_size = 10L) %>% 
-  scroll_box(width = "100%", height = "500px") 
+cfactuals$data
 ```
 
 ```{r}
