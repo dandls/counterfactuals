@@ -60,6 +60,9 @@ NICEClassif = R6::R6Class("NICEClassif",
     correct_classif_only = NULL,
 
     run = function() {
+      # Flush
+      self$archive = NULL
+      
       predictor = private$predictor
       desired_class = private$desired_class
       desired_prob = private$desired_prob
