@@ -164,9 +164,9 @@ NICEClassif = R6::R6Class("NICEClassif",
     },
 
     print_parameters = function() {
+      cat(" - correct_classif_only: ", private$correct_classif_only, "\n")
       cat(" - optimization: ", private$optimization, "\n")
       cat(" - threshold: ", paste0(names(private$threshold), ":", private$threshold), "\n")
-      cat(" - correct_classif_only: ", private$correct_classif_only, "\n")
     }
   )
 )
