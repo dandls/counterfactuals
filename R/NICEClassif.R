@@ -148,7 +148,7 @@ NICEClassif = R6::R6Class("NICEClassif",
         x_current = X_candidates[which.max(reward)]
         self$archive = c(
           self$archive,
-          list(cbind(X_candidates, reward, predictor$predict(X_candidates)))
+          list(cbind(X_candidates, "reward" = as.numeric(reward), predictor$predict(X_candidates)))
         )
         
         if (between(predictor$predict(x_current)[[desired_class]], desired_prob[1L], desired_prob[2L])) {
