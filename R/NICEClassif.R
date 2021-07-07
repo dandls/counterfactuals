@@ -7,26 +7,17 @@ NICEClassif = R6::R6Class("NICEClassif",
     
     archive = list(),
     
-    # correct_classif_only: Only correctly classified observations are considered as nearest neighbor
-    initialize = function(predictor, optimization = "sparsity", threshold = NULL, correct_classif_only = TRUE, 
+    # x_nn_correct_classif: Only correctly classified observations are considered as nearest neighbor
+    initialize = function(predictor, optimization = "sparsity", x_nn_correct_classif = TRUE, 
                           lower = NULL, upper = NULL) {
       
       super$initialize(predictor, lower, upper)
 
-      assert_flag(correct_classif_only)
+      assert_flag(x_nn_correct_classif)
       assert_choice(optimization, choices = c("sparsity", "proximity", "plausibility"))
       private$optimization = optimization
-      private$correct_classif_only = correct_classif_only
+      private$x_nn_correct_classif = x_nn_correct_classif
       private$y_hat = private$predictor$predict(predictor$data$X)
-      assert_numeric(threshold, lower = 0L, upper = 1L, any.missing = FALSE, len = ncol(private$y_hat), null.ok = TRUE)
-      if (is.null(threshold)) {
-        k = ncol(private$y_hat)
-        private$threshold = rep(1 / k, k)
-        names(private$threshold) = names(private$y_hat)
-      } else {
-        assert_names(names(threshold), must.include = names(private$y_hat))
-        private$threshold = threshold[names(private$y_hat)]
-      }
       
       if (private$optimization == "plausibility") {
         if (!requireNamespace("keras", quietly = TRUE)) {
@@ -36,13 +27,8 @@ NICEClassif = R6::R6Class("NICEClassif",
         private$ae_model = train_AE_model(predictor$data$X, private$aep)
       }
       
-      if (correct_classif_only) {
-        pred_class = private$y_hat > t(private$threshold)
-        private$X_train_class = apply(pred_class, 1L, function(x) ifelse(any(x), names(private$y_hat)[which.max(x)], NA))
-      } else {
-        if (!is.null(threshold)) {
-          message("`threshold` is ignored, when `correct_classif_only` is set to FALSE.")
-        }
+      if (x_nn_correct_classif) {
+        private$X_train_class = names(private$y_hat)[max.col(private$y_hat, ties.method = "random")] 
       }
    
     }
@@ -56,8 +42,7 @@ NICEClassif = R6::R6Class("NICEClassif",
     ae_model = NULL,
     aep = NULL,
     y_hat = NULL,
-    threshold = NULL,
-    correct_classif_only = NULL,
+    x_nn_correct_classif = NULL,
 
     run = function() {
       # Flush
@@ -69,7 +54,7 @@ NICEClassif = R6::R6Class("NICEClassif",
       candidates_x_nn = predictor$data$X 
       
       is_correctly_classified = rep(TRUE, nrow(candidates_x_nn))
-      if (private$correct_classif_only) {
+      if (private$x_nn_correct_classif) {
         # Converts multi-class to binary-class problem
         is_correctly_classified = ifelse(
           predictor$data$y[[1L]] == desired_class, 
@@ -164,9 +149,8 @@ NICEClassif = R6::R6Class("NICEClassif",
     },
 
     print_parameters = function() {
-      cat(" - correct_classif_only: ", private$correct_classif_only, "\n")
+      cat(" - x_nn_correct_classif: ", private$x_nn_correct_classif, "\n")
       cat(" - optimization: ", private$optimization, "\n")
-      cat(" - threshold: ", paste0(names(private$threshold), ":", private$threshold), "\n")
     }
   )
 )
