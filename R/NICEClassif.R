@@ -148,17 +148,13 @@ NICEClassif = R6::R6Class("NICEClassif",
         x_current = X_candidates[which.max(reward)]
         self$archive = c(
           self$archive,
-          list(list(
-            "X_candidates" = X_candidates, 
-            "reward" = as.numeric(reward), 
-            "pred" = predictor$predict(X_candidates)
-          ))
+          list(cbind(X_candidates, reward, predictor$predict(X_candidates)))
         )
         
         if (between(predictor$predict(x_current)[[desired_class]], desired_prob[1L], desired_prob[2L])) {
           counterfactuals = lapply(
             self$archive, function(el) {
-              el$X_candidates[between(el$pred[[desired_class]], desired_prob[1L], desired_prob[2L])]
+              el[between(el[[desired_class]], desired_prob[1L], desired_prob[2L]), names(X_candidates), with = FALSE]
             } 
           )
           return(unique(rbindlist(counterfactuals)))
