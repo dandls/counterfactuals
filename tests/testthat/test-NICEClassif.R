@@ -23,7 +23,7 @@ test_that("Returns correct output format for soft binary classification", {
   # Optim Plausibility
   skip_on_ci()
   set.seed(544564)
-  nice_classif = NICEClassif$new(pred, optimization = "plausibility", correct_classif_only = FALSE)
+  nice_classif = NICEClassif$new(pred, optimization = "plausibility", x_nn_correct_classif = FALSE)
   cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "0")
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
@@ -36,13 +36,13 @@ test_that("Returns correct output format for hard binary classification", {
   x_interest = iris[1L, -5L]
 
   # Optim Sparsity
-  nice_classif = NICEClassif$new(iris_pred, optimization = "sparsity", correct_classif_only = FALSE)
+  nice_classif = NICEClassif$new(iris_pred, optimization = "sparsity", x_nn_correct_classif = FALSE)
   cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = 1)
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
 
   # Optim Proximity
-  nice_classif = NICEClassif$new(iris_pred, optimization = "proximity", correct_classif_only = FALSE)
+  nice_classif = NICEClassif$new(iris_pred, optimization = "proximity", x_nn_correct_classif = FALSE)
   cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = 1)
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
@@ -50,7 +50,7 @@ test_that("Returns correct output format for hard binary classification", {
   # Optim Plausibility
   skip_on_ci()
   set.seed(544564)
-  nice_classif = NICEClassif$new(iris_pred, optimization = "plausibility", correct_classif_only = FALSE)
+  nice_classif = NICEClassif$new(iris_pred, optimization = "plausibility", x_nn_correct_classif = FALSE)
   cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = 1)
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
@@ -69,13 +69,13 @@ test_that("Can handle non-numeric target classes", {
   x_interest = head(subset(test_data, select = -cl), 1L)
 
   # Optim Sparsity
-  nice_classif = NICEClassif$new(pred, optimization = "sparsity", correct_classif_only = FALSE)
+  nice_classif = NICEClassif$new(pred, optimization = "sparsity", x_nn_correct_classif = FALSE)
   cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "neg")
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
 
   # Optim Proximity
-  nice_classif = NICEClassif$new(pred, optimization = "proximity", correct_classif_only = FALSE)
+  nice_classif = NICEClassif$new(pred, optimization = "proximity", x_nn_correct_classif = FALSE)
   cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "neg")
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
@@ -83,7 +83,7 @@ test_that("Can handle non-numeric target classes", {
   # Optim Plausibility
   skip_on_ci()
   set.seed(57421)
-  nice_classif = NICEClassif$new(pred, optimization = "plausibility", correct_classif_only = FALSE)
+  nice_classif = NICEClassif$new(pred, optimization = "plausibility", x_nn_correct_classif = FALSE)
   cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "neg")
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
@@ -98,7 +98,7 @@ test_that("Can handle ordered factor input columns", {
   pred_credit = iml::Predictor$new(rf, data = german, y = "credit_risk", type = "prob")
 
   # Optim Sparsity
-  nice_classif = NICEClassif$new(pred_credit, optimization = "sparsity", correct_classif_only = FALSE)
+  nice_classif = NICEClassif$new(pred_credit, optimization = "sparsity", x_nn_correct_classif = FALSE)
   cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "good", desired_prob = c(0.8 , 1))
   expect_data_table(cfactuals$data, col.names = "named")
   expect_identical(sapply(cfactuals$data, class), sapply(x_interest, class))
@@ -106,7 +106,7 @@ test_that("Can handle ordered factor input columns", {
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
 
   # Optim Proximity
-  nice_classif = NICEClassif$new(pred_credit, optimization = "proximity", correct_classif_only = FALSE)
+  nice_classif = NICEClassif$new(pred_credit, optimization = "proximity", x_nn_correct_classif = FALSE)
   cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "good", desired_prob = c(0.8 , 1))
   expect_data_table(cfactuals$data, col.names = "named")
   expect_identical(sapply(cfactuals$data, class), sapply(x_interest, class))
@@ -116,7 +116,7 @@ test_that("Can handle ordered factor input columns", {
   # Optim Plausibility
   skip_on_ci()
   set.seed(544564)
-  nice_classif = NICEClassif$new(pred_credit, optimization = "plausibility", correct_classif_only = FALSE)
+  nice_classif = NICEClassif$new(pred_credit, optimization = "plausibility", x_nn_correct_classif = FALSE)
   cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "good", desired_prob = c(0.8 , 1))
   expect_data_table(cfactuals$data, col.names = "named")
   expect_identical(sapply(cfactuals$data, class), sapply(x_interest, class))
@@ -125,19 +125,6 @@ test_that("Can handle ordered factor input columns", {
 
 })
 
-test_that("Returns message that `threshold` is ignored, when `correct_classif_only` is set to FALSE.", {
-  set.seed(54542142)
-  mydf = mtcars
-  mydf$am = as.factor(mydf$am)
-  mydf$vs = as.factor(mydf$vs)
-  rf = randomForest::randomForest(am ~ ., data = mydf, ntree = 5L)
-  pred = Predictor$new(rf, data = mydf, type = "class")
-  x_interest = head(subset(mydf, select = -am), n = 1L)
-  th = c("0" = 0.5, "1" = 0.5)
-  expect_snapshot({
-    nice_classif = NICEClassif$new(pred, optimization = "sparsity", correct_classif_only = FALSE, threshold = th)
-  })
-})
 
 test_that("Returns warning if no counterfactuals could be found", {
   set.seed(54542142)
@@ -146,9 +133,8 @@ test_that("Returns warning if no counterfactuals could be found", {
   rf = randomForest::randomForest(am ~ ., data = mydf, ntree = 5L)
   pred = Predictor$new(rf, data = mydf, type = "class")
   x_interest = head(subset(mydf, select = -am), n = 1L)
-  th = c("0" = 1, "1" = 1)
-  nice_classif = NICEClassif$new(pred, optimization = "sparsity", correct_classif_only = TRUE, threshold = th)
-  expect_snapshot({cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "0")})
+  nice_classif = NICEClassif$new(pred, optimization = "sparsity", x_nn_correct_classif = TRUE)
+  expect_snapshot({cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "0", desired_prob = 0.454851)})
 })
 
 
@@ -158,7 +144,6 @@ test_that("Returns equal results with and without parallelization", {
   rf = get_rf_classif_iris()
   mod = Predictor$new(rf, data = iris, y = "Species")
   x_interest = iris[1L, ]
-  desired = 
   nice_classif = NICEClassif$new(mod, optimization = "sparsity")
   future::plan(future::multisession, workers = parallel::detectCores() - 1L)
   par = nice_classif$find_counterfactuals(x_interest, "versicolor", c(0.7, 1))
@@ -166,6 +151,20 @@ test_that("Returns equal results with and without parallelization", {
   sequ = nice_classif$find_counterfactuals(x_interest, "versicolor", c(0.7, 1))
   expect_equal(par, sequ)
 })
+
+
+test_that("Returns x_nn if finish_early=FALSE and return_multiple=FALSE", {
+  skip_if_not(parallel::detectCores() > 1L)
+  set.seed(54542142)
+  rf = get_rf_classif_iris()
+  mod = Predictor$new(rf, data = iris, y = "Species")
+  x_interest = iris[1L, ]
+  nice_classif = NICEClassif$new(mod, optimization = "sparsity", finish_early = FALSE, return_multiple = FALSE)
+  cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "versicolor")
+  expect_identical(cfactuals$data, nice_classif$x_nn)
+})
+
+
 
 
 
