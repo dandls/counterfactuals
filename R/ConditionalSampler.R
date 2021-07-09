@@ -24,12 +24,15 @@ ConditionalSampler = R6::R6Class(
 
   private = list(
     data_nodes = NULL,
-    ctrl = partykit::ctree_control(maxdepth = 5L),
     y = NULL,
     X = NULL,
     feature_name = NULL,
     
     fit_conditional = function() {
+      if (!requireNamespace("partykit", quietly = TRUE)) {
+        stop("Package 'partykit' needed for this function to work. Please install it.", call. = FALSE)
+      }
+      ctrl = partykit::ctree_control(maxdepth = 5L)
       y_unique = unique(private$y)
       if (is.numeric(y_unique) && length(y_unique[!is.na(y_unique)]) > 5L) {
         yvar = variables::numeric_var(
@@ -38,10 +41,10 @@ ConditionalSampler = R6::R6Class(
         bernstein_basis_y = basefun::Bernstein_basis(yvar, order = 5L, ui = "increasing")
         cond_transfo_model = mlt::ctm(bernstein_basis_y, todistr = "Normal", data = private$X)
         tree_formula = as.formula(sprintf("%s ~ 1 | .", private$feature_name))
-        self$model = trtf::trafotree(cond_transfo_model, formula = tree_formula, data = private$X, control = private$ctrl)
+        self$model = trtf::trafotree(cond_transfo_model, formula = tree_formula, data = private$X, control = ctrl)
       } else {
         tree_formula = as.formula(sprintf("%s ~ 1 | .", private$feature_name))
-        self$model = partykit::ctree(tree_formula, data = private$X, control = private$ctrl)
+        self$model = partykit::ctree(tree_formula, data = private$X, control = ctrl)
       }
  
     },
