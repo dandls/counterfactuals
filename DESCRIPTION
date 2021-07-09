@@ -49,6 +49,7 @@ Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
 Remotes:
     mlr-org/miesmuschel@multiobjective_hb,
+    mlr-org/paradox@expression_params,
     katokohaku/featureTweakR
 
 
