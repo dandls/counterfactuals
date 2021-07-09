@@ -51,7 +51,6 @@ NICEClassif = R6::R6Class("NICEClassif",
   private = list(
     optimization = NULL,
     X_train_class = NULL,
-    desired_class = NULL,
     ae_model = NULL,
     aep = NULL,
     y_hat = NULL,
