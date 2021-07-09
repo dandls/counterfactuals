@@ -49,6 +49,8 @@ test_that("$plot_freq_of_feature_changes() creates correct plot", {
 
 # $plot_surface() ------------------------------------------------------------------------------------------------------
 test_that("plot_surface creates correct plot for numerical features", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("ggExtra")
   skip_on_ci()
   cf = make_counterfactual_test_obj()
   expect_snapshot_file(
@@ -58,6 +60,8 @@ test_that("plot_surface creates correct plot for numerical features", {
 })
 
 test_that("plot_surface creates correct plot for categorical features", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("ggExtra")
   skip_on_ci()
   cf = make_counterfactual_test_obj()
   set.seed(4574541)
@@ -68,6 +72,8 @@ test_that("plot_surface creates correct plot for categorical features", {
 })
 
 test_that("plot_surface creates correct plot for mixed features", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("ggExtra")
   skip_on_ci()
   cf = make_counterfactual_test_obj()
   expect_snapshot_file(
@@ -76,8 +82,10 @@ test_that("plot_surface creates correct plot for mixed features", {
   )
 })
 
-# $plot_surface() ------------------------------------------------------------------------------------------------------
+# $plot_parallel() ------------------------------------------------------------------------------------------------------
 test_that("plot_parallel creates correct plot for numerical features", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("GGally")
   skip_on_ci()
   cf = make_counterfactual_test_obj()
   expect_snapshot_file(
@@ -86,14 +94,18 @@ test_that("plot_parallel creates correct plot for numerical features", {
   )
 })
 
-test_that("plot_surface returns warning if non-numerical features", {
+test_that("plot_parallel returns warning if non-numerical features", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("GGally")
   skip_on_ci()
   cf = make_counterfactual_test_obj()
   set.seed(4574541)
   expect_warning(cf$plot_parallel(), "removed")
 })
 
-test_that("plot_surface returns error for unknown feature names", {
+test_that("plot_parallel returns error for unknown feature names", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("GGally")
   skip_on_ci()
   cf = make_counterfactual_test_obj()
   expect_snapshot_error(cf$plot_surface(c("non_in_data1", "non_in_data2")))
