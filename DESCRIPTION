@@ -48,7 +48,7 @@ VignetteBuilder:
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
 Remotes:
-    mlr-org/miesmuschel/tree/multiobjective_hb,
+    ulr::https://api.github.com/repos/mlr-org/miesmuschel/branches/multiobjective_hb,
     katokohaku/featureTweakR
 
 
