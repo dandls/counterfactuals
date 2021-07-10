@@ -113,9 +113,7 @@ FeatureTweaker = R6::R6Class("FeatureTweaker", inherit = CounterfactualMethodCla
 
 ### Implement the `$initialize` method
 
-The `$initialize()` method must have a predictor argument (for the [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object) and should have arguments `upper` 
-and `lower`, that are passed to the `$initialize()` method of the super class (see e.g. `?WhatIfClassif` for further details 
-on those arguments). 
+The `$initialize()` method must have a predictor argument (for the [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object) and initalizes the super class. 
 
 
 Additionally, `$initialize()` can have further arguments that are specific to the counterfactual method such as
@@ -127,8 +125,8 @@ Additionally, `$initialize()` can have further arguments that are specific to th
 FeatureTweaker = R6Class("FeatureTweaker", inherit = CounterfactualMethodClassif,
   
   public = list(
-    initialize = function(predictor, ktree = 30L, epsilon = 0.1, lower = NULL, nrep = 10L, upper = NULL) {
-      super$initialize(predictor, lower, upper)
+    initialize = function(predictor, ktree = 30L, epsilon = 0.1, nrep = 10L) {
+      super$initialize(predictor)
       private$ktree = ktree
       private$epsilon = epsilon
       private$n_rep = n_rep
@@ -177,9 +175,9 @@ We can then implement the `$run()` method as follows:
 FeatureTweaker = R6Class("FeatureTweaker", inherit = CounterfactualMethodClassif,
   
   public = list(
-    initialize = function(predictor, ktree = 10L, epsilon = 0.1, nrep = 10L, lower = NULL, upper = NULL) {
+    initialize = function(predictor, ktree = 10L, epsilon = 0.1, nrep = 10L) {
       # adds predictor to private$predictor field
-      super$initialize(predictor, lower, upper) 
+      super$initialize(predictor) 
       private$ktree = ktree
       private$epsilon = epsilon
       private$nrep = nrep
