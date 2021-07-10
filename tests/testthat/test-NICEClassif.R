@@ -140,7 +140,7 @@ test_that("Returns warning if no counterfactuals could be found", {
 
 test_that("Returns equal results with and without parallelization", {
   skip_if_not(parallel::detectCores() > 1L)
-  # skip_on_ci()
+  skip_on_ci()
   set.seed(54542142)
   rf = get_rf_classif_iris()
   mod = Predictor$new(rf, data = iris, y = "Species")
@@ -157,7 +157,6 @@ test_that("Returns equal results with and without parallelization", {
 
 
 test_that("Returns x_nn if finish_early=FALSE and return_multiple=FALSE", {
-  skip_if_not(parallel::detectCores() > 1L)
   set.seed(54542142)
   rf = get_rf_classif_iris()
   mod = Predictor$new(rf, data = iris, y = "Species")
