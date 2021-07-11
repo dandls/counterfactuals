@@ -2,7 +2,7 @@
 
     Columns of `cfactuals` and `predictor$data$X` must have the same types.
 
-# plot_surface returns error for unknown feature names
+# plot_parallel returns error for unknown feature names
 
     Assertion on 'feature_names' failed: Must be a subset of set {var_num_1,var_num_2,var_fact_1,var_fact_2}.
 

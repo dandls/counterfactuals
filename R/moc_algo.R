@@ -1,4 +1,4 @@
-moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower, upper, sdevs_dbl_feats, 
+moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower, upper, sdevs_num_feats, 
                     epsilon,  fixed_features, max_changed, mu, n_generations, p_rec, p_rec_gen, p_rec_use_orig,
                     p_mut, p_mut_gen, p_mut_use_orig, k, weights, init_strategy, cond_sampler = NULL) {
   
@@ -14,7 +14,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
   )
   
   flex_cols = setdiff(names(x_interest), fixed_features)
-  sdevs_flex_dbl_feats = sdevs_dbl_feats[names(sdevs_dbl_feats) %in% flex_cols]
+  sdevs_flex_num_feats = sdevs_num_feats[names(sdevs_num_feats) %in% flex_cols]
   param_set_flex = param_set$clone()
   param_set_flex$subset(flex_cols)
   
@@ -34,7 +34,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
       ps = param_set_flex, 
       x_interest = x_interest, 
       max_changed = max_changed, 
-      sdevs = sdevs_flex_dbl_feats, 
+      sdevs = sdevs_flex_num_feats, 
       p_mut = p_mut,
       p_mut_gen = p_mut_gen, 
       p_mut_use_orig = p_mut_use_orig
@@ -73,7 +73,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
     max_changed = max_changed, 
     init_strategy = init_strategy, 
     flex_cols = flex_cols, 
-    sdevs = sdevs_flex_dbl_feats, 
+    sdevs = sdevs_flex_num_feats, 
     lower = lower, 
     upper = upper, 
     predictor = predictor

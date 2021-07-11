@@ -60,7 +60,10 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
       private$k = k
       private$weights = weights
       private$init_strategy = init_strategy
-      private$sdevs_dbl_feats = apply(Filter(is.double, private$predictor$data$X), 2L, sd)
+      sdevs_num_feats = apply(Filter(is.numeric, private$predictor$data$X), 2L, sd)
+      is_integer_col = names(which(private$param_set$class == "ParamInt"))
+      sdevs_num_feats[is_integer_col] = as.integer(sdevs_num_feats[is_integer_col])
+      private$sdevs_num_feats = sdevs_num_feats
       private$lower = lower
       private$upper = upper
     },
@@ -123,7 +126,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     k = NULL,
     weights = NULL,
     init_strategy = NULL,
-    sdevs_dbl_feats = NULL,
+    sdevs_num_feats = NULL,
     lower = NULL,
     upper = NULL,
     ref_point = NULL,
@@ -143,7 +146,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
         param_set = private$param_set,
         lower = private$lower,
         upper = private$upper,
-        sdevs_dbl_feats = private$sdevs_dbl_feats,
+        sdevs_num_feats = private$sdevs_num_feats,
         epsilon = private$epsilon,
         fixed_features = private$fixed_features,
         max_changed = private$max_changed,

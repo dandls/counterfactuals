@@ -197,12 +197,12 @@ ScalorNondomPenalized = R6::R6Class("ScalorNondomPenalized", inherit = Scalor,
 
 make_moc_mutator = function(ps, x_interest, max_changed, sdevs, p_mut, p_mut_gen, p_mut_use_orig) {
   ops_list = list()
-  if ("ParamDbl" %in% ps$class) {
-    ops_list[["ParamDbl"]] = mut("maybe", mut("gauss", sdev = sdevs), mut("null"), p = p_mut_gen)
+ 
+  ids_param_num = names(which(ps$is_number))
+  for (id in ids_param_num) {
+    ops_list[[id]] = mut("maybe", mut("gauss", sdev = sdevs[[id]], truncated_normal = TRUE), mut("null"), p = p_mut_gen)
   }
-  if ("ParamInt" %in% ps$class) {
-    ops_list[["ParamInt"]] = mut("maybe", mut("gauss"), mut("null"), p = p_mut_gen)
-  }
+
   if ("ParamFct" %in% ps$class) {
     idx_facts = which("ParamFct" == ps$class)
     mut_maybe_unif = mut("maybe", mut("unif", can_mutate_to_same = FALSE), mut("null"), p = p_mut_gen)
@@ -253,16 +253,15 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
         SamplerUnif$new(ps)$sample(n)
       }
     } else if (init_strategy == "sd") {
-
       if (length(sdevs) == 0L) {
         f_design = function(ps, n) {
           SamplerUnif$new(ps)$sample(n)
         }
       } else {
         make_f_design = function(X, x_interest, sdevs, lower, upper) {
-          x_interest_dbl = x_interest[, names(sdevs), with = FALSE]
-          lower_bounds = pmax(ps$lower[names(sdevs)], x_interest_dbl - sdevs)
-          upper_bounds = pmin(ps$upper[names(sdevs)], x_interest_dbl + sdevs)
+          x_interest_num = x_interest[, names(sdevs), with = FALSE]
+          lower_bounds = pmax(ps$lower[names(sdevs)], x_interest_num - sdevs)
+          upper_bounds = pmin(ps$upper[names(sdevs)], x_interest_num + sdevs)
           lower_bounds[names(lower)] = lower
           upper_bounds[names(upper)] = upper
 
@@ -449,7 +448,7 @@ make_moc_search_plot = function(data, objectives) {
 
 
 
-# Conditional mutator as described in the package
+# Conditional mutator as described in the paper
 MutatorConditional = R6::R6Class("MutatorConditional", inherit = Mutator,
   public = list(
     initialize = function(cond_sampler, param_set) {
