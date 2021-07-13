@@ -34,8 +34,9 @@ NICE for Classification Task
 \if{html}{\out{<div class="r">}}\preformatted{NICEClassif$new(
   predictor,
   optimization = "sparsity",
-  threshold = NULL,
-  correct_classif_only = TRUE,
+  x_nn_correct_classif = TRUE,
+  return_multiple = TRUE,
+  finish_early = TRUE,
   lower = NULL,
   upper = NULL
 )}\if{html}{\out{</div>}}

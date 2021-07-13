@@ -140,7 +140,11 @@ Predicts the target values of the counterfactuals.
 \subsection{Method \code{plot_parallel()}}{
 Plots a parallel plot of the (scaled) feature values of the counterfactuals.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$plot_parallel(feature_names = NULL, row_ids = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$plot_parallel(
+  feature_names = NULL,
+  row_ids = NULL,
+  digits_min_max = 3L
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -151,6 +155,8 @@ The names of the (numeric) features to plot. If \code{NULL} (default) all featur
 
 \item{\code{row_ids}}{(\code{integerish} | \code{NULL})\cr
 The row ids of the counterfactuals to plot. If \code{NULL} (default) all counterfactuals are plotted.}
+
+\item{\code{digits_min_max}}{Number of digits for the rounding the minimum and maximum features values. Default is \code{3L}.}
 }
 \if{html}{\out{</div>}}
 }

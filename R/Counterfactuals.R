@@ -160,7 +160,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #'  The names of the (numeric) features to plot. If `NULL` (default) all features are plotted.
     #' @param row_ids (`integerish` | `NULL`)\cr
     #'  The row ids of the counterfactuals to plot. If `NULL` (default) all counterfactuals are plotted.
-    plot_parallel = function(feature_names = NULL, row_ids = NULL) {
+    #' @param digits_min_max Number of digits for the rounding the minimum and maximum features values. Default is `3L`.
+    plot_parallel = function(feature_names = NULL, row_ids = NULL, digits_min_max = 2L) {
       
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
         stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)
@@ -180,10 +181,10 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         row_ids = 1:nrow(private$.data)
       }
       assert_integerish(row_ids, lower = 1L, upper = nrow(private$.data))
+      assert_integerish(digits_min_max, len = 1L, lower = 1L)
       
       cfactuals = private$.data[row_ids, ..feature_names]
       dt = rbind(cfactuals, self$x_interest[, ..feature_names])
-      
 
       is_numeric_col = sapply(dt, function(x) is.numeric(x))
       numeric_cols = names(dt)[is_numeric_col]
@@ -204,10 +205,12 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         ggplot2::ylab("Scaled feature values") +
         ggplot2::scale_colour_manual(name = "rows", values = line_colors) +
         ggplot2::annotate(
-          "text", x = 1:length(numeric_cols), y = 1.05, label = sapply(dt[, ..numeric_cols], max, na.rm = TRUE)
+          "text", x = 1:length(numeric_cols), y = 1.05, 
+          label = sapply(dt[, ..numeric_cols], function(x) round(max(x, na.rm = TRUE), digits = digits_min_max))
         ) +
         ggplot2::annotate(
-          "text", x = 1:length(numeric_cols), y = -0.05, label = sapply(dt[, ..numeric_cols], min, na.rm = TRUE)
+          "text", x = 1:length(numeric_cols), y = -0.05, 
+          label = sapply(dt[, ..numeric_cols], function(x) round(min(x, na.rm = TRUE), digits = digits_min_max))
         )
       
     },
