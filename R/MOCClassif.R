@@ -1,3 +1,19 @@
+#' MOC for Classification Tasks
+#' @examples 
+#' if (require("randomForest")) {
+#'   # Train a model
+#'   rf = randomForest(Species ~ ., data = iris)
+#'   # Create a predictor object
+#'   predictor = iml::Predictor$new(rf, type = "prob")
+#'   # Find counterfactuals
+#'   moc_classif = MOCClassif$new(predictor)
+#'   cfactuals = moc_classif$find_counterfactuals(
+#'     x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
+#'   )
+#'   # Print the results
+#'   cfactuals$data
+#' }
+#' 
 #' @export
 MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
 
