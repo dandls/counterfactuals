@@ -1,8 +1,7 @@
-whatif_algo = function(predictor, n_cfactuals, x_interest, pred_column, desired_y_hat_range) {
-  
-  X = setDT(predictor$data$X)
-  y_hat = setDT(predictor$predict(X))[[pred_column]]
-  X_search = X[y_hat %between% desired_y_hat_range]
+whatif_algo = function(predictor, n_cfactuals, x_interest, pred_column, desired_y_hat_range, X_search) {
+
+  y_hat = setDT(predictor$predict(X_search))[[pred_column]]
+  X_search = X_search[y_hat %between% desired_y_hat_range]
 
   if (nrow(X_search) < n_cfactuals) {
     warning(sprintf("Could only find %s counterfactual(s)", nrow(X_search)))
@@ -11,11 +10,11 @@ whatif_algo = function(predictor, n_cfactuals, x_interest, pred_column, desired_
     return(X_search)
   }
 
-  ranges = rep(NA, ncol(X))
-  names(ranges) = names(X)
-  idx_numeric_cols = sapply(X, is.numeric)
+  ranges = rep(NA, ncol(X_search))
+  names(ranges) = names(X_search)
+  idx_numeric_cols = sapply(X_search, is.numeric)
   if (length(idx_numeric_cols) > 0) {
-    ranges[idx_numeric_cols] = X[, sapply(.SD, sd, na.rm = TRUE), .SDcols = idx_numeric_cols]
+    ranges[idx_numeric_cols] = predictor$data$X[, sapply(.SD, sd, na.rm = TRUE), .SDcols = idx_numeric_cols]
   }
   
   X_list = split(X_search, seq(nrow(X_search)))

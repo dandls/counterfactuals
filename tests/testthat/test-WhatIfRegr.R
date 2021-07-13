@@ -19,7 +19,44 @@ test_that("Returns correct output format for mixed columns", {
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
 })
 
-
+test_that("Correct handling of lower and upper", {
+  set.seed(54542142)
+  mydf = mtcars
+  rf = randomForest(mpg ~ ., data = mydf, ntree = 5L)
+  pred = iml::Predictor$new(rf, data = mydf, y = "mpg")
+  n = 3L
+  x_interest = mydf[1, ]
+  
+  wi = WhatIfRegr$new(
+    pred, n_counterfactuals = n, 
+    lower = c("disp" = 80, "hp" = 50), upper = c("disp" = 180, "hp" = 200)
+  )
+  cfactuals = wi$find_counterfactuals(x_interest, desired_outcome = c(22, 25))
+  expect_true(all(between(cfactuals$data$disp, 80, 180)))
+  expect_true(all(between(cfactuals$data$hp, 50, 200)))
+  
+  expect_snapshot(
+    WhatIfRegr$new(
+      pred, n_counterfactuals = n, 
+      lower = c("disp" = 80, "hp" = 100), upper = c("disp" = 100, "hp" = 120)
+    )
+  )
+  
+  expect_snapshot(
+    WhatIfRegr$new(
+      pred, n_counterfactuals = n, 
+      lower = c("disp" = 0), upper = c("disp" = 10)
+    )
+  ) 
+  
+  expect_snapshot(
+    WhatIfRegr$new(
+      pred, n_counterfactuals = n, 
+      lower = c("disp" = 1000), upper = c("disp" = 2000)
+    )
+  ) 
+  
+})
 
 
 

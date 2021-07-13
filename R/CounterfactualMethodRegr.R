@@ -45,7 +45,6 @@ CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = Cou
       if (length(factor_cols) > 0) {
         temp[, (factor_cols) := lapply(.SD, as.character), .SDcols = factor_cols]
       }
-      private$param_set$assert_dt(temp)
       
       # Checks desired_outcome
       assert_numeric(desired_outcome, any.missing = FALSE, min.len = 1L,  max.len = 2L)

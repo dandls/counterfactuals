@@ -30,6 +30,8 @@ CounterfactualMethod = R6::R6Class("CounterfactualMethod",
       
       private$predictor = predictor
       private$param_set = make_param_set(predictor$data$X, lower, upper)
+      private$lower = lower
+      private$upper = upper
     },
     
     #' @description 
@@ -46,6 +48,8 @@ CounterfactualMethod = R6::R6Class("CounterfactualMethod",
     predictor = NULL,
     x_interest = NULL,
     param_set = NULL,
+    lower = NULL,
+    upper = NULL,
     
     run = function() stop("abstract"),
     

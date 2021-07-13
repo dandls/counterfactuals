@@ -66,6 +66,41 @@ test_that("$find_counterfactuals with specified `desired_outcome` returns the sa
 })
 
 
-
+test_that("Correct handling of lower and upper", {
+  set.seed(54542142)
+  rf = get_rf_classif_iris()
+  iris_pred = iml::Predictor$new(rf, type = "prob")
+  n = 5L
+  x_interest = iris[1L, ]
+  wi = WhatIfClassif$new(
+    iris_pred, n_counterfactuals = n, 
+    lower = c("Sepal.Length" = 5, "Sepal.Width" = 2.5), upper = c("Sepal.Length" = 6, "Sepal.Width" = 3.5)
+  )
+  cfactuals = wi$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = c(0.5, 1))
+  expect_true(all(between(cfactuals$data$Sepal.Length, 5, 6)))
+  expect_true(all(between(cfactuals$data$Sepal.Width, 2.5, 3.5)))
+  
+  expect_snapshot(
+    WhatIfClassif$new(
+      iris_pred, n_counterfactuals = 10, 
+      lower = c("Sepal.Length" = 5.5), upper = c("Sepal.Length" = 5.7)
+    )
+  ) 
+  
+  expect_snapshot(
+    WhatIfClassif$new(
+      iris_pred, n_counterfactuals = n, 
+      lower = c("Sepal.Length" = 0), upper = c("Sepal.Length" = 1)
+    )
+  ) 
+  
+  expect_snapshot(
+    WhatIfClassif$new(
+      iris_pred, n_counterfactuals = n, 
+      lower = c("Sepal.Length" = 100), upper = c("Sepal.Length" = 200)
+    )
+  ) 
+  
+})
 
 

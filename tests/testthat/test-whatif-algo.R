@@ -13,7 +13,8 @@ test_that("whatif_algo returns correct counterfactuals", {
     n_cfactuals = n,
     x_interest = x_interest,
     pred_column = "versicolor",
-    desired_y_hat_range = desired
+    desired_y_hat_range = desired,
+    X_search = mod$data$X
   )
   
   expect_data_table(res, nrows = n, types = sapply(iris[, -5L], class))
@@ -40,7 +41,8 @@ test_that("whatif_algo returns warning and empty data.table with correct columns
       n_cfactuals = 5L,
       x_interest = x_interest,
       pred_column = "pred",
-      desired_y_hat_range = c(5, 10)
+      desired_y_hat_range = c(5, 10),
+      X_search = mod$data$X
     )
   })
   
@@ -57,8 +59,8 @@ test_that("whatif_algo returns equal results with and without parallelization", 
   desired = c(0.7, 1)
   n = 5L
   future::plan(future::multisession, workers = parallel::detectCores() - 1L)
-  par = whatif_algo(mod, n, x_interest, "versicolor", desired)
+  par = whatif_algo(mod, n, x_interest, "versicolor", desired, X_search = mod$data$X)
   future::plan(future::sequential)
-  sequ = whatif_algo(mod, n, x_interest, "versicolor", desired)
+  sequ = whatif_algo(mod, n, x_interest, "versicolor", desired, X_search = mod$data$X)
   expect_equal(par, sequ)
 })

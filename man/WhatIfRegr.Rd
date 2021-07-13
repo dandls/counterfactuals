@@ -12,6 +12,8 @@ To measure dissimilarity the extension of the Gower's dissimilarity measure prop
 and implemented by \link[StatMatch]{gower.dist} is used.
 For numerical features the distances are scaled with the standard deviation of the specific feature values in the
 training data.
+Only data points with features values between \code{lower} and \code{upper} are considered as candidates for the nearest data
+observations.
 }
 \examples{
 if (require("randomForest")) {

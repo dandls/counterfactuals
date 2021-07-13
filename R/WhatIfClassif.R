@@ -15,6 +15,8 @@
 #' and implemented by \link[StatMatch]{gower.dist} is used.
 #' For numerical features the distances are scaled with the standard deviation of the specific feature values in the 
 #' training data.
+#' Only data points with features values between `lower` and `upper` are considered as candidates for the nearest data
+#' observations.
 #' 
 #' @references 
 #' 
@@ -53,11 +55,23 @@ WhatIfClassif = R6::R6Class("WhatIfClassif", inherit = CounterfactualMethodClass
       super$initialize(predictor, lower, upper)
       assert_integerish(n_counterfactuals, lower = 1L, any.missing = FALSE, len = 1L)
       private$n_counterfactuals = n_counterfactuals
+      X_search = private$predictor$data$X
+      if (!is.null(lower)) {
+        X_search = X_search[Reduce(`&`, Map(`>`, X_search[, names(lower), with = FALSE], lower))]
+      }
+      if (!is.null(upper)) {
+        X_search = X_search[Reduce(`&`, Map(`<`, X_search[, names(upper), with = FALSE], upper))]
+      }
+      if (nrow(X_search) < n_counterfactuals) {
+        warning(sprintf("Could only find %s candidate(s) with feature values between `lower` and `upper`.", nrow(X_search)))
+      }
+      private$X_search = X_search
     }
   ),
   
   private = list(
     n_counterfactuals = NULL,
+    X_search = NULL,
     
     run = function() {
       pred_column = private$get_pred_column()
@@ -66,7 +80,8 @@ WhatIfClassif = R6::R6Class("WhatIfClassif", inherit = CounterfactualMethodClass
         n_cfactuals = private$n_counterfactuals, 
         x_interest = private$x_interest, 
         pred_column = pred_column, 
-        desired_y_hat_range = private$desired_prob
+        desired_y_hat_range = private$desired_prob,
+        X_search = private$X_search
       )
     },
     
