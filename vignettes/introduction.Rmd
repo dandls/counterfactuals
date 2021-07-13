@@ -1,0 +1,262 @@
+---
+title: "Introduction to counterfactuals"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to counterfactuals}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+In this document, we explain the `counterfactuals` workflow for both a classification and a regression task.
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  fig.width = 7,
+  fig.height = 3,
+  comment = "#>"
+)
+options(width = 130)
+```
+
+```{r setup, message=FALSE}
+library(counterfactuals)
+library(iml)
+library(randomForest)
+```
+
+
+## Classification Models
+
+To demonstrate the workflow in classification settings, we search for counterfactual explanations for diabetes tested
+patients with `MOC`. 
+
+### Data: Pima Indians Diabetes Databas
+
+As training data we use the Pima Indians Diabetes Database from the `mlbench` package.
+The data set contains 768 observations with 8 features and the binary target variable `diabetes`:
+
+```{r, echo=FALSE}
+column_descr = data.frame(
+  rbind(
+    cbind("pregnant", "Number of times pregnant"),
+    cbind("glucose", "Plasma glucose concentration (glucose tolerance test)"),
+    cbind("pressure", "Diastolic blood pressure (mm Hg)"),
+    cbind("mass", "Body mass index (weight in kg/(height in m)\\^2)"),
+    cbind("pedigree", "Diabetes pedigree function"),
+    cbind("age", "	Age (years)"),
+    cbind("diabetes", "Class variable (test for diabetes)")
+  )
+)
+names(column_descr) <- c("Variable", "Description")
+knitr::kable(column_descr, escape = FALSE, format = "html", table.attr = "style='width:100%;'")
+```
+
+```{r}
+data(PimaIndiansDiabetes, package = "mlbench")  
+```
+
+
+Converting `integerish` features to the `integer` data type ensures that counterfactuals will
+only contain `integer` values for them. (e.g. no `2.76` pregnancies).
+
+```{r}
+PimaIndiansDiabetes$pregnant = as.integer(PimaIndiansDiabetes$pregnant)
+PimaIndiansDiabetes$glucose = as.integer(PimaIndiansDiabetes$glucose)
+PimaIndiansDiabetes$age = as.integer(PimaIndiansDiabetes$age)
+```
+
+
+### Fitting a model
+
+First we train a model to predict `diabetes`.
+
+```{r}
+rf = randomForest(diabetes ~ ., data = PimaIndiansDiabetes)
+```
+
+### Setting up an iml::Predictor() object
+
+An [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object serves as a wrapper for different 
+model types. It contains the model and the data for its analysis.
+
+```{r}
+predictor = Predictor$new(rf, data = PimaIndiansDiabetes, y = "diabetes", type = "prob")
+```
+
+
+### Find counterfactuals
+
+Here we simply use an observation from our training data as `x_interest`.
+
+```{r}
+x_interest = PimaIndiansDiabetes[500L, ]
+predictor$predict(x_interest)
+```
+
+Now we can examine which risk factors need to be changed to obtain a predicted probability of
+at least 70% for a diabetes disease.
+
+Since we want to use `MOC` for a classification model, we initialize a `MOCClassif` object.
+
+```{r, eval=FALSE}
+moc_classif = MOCClassif$new(predictor)
+```
+
+Then we use the `$find_counterfactuals()` method to find counterfactual explanations for `x_interest`. 
+
+```{r, eval=FALSE}
+cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "pos", desired_prob = c(0.7, 1))
+```
+
+```{r, echo=FALSE, results='hide', message=FALSE}
+if (!file.exists("introduction-res/cfactuals.RDS")) {
+  moc_classif = MOCClassif$new(predictor)
+  cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "pos", desired_prob = c(0.7, 1))
+  saveRDS(moc_classif, "introduction-res/moc_classif.RDS")
+  saveRDS(cfactuals, "introduction-res/cfactuals.RDS")
+}
+moc_classif = readRDS("introduction-res/moc_classif.RDS")
+cfactuals = readRDS("introduction-res/cfactuals.RDS")
+```
+
+
+### The counterfactuals object
+
+The resulting `Counterfactuals` object holds the found counterfactuals and has several methods for their evaluation and 
+visualization.
+
+```{r}
+print(cfactuals)
+```
+
+We can use the `$predict()` method to predict the target values of the counterfactuals found.
+
+```{r}
+head(cbind(cfactuals$data, cfactuals$predict()), 5L)
+```
+
+The `$evaluate()` method returns the counterfactuals along with evaluation measures (`dist_x_interest`, `dist_target`,
+`nr_changed` and `dist_train`). Setting the `show_diff` argument to `TRUE` shows the counterfactuals as their difference
+to `x_interest`. `NA` means "no difference".
+
+```{r}
+head(cfactuals$evaluate(show_diff = TRUE), 5L)
+```
+
+To plot the frequency of feature changes across all counterfactuals, we can use the `$plot_freq_of_feature_changes()` method.
+
+```{r}
+cfactuals$plot_freq_of_feature_changes()
+```
+
+The parallel plot connects the (scaled) feature values of each counterfactual and highlights `x_interest` in blue.
+
+```{r, message=FALSE}
+cfactuals$plot_parallel()
+```
+
+The white dot in the surface plot represents `x_interest`. All counterfactuals that only differ from `x_interest` 
+in the selected features are displayed as black dots.
+
+```{r, fig.height=3.5}
+cfactuals$plot_surface(feature_names = c("mass", "pregnant"))
+```
+
+
+### MOC diagnostics
+
+A `MOCClassif` object has several diagnostics methods.
+
+`$plot_search()` plots two objective values of all individuals over the generations.
+
+```{r}
+moc_classif$plot_search()
+```
+
+To plot the evolution of the mean and minimum objective values together with the dominated hypervolume, we can use the 
+`$plot_statistics()` method.
+
+```{r, fig.height=2, results='asis'}
+moc_classif$plot_statistics()
+```
+
+
+## Regression Models
+
+Finding counterfactuals for regression models is analogous to classification models. In this example we search for
+counterfactuals explanations for housing prices with `WhatIf`.
+
+### Data: Boston Housing Data
+
+As training data we use the Boston Housing dataset from the `mlbench` package. 
+The data set contains 506 observations with 13 features and the continuous target variable `medv`:
+
+```{r, echo=FALSE}
+# data(BostonHousing, package = "mlbench")  
+# df = data.frame(
+#   Variable = colnames(BostonHousing),
+#   Description = c(
+#     "Per capita crime rate by town",
+#     "Proportion of residential land zoned for lots over 25,000 sq.ft.",
+#     "Proportion of non-retail business acres per town",
+#     "Charles River dummy variable (= 1 if tract bounds river; 0 otherwise)",
+#     "Nitrogen oxides concentration (parts per 10 million).",
+#     "Average number of rooms per dwelling.",
+#     "Proportion of owner-occupied units built prior to 1940",
+#     "Weighted mean of distances to five Boston employment centres.",
+#     "Index of accessibility to radial highways.",
+#     "Full-value property-tax rate per $10,000.",
+#     "Pupil-teacher ratio by town.",
+#     "1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town.",
+#     "Percentage of lower status of the population",
+#     "Median value of owner-occupied homes in USD 1000's"
+#   )
+# )
+# knitr::kable(df, format = "html", table.attr = "style='width:100%;'")
+```
+
+```{r}
+data(BostonHousing, package = "mlbench")  
+```
+
+
+### Fitting a model
+
+First we train a model to predict `medv`.
+
+```{r}
+set.seed(20210713)
+rf = randomForest(medv ~ ., data = BostonHousing)
+```
+
+### Setting up an iml::Predictor() object
+
+```{r}
+predictor = Predictor$new(rf, data = BostonHousing, y = "medv")
+```
+
+
+### Find counterfactuals
+
+```{r}
+x_interest = BostonHousing[1L, -ncol(BostonHousing)]
+predictor$predict(x_interest)
+```
+
+As we want to use `WhatIf` for a regression model, we initialize a `WhatIfRegr` object.
+
+```{r}
+whatif_regr = WhatIfRegr$new(predictor, n_counterfactuals = 5L)
+```
+
+Then we use the `$find_counterfactuals()` method to find counterfactual explanations for `x_interest`.
+
+```{r}
+cfactuals = whatif_regr$find_counterfactuals(x_interest, desired_outcome = c(28, 30))
+```
+
+```{r}
+cfactuals
+```
+

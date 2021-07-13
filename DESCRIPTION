@@ -37,14 +37,16 @@ Suggests:
     partykit,
     rmarkdown,
     basefun,
-    featureTweakR
+    featureTweakR,
+    mlbench
 License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.1.1
 VignetteBuilder: 
     knitr, 
     randomForest,
-    featureTweakR
+    featureTweakR,
+    mlbench
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
 Remotes:

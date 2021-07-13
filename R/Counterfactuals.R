@@ -154,7 +154,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       private$predictor$predict(private$.data) 
     },
     
-    #' @description Plots a parallel plot of the (scaled) feature values of the counterfactuals.
+    #' @description Plots a parallel plot of the (scaled) feature values of the counterfactuals. `x_interest` is shown
+    #' in blue.
     #' 
     #' @param feature_names (`character` | `NULL`)\cr
     #'  The names of the (numeric) features to plot. If `NULL` (default) all features are plotted.
@@ -252,7 +253,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       sort(freq, decreasing = TRUE)
     },
     
-    #' @description Creates a surface plot for two features. `x_interest` is shown as bright dot and 
+    #' @description Creates a surface plot for two features. `x_interest` is represented as bright dot and 
     #' all counterfactuals that **only** differ from `x_interest` in those two feature are displayed as dark dots.
     #' The exact plot appearance depends on the types of the two features:
     #'  * (`numeric`, `numeric`): surface plot

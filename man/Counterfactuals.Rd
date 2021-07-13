@@ -138,12 +138,13 @@ Predicts the target values of the counterfactuals.
 \if{html}{\out{<a id="method-plot_parallel"></a>}}
 \if{latex}{\out{\hypertarget{method-plot_parallel}{}}}
 \subsection{Method \code{plot_parallel()}}{
-Plots a parallel plot of the (scaled) feature values of the counterfactuals.
+Plots a parallel plot of the (scaled) feature values of the counterfactuals. \code{x_interest} is shown
+in blue.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$plot_parallel(
   feature_names = NULL,
   row_ids = NULL,
-  digits_min_max = 3L
+  digits_min_max = 2L
 )}\if{html}{\out{</div>}}
 }
 
@@ -204,7 +205,7 @@ A (named) \code{numeric} vector with the frequency of feature changes.
 \if{html}{\out{<a id="method-plot_surface"></a>}}
 \if{latex}{\out{\hypertarget{method-plot_surface}{}}}
 \subsection{Method \code{plot_surface()}}{
-Creates a surface plot for two features. \code{x_interest} is shown as bright dot and
+Creates a surface plot for two features. \code{x_interest} is represented as bright dot and
 all counterfactuals that \strong{only} differ from \code{x_interest} in those two feature are displayed as dark dots.
 The exact plot appearance depends on the types of the two features:
 \itemize{
