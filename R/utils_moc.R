@@ -361,20 +361,42 @@ get_ICE_sd = function(x_interest, predictor, param_set) {
 }
 
 
-make_moc_statistics_plots = function(data, ref_point, normalize_objectives) {
+make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
   obj_names = c("dist_target", "dist_x_interest", "nr_changed", "dist_train")
-  dt = data[, c("batch_nr", obj_names), with = FALSE]
-  dt_agg_mean = dt[, lapply(.SD, mean, na.rm = TRUE), by = .(batch_nr), .SDcols = obj_names]
-  dt_agg_min = dt[, lapply(.SD, min, na.rm = TRUE), by = .(batch_nr), .SDcols = obj_names]
+
+  ls_stats = lapply(seq_len(max(archive$data$batch_nr)), function(i){
+    best = archive$best(seq_len(i))
+    best_mean = best[, lapply(.SD, mean, na.rm = TRUE), .SDcols = obj_names]
+    best_min = best[, lapply(.SD, min, na.rm = TRUE), .SDcols = obj_names]
+    # TODO: ecr::computeHV gives different results (monotonic increase of domhv)
+    # hv = data.table(
+    #   hv = ecr::computeHV(t(best[, ..obj_names]), ref_point),
+    #   generations = i
+    # )
+    hv = data.table(
+      hv = miesmuschel:::domhv(-as.matrix(best[, ..obj_names]), nadir = -ref_point),
+      generations = i
+    )
+    
+    best_mean[, generation := i]
+    best_min[, generation := i]
+    
+    list(best_mean, best_min, hv)
+  }) 
+
+  dt_agg_mean = rbindlist(lapply(ls_stats, "[[", 1L))
+  dt_agg_min = rbindlist(lapply(ls_stats, "[[", 2L))
+  dt_hv = rbindlist(lapply(ls_stats, "[[", 3L))
+  
   if (normalize_objectives) {
     eps = .Machine$double.eps
     dt_agg_mean[, (obj_names) := lapply(.SD, function(x) (x - min(x)) / (max(x) - min(x) + eps)), .SDcols = obj_names]
     dt_agg_min[, (obj_names) := lapply(.SD, function(x)  (x - min(x)) / (max(x) - min(x) + eps)), .SDcols = obj_names]
-    dt_agg_mean = melt(dt_agg_mean, id.vars = "batch_nr", measure.vars = obj_names)
-    dt_agg_min = melt(dt_agg_min, id.vars = "batch_nr", measure.vars = obj_names)
+    dt_agg_mean = melt(dt_agg_mean, id.vars = "generation", measure.vars = obj_names)
+    dt_agg_min = melt(dt_agg_min, id.vars = "generation", measure.vars = obj_names)
     
     gg_mean = ggplot2::ggplot(dt_agg_mean) + 
-      ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value, color = variable)) +
+      ggplot2::geom_line(ggplot2::aes(x = generation, y = value, color = variable)) +
       ggplot2::xlab("generations") +
       ggplot2::ggtitle("Mean objective values (normalized)") +
       ggplot2::theme_bw() +
@@ -382,7 +404,7 @@ make_moc_statistics_plots = function(data, ref_point, normalize_objectives) {
       ggplot2::theme(legend.title = ggplot2::element_blank(), axis.title.y = ggplot2::element_blank())
     
     gg_min = ggplot2::ggplot(dt_agg_min) + 
-      ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value, color = variable)) +
+      ggplot2::geom_line(ggplot2::aes(x = generation, y = value, color = variable)) +
       ggplot2::xlab("generations") +
       ggplot2::ggtitle("Minimum objective values (normalized)") +
       ggplot2::theme_bw() +
@@ -390,11 +412,11 @@ make_moc_statistics_plots = function(data, ref_point, normalize_objectives) {
       ggplot2::theme(legend.title = ggplot2::element_blank(), axis.title.y = ggplot2::element_blank())
     
   } else {
-    dt_agg_mean = melt(dt_agg_mean, id.vars = "batch_nr", measure.vars = obj_names)
-    dt_agg_min = melt(dt_agg_min, id.vars = "batch_nr", measure.vars = obj_names)
+    dt_agg_mean = melt(dt_agg_mean, id.vars = "generation", measure.vars = obj_names)
+    dt_agg_min = melt(dt_agg_min, id.vars = "generation", measure.vars = obj_names)
     
     gg_mean = ggplot2::ggplot(dt_agg_mean) + 
-      ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value)) +
+      ggplot2::geom_line(ggplot2::aes(x = generation, y = value)) +
       ggplot2::facet_wrap(ggplot2::vars(variable), scales = "free_y", nrow = 4L) +
       ggplot2::xlab("generations") +
       ggplot2::ggtitle("Mean objective values") +
@@ -402,7 +424,7 @@ make_moc_statistics_plots = function(data, ref_point, normalize_objectives) {
       ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))
     
     gg_min = ggplot2::ggplot(dt_agg_min) + 
-      ggplot2::geom_line(ggplot2::aes(x = batch_nr, y = value)) +
+      ggplot2::geom_line(ggplot2::aes(x = generation, y = value)) +
       ggplot2::facet_wrap(ggplot2::vars(variable), scales = "free_y", nrow = 4L) +
       ggplot2::xlab("generations") +
       ggplot2::ggtitle("Minimum objective values") +
@@ -410,8 +432,6 @@ make_moc_statistics_plots = function(data, ref_point, normalize_objectives) {
       ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))
   }
   
-  
-  dt_hv = comp_domhv_all_gen(dt, ref_point)
   gg_hv = ggplot2::ggplot(dt_hv) + 
     ggplot2::geom_line(ggplot2::aes(x = generations, y = hv)) +
     ggplot2::xlab("generations") +
@@ -422,16 +442,22 @@ make_moc_statistics_plots = function(data, ref_point, normalize_objectives) {
   list(gg_mean, gg_min, gg_hv)
 }
 
-comp_domhv_all_gen = function(fitness_values, ref_point) {
+comp_domhv_all_gen = function(archive, ref_point) {
+  obj_names = c("dist_target", "dist_x_interest", "nr_changed", "dist_train")
   data.table(
-    generations = unique(fitness_values$batch_nr), 
+    generations = unique(archive$data$batch_nr), 
     hv = vapply(
-      seq_len(max(fitness_values$batch_nr)), 
-      function(i) miesmuschel:::domhv(
-        -as.matrix(fitness_values[batch_nr == i, -"batch_nr"]), 
-        nadir = -ref_point,
-        on_worse_than_nadir = "quiet"      
-      ),
+      seq_len(max(archive$data$batch_nr)), 
+      function(i) {
+        best = archive$best(seq_len(i))
+        # TODO: ecr::computeHV gives different results (monotonic increase of domhv)
+        # ecr::computeHV(best[, obj_names, with = FALSE]), ref_point),
+        miesmuschel:::domhv(
+          -as.matrix(best[, obj_names, with = FALSE]), 
+          nadir = -ref_point,
+          on_worse_than_nadir = "quiet"      
+        )
+      } ,
       FUN.VALUE = numeric(1L)
     )
   )
