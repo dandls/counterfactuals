@@ -206,8 +206,7 @@ A (named) \code{numeric} vector with the frequency of feature changes.
 \if{latex}{\out{\hypertarget{method-plot_surface}{}}}
 \subsection{Method \code{plot_surface()}}{
 Creates a surface plot for two features. \code{x_interest} is represented as bright dot and
-all counterfactuals that \strong{only} differ from \code{x_interest} in those two feature are displayed as dark dots.
-The exact plot appearance depends on the types of the two features:
+all counterfactuals that differ from \code{x_interest} \strong{only} in the selected features are represented as black dots.
 \itemize{
 \item (\code{numeric}, \code{numeric}): surface plot
 \item (\code{non-numeric}, \code{non-numeric}): heatmap

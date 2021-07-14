@@ -254,8 +254,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     },
     
     #' @description Creates a surface plot for two features. `x_interest` is represented as bright dot and 
-    #' all counterfactuals that **only** differ from `x_interest` in those two feature are displayed as dark dots.
-    #' The exact plot appearance depends on the types of the two features:
+    #' all counterfactuals that differ from `x_interest` **only** in the selected features are represented as black dots.
+    #' 
     #'  * (`numeric`, `numeric`): surface plot
     #'  * (`non-numeric`, `non-numeric`): heatmap
     #'  * (`numeric`, `non-numeric`): line graph

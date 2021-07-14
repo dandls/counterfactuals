@@ -28,7 +28,7 @@ library(randomForest)
 
 ## Classification Models
 
-To demonstrate the workflow in classification settings, we search for counterfactual explanations for diabetes tested
+To demonstrate the workflow for classification tasks, we search for counterfactual explanations for diabetes tested
 patients with `MOC`. 
 
 ### Data: Pima Indians Diabetes Databas
@@ -58,7 +58,7 @@ data(PimaIndiansDiabetes, package = "mlbench")
 
 
 Converting `integerish` features to the `integer` data type ensures that counterfactuals will
-only contain `integer` values for them. (e.g. no `2.76` pregnancies).
+only contain `integer` values for these features (e.g. no `2.76` pregnancies).
 
 ```{r}
 PimaIndiansDiabetes$pregnant = as.integer(PimaIndiansDiabetes$pregnant)
@@ -72,6 +72,7 @@ PimaIndiansDiabetes$age = as.integer(PimaIndiansDiabetes$age)
 First we train a model to predict `diabetes`.
 
 ```{r}
+set.seed(20210713)
 rf = randomForest(diabetes ~ ., data = PimaIndiansDiabetes)
 ```
 
@@ -127,17 +128,22 @@ The resulting `Counterfactuals` object holds the found counterfactuals and has s
 visualization.
 
 ```{r}
+class(cfactuals)
+```
+
+
+```{r}
 print(cfactuals)
 ```
 
-We can use the `$predict()` method to predict the target values of the counterfactuals found.
+We can use the `$predict()` method to predict the outcome of the counterfactuals found.
 
 ```{r}
 head(cbind(cfactuals$data, cfactuals$predict()), 5L)
 ```
 
 The `$evaluate()` method returns the counterfactuals along with evaluation measures (`dist_x_interest`, `dist_target`,
-`nr_changed` and `dist_train`). Setting the `show_diff` argument to `TRUE` shows the counterfactuals as their difference
+`nr_changed` and `dist_train`). Setting the `show_diff` argument to `TRUE` will show the counterfactuals as their difference
 to `x_interest`. `NA` means "no difference".
 
 ```{r}
@@ -156,11 +162,11 @@ The parallel plot connects the (scaled) feature values of each counterfactual an
 cfactuals$plot_parallel()
 ```
 
-The white dot in the surface plot represents `x_interest`. All counterfactuals that only differ from `x_interest` 
-in the selected features are displayed as black dots.
+The white dot in the surface plot represents `x_interest`. All counterfactuals that differ from `x_interest` only in the 
+selected features are represented as black dots.
 
 ```{r, fig.height=3.5}
-cfactuals$plot_surface(feature_names = c("mass", "pregnant"))
+cfactuals$plot_surface(feature_names = c("mass", "glucose"))
 ```
 
 
@@ -168,13 +174,13 @@ cfactuals$plot_surface(feature_names = c("mass", "pregnant"))
 
 A `MOCClassif` object has several diagnostics methods.
 
-`$plot_search()` plots two objective values of all individuals over the generations.
+The method `$plot_search()` plots two objective values of all individuals across generations.
 
 ```{r}
 moc_classif$plot_search()
 ```
 
-To plot the evolution of the mean and minimum objective values together with the dominated hypervolume, we can use the 
+To plot the evolution of the mean and minimum objective values along with the dominated hypervolume, we can use the 
 `$plot_statistics()` method.
 
 ```{r, fig.height=2, results='asis'}
@@ -184,7 +190,7 @@ moc_classif$plot_statistics()
 
 ## Regression Models
 
-Finding counterfactuals for regression models is analogous to classification models. In this example we search for
+Finding counterfactuals for regression models is analogous to classification models. In this example, we search for
 counterfactuals explanations for housing prices with `WhatIf`.
 
 ### Data: Boston Housing Data
@@ -232,6 +238,8 @@ rf = randomForest(medv ~ ., data = BostonHousing)
 
 ### Setting up an iml::Predictor() object
 
+Then we initialize an [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object.
+
 ```{r}
 predictor = Predictor$new(rf, data = BostonHousing, y = "medv")
 ```
@@ -239,22 +247,28 @@ predictor = Predictor$new(rf, data = BostonHousing, y = "medv")
 
 ### Find counterfactuals
 
+As `x_interest` we again simply use an observation from our training data.
+
 ```{r}
 x_interest = BostonHousing[1L, -ncol(BostonHousing)]
 predictor$predict(x_interest)
 ```
 
-As we want to use `WhatIf` for a regression model, we initialize a `WhatIfRegr` object.
+Since we want to use `WhatIf` for a regression model, we initialize a `WhatIfRegr` object.
 
 ```{r}
 whatif_regr = WhatIfRegr$new(predictor, n_counterfactuals = 5L)
 ```
 
-Then we use the `$find_counterfactuals()` method to find counterfactual explanations for `x_interest`.
-
+Then we use the `$find_counterfactuals()` method to find counterfactual explanations for `x_interest`. Note that for
+regression tasks we only have to specifiy `desired_outcome` compared to `desired_class` and `desired_probs` for
+classification tasks.
+ 
 ```{r}
 cfactuals = whatif_regr$find_counterfactuals(x_interest, desired_outcome = c(28, 30))
 ```
+
+As a result, we obtain a `Counterfactuals` object just like for the classification task.
 
 ```{r}
 cfactuals
