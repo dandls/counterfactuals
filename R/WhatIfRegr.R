@@ -54,10 +54,10 @@ WhatIfRegr = R6::R6Class("WhatIfRegr", inherit = CounterfactualMethodRegr,
       private$n_counterfactuals = n_counterfactuals
       X_search = private$predictor$data$X
       if (!is.null(lower)) {
-        X_search = X_search[Reduce(`&`, Map(`>`, X_search[, names(lower), with = FALSE], lower))]
+        X_search = X_search[Reduce(`&`, Map(`>=`, X_search[, names(lower), with = FALSE], lower))]
       }
       if (!is.null(upper)) {
-        X_search = X_search[Reduce(`&`, Map(`<`, X_search[, names(upper), with = FALSE], upper))]
+        X_search = X_search[Reduce(`&`, Map(`<=`, X_search[, names(upper), with = FALSE], upper))]
       }
       if (nrow(X_search) < n_counterfactuals) {
         warning(sprintf("Could only find %s candidate(s) with feature values between `lower` and `upper`.", nrow(X_search)))

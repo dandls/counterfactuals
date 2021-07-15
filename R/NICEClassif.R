@@ -14,9 +14,9 @@ NICEClassif = R6::R6Class("NICEClassif",
     #                  Should not be set to FALSE if finish_early = FALSE as x_nn is returned
     # finish_early: Equivalent to paper (if return_multiple FALSE)
     initialize = function(predictor, optimization = "sparsity", x_nn_correct_classif = TRUE, return_multiple = TRUE,
-                          finish_early = TRUE, lower = NULL, upper = NULL) {
+                          finish_early = TRUE) {
       
-      super$initialize(predictor, lower, upper)
+      super$initialize(predictor)
       
       assert_choice(optimization, choices = c("sparsity", "proximity", "plausibility"))
       assert_flag(x_nn_correct_classif)

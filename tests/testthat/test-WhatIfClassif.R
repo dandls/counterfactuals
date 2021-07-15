@@ -82,7 +82,7 @@ test_that("Correct handling of lower and upper", {
   
   expect_snapshot(
     WhatIfClassif$new(
-      iris_pred, n_counterfactuals = 10, 
+      iris_pred, n_counterfactuals = 30, 
       lower = c("Sepal.Length" = 5.5), upper = c("Sepal.Length" = 5.7)
     )
   ) 
