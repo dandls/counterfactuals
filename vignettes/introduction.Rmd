@@ -69,11 +69,12 @@ PimaIndiansDiabetes$age = as.integer(PimaIndiansDiabetes$age)
 
 ### Fitting a model
 
-First we train a model to predict `diabetes`.
+First we train a model to predict `diabetes`. Note that we leave out one observation from the
+training data which is our `x_interest`.
 
 ```{r}
-set.seed(20210713)
-rf = randomForest(diabetes ~ ., data = PimaIndiansDiabetes)
+set.seed(20210716)
+rf = randomForest(diabetes ~ ., data = PimaIndiansDiabetes[-154L, ])
 ```
 
 ### Setting up an iml::Predictor() object
@@ -82,21 +83,21 @@ An [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html)
 model types. It contains the model and the data for its analysis.
 
 ```{r}
-predictor = Predictor$new(rf, data = PimaIndiansDiabetes, y = "diabetes", type = "prob")
+predictor = Predictor$new(rf, type = "prob")
 ```
 
 
 ### Find counterfactuals
 
-Here we simply use an observation from our training data as `x_interest`.
+For `x_interest` the model predicts:
 
 ```{r}
-x_interest = PimaIndiansDiabetes[500L, ]
+x_interest = PimaIndiansDiabetes[154L, ]
 predictor$predict(x_interest)
 ```
 
 Now we can examine which risk factors need to be changed to obtain a predicted probability of
-at least 70% for a diabetes disease.
+at least 50% for a diabetes disease.
 
 Since we want to use `MOC` for a classification model, we initialize a `MOCClassif` object.
 
@@ -107,13 +108,13 @@ moc_classif = MOCClassif$new(predictor)
 Then we use the `$find_counterfactuals()` method to find counterfactual explanations for `x_interest`. 
 
 ```{r, eval=FALSE}
-cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "pos", desired_prob = c(0.7, 1))
+cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "pos", desired_prob = c(0.5, 1))
 ```
 
 ```{r, echo=FALSE, results='hide', message=FALSE}
 if (!file.exists("introduction-res/cfactuals.RDS")) {
   moc_classif = MOCClassif$new(predictor)
-  cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "pos", desired_prob = c(0.7, 1))
+  cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "pos", desired_prob = c(0.5, 1))
   saveRDS(moc_classif, "introduction-res/moc_classif.RDS")
   saveRDS(cfactuals, "introduction-res/cfactuals.RDS")
 }
@@ -162,7 +163,7 @@ The parallel plot connects the (scaled) feature values of each counterfactual an
 cfactuals$plot_parallel()
 ```
 
-The white dot in the surface plot represents `x_interest`. All counterfactuals that differ from `x_interest` only in the 
+The white dot in the prediction surface plot represents `x_interest`. All counterfactuals that differ from `x_interest` only in the 
 selected features are represented as black dots.
 
 ```{r, fig.height=3.5}
@@ -229,11 +230,12 @@ data(BostonHousing, package = "mlbench")
 
 ### Fitting a model
 
-First we train a model to predict `medv`.
+First we train a model to predict `medv`. Note that we leave out one observation from the
+training data which is our `x_interest`.
 
 ```{r}
 set.seed(20210713)
-rf = randomForest(medv ~ ., data = BostonHousing)
+rf = randomForest(medv ~ ., data = BostonHousing[-1L, ])
 ```
 
 ### Setting up an iml::Predictor() object
@@ -241,7 +243,7 @@ rf = randomForest(medv ~ ., data = BostonHousing)
 Then we initialize an [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object.
 
 ```{r}
-predictor = Predictor$new(rf, data = BostonHousing, y = "medv")
+predictor = Predictor$new(rf)
 ```
 
 
@@ -250,7 +252,7 @@ predictor = Predictor$new(rf, data = BostonHousing, y = "medv")
 As `x_interest` we again simply use an observation from our training data.
 
 ```{r}
-x_interest = BostonHousing[1L, -ncol(BostonHousing)]
+x_interest = BostonHousing[1L, ]
 predictor$predict(x_interest)
 ```
 
@@ -265,7 +267,7 @@ regression tasks we only have to specifiy `desired_outcome` compared to `desired
 classification tasks.
  
 ```{r}
-cfactuals = whatif_regr$find_counterfactuals(x_interest, desired_outcome = c(28, 30))
+cfactuals = whatif_regr$find_counterfactuals(x_interest, desired_outcome = c(30, 32))
 ```
 
 As a result, we obtain a `Counterfactuals` object just like for the classification task.

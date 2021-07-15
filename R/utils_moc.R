@@ -375,7 +375,7 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
     #   generations = i
     # )
     hv = data.table(
-      hv = miesmuschel:::domhv(-as.matrix(best[, ..obj_names]), nadir = -ref_point),
+      hv = miesmuschel:::domhv(-as.matrix(best[, ..obj_names]), nadir = -ref_point, on_worse_than_nadir = "quiet"),
       generations = i
     )
     

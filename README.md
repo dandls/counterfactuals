@@ -11,7 +11,7 @@ coverage](https://codecov.io/gh/susanne-207/counterfactuals/branch/main/graph/ba
 <!-- badges: end -->
 
 `counterfactuals` provides various (model-agnostic) counterfactual
-explanation methods via a unified and easy-to-use R6-based interface.
+explanation methods via a unified R6-based interface.
 
 ## Available methods
 
@@ -35,10 +35,10 @@ devtools::install_github("susanne-207/counterfactuals")
 
 ## Get started
 
-In this basic example, we train a `randomForest` on the `iris` dataset
-and examine how the feature values of a given `virginica` observation
-would have to change in order for it to be classified as `versicolor`
-with a prediction probability of at least 0.5.
+In this example, we train a `randomForest` on the `iris` dataset. We
+then examine how the feature values of a given `virginica` observation
+need to change in order for it to be classified as `versicolor` with a
+prediction probability of at least 0.5.
 
 ``` r
 library(counterfactuals)
@@ -46,10 +46,12 @@ library(randomForest)
 library(iml)
 ```
 
-First, we train the randomForest model to predict the `Species`.
+First, we train the randomForest model to predict the `Species`. Note
+that we leave out one observation from the training data which is our
+`x_interest`.
 
 ``` r
-rf = randomForest(Species ~ ., data = iris)
+rf = randomForest(Species ~ ., data = iris[-150L, ])
 ```
 
 We then create an `iml::Predictor` object, that holds the model and the
@@ -59,7 +61,7 @@ data.
 predictor = Predictor$new(rf, type = "prob")
 ```
 
-Now we set up an object of the counterfactual explanations technique we
+Now we set up an object of the counterfactual explanations method we
 want to use. In this example, we use `WhatIf` and since we have a
 classification task we create an `WhatIfClassif` object.
 
@@ -67,12 +69,13 @@ classification task we create an `WhatIfClassif` object.
 wi_classif = WhatIfClassif$new(predictor, n_counterfactuals = 5L)
 ```
 
-For observation 150 (`x_interest`) the model predicts:
+For `x_interest` the model predicts:
 
 ``` r
-predictor$predict(iris[150L, ])
+x_interest = iris[150L, ]
+predictor$predict(x_interest)
 #>   setosa versicolor virginica
-#> 1      0       0.06      0.94
+#> 1      0       0.13      0.87
 ```
 
 We can use the `$find_counterfactuals()` method to find counterfactuals
@@ -80,7 +83,7 @@ for `x_interest`.
 
 ``` r
 cfactuals = wi_classif$find_counterfactuals(
-  x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
+  x_interest, desired_class = "versicolor", desired_prob = c(0.5, 1)
 )
 ```
 
@@ -119,15 +122,15 @@ The `$predict` method shows the predictions for the counterfactuals.
 ``` r
 cbind(cfactuals$data, cfactuals$predict())
 #>    Sepal.Length Sepal.Width Petal.Length Petal.Width setosa versicolor virginica
-#> 1:          5.9         3.2          4.8         1.8      0      0.640     0.360
+#> 1:          5.9         3.2          4.8         1.8      0      0.600     0.400
 #> 2:          5.9         3.0          4.2         1.5      0      0.998     0.002
 #> 3:          6.1         3.0          4.6         1.4      0      1.000     0.000
-#> 4:          6.0         2.7          5.1         1.6      0      0.648     0.352
-#> 5:          6.0         2.9          4.5         1.5      0      0.986     0.014
+#> 4:          6.0         2.7          5.1         1.6      0      0.692     0.308
+#> 5:          6.0         2.9          4.5         1.5      0      0.998     0.002
 ```
 
-We can evaluate the counterfactuals according to various quality
-criteria using the `$evaluate()` method.
+We can evaluate the counterfactuals according to various measures using
+the `$evaluate()` method.
 
 ``` r
 cfactuals$evaluate()

@@ -22,8 +22,7 @@ options(width = 200)
 [![Codecov test coverage](https://codecov.io/gh/susanne-207/counterfactuals/branch/main/graph/badge.svg)](https://codecov.io/gh/susanne-207/counterfactuals?branch=main)
 <!-- badges: end -->
 
-`counterfactuals` provides various (model-agnostic) counterfactual explanation methods via a unified and easy-to-use
-R6-based interface.
+`counterfactuals` provides various (model-agnostic) counterfactual explanation methods via a unified R6-based interface.
 
 ## Available methods
 
@@ -43,9 +42,9 @@ devtools::install_github("susanne-207/counterfactuals")
 ```
 ## Get started
 
-In this basic example, we train a `randomForest` on the `iris` dataset and examine how the feature values of a given 
-`virginica` observation would have to change in order for it to be classified as `versicolor` with a prediction 
-probability of at least 0.5.
+In this example, we train a `randomForest` on the `iris` dataset. 
+We then examine how the feature values of a given `virginica` observation need to change in order for it to be classified as `versicolor` with a prediction probability of at least 0.5. 
+
 
 ```{r example, message=FALSE}
 library(counterfactuals)
@@ -53,9 +52,10 @@ library(randomForest)
 library(iml)
 ```
 
-First, we train the randomForest model to predict the `Species`.
+First, we train the randomForest model to predict the `Species`. Note that we leave out one observation from the
+training data which is our `x_interest`.
 ```{r}
-rf = randomForest(Species ~ ., data = iris)
+rf = randomForest(Species ~ ., data = iris[-150L, ])
 ```
 
 We then create an `iml::Predictor` object, that holds the model and the data.
@@ -64,24 +64,25 @@ We then create an `iml::Predictor` object, that holds the model and the data.
 predictor = Predictor$new(rf, type = "prob")
 ```
 
-Now we set up an object of the counterfactual explanations technique we want to use.
+Now we set up an object of the counterfactual explanations method we want to use.
 In this example, we use `WhatIf` and since we have a classification task we create an `WhatIfClassif` object.
 
 ```{r}
 wi_classif = WhatIfClassif$new(predictor, n_counterfactuals = 5L)
 ```
 
-For observation 150 (`x_interest`) the model predicts:
+For `x_interest` the model predicts:
 
 ```{r}
-predictor$predict(iris[150L, ])
+x_interest = iris[150L, ]
+predictor$predict(x_interest)
 ```
 
 We can use the `$find_counterfactuals()` method to find counterfactuals for `x_interest`.
 
 ```{r}
 cfactuals = wi_classif$find_counterfactuals(
-  x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
+  x_interest, desired_class = "versicolor", desired_prob = c(0.5, 1)
 )
 ```
 
@@ -104,7 +105,7 @@ cbind(cfactuals$data, cfactuals$predict())
 ```
 
 
-We can evaluate the counterfactuals according to various quality criteria using the `$evaluate()` method.
+We can evaluate the counterfactuals according to various measures using the `$evaluate()` method.
 
 ```{r}
 cfactuals$evaluate()
