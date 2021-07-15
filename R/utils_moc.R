@@ -23,9 +23,10 @@ make_fitness_function = function(predictor, x_interest, param_set, pred_column, 
     dist_target = sapply(pred, function(x) ifelse(between(x, target[1L], target[2L]), 0, min(abs(x - target))))
     dist_x_interest = as.vector(StatMatch::gower.dist(x_interest, xdt, rngs = param_range, KR.corr = FALSE))
     nr_changed = rowSums(xdt != x_interest[rep(seq_len(nrow(x_interest)), nrow(xdt)), ])
+    X_list = split(predictor$data$X, seq(nrow(predictor$data$X)))
     dist_train = apply(
-      StatMatch::gower.dist(predictor$data$X, xdt, rngs = param_range, KR.corr = FALSE),
-      MARGIN = 2L,
+      future.apply::future_sapply(X_list, StatMatch::gower.dist, xdt, rngs = param_range, KR.corr = FALSE),
+      MARGIN = 1L,
       FUN = function(dist) {
         d = sort(dist)[1:k]
         if (!is.null(weights)) {

@@ -116,9 +116,10 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       
       if ("dist_train" %in% measures) {
         ranges = private$param_set$upper - private$param_set$lower
+        X_list = split(private$predictor$data$X, seq(nrow(private$predictor$data$X)))
         evals$dist_train = apply(
-          StatMatch::gower.dist(private$predictor$data$X, private$.data, rngs = ranges, KR.corr = FALSE),
-          MARGIN = 2L,
+          future.apply::future_sapply(X_list, StatMatch::gower.dist, private$.data, rngs = ranges, KR.corr = FALSE),
+          MARGIN = 1L,
           FUN = function(dist) {
             d = sort(dist)[1:k]
             if (!is.null(weights)) {
