@@ -251,12 +251,16 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
     
     if (init_strategy == "random") {
       f_design = function(ps, n) {
-        SamplerUnif$new(ps)$sample(n)
+        mydesign = SamplerUnif$new(ps)$sample(n)
+        mydesign$data = reset_columns(mydesign$data, p_use_orig = 0.5, max_changed = 1e7, x_interest = x_interest)
+        mydesign
       }
     } else if (init_strategy == "sd") {
       if (length(sdevs) == 0L) {
         f_design = function(ps, n) {
-          SamplerUnif$new(ps)$sample(n)
+          mydesign = SamplerUnif$new(ps)$sample(n)
+          mydesign$data = reset_columns(mydesign$data, p_use_orig = 0.5, max_changed = 1e7, x_interest = x_interest)
+          mydesign
         }
       } else {
         make_f_design = function(X, x_interest, sdevs, lower, upper) {
@@ -268,7 +272,9 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
 
           param_set_init = make_param_set(X, lower = lower_bounds, upper = upper_bounds)
           function(ps, n) {
-            SamplerUnif$new(param_set_init)$sample(n)
+            mydesign = SamplerUnif$new(param_set_init)$sample(n)
+            mydesign$data = reset_columns(mydesign$data, p_use_orig = 0.5, max_changed = 1e7, x_interest = x_interest)
+            mydesign
           }
         }
 

@@ -4,9 +4,34 @@
 \alias{MOCClassif}
 \title{MOC for Classification Tasks}
 \description{
-MOC for Classification Tasks
+\code{MOC} (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
+to minimize are:
+\enumerate{
+\item {Distance between \code{x_interest} and \code{desired_prob}}
+\item {Distance between \code{x_interest} and a counterfactual}
+\item {Number of feature changes (using the $L_0$ norm)}
+\item {(Weighted) average distance between a counterfactual and the \code{k} nearest observed data points}
+}
 
-MOC for Classification Tasks
+For optimization it uses
+the NSGA II algorithm (Deb et. al 2002) with mixed integer evolutionary strategies by Li et al. (2013).
+}
+\details{
+Several population initialization strategies are available:
+\enumerate{
+\item {\code{random}: Sample from numerical feature ranges and discrete feature values from \code{predictor$data$X}.
+Some features values are randomly reset to the values of \code{x_interest}.}
+\item {\code{icecurve}: Sample from numerical feature ranges and discrete feature values from \code{predictor$data$X}
+as in \code{random} strategy . The higher the ICE curve variance of a feature, the lower the probability that
+values of this feature are reset to the values of \code{x_interest}.}
+\item {\code{sd}: Sample from numerical feature ranges that are limited by the feature standard deviations extracted
+from \code{predictor$data$X}. Some features values are randomly reset to the values of \code{x_interest}.}
+}
+
+The R package \code{miesmuschel} implements the mixed integer evolutionary strategies.
+
+The Gower's dissimilarity measure proposed by Kaufman and Rousseeuw (1990) computes all required distances.
+It is implemented by \link[StatMatch]{gower.dist}.
 }
 \examples{
 if (require("randomForest")) {
@@ -23,6 +48,20 @@ if (require("randomForest")) {
   cfactuals$data
 }
 
+}
+\references{
+Binder Martin (2021). miesmuschel: Mixed Integer Evolutionary Strategies. R
+package version 0.0.0-9000. https://github.com/mlr-org/miesmuschel
+
+Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “Multi-Objective Counterfactual Explanations.”
+In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr,
+Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Publishing.
+
+Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. A. M. T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
+IEEE transactions on evolutionary computation, 6(2), 182-197.
+
+R. Li et al., "Mixed Integer Evolution Strategies for Parameter Optimization," in Evolutionary Computation, vol. 21, no. 1,
+pp. 29-64, March 2013, doi: 10.1162/EVCO_a_00059.
 }
 \section{Super classes}{
 \code{\link[counterfactuals:CounterfactualMethod]{counterfactuals::CounterfactualMethod}} -> \code{\link[counterfactuals:CounterfactualMethodClassif]{counterfactuals::CounterfactualMethodClassif}} -> \code{MOCClassif}
@@ -56,7 +95,7 @@ if (require("randomForest")) {
   fixed_features = NULL,
   max_changed = NULL,
   mu = 20L,
-  n_generations = 30L,
+  n_generations = 175L,
   p_rec = 0.57,
   p_rec_gen = 0.85,
   p_rec_use_orig = 0.88,

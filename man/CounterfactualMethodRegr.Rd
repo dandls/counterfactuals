@@ -40,7 +40,7 @@ Child classes: \link{MOCRegr}, \link{WhatIfRegr}
 \subsection{Method \code{new()}}{
 Creates a new CounterfactualMethodRegr object.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CounterfactualMethodRegr$new(predictor, lower, upper)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CounterfactualMethodRegr$new(predictor, lower = NULL, upper = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
