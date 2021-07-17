@@ -41,7 +41,7 @@ make_fitness_function = function(predictor, x_interest, param_set, pred_column, 
   }
 }
 
-# Reset mutated feature values to feature value of x_interest with prop p_use_orig and controls that maximum
+# Reset mutated feature values to feature value of x_interest with prop `p_use_orig` and controls that maximum
 # `max_changed` features are changed
 MutatorReset = R6::R6Class("MutatorReset", inherit = Mutator,
   public = list(
@@ -78,7 +78,7 @@ MutatorReset = R6::R6Class("MutatorReset", inherit = Mutator,
 
 
 
-# Reset recombinated values to feature value of x_interest with prop p_use_orig and controls that maximum
+# Reset recombinated values to feature value of x_interest with prop `p_use_orig` and controls that maximum
 # `max_changed` features are changed
 RecombinatorReset = R6::R6Class("RecombinatorReset", inherit = Recombinator,
   
@@ -110,7 +110,8 @@ RecombinatorReset = R6::R6Class("RecombinatorReset", inherit = Recombinator,
   )
 )
 
-
+# Resets columns of `values` to feature value of `x_interest` with prop `p_use_orig` and controls that maximum
+# `max_changed` features are changed
 reset_columns = function(values, p_use_orig, max_changed, x_interest) {
   values_reset = copy(values)
   
@@ -134,7 +135,6 @@ reset_columns = function(values, p_use_orig, max_changed, x_interest) {
     }
     
     # If more changes than allowed, randomly reset some features such that constraint holds
-    
     n_changes = count_changes(values_reset[i, ], x_interest_sub)
     if (!is.null(max_changed)) {
       if (n_changes > max_changed) {
@@ -147,12 +147,12 @@ reset_columns = function(values, p_use_orig, max_changed, x_interest) {
   values_reset
 }
 
-# Slightly adapted from ScalorNondom
+# Slightly adapted from miesmuschel::ScalorNondom
+# Penalizes candidates whose distance between their prediction and target exceeds epsilon by moving them up by shifting 
+# them up by one front.
 ScalorNondomPenalized = R6::R6Class("ScalorNondomPenalized", inherit = Scalor,
   
   public = list(
-    #' @description
-    #' Initialize the `ScalorNondomPenalized` object.
     initialize = function(epsilon) {
       param_set = ps(
         epsilon = p_dbl(lower = 0, tags = "required", special_vals = list(NULL)),
@@ -226,7 +226,7 @@ make_moc_recombinator = function(ps, x_interest, max_changed, p_rec, p_rec_gen, 
   ops_list = list()
   # If clauses are necessary to avoid warning that no corresponding dimensions
   if ("ParamDbl" %in% ps$class) {
-    # TODO: Replace this with "simulated binary crossover recombinator"
+    # TODO: Replace this with "simulated binary crossover recombinator" once it is available
     ops_list[["ParamDbl"]] = rec("maybe", rec("xounif"), rec("null", n_indivs_in = 2L, n_indivs_out = 2L), p = p_rec)
   }
   rec_fact_int = rec("maybe", rec("xounif"), rec("null", n_indivs_in = 2L, n_indivs_out = 2L), p = p_rec)
@@ -375,7 +375,7 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
     best = archive$best(seq_len(i))
     best_mean = best[, lapply(.SD, mean, na.rm = TRUE), .SDcols = obj_names]
     best_min = best[, lapply(.SD, min, na.rm = TRUE), .SDcols = obj_names]
-    # TODO: ecr::computeHV gives different results (monotonic increase of domhv)
+    # TODO: ecr::computeHV gives slightly different results (monotonic increase of domhv)
     # hv = data.table(
     #   hv = ecr::computeHV(t(best[, ..obj_names]), ref_point),
     #   generations = i
@@ -457,7 +457,7 @@ comp_domhv_all_gen = function(archive, ref_point) {
       seq_len(max(archive$data$batch_nr)), 
       function(i) {
         best = archive$best(seq_len(i))
-        # TODO: ecr::computeHV gives different results (monotonic increase of domhv)
+        # TODO: ecr::computeHV gives slightly different results (monotonic increase of domhv)
         # ecr::computeHV(best[, obj_names, with = FALSE]), ref_point),
         miesmuschel:::domhv(
           -as.matrix(best[, obj_names, with = FALSE]), 
@@ -481,7 +481,7 @@ make_moc_search_plot = function(data, objectives) {
 
 
 
-# Conditional mutator as described in the paper
+# Conditional mutator as described in the MOC paper
 MutatorConditional = R6::R6Class("MutatorConditional", inherit = Mutator,
   public = list(
     initialize = function(cond_sampler, param_set) {

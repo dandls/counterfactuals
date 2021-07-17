@@ -9,7 +9,6 @@ Abstract base class for counterfactual explanation methods for classifcation tas
 \code{CounterfactualMethodClassif} can only be initialized for classification tasks. Child classes inherit the (public)
 \verb{$find_counterfactuals()} method, which calls a (private) \verb{$run()} method. This \verb{$run()} method should be implemented
 by the child classes and return the found counterfactuals as \code{data.table} (preferably) or \code{data.frame}.
-TODO: Link to vignette with how to add new methods
 }
 \section{Inheritance}{
 

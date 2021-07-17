@@ -6,7 +6,6 @@
 #' `CounterfactualMethodRegr` can only be initialized for regression tasks. Child classes inherit the (public) 
 #' `$find_counterfactuals()` method, which calls a (private) `$run()` method. This `$run()` method should be implemented 
 #' by the child classes and return the found counterfactuals as `data.table` (preferably) or `data.frame`.
-#' TODO: Link to vignette with how to add new methods
 #' 
 #' @section Inheritance:
 #' Child classes: \link{MOCRegr}, \link{WhatIfRegr}
@@ -45,7 +44,7 @@ CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = Cou
       if (length(factor_cols) > 0) {
         temp[, (factor_cols) := lapply(.SD, as.character), .SDcols = factor_cols]
       }
-      
+
       # Checks desired_outcome
       assert_numeric(desired_outcome, any.missing = FALSE, min.len = 1L,  max.len = 2L)
       if (length(desired_outcome) == 1L) {

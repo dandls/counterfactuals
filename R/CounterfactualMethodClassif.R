@@ -6,7 +6,6 @@
 #' `CounterfactualMethodClassif` can only be initialized for classification tasks. Child classes inherit the (public) 
 #' `$find_counterfactuals()` method, which calls a (private) `$run()` method. This `$run()` method should be implemented 
 #' by the child classes and return the found counterfactuals as `data.table` (preferably) or `data.frame`.
-#' TODO: Link to vignette with how to add new methods
 #' 
 #' @section Inheritance:
 #' Child classes: \link{MOCClassif}, \link{WhatIfClassif}, \link{NICEClassif}

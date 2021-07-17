@@ -118,6 +118,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
   if (length(int_cols) > 0L) {
     oi$result[, (int_cols) := lapply(.SD, as.integer), .SDcols = int_cols]
   }
+  
   setorder(oi$result, dist_target)
   oi
 }

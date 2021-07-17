@@ -46,7 +46,6 @@ ConditionalSampler = R6::R6Class(
         tree_formula = as.formula(sprintf("%s ~ 1 | .", private$feature_name))
         self$model = partykit::ctree(tree_formula, data = private$X, control = ctrl)
       }
- 
     },
     
     comp_conditional_densites = function(x, y_grid = NULL){
