@@ -46,7 +46,8 @@ VignetteBuilder:
     knitr, 
     randomForest,
     featureTweakR,
-    mlbench
+    mlbench,
+    GGally
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
 Remotes:
