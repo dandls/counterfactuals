@@ -1,0 +1,12 @@
+template:
+  params:
+    bootswatch: flatly
+navbar:
+ components:
+   articles:
+    text: Articles
+    menu:
+    - text: Introduction to counterfactuals
+      href: articles/introduction.html
+    - text: How to extend the package
+      href: articles/how-to-add-new-cf-methods.html

@@ -10,12 +10,27 @@
 coverage](https://codecov.io/gh/susanne-207/counterfactuals/branch/main/graph/badge.svg)](https://codecov.io/gh/susanne-207/counterfactuals?branch=main)
 <!-- badges: end -->
 
-`counterfactuals` provides various (model-agnostic) counterfactual
-explanation methods via a unified R6-based interface.
+The `counterfactuals` package provides various (model-agnostic)
+counterfactual explanation methods via a unified R6-based interface.
+Counterfactual explanation methods (or counterfactuals for short)
+address questions of the form: “For input **x**, the model predicted
+*y*. What would need to be changed in **x** for the model to predict the
+desired outcome *ỹ* instead?”.
+
+Counterfactuals for denied loan applications are a common example. Here
+a counterfactual could be: “The loan was denied because the amount of
+€30k is too high given the income. If the amount had been €20k, the loan
+would have been granted.”
+
+For an introduction to the topic, see e.g. Chapter 6 of the
+[Interpretable Machine Learning
+book](https://christophm.github.io/interpretable-ml-book/) by Christoph
+Molnar.
 
 ## Available methods
 
-Currently available are the following methods:
+The following counterfactual explanation methods are currently
+implemented:
 
 -   [Multi-Objective Counterfactual Explanations
     (MOC)](https://arxiv.org/abs/2004.11165)
@@ -35,10 +50,10 @@ devtools::install_github("susanne-207/counterfactuals")
 
 ## Get started
 
-In this example, we train a `randomForest` on the `iris` dataset. We
-then examine how the feature values of a given `virginica` observation
-need to change in order for it to be classified as `versicolor` with a
-prediction probability of at least 0.5.
+In this example, we train a `randomForest` on the `iris` dataset.
+
+We then examine how a given `virginica` observation would have to change
+to be classified as `versicolor`.
 
 ``` r
 library(counterfactuals)
@@ -46,24 +61,24 @@ library(randomForest)
 library(iml)
 ```
 
-First, we train the randomForest model to predict the `Species`. Note
-that we leave out one observation from the training data which is our
-`x_interest`.
+First, we train the randomForest model to predict the `Species`. <br>
+Note that we leave out one observation from the training data which is
+our `x_interest`.
 
 ``` r
 rf = randomForest(Species ~ ., data = iris[-150L, ])
 ```
 
 We then create an `iml::Predictor` object, that holds the model and the
-data.
+data for analyzing the model.
 
 ``` r
 predictor = Predictor$new(rf, type = "prob")
 ```
 
-Now we set up an object of the counterfactual explanations method we
-want to use. In this example, we use `WhatIf` and since we have a
-classification task we create an `WhatIfClassif` object.
+Now we set up an object of the counterfactual explanation method we want
+to use. Here we use `WhatIf` and since we have a classification task, we
+create an `WhatIfClassif` object.
 
 ``` r
 wi_classif = WhatIfClassif$new(predictor, n_counterfactuals = 5L)
@@ -75,11 +90,11 @@ For `x_interest` the model predicts:
 x_interest = iris[150L, ]
 predictor$predict(x_interest)
 #>   setosa versicolor virginica
-#> 1      0       0.13      0.87
+#> 1      0       0.12      0.88
 ```
 
-We can use the `$find_counterfactuals()` method to find counterfactuals
-for `x_interest`.
+We can now use the `$find_counterfactuals()` method to find
+counterfactuals for `x_interest`.
 
 ``` r
 cfactuals = wi_classif$find_counterfactuals(
@@ -87,9 +102,9 @@ cfactuals = wi_classif$find_counterfactuals(
 )
 ```
 
-The `cfactuals` object is now an instance of class `Counterfactuals`,
-which contains the counterfactuals and provides several methods for
-evaluation and plotting.
+`cfactuals` is a `Counterfactuals` object that contains the found
+counterfactuals and provides several methods for their evaluation and
+visualization.
 
 ``` r
 cfactuals
@@ -105,7 +120,7 @@ cfactuals
 #> 3:          6.1         3.0          4.6         1.4
 ```
 
-The counterfactuals can be retrieved via `$data`.
+The counterfactuals are stored in the `$data` field.
 
 ``` r
 cfactuals$data
@@ -117,20 +132,8 @@ cfactuals$data
 #> 5:          6.0         2.9          4.5         1.5
 ```
 
-The `$predict` method shows the predictions for the counterfactuals.
-
-``` r
-cbind(cfactuals$data, cfactuals$predict())
-#>    Sepal.Length Sepal.Width Petal.Length Petal.Width setosa versicolor virginica
-#> 1:          5.9         3.2          4.8         1.8      0      0.600     0.400
-#> 2:          5.9         3.0          4.2         1.5      0      0.998     0.002
-#> 3:          6.1         3.0          4.6         1.4      0      1.000     0.000
-#> 4:          6.0         2.7          5.1         1.6      0      0.692     0.308
-#> 5:          6.0         2.9          4.5         1.5      0      0.998     0.002
-```
-
-We can evaluate the counterfactuals according to various measures using
-the `$evaluate()` method.
+We can evaluate the results according to various measures using the
+`$evaluate()` method.
 
 ``` r
 cfactuals$evaluate()
@@ -142,11 +145,11 @@ cfactuals$evaluate()
 #> 5:          6.0         2.9          4.5         1.5      0.07403484          4          0           0
 ```
 
-To examine the frequency of changes in each feature, we can use the
-`$plot_freq_of_feature_changes()` method.
+One visualization option is to plot the frequency of changes of each
+feature using the `$plot_freq_of_feature_changes()` method.
 
 ``` r
 cfactuals$plot_freq_of_feature_changes()
 ```
 
-![](man/figures/README-unnamed-chunk-11-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-10-1.png)<!-- -->

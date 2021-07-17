@@ -19,19 +19,17 @@ knitr::opts_chunk$set(
 options(width = 200)
 ```
 
-## Introduction
-
 The variety of counterfactual explanation methods continues to grow as new techniques are actively developed in current 
 research. 
 A primary objective of the `counterfactuals` package is therefore to be quickly and intuitively extensible with new
 state-of-the art counterfactual methods.
 
-In the following, we explain the integration of new methods through the exemplary integration of the  [`featureTweakR`](https://github.com/katokohaku/featureTweakR) package which implements the feature-tweaking technique of 
+In the following, we explain the integration of new methods through the exemplary integration of the  [`featureTweakR` package](https://github.com/katokohaku/featureTweakR) which implements the feature-tweaking technique of 
 Tolomei et al. (2017). 
 
 (Note that `featureTweakR` has a couple of limitations, e.g., that factors in the training data cause problems or that the 
 algorithm can only be applied to `randomForests` trained on standardized features.
-Therefore, `featureTweakR` is not part of the `counterfactuals` package, but serves as a great example for our purpose here.)
+Therefore, `featureTweakR` is not part of the `counterfactuals` package, but serves as a suitable example for our purpose here.)
 
 
 ## Structure of the counterfactuals package
@@ -47,23 +45,24 @@ and `MOCRegr`).
 ```{r img_class_diagram, echo=FALSE, fig.cap="", out.width = '100%'}
 knitr::include_graphics("how-to-add-new-cf-methods-res/class-diagram.png")
 ```
+
 The key advantage of this approach is that we are able to provide a tailored
-`$find_counterfactuals()` method to the task at hand. 
+`$find_counterfactuals()` interface to the task at hand. 
 The leaf classes inherit this method from from `CounterfactualMethodClassif` or `CounterfactualMethodRegr`.
 For classification tasks `$find_counterfactuals()` has two arguments `desired_class` and `desired_prob` and for regression 
 tasks it has one argument `desired_outcome`.
 
 ### Call graph
 
-The `$find_counterfactuals()` method (of `CounterfactualMethodClassif` and `CounterfactualMethodRegr`) calls the
+The `$find_counterfactuals()` method (owned by `CounterfactualMethodClassif` and `CounterfactualMethodRegr`) calls a
 private `$run()` method. This `$run()` should be implemented by the leaf classes such as `MOCClassif` and `MOCRegr` and 
 return the found counterfactuals as `data.table` (preferably) or `data.frame`. 
-The actual structure of `$run()` is completely free, which makes it very flexible to add new counterfactual methods to the package. 
+The actual structure of `$run()` is completely free, which makes it flexible to add new counterfactual methods to the package. 
 
 Based on the counterfactuals returned by `$run()`, the `$find_counterfactuals()` method then creates a `Counterfactuals` 
-object, that contains the obtained counterfactuals and has several methods for their evaluation and visualization.
+object.
 
-```{r img_call_diagram, echo=FALSE, fig.cap="", out.width = '100%', out.height='50%'}
+```{r img_call_diagram, echo=FALSE, fig.cap="", out.width = '75%', out.height='60%', fig.align='center'}
 knitr::include_graphics("how-to-add-new-cf-methods-res/call-diagram.png")
 ```
 
@@ -91,10 +90,10 @@ library(iml)
 ### Class structure
 
 The new class is required to have at least two methods: `$initialize()` and `$run()`. The `print_parameters` is not 
-mandatory but strongly encouraged as it give objects of that class an informative `print` output.
+mandatory but strongly encouraged as it gives objects of that class an informative `print` output.
 
 As explained above, depending on the supported task, the new class inherits from either `CounterfactualMethodClassif` or
-`CounterfactualMethodRegr.` Since feature tweaking supports classification tasks the new class inherits from the former.
+`CounterfactualMethodRegr.` Since feature tweaking supports classification tasks, the new class inherits from the former.
 
 ```{r,eval=FALSE}
 FeatureTweaker = R6::R6Class("FeatureTweaker", inherit = CounterfactualMethodClassif,
@@ -117,7 +116,7 @@ The `$initialize()` method must have a predictor argument (for the [`iml::Predic
 
 
 Additionally, `$initialize()` can have further arguments that are specific to the counterfactual method such as
-`ktree`, `epsilon` and `nrep` in our case. We also fill the `$print_parameters()` method with the model specifications.
+`ktree`, `epsilon` and `nrep` in this case. We also fill the `$print_parameters()` method with the model specifications.
 
 (Note: For reasons of clarity, we omit argument type checks here).
 
@@ -230,18 +229,19 @@ FeatureTweaker = R6Class("FeatureTweaker", inherit = CounterfactualMethodClassif
 Now that we have implemented `FeatureTweaker`, we can briefly look at a possible use case.
 
 First we train a `randomForest` model on the `iris` data set and set up the [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object).
+Note that we leave out one observation from the training data which is our `x_interest`.
 ```{r}
 set.seed(78546)
 X = subset(iris, select = -Species)
 y = iris$Species
 rf = randomForest(X, y, ntree = 20L)
-predictor = iml::Predictor$new(rf, data = iris, y = "Species", type = "prob")
+predictor = iml::Predictor$new(rf, data = iris[-120L, ], y = "Species", type = "prob")
 ```
 
-As our instance of interest, we can select the some observation from the data set.
+For `x_interest` the model predicts:
 ```{r}
 x_interest = iris[120L, ]
-cbind(x_interest, predictor$predict(x_interest))
+predictor$predict(x_interest)
 ```
 
 ```{r, echo=FALSE}
@@ -255,7 +255,7 @@ ft_classif = readRDS("how-to-add-new-cf-methods-res/ft_classif.RDS")
 cfactuals = readRDS("how-to-add-new-cf-methods-res/cfactuals.RDS")
 ```
 
-Now, we can explore the question: "What would need to be changed in the features such that the model predicts
+Now, we can explore the question: "What would need to be changed such that the model predicts
 class 'versicolor' with a class probability of at least 60%?" using feature tweaking.
 
 ```{r, eval=FALSE}
@@ -267,21 +267,17 @@ cfactuals = ft_classif$find_counterfactuals(
   x_interest = iris[120L, ], desired_class = "versicolor", desired_prob = c(0.6, 1)
 )
 
-# Print counterfactuals together with their predictions
-cbind(cfactuals$data, cfactuals$predict())
+cfactuals
 ```
 
 ```{r, echo=FALSE}
-cbind(cfactuals$data, cfactuals$predict())
-```
-```{r}
-cfactuals$evaluate(show_diff = TRUE, measures = c("dist_x_interest", "nr_changed")) 
+cfactuals
 ```
 
 
 ## Comments
 
-A limitation of this implementation is that we would not be able to find counterfactuals for a setting with 
+A limitation of this basic implementation is that we would not be able to find counterfactuals for a setting with 
 `max(desired_prob) < 0.5`, since `featureTweakR::tweak` only looks for instances that would be predicted as `desired_class`
 by majority vote. To enable this setting we would need to change some `featureTweakR` internal code, but for the sake of 
 clarity we will not do this here.

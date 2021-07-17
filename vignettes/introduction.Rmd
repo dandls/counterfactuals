@@ -28,8 +28,7 @@ library(randomForest)
 
 ## Classification Models
 
-To demonstrate the workflow for classification tasks, we search for counterfactual explanations for diabetes tested
-patients with `MOC`. 
+To demonstrate the `counterfactuals` workflow for classification tasks, we search for counterfactual explanations for diabetes tested patients with `MOC`. 
 
 ### Data: Pima Indians Diabetes Databas
 
@@ -58,7 +57,7 @@ data(PimaIndiansDiabetes, package = "mlbench")
 
 
 Converting `integerish` features to the `integer` data type ensures that counterfactuals will
-only contain `integer` values for these features (e.g. no `2.76` pregnancies).
+only contain `integer` values for these features (for example no `2.76` pregnancies).
 
 ```{r}
 PimaIndiansDiabetes$pregnant = as.integer(PimaIndiansDiabetes$pregnant)
@@ -175,14 +174,13 @@ cfactuals$plot_surface(feature_names = c("mass", "glucose"))
 
 A `MOCClassif` object has several diagnostics methods.
 
-The method `$plot_search()` plots two objective values of all individuals across generations.
+The method `$plot_search()` visualizes all individuals of all generations in a scatter plot with two objectives on the axes.
 
 ```{r}
 moc_classif$plot_search()
 ```
 
-To plot the evolution of the mean and minimum objective values along with the dominated hypervolume, we can use the 
-`$plot_statistics()` method.
+It is also possible to plot the evolution of the mean and minimum objective values together with the dominated hypervolume over the generations
 
 ```{r, fig.height=2, results='asis'}
 moc_classif$plot_statistics()
@@ -191,13 +189,13 @@ moc_classif$plot_statistics()
 
 ## Regression Models
 
-Finding counterfactuals for regression models is analogous to classification models. In this example, we search for
+Finding counterfactuals for regression models is analogous to classification models. In this example we search for
 counterfactuals explanations for housing prices with `WhatIf`.
 
 ### Data: Boston Housing Data
 
 As training data we use the Boston Housing dataset from the `mlbench` package. 
-The data set contains 506 observations with 13 features and the continuous target variable `medv`:
+The data set contains 506 observations with 13 features and the (continuous) target variable `medv`:
 
 ```{r, echo=FALSE}
 # data(BostonHousing, package = "mlbench")  
@@ -230,8 +228,8 @@ data(BostonHousing, package = "mlbench")
 
 ### Fitting a model
 
-First we train a model to predict `medv`. Note that we leave out one observation from the
-training data which is our `x_interest`.
+First we train a model to predict `medv`. <br> 
+Note that we leave out one observation from the training data which is our `x_interest`.
 
 ```{r}
 set.seed(20210713)
@@ -249,7 +247,7 @@ predictor = Predictor$new(rf)
 
 ### Find counterfactuals
 
-As `x_interest` we again simply use an observation from our training data.
+For `x_interest` the model predicts:
 
 ```{r}
 x_interest = BostonHousing[1L, ]
@@ -263,12 +261,13 @@ whatif_regr = WhatIfRegr$new(predictor, n_counterfactuals = 5L)
 ```
 
 Then we use the `$find_counterfactuals()` method to find counterfactual explanations for `x_interest`. Note that for
-regression tasks we only have to specifiy `desired_outcome` compared to `desired_class` and `desired_probs` for
+regression tasks we only need to specify `desired_outcome`, unlike `desired_class` and `desired_probs` for
 classification tasks.
  
 ```{r}
 cfactuals = whatif_regr$find_counterfactuals(x_interest, desired_outcome = c(30, 32))
 ```
+### The counterfactuals object
 
 As a result, we obtain a `Counterfactuals` object just like for the classification task.
 
