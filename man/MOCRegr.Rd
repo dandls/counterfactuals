@@ -44,7 +44,7 @@ if (require("randomForest")) {
   # Print the results
   cfactuals$data
   # Plot evolution
-  moc_classif$plot_statistics()
+  moc_regr$plot_statistics()
 }
 
 
