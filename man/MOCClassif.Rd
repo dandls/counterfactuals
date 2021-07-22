@@ -2,7 +2,7 @@
 % Please edit documentation in R/MOCClassif.R
 \name{MOCClassif}
 \alias{MOCClassif}
-\title{MOC for Classification Tasks}
+\title{MOC (Multi-objective counterfactual explanations) for Classification Tasks}
 \description{
 \code{MOC} (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
 to minimize are:

@@ -1,4 +1,4 @@
-#' MOC for Regression Tasks
+#' MOC (Multi-objective counterfactual explanations) for Regression Tasks
 #' 
 #' @template moc_info
 #'

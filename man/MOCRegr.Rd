@@ -2,7 +2,7 @@
 % Please edit documentation in R/MOCRegr.R
 \name{MOCRegr}
 \alias{MOCRegr}
-\title{MOC for Regression Tasks}
+\title{MOC (Multi-objective counterfactual explanations) for Regression Tasks}
 \description{
 \code{MOC} (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
 to minimize are:

@@ -1,4 +1,4 @@
-#' MOC for Classification Tasks
+#' MOC (Multi-objective counterfactual explanations) for Classification Tasks
 #' 
 #' @template moc_info
 #' 
