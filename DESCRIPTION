@@ -38,7 +38,8 @@ Suggests:
     rmarkdown,
     basefun,
     featureTweakR,
-    mlbench
+    mlbench,
+    UBL
 License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.1.1
@@ -54,6 +55,3 @@ Remotes:
     mlr-org/miesmuschel@multiobjective_hb,
     mlr-org/paradox@expression_params,
     katokohaku/featureTweakR
-
-
-

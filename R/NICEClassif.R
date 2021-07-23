@@ -1,18 +1,53 @@
-#' NICE for Classification Task
+#' NICE (Nearest Instance Counterfactual Explanations) for Classification Task
+#' 
+#' @description NICE (nsdfndf) by .. searches for counterfactuals by itaretively replacing feature values of `x_interest` with its
+#' nearest (optionnaly correclty classified) neighbor. The features are replaced according to optimize "sparsity", "proximity" 
+#' or "plausibility".
+#' 
+#' Equivalent to the algorithm in the paper is x_nn_correct_classif = TRUE, return_multiple = FALSE, finish_early = TRUE
+#' 
+#' @references 
+#' 
+#' Brughmans, D., & Martens, D. (2021). NICE: An Algorithm for Nearest Instance Counterfactual Explanations. 
+#' arXiv preprint arXiv:2104.07411.
+#' 
+#' @examples 
+#' if (require("randomForest")) {
+#'   # Train a model
+#'   rf = randomForest(Species ~ ., data = iris)
+#'   # Create a predictor object
+#'   predictor = iml::Predictor$new(rf, type = "prob")
+#'   # Find counterfactuals
+#'   nice_classif = NICEClassif$new(predictor)
+#'   cfactuals = nice_classif$find_counterfactuals(
+#'     x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
+#'   )
+#'   # Print the results
+#'   cfactuals$data
+#'   # Print archive
+#'   nice_classif$archive
+#' }
+#' 
 #' @export
-NICEClassif = R6::R6Class("NICEClassif",
-  inherit = CounterfactualMethodClassif,
+NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
 
   public = list(
     
-    x_nn = NULL,
-    archive = list(),
-    
-    # TODO:
-    # x_nn_correct_classif: Only correctly classified observations are considered as nearest neighbor
-    # return_multiple: FALSE then Equivalent to original algo (if finish_early TRUE), returns the last counterfactual found
-    #                  Should not be set to FALSE if finish_early = FALSE as x_nn is returned
-    # finish_early: Equivalent to paper (if return_multiple FALSE)
+    #' @description Create a new NICEClassif object.
+    #' @template predictor
+    #' @param optimization (`character(1)`)\cr 
+    #' The optimization strategy that determines the reward function. Can be `sparsity` (default), `proximity` or 
+    #' `plausibility`.
+    #' @param x_nn_correct_classif (`logical(1)`)\cr 
+    #' Should only correctly classified observations be considered for the nearest neighbor search?
+    #' Default is `TRUE`.
+    #' @param return_multiple (`logical(1)`)\cr 
+    #' If set to `TRUE` (default) all created feature combinations with the desired prediction are returned.
+    #' If set to `FALSE` only the feature combination with the desired prediction that has the highest reward in the last 
+    #' iteration is returned. For more information, see the `details` section. (TODO)
+    #' @param finish_early (`logical(1)`)\cr 
+    #' Should the algorithm finish after an iteration in which the feature combinations with the highest reward
+    #' has the desired prediction? Default is `TRUE`.
     initialize = function(predictor, optimization = "sparsity", x_nn_correct_classif = TRUE, return_multiple = TRUE,
                           finish_early = TRUE) {
       
@@ -29,6 +64,9 @@ NICEClassif = R6::R6Class("NICEClassif",
       private$finish_early = finish_early
       private$y_hat = private$predictor$predict(predictor$data$X)
       
+      if (!requireNamespace("UBL", quietly = TRUE)) {
+        stop("Package 'UBL' needed for this function to work. Please install it.", call. = FALSE)
+      }
       if (private$optimization == "plausibility") {
         if (!requireNamespace("keras", quietly = TRUE)) {
           stop("Package 'keras' needed for this function to work. Please install it.", call. = FALSE)
@@ -47,6 +85,30 @@ NICEClassif = R6::R6Class("NICEClassif",
     }
 
   ),
+  
+  active = list(
+    #' @field x_nn (`logical(1)`) \cr
+    #'  The nearest neighbor. 
+    x_nn = function(value) {
+      if (missing(value)) {
+        private$.x_nn
+      } else {
+        stop("`$x_nn` is read only", call. = FALSE)
+      }
+    },
+    
+    #' @field archive (`list()`) \cr
+    #' A list that stores the history of the algorithm. For each algorithm iteration it has one element.
+    #' A element contains a `data.table` that stores all feature combinations in this iterations together with their
+    #' reward values and their predictions.
+    archive = function(value) {
+      if (missing(value)) {
+        private$.archive
+      } else {
+        stop("`$archive` is read only", call. = FALSE)
+      }
+    }
+  ),
 
   private = list(
     optimization = NULL,
@@ -59,10 +121,12 @@ NICEClassif = R6::R6Class("NICEClassif",
     finish_early = NULL,
     is_correctly_classified = NULL,
     candidates_x_nn = NULL,
+    .x_nn = NULL,
+    .archive = NULL,
 
     run = function() {
       # Flush
-      self$archive = NULL
+      private$.archive = NULL
       
       predictor = private$predictor
       desired_class = private$desired_class
@@ -79,24 +143,29 @@ NICEClassif = R6::R6Class("NICEClassif",
         return(predictor$data$X[0L])
       }
       
-      ranges = private$param_set$upper - private$param_set$lower
       candidates_x_nn_list = split(candidates_x_nn, seq(nrow(candidates_x_nn)))
+      
       distance = future.apply::future_vapply(
-        candidates_x_nn_list, StatMatch::gower.dist, FUN.VALUE = numeric(1L), private$x_interest, ranges, 
-        USE.NAMES = FALSE
+        candidates_x_nn_list, function(x) {
+          df = data.frame(rbind(private$x_interest, x))
+          df$class = "1"
+          UBL::distances(3L, df, dist = "HEOM", p = 1L)[1L, 2L]
+
+        },
+        FUN.VALUE = numeric(1L),  USE.NAMES = FALSE
       )
 
-      self$x_nn = candidates_x_nn[which.min(distance)]
+      private$.x_nn = candidates_x_nn[which.min(distance)]
       x_current = copy(private$x_interest)
       
       finished = FALSE
       while (!finished) {
 
-        diff = which(x_current != self$x_nn)
-        names_diff = names(self$x_nn)[diff]
+        diff = which(x_current != private$.x_nn)
+        names_diff = names(private$.x_nn)[diff]
         X_candidates = x_current[rep(seq_len(nrow(x_current)), length(diff))]
         for (i in seq(length(diff))) {
-          set(X_candidates, i, names_diff[i], value = self$x_nn[, names_diff[i], with = FALSE])
+          set(X_candidates, i, names_diff[i], value = private$.x_nn[, names_diff[i], with = FALSE])
         }
         
         f_x_current = predictor$predict(x_current)[desired_class][[1L]]
@@ -124,19 +193,19 @@ NICEClassif = R6::R6Class("NICEClassif",
         }
         
         x_current = X_candidates[which.max(reward)]
-        self$archive = c(
-          self$archive,
+        private$.archive = c(
+          private$.archive,
           list(cbind(X_candidates, "reward" = as.numeric(reward), predictor$predict(X_candidates)))
         )
         
-        finished = identical(x_current, self$x_nn) | 
+        finished = identical(x_current, private$.x_nn) | 
           private$finish_early & between(predictor$predict(x_current)[[desired_class]], desired_prob[1L], desired_prob[2L])
         
       }
       
       if (private$return_multiple) {
         # Run backwards through archive and look for candidates that fulfill desired properties
-        cfs = lapply(self$archive, function(iter) {
+        cfs = lapply(private$.archive, function(iter) {
           iter[between(iter[[desired_class]], desired_prob[1L], desired_prob[2L]), names(X_candidates), with = FALSE]
         })
         cfs = unique(rbindlist(cfs))
