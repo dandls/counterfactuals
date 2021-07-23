@@ -55,8 +55,8 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     #'   The values should sum up to `1`. Default is `NULL` which means all neighbors are weighted equally. 
     #' @template lower_upper
     #' @param init_strategy (`character(1)`)\cr  
-    #'   The population initialization strategy. Can be `random` (default), `sd` or `icecurve`. Further information
-    #'   are given in the `details` section.
+    #'   The population initialization strategy. Can be `random` (default), `sd` or `icecurve`. For more information,
+    #'   see the `details` section.
     #' @param use_conditional_mutator (`logical(1)`)\cr 
     #'   Should a conditional mutator be used? The conditional mutator generates plausible feature values conditional 
     #'   on the values of the other feature. Default is `FALSE`.

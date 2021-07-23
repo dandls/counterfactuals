@@ -73,7 +73,7 @@ ConditionalSampler = R6::R6Class(
       } else {
         pr = predict(self$model, x, type = "density")
         unique_y = unique(y)
-        density = vapply(pr, function(pr) pr(unique_y) / sum(pr(unique_y)), numeric(length(unique_y)))[, 1L]
+        density = as.matrix(vapply(pr, function(pr) pr(unique_y) / sum(pr(unique_y)), numeric(length(unique_y))))[, 1L]
         dt_densities = data.table(y = unique_y, density = density)
       }
       dt_densities

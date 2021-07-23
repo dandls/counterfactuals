@@ -313,7 +313,7 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
           
           for (j in seq_len(ncol(mydesign$data))) {
             p = p_differs[j]
-            reset = which(sample(c(TRUE, FALSE), size = ncol(mydesign$data), replace = TRUE, prob = c(1 - p, p)))
+            reset = which(sample(c(TRUE, FALSE), size = nrow(mydesign$data), replace = TRUE, prob = c(1 - p, p)))
             set(mydesign$data, reset, j, x_interest_sub[[j]])
           }
           mydesign
@@ -363,7 +363,10 @@ get_ICE_sd = function(x_interest, predictor, param_set) {
     x_interest_sub[, (i_name) := NULL]
     dt = data.table(cbind(grid1d, x_interest_sub))
     pred = predictor$predict(dt)
-    sd(pred[[1L]])
+    sd = sd(pred[[1L]])
+    # No need to change constant features
+    sd[is.na(sd)] = 0
+    sd
   }, FUN.VALUE = numeric(1L))
 }
 

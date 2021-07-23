@@ -176,8 +176,8 @@ Vector of maximum values for numeric features. If not \code{NULL}, it should be 
 If \code{NULL} (default) \code{upper} is taken for each numeric feature as its maximum value in \code{predictor$data$X}.}
 
 \item{\code{init_strategy}}{(\code{character(1)})\cr
-The population initialization strategy. Can be \code{random} (default), \code{sd} or \code{icecurve}. Further information
-are given in the \code{details} section.}
+The population initialization strategy. Can be \code{random} (default), \code{sd} or \code{icecurve}. For more information,
+see the \code{details} section.}
 
 \item{\code{use_conditional_mutator}}{(\code{logical(1)})\cr
 Should a conditional mutator be used? The conditional mutator generates plausible feature values conditional
