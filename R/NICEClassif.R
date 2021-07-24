@@ -52,7 +52,6 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
                           finish_early = TRUE) {
       
       super$initialize(predictor)
-      
       assert_choice(optimization, choices = c("sparsity", "proximity", "plausibility"))
       assert_flag(x_nn_correct_classif)
       assert_flag(return_multiple)
@@ -71,16 +70,16 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
         if (!requireNamespace("keras", quietly = TRUE)) {
           stop("Package 'keras' needed for this function to work. Please install it.", call. = FALSE)
         }
-        private$aep = AEPreprocessor$new(predictor$data$X)
-        private$ae_model = train_AE_model(predictor$data$X, private$aep)
+        private$aep = AEPreprocessor$new(private$predictor$data$X)
+        private$ae_model = train_AE_model(private$predictor$data$X, private$aep)
       }
       
-      private$is_correctly_classified = seq_len(nrow(predictor$data$X))
+      private$is_correctly_classified = seq_len(nrow(private$predictor$data$X))
       if (x_nn_correct_classif) {
         pred_classes = names(private$y_hat)[max.col(private$y_hat, ties.method = "random")] 
-        private$is_correctly_classified = (predictor$data$y[[1L]] == pred_classes)
+        private$is_correctly_classified = (private$predictor$data$y[[1L]] == pred_classes)
       }
-      private$candidates_x_nn = predictor$data$X[private$is_correctly_classified]
+      private$candidates_x_nn = private$predictor$data$X[private$is_correctly_classified]
    
     }
 
@@ -143,11 +142,21 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
         return(predictor$data$X[0L])
       }
       
-      candidates_x_nn_list = split(candidates_x_nn, seq(nrow(candidates_x_nn)))
-      
+      # UBL::distances cannot deal with columns that have two classes (e.g. ordered factors)
+      # Therefore ordering is removed
+      idx_ordered_factor = which(sapply(candidates_x_nn, function(x) test_factor(x, ordered = TRUE)))
+      x_interest = private$x_interest
+      candidates_x_nn_temp = candidates_x_nn
+      if (length(idx_ordered_factor) > 0L) {
+        x_interest = copy(private$x_interest)
+        candidates_x_nn_temp = copy(candidates_x_nn)
+        candidates_x_nn_temp[, (idx_ordered_factor) := lapply(.SD, factor, ordered = FALSE), .SDcols = idx_ordered_factor]
+        x_interest[, (idx_ordered_factor) := lapply(.SD, factor, ordered = FALSE), .SDcols = idx_ordered_factor]
+      }
+      candidates_x_nn_list = split(candidates_x_nn_temp, seq(nrow(candidates_x_nn_temp)))
       distance = future.apply::future_vapply(
         candidates_x_nn_list, function(x) {
-          df = data.frame(rbind(private$x_interest, x))
+          df = data.frame(rbind(x_interest, x))
           df$class = "1"
           UBL::distances(3L, df, dist = "HEOM", p = 1L)[1L, 2L]
 
