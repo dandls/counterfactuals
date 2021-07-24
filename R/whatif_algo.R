@@ -19,7 +19,8 @@ whatif_algo = function(predictor, n_cfactuals, x_interest, pred_column, desired_
   
   X_list = split(X_search, seq(nrow(X_search)))
   dist_vector = future.apply::future_vapply(
-    X_list, StatMatch::gower.dist, FUN.VALUE = numeric(1L), x_interest, ranges, USE.NAMES = FALSE
+    X_list, StatMatch::gower.dist, FUN.VALUE = numeric(1L), x_interest, rngs = ranges, KR.corr = FALSE, 
+    USE.NAMES = FALSE
   )
   
   ix = sort(dist_vector, index.return = TRUE, na.last = TRUE)$ix
