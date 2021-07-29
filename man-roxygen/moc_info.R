@@ -22,6 +22,9 @@
 #'    values of this feature are reset to the values of `x_interest`.}
 #'    \item {`sd`: Sample from numerical feature ranges that are limited by the feature standard deviations extracted
 #'    from `predictor$data$X`. Some features values are randomly reset to the values of `x_interest`.}
+#'    \item {`traindata`: Initializes the first population using observations from `predictor$data$X` that are nondominated. 
+#'    Some features values are randomly reset to the values of `x_interest`. If not enough nondominated observations are found, 
+#'    remaining individuals are created using the `random` strategy.}
 #' }  
 #' 
 #' The R package `miesmuschel` implements the mixed integer evolutionary strategies.\cr

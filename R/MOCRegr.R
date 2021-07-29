@@ -55,7 +55,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     #'   The values should sum up to `1`. Default is `NULL` which means all neighbors are weighted equally. 
     #' @template lower_upper
     #' @param init_strategy (`character(1)`)\cr  
-    #'   The population initialization strategy. Can be `random` (default), `sd` or `icecurve`. For more information,
+    #'   The population initialization strategy. Can be `random` (default), `sd`, `icecurve` or `traindata`. For more information,
     #'   see the `details` section.
     #' @param use_conditional_mutator (`logical(1)`)\cr 
     #'   Should a conditional mutator be used? The conditional mutator generates plausible feature values conditional 
@@ -82,7 +82,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
       assert_number(p_mut_use_orig, lower = 0, upper = 1)
       assert_number(k, lower = 1, upper = nrow(private$predictor$data$X))
       assert_numeric(weights, any.missing = FALSE, len = k, null.ok = TRUE)
-      assert_choice(init_strategy, choices = c("random", "sd", "icecurve"))
+      assert_choice(init_strategy, choices = c("random", "sd", "icecurve", "traindata"))
       assert_flag(use_conditional_mutator)
       
       if (use_conditional_mutator) {

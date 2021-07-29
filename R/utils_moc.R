@@ -246,20 +246,20 @@ make_moc_recombinator = function(ps, x_interest, max_changed, p_rec, p_rec_gen, 
 
 
 make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, flex_cols, sdevs, lower, upper, 
-                                    predictor) {
+                                    predictor, fitness_function, mu) {
   function(param_set, n) {
     
     if (init_strategy == "random") {
       f_design = function(ps, n) {
         mydesign = SamplerUnif$new(ps)$sample(n)
-        mydesign$data = reset_columns(mydesign$data, p_use_orig = 0.5, max_changed = 1e7, x_interest = x_interest)
+        mydesign$data = reset_columns(mydesign$data, p_use_orig = 0.5, max_changed = 1e15, x_interest = x_interest)
         mydesign
       }
     } else if (init_strategy == "sd") {
       if (length(sdevs) == 0L) {
         f_design = function(ps, n) {
           mydesign = SamplerUnif$new(ps)$sample(n)
-          mydesign$data = reset_columns(mydesign$data, p_use_orig = 0.5, max_changed = 1e7, x_interest = x_interest)
+          mydesign$data = reset_columns(mydesign$data, p_use_orig = 0.5, max_changed = 1e15, x_interest = x_interest)
           mydesign
         }
       } else {
@@ -273,7 +273,7 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
           param_set_init = make_param_set(X, lower = lower_bounds, upper = upper_bounds)
           function(ps, n) {
             mydesign = SamplerUnif$new(param_set_init)$sample(n)
-            mydesign$data = reset_columns(mydesign$data, p_use_orig = 0.5, max_changed = 1e7, x_interest = x_interest)
+            mydesign$data = reset_columns(mydesign$data, p_use_orig = 0.5, max_changed = 1e15, x_interest = x_interest)
             mydesign
           }
         }
@@ -320,6 +320,35 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
         }
       }
 
+      f_design = make_f_design(predictor$data$X, flex_cols, x_interest, sdevs_num_feats)
+    } else if (init_strategy == "traindata") {
+      
+      make_f_design = function(X, flex_cols, x_interest, sdevs_num_feats) {
+        function(ps, n) {
+      
+          X_sub = predictor$data$X[sample.int(nrow(predictor$data$X), 200L, replace = TRUE)]
+          for (rx in seq_len(nrow(X_sub))) {
+            use.orig.feats = sample.int(ncol(x_interest), 1L) - 1
+            use.orig = seq_len(ncol(x_interest)) <= use.orig.feats
+            X_sub[rx] = reset_columns(X_sub[rx], mean(use.orig), 1e15, x_interest)
+          }
+          
+          fitness_vals = fitness_function(X_sub)
+          if (nrow(X_sub) > mu) {
+            X_nondom = unique(X_sub[!bbotk::is_dominated(t(X_sub))])
+            if (nrow(X_nondom) > mu) {
+              X_nondom = X_nondom[sample.int(nrow(X_nondom), mu)]
+            }
+          } else {
+            X_nondom = X_sub
+          }
+          
+          param_set = make_param_set(X, lower = NULL, upper = NULL)
+          mydesign = SamplerUnif$new(param_set)$sample(n)
+          mydesign$data[sample.int(nrow(mydesign$data), nrow(X_nondom))] = X_nondom
+          mydesign
+        }
+      }
       f_design = make_f_design(predictor$data$X, flex_cols, x_interest, sdevs_num_feats)
     }
     

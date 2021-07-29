@@ -26,6 +26,9 @@ The higher the ICE curve variance of a feature, the lower the probability that
 values of this feature are reset to the values of \code{x_interest}.}
 \item {\code{sd}: Sample from numerical feature ranges that are limited by the feature standard deviations extracted
 from \code{predictor$data$X}. Some features values are randomly reset to the values of \code{x_interest}.}
+\item {\code{traindata}: Initializes the first population using observations from \code{predictor$data$X} that are nondominated.
+Some features values are randomly reset to the values of \code{x_interest}. If not enough nondominated observations are found,
+remaining individuals are created using the \code{random} strategy.}
 }
 
 The R package \code{miesmuschel} implements the mixed integer evolutionary strategies.\cr
@@ -174,7 +177,7 @@ Vector of maximum values for numeric features. If not \code{NULL}, it should be 
 If \code{NULL} (default) \code{upper} is taken for each numeric feature as its maximum value in \code{predictor$data$X}.}
 
 \item{\code{init_strategy}}{(\code{character(1)})\cr
-The population initialization strategy. Can be \code{random} (default), \code{sd} or \code{icecurve}. For more information,
+The population initialization strategy. Can be \code{random} (default), \code{sd}, \code{icecurve} or \code{traindata}. For more information,
 see the \code{details} section.}
 
 \item{\code{use_conditional_mutator}}{(\code{logical(1)})\cr

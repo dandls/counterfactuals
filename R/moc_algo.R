@@ -77,7 +77,9 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
     sdevs = sdevs_flex_num_feats, 
     lower = lower, 
     upper = upper, 
-    predictor = predictor
+    predictor = predictor,
+    fitness_function = fitness_function,
+    mu = mu
   )
   
   mies_prime_operators(
