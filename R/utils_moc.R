@@ -177,7 +177,7 @@ ScalorNondomPenalized = R6::R6Class("ScalorNondomPenalized", inherit = Scalor,
       epsilon = params$epsilon
       if (is.null(epsilon)) epsilon = Inf
       is_penalized = fitnesses[colnames(fitnesses) == "dist_target"] < -epsilon
-      sorted[is_penalized] = sorted[is_penalized] + 1L
+      sorted[is_penalized] = max(sorted) + order(fitnesses[colnames(fitnesses) == "dist_target"][is_penalized])
       front_indexes = sort(unique(sorted))
       
       fronts = lapply(split(as.data.frame(fitnesses), sorted), as.matrix)
@@ -328,9 +328,9 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
       
           X_sub = predictor$data$X[sample.int(nrow(predictor$data$X), 200L, replace = TRUE)]
           for (rx in seq_len(nrow(X_sub))) {
-            use.orig.feats = sample.int(ncol(x_interest), 1L) - 1
-            use.orig = seq_len(ncol(x_interest)) <= use.orig.feats
-            X_sub[rx] = reset_columns(X_sub[rx], mean(use.orig), 1e15, x_interest)
+            use_orig_feats = sample.int(ncol(x_interest), 1L) - 1
+            use_orig = seq_len(ncol(x_interest)) <= use_orig_feats
+            X_sub[rx] = reset_columns(X_sub[rx], mean(use_orig), 1e15, x_interest)
           }
           
           fitness_vals = fitness_function(X_sub)

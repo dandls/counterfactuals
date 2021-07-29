@@ -32,8 +32,8 @@ remaining individuals are created using the \code{random} strategy.}
 }
 
 The R package \code{miesmuschel} implements the mixed integer evolutionary strategies.\cr
-The Gower's dissimilarity measure proposed by Kaufman and Rousseeuw (1990) computes all required distances.
-It is implemented by \link[StatMatch]{gower.dist}.
+To compute dissimilarities, the function uses Gower's dissimilarity measure (Gower, 1990),
+which is implemented in the \link[StatMatch]{gower.dist}.
 }
 \examples{
 if (require("randomForest")) {
@@ -61,6 +61,8 @@ Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Pu
 
 Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. A. M. T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
 IEEE transactions on evolutionary computation, 6(2), 182-197.
+
+Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
 
 R. Li et al., "Mixed Integer Evolution Strategies for Parameter Optimization," in Evolutionary Computation, vol. 21, no. 1,
 pp. 29-64, March 2013, doi: 10.1162/EVCO_a_00059.
@@ -129,8 +131,8 @@ Create a new MOCClassif object.
 The object (created with \code{iml::Predictor$new()}) holding the machine learning model and the data.}
 
 \item{\code{epsilon}}{(\code{numeric(1)} | \code{NULL})\cr
-If not \code{NULL}, candidates whose distance between their prediction and target exceeds epsilon are penalized.
-Defauls is \code{NULL}, which means no penalization}
+If not \code{NULL}, candidates whose prediction is further away from the desired prediction than epsilon are penalized.
+Default is \code{NULL}, which means no penalization}
 
 \item{\code{fixed_features}}{(\code{character()} | \code{NULL})\cr
 Names of features that are not allowed to change. \code{NULL} (default) allows to change all features.}
@@ -145,7 +147,7 @@ The population size. Default is \code{20L}.}
 The number of generations. Default is \code{175L}.}
 
 \item{\code{p_rec}}{(\code{numeric(1)})\cr
-Probability with which a child is chosen for recombination. Default is \code{0.57}.}
+Probability with which an individual is chosen for recombination. Default is \code{0.57}.}
 
 \item{\code{p_rec_gen}}{(\code{numeric(1)})\cr
 Probability with which a feature/gene is chosen for recombination. Default is \code{0.85}.}
@@ -154,7 +156,7 @@ Probability with which a feature/gene is chosen for recombination. Default is \c
 Probability with which a feature/gene is reset to the feature value of \code{x_interest} after recombination. Default is \code{0.88}.}
 
 \item{\code{p_mut}}{(\code{numeric(1)})\cr
-Probability with which a child is chosen for mutation. Default is \code{0.79}.}
+Probability with which an individual is chosen for mutation. Default is \code{0.79}.}
 
 \item{\code{p_mut_gen}}{(\code{numeric(1)})\cr
 Probability with which a feature/gene is chosen for mutation. Default is \code{0.56}.}

@@ -24,7 +24,7 @@ research.
 A primary objective of the `counterfactuals` package is therefore to be quickly and intuitively extensible with new
 state-of-the art counterfactual methods.
 
-In the following, we explain the integration of new methods through the exemplary integration of the  [`featureTweakR` package](https://github.com/katokohaku/featureTweakR) which implements the feature-tweaking technique of 
+In the following, we explain the integration of new methods through the exemplary integration of the  [`featureTweakR` package](https://github.com/katokohaku/featureTweakR) which implements Feature Tweaking of 
 Tolomei et al. (2017). 
 
 (Note that `featureTweakR` has a couple of limitations, e.g., that factors in the training data cause problems or that the 
@@ -69,7 +69,7 @@ knitr::include_graphics("how-to-add-new-cf-methods-res/call-diagram.png")
 
 ## Integrating a new counterfactuals explanation method
 
-To integrate feature tweaking, we first we need to install `featureTweakR` and `pforeach` from github and 
+To integrate Feature Tweaking, we first we need to install `featureTweakR` and `pforeach` from github and 
 load the required libraries.
 
 ```{r, eval=FALSE}
@@ -89,11 +89,11 @@ library(iml)
 
 ### Class structure
 
-The new class is required to have at least two methods: `$initialize()` and `$run()`. The `print_parameters` is not 
+A new class is required to have at least two methods: `$initialize()` and `$run()`. The `print_parameters` is not 
 mandatory but strongly encouraged as it gives objects of that class an informative `print` output.
 
 As explained above, depending on the supported task, the new class inherits from either `CounterfactualMethodClassif` or
-`CounterfactualMethodRegr.` Since feature tweaking supports classification tasks, the new class inherits from the former.
+`CounterfactualMethodRegr.` Since Feature Tweaking supports classification tasks, the new class inherits from the former.
 
 ```{r,eval=FALSE}
 FeatureTweaker = R6::R6Class("FeatureTweaker", inherit = CounterfactualMethodClassif,
@@ -256,7 +256,7 @@ cfactuals = readRDS("how-to-add-new-cf-methods-res/cfactuals.RDS")
 ```
 
 Now, we can explore the question: "What would need to be changed such that the model predicts
-class 'versicolor' with a class probability of at least 60%?" using feature tweaking.
+class 'versicolor' with a class probability of at least 60%?" using Feature Tweaking.
 
 ```{r, eval=FALSE}
 # Set up FeatureTweaker

@@ -21,15 +21,16 @@
 #'    The higher the ICE curve variance of a feature, the lower the probability that
 #'    values of this feature are reset to the values of `x_interest`.}
 #'    \item {`sd`: Sample from numerical feature ranges that are limited by the feature standard deviations extracted
-#'    from `predictor$data$X`. Some features values are randomly reset to the values of `x_interest`.}
+#'    from `predictor$data$X`. For non-numerical features, the `random` strategy is used. 
+#'    Some features values are randomly reset to the values of `x_interest`.}
 #'    \item {`traindata`: Initializes the first population using observations from `predictor$data$X` that are nondominated. 
 #'    Some features values are randomly reset to the values of `x_interest`. If not enough nondominated observations are found, 
 #'    remaining individuals are created using the `random` strategy.}
 #' }  
 #' 
 #' The R package `miesmuschel` implements the mixed integer evolutionary strategies.\cr
-#' The Gower's dissimilarity measure proposed by Kaufman and Rousseeuw (1990) computes all required distances. 
-#' It is implemented by \link[StatMatch]{gower.dist}.
+#' To compute dissimilarities, the function uses Gower's dissimilarity measure (Gower, 1990), 
+#' which is implemented in the \link[StatMatch]{gower.dist}. 
 #' 
 #' @references 
 #'
@@ -39,6 +40,8 @@
 #' 
 #' Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. A. M. T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II. 
 #' IEEE transactions on evolutionary computation, 6(2), 182-197.
+#' 
+#' Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
 #' 
 #' R. Li et al., "Mixed Integer Evolution Strategies for Parameter Optimization," in Evolutionary Computation, vol. 21, no. 1, 
 #' pp. 29-64, March 2013, doi: 10.1162/EVCO_a_00059.

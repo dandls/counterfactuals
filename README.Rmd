@@ -87,7 +87,7 @@ x_interest = iris[150L, ]
 predictor$predict(x_interest)
 ```
 
-We can now use the `$find_counterfactuals()` method to find counterfactuals for `x_interest`.
+We use the `$find_counterfactuals()` method to find counterfactuals for `x_interest`.
 
 ```{r}
 cfactuals = wi_classif$find_counterfactuals(

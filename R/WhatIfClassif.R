@@ -11,8 +11,8 @@
 #' 
 #' @details
 #' 
-#' To measure dissimilarity the extension of the Gower's dissimilarity measure proposed by Kaufman and Rousseeuw (1990) 
-#' and implemented by \link[StatMatch]{gower.dist} is used.
+#' To compute dissimilarities, the function uses Gower's dissimilarity measure (Gower, 1990), 
+#' which is implemented in the \link[StatMatch]{gower.dist}. 
 #' For numerical features the distances are scaled with the standard deviation of the specific feature values in the 
 #' training data.
 #' Only data points with features values between `lower` and `upper` are considered as candidates for the nearest data
@@ -21,8 +21,6 @@
 #' @references 
 #' 
 #' Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
-#' 
-#' Kaufman, L. and Rousseeuw, P.J. (1990), Finding Groups in Data: An Introduction to Cluster Analysis. Wiley, New York.
 #' 
 #' Wexler, J., Pushkarna, M., Bolukbasi, T., Wattenberg, M., Viégas, F., & Wilson, J. (2019). The what-if tool: 
 #' Interactive probing of machine learning models. IEEE transactions on visualization and computer graphics, 26(1), 56–65.

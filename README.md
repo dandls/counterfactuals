@@ -90,11 +90,11 @@ For `x_interest` the model predicts:
 x_interest = iris[150L, ]
 predictor$predict(x_interest)
 #>   setosa versicolor virginica
-#> 1      0       0.12      0.88
+#> 1      0      0.102     0.898
 ```
 
-We can now use the `$find_counterfactuals()` method to find
-counterfactuals for `x_interest`.
+We use the `$find_counterfactuals()` method to find counterfactuals for
+`x_interest`.
 
 ``` r
 cfactuals = wi_classif$find_counterfactuals(

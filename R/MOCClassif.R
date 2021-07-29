@@ -27,8 +27,8 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     #' @description Create a new MOCClassif object.
     #' @template predictor
     #' @param epsilon (`numeric(1)` | `NULL`)\cr  
-    #'   If not `NULL`, candidates whose distance between their prediction and target exceeds epsilon are penalized.
-    #'   Defauls is `NULL`, which means no penalization
+    #'   If not `NULL`, candidates whose prediction is further away from the desired prediction than epsilon are penalized.
+    #'   Default is `NULL`, which means no penalization
     #' @param fixed_features (`character()` | `NULL`)\cr  
     #'   Names of features that are not allowed to change. `NULL` (default) allows to change all features.
     #' @param max_changed (`integerish(1)` | `NULL`)\cr  
@@ -38,13 +38,13 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     #' @param n_generations (`integerish(1)`)\cr  
     #'   The number of generations. Default is `175L`.   
     #' @param p_rec (`numeric(1)`)\cr  
-    #'   Probability with which a child is chosen for recombination. Default is `0.57`.
+    #'   Probability with which an individual is chosen for recombination. Default is `0.57`.
     #' @param p_rec_gen (`numeric(1)`)\cr  
     #'   Probability with which a feature/gene is chosen for recombination. Default is `0.85`.  
     #' @param p_rec_use_orig (`numeric(1)`)\cr  
     #'   Probability with which a feature/gene is reset to the feature value of `x_interest` after recombination. Default is `0.88`.    
     #' @param p_mut (`numeric(1)`)\cr  
-    #'   Probability with which a child is chosen for mutation. Default is `0.79`.    
+    #'   Probability with which an individual is chosen for mutation. Default is `0.79`.    
     #' @param p_mut_gen (`numeric(1)`)\cr  
     #'   Probability with which a feature/gene is chosen for mutation. Default is `0.56`.   
     #' @param p_mut_use_orig (`numeric(1)`)\cr  
