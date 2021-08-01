@@ -335,7 +335,7 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
           
           fitness_vals = fitness_function(X_sub)
           if (nrow(X_sub) > mu) {
-            X_nondom = unique(X_sub[!bbotk::is_dominated(t(X_sub))])
+            X_nondom = unique(X_sub[!bbotk::is_dominated(t(fitness_vals))])
             if (nrow(X_nondom) > mu) {
               X_nondom = X_nondom[sample.int(nrow(X_nondom), mu)]
             }

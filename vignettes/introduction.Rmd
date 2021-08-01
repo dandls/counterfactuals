@@ -30,7 +30,7 @@ library(randomForest)
 
 To demonstrate the `counterfactuals` workflow for classification tasks, we search for counterfactual explanations for diabetes tested patients with `MOC`. 
 
-### Data: Pima Indians Diabetes Databas
+### Data: Pima Indians Diabetes Database
 
 As training data we use the Pima Indians Diabetes Database from the `mlbench` package.
 The data set contains 768 observations with 8 features and the binary target variable `diabetes`:
