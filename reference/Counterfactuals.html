@@ -193,7 +193,7 @@ The object (created with <code>iml::Predictor$new()</code>) holding the machine 
 A single row with the observation of interest.</p></dd>
 
 <dt><code>param_set</code></dt><dd><p>(<a href='https://paradox.mlr-org.com/reference/ParamSet.html'>ParamSet</a>)<br />
-A <a href='https://paradox.mlr-org.com/reference/ParamSet.html'>ParamSet</a> created by make_paramset based on <code>predictor$data$X</code>.</p></dd>
+A <a href='https://paradox.mlr-org.com/reference/ParamSet.html'>ParamSet</a> based on the features of <code>predictor$data$X</code>.</p></dd>
 
 <dt><code>desired</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/list.html'>list(1)</a></code> | <code><a href='https://rdrr.io/r/base/list.html'>list(2)</a></code>)<br />
 A <code>list</code> with the desired properties of the counterfactuals. For regression tasks it should have one

@@ -164,7 +164,8 @@ Some features values are randomly reset to the values of <code>x_interest</code>
 The higher the ICE curve variance of a feature, the lower the probability that
 values of this feature are reset to the values of <code>x_interest</code>.</p></li>
 <li><p><code>sd</code>: Sample from numerical feature ranges that are limited by the feature standard deviations extracted
-from <code>predictor$data$X</code>. Some features values are randomly reset to the values of <code>x_interest</code>.</p></li>
+from <code>predictor$data$X</code>. For non-numerical features, the <code>random</code> strategy is used.
+Some features values are randomly reset to the values of <code>x_interest</code>.</p></li>
 <li><p><code>traindata</code>: Initializes the first population using observations from <code>predictor$data$X</code> that are nondominated.
 Some features values are randomly reset to the values of <code>x_interest</code>. If not enough nondominated observations are found,
 remaining individuals are created using the <code>random</code> strategy.</p></li>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>NICE for Classification Task — NICEClassif • counterfactuals</title>
+<title>NICE (Nearest Instance Counterfactual Explanations) for Classification Task — NICEClassif • counterfactuals</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,14 @@
 
 
 
-<meta property="og:title" content="NICE for Classification Task — NICEClassif" />
-<meta property="og:description" content="NICE for Classification Task
-NICE for Classification Task" />
+<meta property="og:title" content="NICE (Nearest Instance Counterfactual Explanations) for Classification Task — NICEClassif" />
+<meta property="og:description" content="NICE (Brughmans and Martens, 2021) starts the counterfactual search for x_interest by finding its nearest
+(optionally) correctly classified neighbor x_nn. The distances function that implements the
+Heterogeneous Euclidean Overlap Method (HEOM) (Wilson and Martinez, 1997) is used to compute the distances. 
+Once x_nn is found, NICE iteratively replaces feature values of x_interest with the corresponding values of x_nn to optimize
+some predefined reward function. Available reward functions are sparsity proximity and plausibility. 
+Our NICE implementation is equivalent to the original version if return_multiple = FALSE, finish_early = TRUE and
+x_nn_correct_classif = TRUE." />
 
 
 
@@ -127,21 +132,59 @@ NICE for Classification Task" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>NICE for Classification Task</h1>
+    <h1>NICE (Nearest Instance Counterfactual Explanations) for Classification Task</h1>
     <small class="dont-index">Source: <a href='https://github.com/TODO/issues/blob/master/R/NICEClassif.R'><code>R/NICEClassif.R</code></a></small>
     <div class="hidden name"><code>NICEClassif.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>NICE for Classification Task</p>
-<p>NICE for Classification Task</p>
+    <p>NICE (Brughmans and Martens, 2021) starts the counterfactual search for <code>x_interest</code> by finding its nearest
+(optionally) correctly classified neighbor <code>x_nn</code>. The <a href='https://rdrr.io/pkg/UBL/man/Distances.html'>distances</a> function that implements the
+Heterogeneous Euclidean Overlap Method (HEOM) (Wilson and Martinez, 1997) is used to compute the distances. <br />
+Once <code>x_nn</code> is found, NICE iteratively replaces feature values of <code>x_interest</code> with the corresponding values of <code>x_nn</code> to optimize
+some predefined reward function. Available reward functions are <code>sparsity</code> <code>proximity</code> and <code>plausibility</code>. <br />
+Our NICE implementation is equivalent to the original version if <code>return_multiple = FALSE</code>, <code>finish_early = TRUE</code> and
+<code>x_nn_correct_classif = TRUE</code>.</p>
     </div>
 
 
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>In the first iteration, NICE creates new instances by replacing one feature of <code>x_interest</code> with the corresponding
+values of <code>x_nn</code> in each instance. Thus, if <code>x_nn</code> differs from <code>x_interest</code> in <code>d</code> features, <code>d</code> instances are created. <br />
+Then, the rewards of each instances are calculated with the chosen reward function. <br />
+In the second iteration, new instances are created by replacing one feature of the instance with the highest reward
+in the previous iteration. <br />
+If <code>finish_early = TRUE</code>, the algorithm terminates when the predicted probability for
+the <code>desired_class</code> of the instance with the highest reward, is in <code>desired_prob</code>. If <code>finish_early = FALSE</code>, the algorithm
+continues until <code>x_nn</code> is recreated. <br />
+Once the algorithm terminated, it depends on <code>return_multiple</code> which instances
+are returned as counterfactuals. If <code>return_multiple = FALSE</code>, then only the instance with the highest reward in the
+last iteration is returned as counterfactual. If <code>return_multiple = TRUE</code>, then all instances of all iterations
+whose predicted probability for the <code>desired_class</code> is in <code>desired_prob</code> are returned as counterfactuals. <br />
+Note that if <code>finish_early = FALSE</code> and <code>return_multiple = FALSE</code>, then <code>x_nn</code> is returned as single counterfactual.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Brughmans, D., &amp; Martens, D. (2021). NICE: An Algorithm for Nearest Instance Counterfactual Explanations.
+arXiv preprint arXiv:2104.07411.</p>
+<p>Wilson, D Randall, and Tony R Martinez. 1997. “Improved Heterogeneous Distance Functions.” Journal of Artificial
+Intelligence Research 6: 1–34.</p>
     <h2 class="hasAnchor" id="super-classes"><a class="anchor" href="#super-classes"></a>Super classes</h2>
 
     <p><code><a href='CounterfactualMethod.html'>counterfactuals::CounterfactualMethod</a></code> -&gt; <code><a href='CounterfactualMethodClassif.html'>counterfactuals::CounterfactualMethodClassif</a></code> -&gt; <code>NICEClassif</code></p>
+    <h2 class="hasAnchor" id="active-bindings"><a class="anchor" href="#active-bindings"></a>Active bindings</h2>
+
+    <p><div class="r6-active-bindings"></p><dl>
+<dt><code>x_nn</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>) <br />
+The nearest neighbor.</p></dd>
+
+<dt><code>archive</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/list.html'>list()</a></code>) <br />
+A list that stores the history of the algorithm. For each algorithm iteration it has one element.
+A element contains a <code>data.table</code> that stores all feature combinations in this iterations together with their
+reward values and their predictions.</p></dd>
+
+</dl><p></div></p>
     <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
 
     
@@ -160,18 +203,38 @@ NICE for Classification Task" />
 
 <hr>
 <a id="method-new"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>new()</code></h3>
-
-<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p>Create a new NICEClassif object.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
 <p><div class="r"></p><pre><span class='va'>NICEClassif</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span>
   <span class='va'>predictor</span>,
   optimization <span class='op'>=</span> <span class='st'>"sparsity"</span>,
   x_nn_correct_classif <span class='op'>=</span> <span class='cn'>TRUE</span>,
   return_multiple <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  finish_early <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  lower <span class='op'>=</span> <span class='cn'>NULL</span>,
-  upper <span class='op'>=</span> <span class='cn'>NULL</span>
+  finish_early <span class='op'>=</span> <span class='cn'>TRUE</span>
 <span class='op'>)</span></pre><p></div></p>
 
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
+<p><div class="arguments"></p><dl>
+<dt><code>predictor</code></dt><dd><p>(<a href='https://christophm.github.io/iml/reference/Predictor.html'>Predictor</a>)<br />
+The object (created with <code>iml::Predictor$new()</code>) holding the machine learning model and the data.</p></dd>
+
+<dt><code>optimization</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code>)<br />
+The optimization strategy that determines the reward function. Can be <code>sparsity</code> (default), <code>proximity</code> or
+<code>plausibility</code>.</p></dd>
+
+<dt><code>x_nn_correct_classif</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>)<br />
+Should only correctly classified observations be considered for the nearest neighbor search?
+Default is <code>TRUE</code>.</p></dd>
+
+<dt><code>return_multiple</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>)<br />
+If set to <code>TRUE</code> (default) all created feature combinations with the desired prediction are returned.
+If set to <code>FALSE</code> only the feature combination with the desired prediction that has the highest reward in the last
+iteration is returned. For more information, see the <code>details</code> section. (TODO)</p></dd>
+
+<dt><code>finish_early</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>)<br />
+Should the algorithm finish after an iteration in which the feature combinations with the highest reward
+has the desired prediction? Default is <code>TRUE</code>.</p></dd>
+
+</dl><p></div></p>
 <p><hr>
 <a id="method-clone"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>clone()</code></h3>
 <p>The objects of this class are cloneable with this method.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
@@ -185,6 +248,31 @@ NICE for Classification Task" />
 
 
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='st'><a href='https://www.stat.berkeley.edu/~breiman/RandomForests/'>"randomForest"</a></span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='co'># Train a model</span>
+  <span class='va'>rf</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/randomForest/man/randomForest.html'>randomForest</a></span><span class='op'>(</span><span class='va'>Species</span> <span class='op'>~</span> <span class='va'>.</span>, data <span class='op'>=</span> <span class='va'>iris</span><span class='op'>)</span>
+  <span class='co'># Create a predictor object</span>
+  <span class='va'>predictor</span> <span class='op'>=</span> <span class='fu'>iml</span><span class='fu'>::</span><span class='va'><a href='https://christophm.github.io/iml/reference/Predictor.html'>Predictor</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>rf</span>, type <span class='op'>=</span> <span class='st'>"prob"</span><span class='op'>)</span>
+  <span class='co'># Find counterfactuals</span>
+  <span class='va'>nice_classif</span> <span class='op'>=</span> <span class='va'>NICEClassif</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>predictor</span><span class='op'>)</span>
+  <span class='va'>cfactuals</span> <span class='op'>=</span> <span class='va'>nice_classif</span><span class='op'>$</span><span class='fu'>find_counterfactuals</span><span class='op'>(</span>
+    x_interest <span class='op'>=</span> <span class='va'>iris</span><span class='op'>[</span><span class='fl'>150L</span>, <span class='op'>]</span>, desired_class <span class='op'>=</span> <span class='st'>"versicolor"</span>, desired_prob <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.5</span>, <span class='fl'>1</span><span class='op'>)</span>
+  <span class='op'>)</span>
+  <span class='co'># Print the results</span>
+  <span class='va'>cfactuals</span><span class='op'>$</span><span class='va'>data</span>
+  <span class='co'># Print archive</span>
+  <span class='va'>nice_classif</span><span class='op'>$</span><span class='va'>archive</span>
+<span class='op'>}</span>
+</div><div class='output co'>#&gt; [[1]]
+#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width reward setosa versicolor
+#&gt; 1:          5.9           3          4.2         1.8  0.462      0       0.51
+#&gt; 2:          5.9           3          5.1         1.5  0.392      0       0.44
+#&gt;    virginica
+#&gt; 1:      0.49
+#&gt; 2:      0.56
+#&gt; </div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
