@@ -66,7 +66,7 @@ The object (created with \code{iml::Predictor$new()}) holding the machine learni
 A single row with the observation of interest.}
 
 \item{\code{param_set}}{(\link[paradox]{ParamSet})\cr
-A \link[paradox]{ParamSet} created by \link{make_paramset} based on \code{predictor$data$X}.}
+A \link[paradox]{ParamSet} based on the features of \code{predictor$data$X}.}
 
 \item{\code{desired}}{(\code{list(1)} | \code{list(2)})\cr
 A \code{list} with the desired properties of the counterfactuals. For regression tasks it should have one

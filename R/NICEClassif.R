@@ -1,15 +1,38 @@
 #' NICE (Nearest Instance Counterfactual Explanations) for Classification Task
 #' 
-#' @description NICE (nsdfndf) by .. searches for counterfactuals by itaretively replacing feature values of `x_interest` with its
-#' nearest (optionnaly correclty classified) neighbor. The features are replaced according to optimize "sparsity", "proximity" 
-#' or "plausibility".
+#' @description NICE (Brughmans and Martens, 2021) starts the counterfactual search for `x_interest` by finding its nearest
+#' (optionally) correctly classified neighbor `x_nn`. The \link[UBL]{distances} function that implements the 
+#' Heterogeneous Euclidean Overlap Method (HEOM) (Wilson and Martinez, 1997) is used to compute the distances. \cr 
+#' Once `x_nn` is found, NICE iteratively replaces feature values of `x_interest` with the corresponding values of `x_nn` to optimize
+#' some predefined reward function. Available reward functions are `sparsity` `proximity` and `plausibility`. \cr 
+#' Our NICE implementation is equivalent to the original version if `return_multiple = FALSE`, `finish_early = TRUE` and
+#' `x_nn_correct_classif = TRUE`.
 #' 
-#' Equivalent to the algorithm in the paper is x_nn_correct_classif = TRUE, return_multiple = FALSE, finish_early = TRUE
+#' @details 
+#' In the first iteration, NICE creates new instances by replacing one feature of `x_interest` with the corresponding 
+#' values of `x_nn` in each instance. Thus, if `x_nn` differs from `x_interest` in `d` features, `d` instances are created. \cr 
+#' Then, the rewards of each instances are calculated with the chosen reward function. \cr 
+#' In the second iteration, new instances are created by replacing one feature of the instance with the highest reward 
+#' in the previous iteration. \cr 
+#' If `finish_early = TRUE`, the algorithm terminates when the predicted probability for
+#' the `desired_class` of the instance with the highest reward, is in `desired_prob`. If `finish_early = FALSE`, the algorithm
+#' continues until `x_nn` is recreated. \cr 
+#' Once the algorithm terminated, it depends on `return_multiple` which instances
+#' are returned as counterfactuals. If `return_multiple = FALSE`, then only the instance with the highest reward in the
+#' last iteration is returned as counterfactual. If `return_multiple = TRUE`, then all instances of all iterations
+#' whose predicted probability for the `desired_class` is in `desired_prob` are returned as counterfactuals. \cr
+#' Note that if `finish_early = FALSE` and `return_multiple = FALSE`, then `x_nn` is returned as single counterfactual.
+#' 
+#' 
 #' 
 #' @references 
 #' 
 #' Brughmans, D., & Martens, D. (2021). NICE: An Algorithm for Nearest Instance Counterfactual Explanations. 
 #' arXiv preprint arXiv:2104.07411.
+#' 
+#' Wilson, D Randall, and Tony R Martinez. 1997. “Improved Heterogeneous Distance Functions.” Journal of Artificial 
+#' Intelligence Research 6: 1–34.
+#' 
 #' 
 #' @examples 
 #' if (require("randomForest")) {

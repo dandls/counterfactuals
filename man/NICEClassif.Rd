@@ -2,14 +2,71 @@
 % Please edit documentation in R/NICEClassif.R
 \name{NICEClassif}
 \alias{NICEClassif}
-\title{NICE for Classification Task}
+\title{NICE (Nearest Instance Counterfactual Explanations) for Classification Task}
 \description{
-NICE for Classification Task
+NICE (Brughmans and Martens, 2021) starts the counterfactual search for \code{x_interest} by finding its nearest
+(optionally) correctly classified neighbor \code{x_nn}. The \link[UBL]{distances} function that implements the
+Heterogeneous Euclidean Overlap Method (HEOM) (Wilson and Martinez, 1997) is used to compute the distances. \cr
+Once \code{x_nn} is found, NICE iteratively replaces feature values of \code{x_interest} with the corresponding values of \code{x_nn} to optimize
+some predefined reward function. Available reward functions are \code{sparsity} \code{proximity} and \code{plausibility}. \cr
+Our NICE implementation is equivalent to the original version if \code{return_multiple = FALSE}, \code{finish_early = TRUE} and
+\code{x_nn_correct_classif = TRUE}.
+}
+\details{
+In the first iteration, NICE creates new instances by replacing one feature of \code{x_interest} with the corresponding
+values of \code{x_nn} in each instance. Thus, if \code{x_nn} differs from \code{x_interest} in \code{d} features, \code{d} instances are created. \cr
+Then, the rewards of each instances are calculated with the chosen reward function. \cr
+In the second iteration, new instances are created by replacing one feature of the instance with the highest reward
+in the previous iteration. \cr
+If \code{finish_early = TRUE}, the algorithm terminates when the predicted probability for
+the \code{desired_class} of the instance with the highest reward, is in \code{desired_prob}. If \code{finish_early = FALSE}, the algorithm
+continues until \code{x_nn} is recreated. \cr
+Once the algorithm terminated, it depends on \code{return_multiple} which instances
+are returned as counterfactuals. If \code{return_multiple = FALSE}, then only the instance with the highest reward in the
+last iteration is returned as counterfactual. If \code{return_multiple = TRUE}, then all instances of all iterations
+whose predicted probability for the \code{desired_class} is in \code{desired_prob} are returned as counterfactuals. \cr
+Note that if \code{finish_early = FALSE} and \code{return_multiple = FALSE}, then \code{x_nn} is returned as single counterfactual.
+}
+\examples{
+if (require("randomForest")) {
+  # Train a model
+  rf = randomForest(Species ~ ., data = iris)
+  # Create a predictor object
+  predictor = iml::Predictor$new(rf, type = "prob")
+  # Find counterfactuals
+  nice_classif = NICEClassif$new(predictor)
+  cfactuals = nice_classif$find_counterfactuals(
+    x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
+  )
+  # Print the results
+  cfactuals$data
+  # Print archive
+  nice_classif$archive
+}
 
-NICE for Classification Task
+}
+\references{
+Brughmans, D., & Martens, D. (2021). NICE: An Algorithm for Nearest Instance Counterfactual Explanations.
+arXiv preprint arXiv:2104.07411.
+
+Wilson, D Randall, and Tony R Martinez. 1997. “Improved Heterogeneous Distance Functions.” Journal of Artificial
+Intelligence Research 6: 1–34.
 }
 \section{Super classes}{
 \code{\link[counterfactuals:CounterfactualMethod]{counterfactuals::CounterfactualMethod}} -> \code{\link[counterfactuals:CounterfactualMethodClassif]{counterfactuals::CounterfactualMethodClassif}} -> \code{NICEClassif}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{x_nn}}{(\code{logical(1)}) \cr
+The nearest neighbor.}
+
+\item{\code{archive}}{(\code{list()}) \cr
+A list that stores the history of the algorithm. For each algorithm iteration it has one element.
+A element contains a \code{data.table} that stores all feature combinations in this iterations together with their
+reward values and their predictions.}
+}
+\if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -30,18 +87,42 @@ NICE for Classification Task
 \if{html}{\out{<a id="method-new"></a>}}
 \if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
+Create a new NICEClassif object.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{NICEClassif$new(
   predictor,
   optimization = "sparsity",
   x_nn_correct_classif = TRUE,
   return_multiple = TRUE,
-  finish_early = TRUE,
-  lower = NULL,
-  upper = NULL
+  finish_early = TRUE
 )}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{predictor}}{(\link[iml]{Predictor})\cr
+The object (created with \code{iml::Predictor$new()}) holding the machine learning model and the data.}
+
+\item{\code{optimization}}{(\code{character(1)})\cr
+The optimization strategy that determines the reward function. Can be \code{sparsity} (default), \code{proximity} or
+\code{plausibility}.}
+
+\item{\code{x_nn_correct_classif}}{(\code{logical(1)})\cr
+Should only correctly classified observations be considered for the nearest neighbor search?
+Default is \code{TRUE}.}
+
+\item{\code{return_multiple}}{(\code{logical(1)})\cr
+If set to \code{TRUE} (default) all created feature combinations with the desired prediction are returned.
+If set to \code{FALSE} only the feature combination with the desired prediction that has the highest reward in the last
+iteration is returned. For more information, see the \code{details} section. (TODO)}
+
+\item{\code{finish_early}}{(\code{logical(1)})\cr
+Should the algorithm finish after an iteration in which the feature combinations with the highest reward
+has the desired prediction? Default is \code{TRUE}.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

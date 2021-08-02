@@ -23,7 +23,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #' @template x_interest
     #' @template predictor
     #' @param param_set (\link[paradox]{ParamSet})\cr
-    #'  A \link[paradox]{ParamSet} created by \link{make_paramset} based on `predictor$data$X`.
+    #'  A \link[paradox]{ParamSet} based on the features of `predictor$data$X`.
     #' @param desired (`list(1)` | `list(2)`)\cr
     #'  A `list` with the desired properties of the counterfactuals. For regression tasks it should have one 
     #'  element `desired_outcome` (\link{CounterfactualMethodRegr}) and for classification tasks two elements 
