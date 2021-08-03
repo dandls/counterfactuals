@@ -5,7 +5,7 @@
 #' 
 #' `CounterfactualMethodRegr` can only be initialized for regression tasks. Child classes inherit the (public) 
 #' `$find_counterfactuals()` method, which calls a (private) `$run()` method. This `$run()` method should be implemented 
-#' by the child classes and return the found counterfactuals as `data.table` (preferably) or `data.frame`.
+#' by the child classes and return the counterfactuals as `data.table` (preferably) or `data.frame`.
 #' 
 #' @section Inheritance:
 #' Child classes: \link{MOCRegr}, \link{WhatIfRegr}

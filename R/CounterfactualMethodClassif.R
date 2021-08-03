@@ -5,7 +5,7 @@
 #' 
 #' `CounterfactualMethodClassif` can only be initialized for classification tasks. Child classes inherit the (public) 
 #' `$find_counterfactuals()` method, which calls a (private) `$run()` method. This `$run()` method should be implemented 
-#' by the child classes and return the found counterfactuals as `data.table` (preferably) or `data.frame`.
+#' by the child classes and return the counterfactuals as `data.table` (preferably) or `data.frame`.
 #' 
 #' @section Inheritance:
 #' Child classes: \link{MOCClassif}, \link{WhatIfClassif}, \link{NICEClassif}
@@ -27,7 +27,7 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit
     
     #' @description 
     #' 
-    #' Runs the counterfactual explanation method and returns the counterfactuals found.
+    #' Runs the counterfactual explanation method and returns the counterfactuals.
     #' It searches for counterfactuals that have a predicted probability `desired_prob` for the `desired_class`.
     #' 
     #' @template x_interest

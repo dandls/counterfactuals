@@ -7,7 +7,7 @@
 NICE (Brughmans and Martens, 2021) starts the counterfactual search for \code{x_interest} by finding its nearest
 (optionally) correctly classified neighbor \code{x_nn}. The \link[UBL]{distances} function that implements the
 Heterogeneous Euclidean Overlap Method (HEOM) (Wilson and Martinez, 1997) is used to compute the distances. \cr
-Once \code{x_nn} is found, NICE iteratively replaces feature values of \code{x_interest} with the corresponding values of \code{x_nn} to optimize
+Once \code{x_nn} was found, NICE iteratively replaces feature values of \code{x_interest} with the corresponding values of \code{x_nn} to optimize
 some predefined reward function. Available reward functions are \code{sparsity} \code{proximity} and \code{plausibility}. \cr
 Our NICE implementation is equivalent to the original version if \code{return_multiple = FALSE}, \code{finish_early = TRUE} and
 \code{x_nn_correct_classif = TRUE}.

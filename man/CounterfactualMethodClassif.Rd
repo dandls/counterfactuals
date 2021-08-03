@@ -8,7 +8,7 @@ Abstract base class for counterfactual explanation methods for classifcation tas
 
 \code{CounterfactualMethodClassif} can only be initialized for classification tasks. Child classes inherit the (public)
 \verb{$find_counterfactuals()} method, which calls a (private) \verb{$run()} method. This \verb{$run()} method should be implemented
-by the child classes and return the found counterfactuals as \code{data.table} (preferably) or \code{data.frame}.
+by the child classes and return the counterfactuals as \code{data.table} (preferably) or \code{data.frame}.
 }
 \section{Inheritance}{
 
@@ -63,7 +63,7 @@ If \code{NULL} (default) \code{upper} is taken for each numeric feature as its m
 \if{html}{\out{<a id="method-find_counterfactuals"></a>}}
 \if{latex}{\out{\hypertarget{method-find_counterfactuals}{}}}
 \subsection{Method \code{find_counterfactuals()}}{
-Runs the counterfactual explanation method and returns the counterfactuals found.
+Runs the counterfactual explanation method and returns the counterfactuals.
 It searches for counterfactuals that have a predicted probability \code{desired_prob} for the \code{desired_class}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CounterfactualMethodClassif$find_counterfactuals(

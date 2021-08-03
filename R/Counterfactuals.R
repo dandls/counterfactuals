@@ -2,7 +2,7 @@
 #'
 #' @description 
 #' A `Counterfactuals` object should be created by \link{CounterfactualMethodRegr} or \link{CounterfactualMethodClassif}.
-#' It contains the found counterfactuals and has several methods for their evaluation and visualization.
+#' It contains the counterfactuals and has several methods for their evaluation and visualization.
 #' 
 #' @references 
 #' 
@@ -18,7 +18,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #' This method should only be called within the `$find_counterfactuals` methods of \link{CounterfactualMethodRegr} 
     #' and \link{CounterfactualMethodClassif}.
     #' @param cfactuals (`data.table`) \cr
-    #'  The counterfactuals found. Must have the same column names and types as `predictor$data$X`.
+    #'  The counterfactuals. Must have the same column names and types as `predictor$data$X`.
     #' @template lower_upper
     #' @template x_interest
     #' @template predictor
@@ -328,7 +328,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
     },
     #' @field data (`data.table`)\cr
-    #'  The counterfactuals found.
+    #'  The counterfactuals.
     data = function(value) {
       if (missing(value)) {
         private$.data

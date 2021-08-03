@@ -5,7 +5,7 @@
 \title{Counterfactuals Class}
 \description{
 A \code{Counterfactuals} object should be created by \link{CounterfactualMethodRegr} or \link{CounterfactualMethodClassif}.
-It contains the found counterfactuals and has several methods for their evaluation and visualization.
+It contains the counterfactuals and has several methods for their evaluation and visualization.
 }
 \references{
 Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
@@ -21,7 +21,7 @@ For regression tasks it has one element \code{desired_outcome} (\link{Counterfac
 classification tasks two elements \code{desired_class} and \code{desired_prob} (\link{CounterfactualMethodRegr}).}
 
 \item{\code{data}}{(\code{data.table})\cr
-The counterfactuals found.}
+The counterfactuals.}
 
 \item{\code{x_interest}}{(\code{data.table(1)}) \cr
 A single row with the observation of interest.}
@@ -57,7 +57,7 @@ and \link{CounterfactualMethodClassif}.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{cfactuals}}{(\code{data.table}) \cr
-The counterfactuals found. Must have the same column names and types as \code{predictor$data$X}.}
+The counterfactuals. Must have the same column names and types as \code{predictor$data$X}.}
 
 \item{\code{predictor}}{(\link[iml]{Predictor})\cr
 The object (created with \code{iml::Predictor$new()}) holding the machine learning model and the data.}
