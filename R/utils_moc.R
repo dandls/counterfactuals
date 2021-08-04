@@ -149,7 +149,7 @@ reset_columns = function(values, p_use_orig, max_changed, x_interest) {
 
 # Slightly adapted from miesmuschel::ScalorNondom
 # Penalizes candidates whose distance between their prediction and target exceeds epsilon by moving them up by shifting 
-# them up by one front.
+# them up by to the last fronts.
 ScalorNondomPenalized = R6::R6Class("ScalorNondomPenalized", inherit = Scalor,
   
   public = list(
@@ -173,15 +173,14 @@ ScalorNondomPenalized = R6::R6Class("ScalorNondomPenalized", inherit = Scalor,
       }
       sorted = order_nondominated(fitnesses)$fronts
       
-      # Add penalization for individuals with -dist_target lower than -epsilon (shifted up by one front)
+      # Add penalization for individuals with -dist_target lower than -epsilon
       epsilon = params$epsilon
       if (is.null(epsilon)) epsilon = Inf
       is_penalized = fitnesses[colnames(fitnesses) == "dist_target"] < -epsilon
       sorted[is_penalized] = max(sorted) + order(fitnesses[colnames(fitnesses) == "dist_target"][is_penalized])
       front_indexes = sort(unique(sorted))
-      
       fronts = lapply(split(as.data.frame(fitnesses), sorted), as.matrix)
-      subranks = lapply(fronts, function(x) rank(dist_crowding(x)) / (length(x) + 1))
+      subranks = lapply(fronts, function(x) rank(dist_crowding_custom(x, values)) / (length(x) + 1))
       for (i in seq_along(subranks)) {
         sr = subranks[[i]]
         # There may be empty fronts in very few cases due to penalization. Therefore this is slightly adapted from 
@@ -195,6 +194,43 @@ ScalorNondomPenalized = R6::R6Class("ScalorNondomPenalized", inherit = Scalor,
     }
   )
 )
+
+# Computes crowding distance in target and feature space
+# source: https://github.com/susanne-207/moc/blob/master/counterfactuals/R/generate_counterfactuals.R#L237
+dist_crowding_custom = function(fitnesses, candidates) {
+  
+  assert_matrix(fitnesses, mode = "numeric", any.missing = FALSE, min.cols = 1, min.rows = 1)
+  assert_data_table(candidates, min.rows = 1L)
+  
+  fitnesses = t(fitnesses)
+  candidates_this_front = candidates[as.numeric(colnames(fitnesses))]
+  
+  n = ncol(fitnesses)
+  max = apply(fitnesses, 1L, max)
+  min = apply(fitnesses, 1L, min)
+  ods = dds = cds = numeric(n)
+  g.dist = StatMatch::gower.dist(candidates_this_front, KR.corr = FALSE)
+  
+  for (i in seq_len(4L)) {
+    # get the order of the points when sorted according to the i-th objective
+    ord = order(fitnesses[i, ])
+    
+    # set the extreme values to Inf
+    ods[ord[c(1L, n)]] = dds[ord[c(1L, n)]] = Inf
+    
+    # update the remaining crowding numbers
+    if (n > 2L) {
+      for (j in 2:(n - 1L)) {
+        ods[ord[j]] = ods[ord[j]] + (fitnesses[i, ord[j + 1L]] - fitnesses[i, ord[j - 1L]]) / (max[i] - min[i])
+        dds[ord[j]] = dds[ord[j]] + g.dist[ord[j], ord[j - 1L]] + g.dist[ord[j], ord[j + 1L]]
+      }
+    }
+  }
+  
+  cds = rank(ods, ties.method = "random") + rank(dds, ties.method = "random")
+  jitter(cds, factor = 1L)
+}
+
 
 make_moc_mutator = function(ps, x_interest, max_changed, sdevs, p_mut, p_mut_gen, p_mut_use_orig) {
   ops_list = list()
@@ -531,7 +567,7 @@ MutatorConditional = R6::R6Class("MutatorConditional", inherit = Mutator,
     .mutate = function(values, context) {
       values_mutated = copy(values)
       for (i in seq_len(nrow(values))) {
-        for (j in names(values)) {
+        for (j in sample(names(values))) {
           set(values_mutated, i, j, value = private$cond_sampler[[j]]$sample(values[i, ]))
         }
       }
