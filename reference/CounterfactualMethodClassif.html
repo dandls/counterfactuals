@@ -43,7 +43,7 @@
 <meta property="og:description" content="Abstract base class for counterfactual explanation methods for classifcation task.
 CounterfactualMethodClassif can only be initialized for classification tasks. Child classes inherit the (public)
 $find_counterfactuals() method, which calls a (private) $run() method. This $run() method should be implemented
-by the child classes and return the found counterfactuals as data.table (preferably) or data.frame." />
+by the child classes and return the counterfactuals as data.table (preferably) or data.frame." />
 
 
 
@@ -138,7 +138,7 @@ by the child classes and return the found counterfactuals as data.table (prefera
     <p>Abstract base class for counterfactual explanation methods for classifcation task.</p>
 <p><code>CounterfactualMethodClassif</code> can only be initialized for classification tasks. Child classes inherit the (public)
 <code>$find_counterfactuals()</code> method, which calls a (private) <code>$run()</code> method. This <code>$run()</code> method should be implemented
-by the child classes and return the found counterfactuals as <code>data.table</code> (preferably) or <code>data.frame</code>.</p>
+by the child classes and return the counterfactuals as <code>data.table</code> (preferably) or <code>data.frame</code>.</p>
     </div>
 
 
@@ -188,7 +188,7 @@ If <code>NULL</code> (default) <code>upper</code> is taken for each numeric feat
 </dl><p></div></p>
 <p><hr>
 <a id="method-find_counterfactuals"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>find_counterfactuals()</code></h3>
-<p>Runs the counterfactual explanation method and returns the counterfactuals found.
+<p>Runs the counterfactual explanation method and returns the counterfactuals.
 It searches for counterfactuals that have a predicted probability <code>desired_prob</code> for the <code>desired_class</code>.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
 <p><div class="r"></p><pre><span class='va'>CounterfactualMethodClassif</span><span class='op'>$</span><span class='fu'>find_counterfactuals</span><span class='op'>(</span>
   <span class='va'>x_interest</span>,

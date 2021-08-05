@@ -41,7 +41,7 @@
 
 <meta property="og:title" content="Counterfactuals Class — Counterfactuals" />
 <meta property="og:description" content="A Counterfactuals object should be created by CounterfactualMethodRegr or CounterfactualMethodClassif.
-It contains the found counterfactuals and has several methods for their evaluation and visualization." />
+It contains the counterfactuals and has several methods for their evaluation and visualization." />
 
 
 
@@ -134,7 +134,7 @@ It contains the found counterfactuals and has several methods for their evaluati
 
     <div class="ref-description">
     <p>A <code>Counterfactuals</code> object should be created by <a href='CounterfactualMethodRegr.html'>CounterfactualMethodRegr</a> or <a href='CounterfactualMethodClassif.html'>CounterfactualMethodClassif</a>.
-It contains the found counterfactuals and has several methods for their evaluation and visualization.</p>
+It contains the counterfactuals and has several methods for their evaluation and visualization.</p>
     </div>
 
 
@@ -152,7 +152,7 @@ For regression tasks it has one element <code>desired_outcome</code> (<a href='C
 classification tasks two elements <code>desired_class</code> and <code>desired_prob</code> (<a href='CounterfactualMethodRegr.html'>CounterfactualMethodRegr</a>).</p></dd>
 
 <dt><code>data</code></dt><dd><p>(<code>data.table</code>)<br />
-The counterfactuals found.</p></dd>
+The counterfactuals.</p></dd>
 
 <dt><code>x_interest</code></dt><dd><p>(<code>data.table(1)</code>) <br />
 A single row with the observation of interest.</p></dd>
@@ -184,7 +184,7 @@ and <a href='CounterfactualMethodClassif.html'>CounterfactualMethodClassif</a>.<
 <h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
 <p><div class="arguments"></p><dl>
 <dt><code>cfactuals</code></dt><dd><p>(<code>data.table</code>) <br />
-The counterfactuals found. Must have the same column names and types as <code>predictor$data$X</code>.</p></dd>
+The counterfactuals. Must have the same column names and types as <code>predictor$data$X</code>.</p></dd>
 
 <dt><code>predictor</code></dt><dd><p>(<a href='https://christophm.github.io/iml/reference/Predictor.html'>Predictor</a>)<br />
 The object (created with <code>iml::Predictor$new()</code>) holding the machine learning model and the data.</p></dd>

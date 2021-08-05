@@ -43,7 +43,7 @@
 <meta property="og:description" content="NICE (Brughmans and Martens, 2021) starts the counterfactual search for x_interest by finding its nearest
 (optionally) correctly classified neighbor x_nn. The distances function that implements the
 Heterogeneous Euclidean Overlap Method (HEOM) (Wilson and Martinez, 1997) is used to compute the distances. 
-Once x_nn is found, NICE iteratively replaces feature values of x_interest with the corresponding values of x_nn to optimize
+Once x_nn was found, NICE iteratively replaces feature values of x_interest with the corresponding values of x_nn to optimize
 some predefined reward function. Available reward functions are sparsity proximity and plausibility. 
 Our NICE implementation is equivalent to the original version if return_multiple = FALSE, finish_early = TRUE and
 x_nn_correct_classif = TRUE." />
@@ -141,7 +141,7 @@ x_nn_correct_classif = TRUE." />
     <p>NICE (Brughmans and Martens, 2021) starts the counterfactual search for <code>x_interest</code> by finding its nearest
 (optionally) correctly classified neighbor <code>x_nn</code>. The <a href='https://rdrr.io/pkg/UBL/man/Distances.html'>distances</a> function that implements the
 Heterogeneous Euclidean Overlap Method (HEOM) (Wilson and Martinez, 1997) is used to compute the distances. <br />
-Once <code>x_nn</code> is found, NICE iteratively replaces feature values of <code>x_interest</code> with the corresponding values of <code>x_nn</code> to optimize
+Once <code>x_nn</code> was found, NICE iteratively replaces feature values of <code>x_interest</code> with the corresponding values of <code>x_nn</code> to optimize
 some predefined reward function. Available reward functions are <code>sparsity</code> <code>proximity</code> and <code>plausibility</code>. <br />
 Our NICE implementation is equivalent to the original version if <code>return_multiple = FALSE</code>, <code>finish_early = TRUE</code> and
 <code>x_nn_correct_classif = TRUE</code>.</p>
@@ -266,11 +266,17 @@ has the desired prediction? Default is <code>TRUE</code>.</p></dd>
 <span class='op'>}</span>
 </div><div class='output co'>#&gt; [[1]]
 #&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width reward setosa versicolor
-#&gt; 1:          5.9           3          4.2         1.8  0.462      0       0.51
-#&gt; 2:          5.9           3          5.1         1.5  0.392      0       0.44
+#&gt; 1:          5.9           3          4.2         1.8  0.452      0      0.484
+#&gt; 2:          5.9           3          5.1         1.5  0.422      0      0.454
 #&gt;    virginica
-#&gt; 1:      0.49
-#&gt; 2:      0.56
+#&gt; 1:     0.516
+#&gt; 2:     0.546
+#&gt; 
+#&gt; [[2]]
+#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width reward setosa versicolor
+#&gt; 1:          5.9           3          4.2         1.5  0.514      0      0.998
+#&gt;    virginica
+#&gt; 1:     0.002
 #&gt; </div><div class='input'>
 </div></pre>
   </div>
