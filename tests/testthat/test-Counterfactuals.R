@@ -128,10 +128,9 @@ test_that("evaluate returns correct results", {
   exp_dist_target[between(cf$predict(), des_outcome[1L], des_outcome[2L])] = 0L
   expect_identical(cf_eval$dist_target, sort(exp_dist_target))
   
-  ps = cf$.__enclos_env__$private$param_set
   expect_identical(
     sort(cf_eval$dist_x_interest), 
-    sort(as.vector(StatMatch::gower.dist(cf$data, cf$x_interest, rngs = ps$upper - ps$lower)))
+    sort(gower::gower_topn(cf$data, cf$x_interest, n = 1L, nthread = 1L)$distance[1L, ])
   )
 })
 

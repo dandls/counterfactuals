@@ -30,13 +30,7 @@ make_cfactuals_diff = function(cfactuals, x_interest) {
 }
 
 count_changes = function(cfactuals, x_interest) {
-  assert_data_table(cfactuals)
-  assert_data_table(x_interest, nrows = 1L)
-  assert_true(ncol(cfactuals) == ncol(x_interest))
-  assert_true(all(names(cfactuals) == names(x_interest)))
-  cfactuals_temp = copy(cfactuals)
-  cfactuals_temp[, n_changes := sum(.SD != x_interest), by = seq_len(nrow(cfactuals_temp))]
-  as.integer(cfactuals_temp$n_changes)
+  cfactuals[, sum(.SD != x_interest), by = seq_len(nrow(cfactuals))][[2L]]
 }
 
 make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest, predictor, feature_names, 

@@ -102,12 +102,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
       
       if ("dist_x_interest" %in% measures) {
-        ranges = private$param_set$upper - private$param_set$lower
-        X_list = split(private$.data, seq(nrow(private$.data)))
-        dist_vector = future.apply::future_vapply(
-          X_list, StatMatch::gower.dist, FUN.VALUE = numeric(1L), private$.x_interest, ranges, USE.NAMES = FALSE
-        )
-        evals$dist_x_interest = dist_vector
+        evals$dist_x_interest = gower::gower_dist(private$.data, private$.x_interest)
       }
       
       if ("nr_changed" %in% measures) {
@@ -115,23 +110,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
       
       if ("dist_train" %in% measures) {
-        ranges = private$param_set$upper - private$param_set$lower
-        X_list = split(private$predictor$data$X, seq(nrow(private$predictor$data$X)))
-        dist_l = future.apply::future_lapply(X_list, StatMatch::gower.dist, private$.data, rngs = ranges, KR.corr = FALSE)
-        dist_m = do.call(rbind, dist_l)
-        evals$dist_train = apply(
-          dist_m,
-          MARGIN = 2L,
-          FUN = function(dist) {
-            d = sort(dist)[1:k]
-            if (!is.null(weights)) {
-              d = weighted.mean(d, w = weights)
-            } else {
-              d = mean(d)
-            }
-            d
-          }
-        )
+        evals$dist_train = gower::gower_topn(private$.data, private$predictor$data$X, n = 1L, nthread = 1L)$distance[1L, ]
       }
       
       if ("dist_target" %in% measures) {

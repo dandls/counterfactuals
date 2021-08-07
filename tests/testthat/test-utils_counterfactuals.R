@@ -20,7 +20,7 @@ test_that("count_changes method computes changes correctly", {
   nr_changed = count_changes(cfactuals, x_interest)
   expect_identical(nr_changed, c(2L, 2L, 1L))
   
-  cfactuals = data.table(a = c(1.5457, 1), b = c("a", "b"))
-  x_interest = data.table(a = 1, b = "b")
+  cfactuals = data.table(a = c(1.5457, 1.0000), b = c("a", "b"))
+  x_interest = data.table(a = 1.0000, b = "b")
   expect_identical(count_changes(cfactuals, x_interest), c(2L, 0L))
 })

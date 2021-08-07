@@ -1,13 +1,11 @@
-make_fitness_function = function(predictor, x_interest, param_set, pred_column, target, weights, k, fixed_features) {
+make_fitness_function = function(predictor, x_interest, pred_column, target, weights, k, fixed_features) {
   
-  param_range = param_set$upper - param_set$lower
   function(xdt) {
     # Add values of fixed_features just for prediction
     if (!is.null(fixed_features)) {
       xdt[, (fixed_features) := x_interest[, fixed_features, with = FALSE]]
     }
     xdt = xdt[, names(x_interest), with = FALSE]
-    
     factor_cols = names(which(sapply(predictor$data$X, is.factor)))
     for (factor_col in factor_cols) {
       fact_col_pred = predictor$data$X[[factor_col]]
@@ -21,22 +19,14 @@ make_fitness_function = function(predictor, x_interest, param_set, pred_column, 
     pred = predictor$predict(xdt)[[pred_column]]
     
     dist_target = sapply(pred, function(x) ifelse(between(x, target[1L], target[2L]), 0, min(abs(x - target))))
-    dist_x_interest = as.vector(StatMatch::gower.dist(x_interest, xdt, rngs = param_range, KR.corr = FALSE))
+    dist_x_interest = gower::gower_dist(xdt, x_interest, nthread = 1L)
     nr_changed = rowSums(xdt != x_interest[rep(seq_len(nrow(x_interest)), nrow(xdt)), ])
-    X_list = split(predictor$data$X, seq(nrow(predictor$data$X)))
-    dist_train = apply(
-      future.apply::future_sapply(X_list, StatMatch::gower.dist, xdt, rngs = param_range, KR.corr = FALSE),
-      MARGIN = 1L,
-      FUN = function(dist) {
-        d = sort(dist)[1:k]
-        if (!is.null(weights)) {
-          d = weighted.mean(d, w = weights)
-        } else {
-          d = mean(d)
-        }
-        d
-      }
-    )
+    dist_train = gower::gower_topn(x = xdt, y = predictor$data$X, n = k, nthread = 1L)$distance
+    if (!is.null(weights)) {
+      dist_train = apply(dist_train, 2L, weighted.mean, w = weights)
+    } else {
+      dist_train = apply(dist_train, 2L, mean)
+    }
     data.table(cbind(dist_target, dist_x_interest, nr_changed, dist_train))
   }
 }
@@ -114,17 +104,16 @@ RecombinatorReset = R6::R6Class("RecombinatorReset", inherit = Recombinator,
 # `max_changed` features are changed
 reset_columns = function(values, p_use_orig, max_changed, x_interest) {
   values_reset = copy(values)
+
+  # Removes fixed features from x_interest, if present, as only flex features are contained in values_reset
+  x_interest_sub = x_interest[, names(values_reset), with = FALSE]
+  
+  factor_cols = which(sapply(x_interest_sub, is.factor))
+  if (length(factor_cols) > 0L) {
+    x_interest_sub[, (factor_cols) := lapply(.SD, as.character), .SDcols = factor_cols]
+  }
   
   for (i in seq_len(nrow(values_reset))) {
-
-    # Removes fixed features from x_interest, if present, as only flex features are contained in values_reset
-    x_interest_sub = x_interest[, names(values_reset), with = FALSE]
-    
-    factor_cols = which(sapply(x_interest_sub, is.factor))
-    if (length(factor_cols) > 0L) {
-      x_interest_sub[, (factor_cols) := lapply(.SD, as.character), .SDcols = factor_cols]
-    }
-    
     # Reset columns with prob p_use_orig
     idx_reset = which(sample(
       c(TRUE, FALSE), size = ncol(values_reset), replace = TRUE, prob = c(p_use_orig, 1 - p_use_orig)
@@ -133,7 +122,7 @@ reset_columns = function(values, p_use_orig, max_changed, x_interest) {
     if (length(idx_reset) > 0L) {
       set(values_reset, i, j = idx_reset, value = x_interest_sub[, ..idx_reset])
     }
-    
+
     # If more changes than allowed, randomly reset some features such that constraint holds
     n_changes = count_changes(values_reset[i, ], x_interest_sub)
     if (!is.null(max_changed)) {
@@ -209,7 +198,8 @@ dist_crowding_custom = function(fitnesses, candidates) {
   max = apply(fitnesses, 1L, max)
   min = apply(fitnesses, 1L, min)
   ods = dds = cds = numeric(n)
-  g.dist = StatMatch::gower.dist(candidates_this_front, KR.corr = FALSE)
+  
+  g_dist = StatMatch::gower.dist(candidates_this_front, KR.corr = FALSE)
   
   for (i in seq_len(4L)) {
     # get the order of the points when sorted according to the i-th objective
@@ -222,7 +212,7 @@ dist_crowding_custom = function(fitnesses, candidates) {
     if (n > 2L) {
       for (j in 2:(n - 1L)) {
         ods[ord[j]] = ods[ord[j]] + (fitnesses[i, ord[j + 1L]] - fitnesses[i, ord[j - 1L]]) / (max[i] - min[i])
-        dds[ord[j]] = dds[ord[j]] + g.dist[ord[j], ord[j - 1L]] + g.dist[ord[j], ord[j + 1L]]
+        dds[ord[j]] = dds[ord[j]] + g_dist[ord[j], ord[j - 1L]] + g_dist[ord[j], ord[j + 1L]]
       }
     }
   }

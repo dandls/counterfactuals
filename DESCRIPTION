@@ -21,7 +21,8 @@ Imports:
     future.apply,
     paradox,
     miesmuschel,
-    bbotk
+    bbotk,
+    gower
 Suggests: 
     randomForest,
     GGally,

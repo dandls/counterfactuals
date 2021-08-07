@@ -10,7 +10,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
   ))
   
   fitness_function = make_fitness_function(
-    predictor, x_interest, param_set, pred_column, target, weights, k, fixed_features
+    predictor, x_interest, pred_column, target, weights, k, fixed_features
   )
   
   flex_cols = setdiff(names(x_interest), fixed_features)
