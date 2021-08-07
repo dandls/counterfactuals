@@ -22,7 +22,7 @@ test_that("whatif_algo returns correct counterfactuals", {
   expect_numeric(mod$predict(res)[["versicolor"]], lower = desired[1L], upper = desired[2L])
   
   versicolor_only = subset(iris, Species == "versicolor", select = -Species)
-  dist_vector = as.vector(StatMatch::gower.dist(x_interest, versicolor_only, rngs = sapply(mod$data$X, sd, na.rm = TRUE)))
+  dist_vector = as.vector(gower::gower_dist(x_interest, versicolor_only))
   cf_expected = as.data.table(head(versicolor_only[order(dist_vector), ], n))
   expect_identical(res, cf_expected)
 })
@@ -50,17 +50,3 @@ test_that("whatif_algo returns warning and empty data.table with correct columns
 })
 
 
-test_that("whatif_algo returns equal results with and without parallelization", {
-  skip_if_not(parallel::detectCores() > 1L)
-  set.seed(54542142)
-  rf = get_rf_classif_iris()
-  mod = Predictor$new(rf, data = iris, y = "Species")
-  x_interest = iris[1L, -5L]
-  desired = c(0.7, 1)
-  n = 5L
-  future::plan(future::multisession, workers = parallel::detectCores() - 1L)
-  par = whatif_algo(mod, n, x_interest, "versicolor", desired, X_search = mod$data$X)
-  future::plan(future::sequential)
-  sequ = whatif_algo(mod, n, x_interest, "versicolor", desired, X_search = mod$data$X)
-  expect_equal(par, sequ)
-})

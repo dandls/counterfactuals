@@ -85,10 +85,7 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
       private$return_multiple = return_multiple
       private$finish_early = finish_early
       private$y_hat = private$predictor$predict(predictor$data$X)
-      
-      if (!requireNamespace("UBL", quietly = TRUE)) {
-        stop("Package 'UBL' needed for this function to work. Please install it.", call. = FALSE)
-      }
+
       if (private$optimization == "plausibility") {
         if (!requireNamespace("keras", quietly = TRUE)) {
           stop("Package 'keras' needed for this function to work. Please install it.", call. = FALSE)
@@ -165,29 +162,7 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
         return(predictor$data$X[0L])
       }
       
-      # UBL::distances cannot deal with columns that have two classes (e.g. ordered factors)
-      # Therefore ordering is removed
-      idx_ordered_factor = which(sapply(candidates_x_nn, function(x) test_factor(x, ordered = TRUE)))
-      x_interest = private$x_interest
-      candidates_x_nn_temp = candidates_x_nn
-      if (length(idx_ordered_factor) > 0L) {
-        x_interest = copy(private$x_interest)
-        candidates_x_nn_temp = copy(candidates_x_nn)
-        candidates_x_nn_temp[, (idx_ordered_factor) := lapply(.SD, factor, ordered = FALSE), .SDcols = idx_ordered_factor]
-        x_interest[, (idx_ordered_factor) := lapply(.SD, factor, ordered = FALSE), .SDcols = idx_ordered_factor]
-      }
-      candidates_x_nn_list = split(candidates_x_nn_temp, seq(nrow(candidates_x_nn_temp)))
-      distance = future.apply::future_vapply(
-        candidates_x_nn_list, function(x) {
-          df = data.frame(rbind(x_interest, x))
-          df$class = "1"
-          UBL::distances(3L, df, dist = "HEOM", p = 1L)[1L, 2L]
-
-        },
-        FUN.VALUE = numeric(1L),  USE.NAMES = FALSE
-      )
-
-      private$.x_nn = candidates_x_nn[which.min(distance)]
+      private$.x_nn = candidates_x_nn[gower::gower_topn(private$x_interest, candidates_x_nn, n = 1L)$index]
       x_current = copy(private$x_interest)
       
       finished = FALSE

@@ -17,8 +17,6 @@ Imports:
     StatMatch,
     iml,
     data.table,
-    future,
-    future.apply,
     paradox,
     miesmuschel,
     bbotk,
@@ -39,8 +37,7 @@ Suggests:
     rmarkdown,
     basefun,
     featureTweakR,
-    mlbench,
-    UBL
+    mlbench
 License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.1.1

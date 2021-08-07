@@ -93,6 +93,7 @@ test_that("Can handle non-numeric target classes", {
 test_that("Can handle ordered factor input columns", {
   set.seed(5748554)
   data("german", package = "rchallenge")
+  german = droplevels(german)
   rf =  randomForest(credit_risk ~ ., data = german)
   x_interest = german[991L, -ncol(german)]
   pred_credit = iml::Predictor$new(rf, data = german, y = "credit_risk", type = "prob")
@@ -135,24 +136,6 @@ test_that("Returns warning if no counterfactuals could be found", {
   x_interest = head(subset(mydf, select = -am), n = 1L)
   nice_classif = NICEClassif$new(pred, optimization = "sparsity", x_nn_correct_classif = TRUE)
   expect_snapshot({cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "0", desired_prob = 0.454851)})
-})
-
-
-test_that("Returns equal results with and without parallelization", {
-  skip_if_not(parallel::detectCores() > 1L)
-  skip_on_ci()
-  set.seed(54542142)
-  rf = get_rf_classif_iris()
-  mod = Predictor$new(rf, data = iris, y = "Species")
-  x_interest = iris[1L, ]
-  set.seed(54542142)
-  nice_classif = NICEClassif$new(mod, optimization = "sparsity")
-  future::plan(future::multisession, workers = parallel::detectCores() - 1L)
-  set.seed(54542142)
-  par = nice_classif$find_counterfactuals(x_interest, "versicolor", c(0.7, 1))
-  future::plan(future::sequential)
-  sequ = nice_classif$find_counterfactuals(x_interest, "versicolor", c(0.7, 1))
-  expect_equal(par, sequ)
 })
 
 

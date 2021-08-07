@@ -39,11 +39,6 @@ CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = Cou
       if (any(sapply(x_interest, typeof) != sapply(private$predictor$data$X, typeof))) {
         stop("Columns that appear in `x_interest` and `predictor$data$X` must have the same types.")
       }
-      temp = copy(x_interest)
-      factor_cols = names(temp)[sapply(temp, is.factor)]
-      if (length(factor_cols) > 0) {
-        temp[, (factor_cols) := lapply(.SD, as.character), .SDcols = factor_cols]
-      }
 
       # Checks desired_outcome
       assert_numeric(desired_outcome, any.missing = FALSE, min.len = 1L,  max.len = 2L)
