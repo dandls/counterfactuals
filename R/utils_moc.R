@@ -322,8 +322,9 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
           
           # p_min and p_max set to default values stated in MOC paper
           p_min = 0.01
-          p_pax = 0.99
-          p_differs = (ice_sds - min(ice_sds)) * (p_pax - p_min) / (max(ice_sds) - min(ice_sds)) + p_min
+          p_max = 0.99
+          p_differs = (ice_sds - min(ice_sds)) * (p_max - p_min) / 
+            (max(ice_sds) - min(ice_sds) + sqrt(.Machine$double.eps)) + p_min
 
           x_interest_sub = copy(x_interest)
           fixed_cols = which(!names(mydesign$data) %in% flex_cols)
