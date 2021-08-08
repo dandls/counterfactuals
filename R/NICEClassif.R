@@ -178,14 +178,19 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
         f_x_current = predictor$predict(x_current)[desired_class][[1L]]
         f_X_candidates = predictor$predict(X_candidates)[desired_class][[1L]]
         
+        dist_to_interval = function(x, interval) {
+          sapply(x, function(z) {
+            ifelse(between(z, interval[1L], interval[2L]), 0, min(abs(z - interval)))
+          })
+        }
+        d_f_x_current = dist_to_interval(f_x_current, desired_prob)
+        d_f_X_candidates = dist_to_interval(f_X_candidates, desired_prob)
         if (private$optimization == "sparsity") {
-          reward = abs(f_x_current - f_X_candidates)
-          
+          reward = d_f_x_current - d_f_X_candidates
         } else if (private$optimization == "proximity") {
           d_X_candidates = StatMatch::gower.dist(X_candidates, private$x_interest)
           d_x_current = as.vector(StatMatch::gower.dist(x_current, private$x_interest))
-          reward = abs((f_x_current - f_X_candidates) / (d_X_candidates - d_x_current + sqrt(.Machine$double.eps)))
-          
+          reward = (d_f_x_current - d_f_X_candidates) / (d_X_candidates - d_x_current + sqrt(.Machine$double.eps))
         } else {
           
           X_candidates_pp = private$aep$preprocess(X_candidates)
@@ -196,7 +201,7 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
           
           ae_pred_x = private$ae_model$predict(as.matrix(x_current_pp))
           AE_loss_x = rowMeans((x_current_pp - ae_pred_x)^2)
-          reward = abs((f_x_current - f_X_candidates) * (AE_loss_x - AE_loss_X_candidates))
+          reward = (d_f_x_current - d_f_X_candidates) * (AE_loss_x - AE_loss_X_candidates)
         }
         
         x_current = X_candidates[which.max(reward)]
