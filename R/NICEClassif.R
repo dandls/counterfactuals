@@ -162,7 +162,7 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
         return(predictor$data$X[0L])
       }
       
-      private$.x_nn = candidates_x_nn[gower::gower_topn(private$x_interest, candidates_x_nn, n = 1L)$index]
+      private$.x_nn = candidates_x_nn[gower_topn(private$x_interest, candidates_x_nn, n = 1L)$index]
       x_current = copy(private$x_interest)
       
       finished = FALSE
@@ -188,8 +188,8 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
         if (private$optimization == "sparsity") {
           reward = d_f_x_current - d_f_X_candidates
         } else if (private$optimization == "proximity") {
-          d_X_candidates = StatMatch::gower.dist(X_candidates, private$x_interest)
-          d_x_current = as.vector(StatMatch::gower.dist(x_current, private$x_interest))
+          d_X_candidates = gower_dist(X_candidates, private$x_interest)
+          d_x_current = gower_dist(x_current, private$x_interest)
           reward = (d_f_x_current - d_f_X_candidates) / (d_X_candidates - d_x_current + sqrt(.Machine$double.eps))
         } else {
           

@@ -10,7 +10,7 @@ whatif_algo = function(predictor, n_cfactuals, x_interest, pred_column, desired_
     return(X_search)
   }
   
-  idx = gower::gower_topn(x_interest, X_search, n = n_cfactuals)$index
+  idx = gower_topn(x_interest, X_search, n = n_cfactuals)$index
   idx = idx[idx > 0L]
   X_search[idx]
 }

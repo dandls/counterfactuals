@@ -130,7 +130,7 @@ test_that("evaluate returns correct results", {
   
   expect_identical(
     sort(cf_eval$dist_x_interest), 
-    sort(gower::gower_topn(cf$data, cf$x_interest, n = 1L, nthread = 1L)$distance[1L, ])
+    sort(gower_topn(cf$data, cf$x_interest, n = 1L)$distance[1L, ])
   )
 })
 

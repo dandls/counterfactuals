@@ -25,10 +25,6 @@
     Code
       cfactuals = quiet(moc_classif$find_counterfactuals(x_interest, desired_class = "good",
         desired_prob = c(0.8, 1)))
-    Warning <simpleWarning>
-      skipping variable with zero or non-finite range
-      skipping variable with zero or non-finite range
-      skipping variable with zero or non-finite range
     Message <simpleMessage>
       `x_interest` was removed from results.
 

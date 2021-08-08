@@ -22,7 +22,7 @@ test_that("whatif_algo returns correct counterfactuals", {
   expect_numeric(mod$predict(res)[["versicolor"]], lower = desired[1L], upper = desired[2L])
   
   versicolor_only = subset(iris, Species == "versicolor", select = -Species)
-  dist_vector = as.vector(gower::gower_dist(x_interest, versicolor_only))
+  dist_vector = as.vector(gower_dist(x_interest, versicolor_only))
   cf_expected = as.data.table(head(versicolor_only[order(dist_vector), ], n))
   expect_identical(res, cf_expected)
 })

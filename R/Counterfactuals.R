@@ -102,7 +102,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
       
       if ("dist_x_interest" %in% measures) {
-        evals$dist_x_interest = gower::gower_dist(private$.data, private$.x_interest)
+        evals$dist_x_interest = gower_dist(private$.data, private$.x_interest)
       }
       
       if ("nr_changed" %in% measures) {
@@ -110,7 +110,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
       
       if ("dist_train" %in% measures) {
-        evals$dist_train = gower::gower_topn(private$.data, private$predictor$data$X, n = 1L, nthread = 1L)$distance[1L, ]
+        evals$dist_train = gower_topn(private$.data, private$predictor$data$X, n = 1L)$distance[1L, ]
       }
       
       if ("dist_target" %in% measures) {

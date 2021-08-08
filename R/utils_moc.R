@@ -19,9 +19,9 @@ make_fitness_function = function(predictor, x_interest, pred_column, target, wei
     pred = predictor$predict(xdt)[[pred_column]]
     
     dist_target = sapply(pred, function(x) ifelse(between(x, target[1L], target[2L]), 0, min(abs(x - target))))
-    dist_x_interest = gower::gower_dist(xdt, x_interest, nthread = 1L)
+    dist_x_interest = gower_dist(xdt, x_interest)
     nr_changed = rowSums(xdt != x_interest[rep(seq_len(nrow(x_interest)), nrow(xdt)), ])
-    dist_train = gower::gower_topn(x = xdt, y = predictor$data$X, n = k, nthread = 1L)$distance
+    dist_train = gower_topn(x = xdt, y = predictor$data$X, n = k)$distance
     if (!is.null(weights)) {
       dist_train = apply(dist_train, 2L, weighted.mean, w = weights)
     } else {
