@@ -1,4 +1,4 @@
-make_fitness_function = function(predictor, x_interest, pred_column, target, weights, k, fixed_features) {
+make_fitness_function = function(predictor, x_interest, pred_column, target, weights, k, fixed_features, param_set) {
   
   function(xdt) {
     # Add values of fixed_features just for prediction
@@ -19,7 +19,8 @@ make_fitness_function = function(predictor, x_interest, pred_column, target, wei
     pred = predictor$predict(xdt)[[pred_column]]
     
     dist_target = sapply(pred, function(x) ifelse(between(x, target[1L], target[2L]), 0, min(abs(x - target))))
-    dist_x_interest = gower_dist(xdt, x_interest)
+    ranges = param_set$upper - param_set$lower
+    dist_x_interest = as.vector(StatMatch::gower.dist(x_interest, xdt, rngs = ranges, KR.corr = FALSE))
     nr_changed = rowSums(xdt != x_interest[rep(seq_len(nrow(x_interest)), nrow(xdt)), ])
     dist_train = gower_topn(x = xdt, y = predictor$data$X, n = k)$distance
     if (!is.null(weights)) {

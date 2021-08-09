@@ -102,7 +102,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
       
       if ("dist_x_interest" %in% measures) {
-        evals$dist_x_interest = gower_dist(private$.data, private$.x_interest)
+        ranges = private$param_set$upper - private$param_set$lower
+        evals$dist_x_interest = as.vector(StatMatch::gower.dist(private$.x_interest, private$.data, rngs = ranges, KR.corr = FALSE))
       }
       
       if ("nr_changed" %in% measures) {
