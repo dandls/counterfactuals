@@ -37,7 +37,7 @@ For an introduction to the topic, see e.g. Chapter 6 of the [Interpretable Machi
 
 The following counterfactual explanation methods are currently implemented:
 
-- [Multi-Objective Counterfactual Explanations (MOC)](https://arxiv.org/abs/2004.11165)
+- [Multi-Objective Counterfactual Explanations (MOC)](https://link.springer.com/chapter/10.1007%2F978-3-030-58112-1_31)
 - [NICE: An Algorithm for Nearest Instance Counterfactual Explanations (NICE)](https://arxiv.org/abs/2104.07411)
 - [WhatIf](https://arxiv.org/abs/1907.04135)
 

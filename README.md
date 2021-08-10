@@ -33,7 +33,7 @@ The following counterfactual explanation methods are currently
 implemented:
 
 -   [Multi-Objective Counterfactual Explanations
-    (MOC)](https://arxiv.org/abs/2004.11165)
+    (MOC)](https://link.springer.com/chapter/10.1007%2F978-3-030-58112-1_31)
 -   [NICE: An Algorithm for Nearest Instance Counterfactual Explanations
     (NICE)](https://arxiv.org/abs/2104.07411)
 -   [WhatIf](https://arxiv.org/abs/1907.04135)
@@ -90,7 +90,7 @@ For `x_interest` the model predicts:
 x_interest = iris[150L, ]
 predictor$predict(x_interest)
 #>   setosa versicolor virginica
-#> 1      0      0.102     0.898
+#> 1      0      0.104     0.896
 ```
 
 We use the `$find_counterfactuals()` method to find counterfactuals for
@@ -116,8 +116,8 @@ cfactuals
 #> Head: 
 #>    Sepal.Length Sepal.Width Petal.Length Petal.Width
 #> 1:          5.9         3.2          4.8         1.8
-#> 2:          5.9         3.0          4.2         1.5
-#> 3:          6.1         3.0          4.6         1.4
+#> 2:          6.0         2.7          5.1         1.6
+#> 3:          6.7         3.0          5.0         1.7
 ```
 
 The counterfactuals are stored in the `$data` field.
@@ -126,10 +126,10 @@ The counterfactuals are stored in the `$data` field.
 cfactuals$data
 #>    Sepal.Length Sepal.Width Petal.Length Petal.Width
 #> 1:          5.9         3.2          4.8         1.8
-#> 2:          5.9         3.0          4.2         1.5
-#> 3:          6.1         3.0          4.6         1.4
-#> 4:          6.0         2.7          5.1         1.6
-#> 5:          6.0         2.9          4.5         1.5
+#> 2:          6.0         2.7          5.1         1.6
+#> 3:          6.7         3.0          5.0         1.7
+#> 4:          6.0         2.9          4.5         1.5
+#> 5:          5.9         3.0          4.2         1.5
 ```
 
 We can evaluate the results according to various measures using the
@@ -139,10 +139,10 @@ We can evaluate the results according to various measures using the
 cfactuals$evaluate()
 #>    Sepal.Length Sepal.Width Petal.Length Petal.Width dist_x_interest nr_changed dist_train dist_target
 #> 1:          5.9         3.2          4.8         1.8      0.03354520          2          0           0
-#> 2:          5.9         3.0          4.2         1.5      0.06938559          2          0           0
-#> 3:          6.1         3.0          4.6         1.4      0.07674200          3          0           0
-#> 4:          6.0         2.7          5.1         1.6      0.05902778          3          0           0
-#> 5:          6.0         2.9          4.5         1.5      0.07403484          4          0           0
+#> 2:          6.0         2.7          5.1         1.6      0.05902778          3          0           0
+#> 3:          6.7         3.0          5.0         1.7      0.07020951          3          0           0
+#> 4:          6.0         2.9          4.5         1.5      0.07403484          4          0           0
+#> 5:          5.9         3.0          4.2         1.5      0.06938559          2          0           0
 ```
 
 One visualization option is to plot the frequency of changes of each
