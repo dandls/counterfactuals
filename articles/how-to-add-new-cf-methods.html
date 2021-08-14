@@ -107,7 +107,7 @@
 <a href="#class-diagram" class="anchor"></a>Class diagram</h3>
 <p>Each counterfactual method (such as <code>MOC</code>) is represented by its own <code>R6</code> class. Depending on whether it supports classification or regression tasks, it inherits from the (abstract) <code>CounterfactualMethodClassif</code> or <code>CounterfactualMethodRegr</code> class. Counterfactual methods that support both (such as <code>MOC</code>) obtain two classes (<code>MOCClassif</code> and <code>MOCRegr</code>).</p>
 <p><img src="how-to-add-new-cf-methods-res/class-diagram.png" width="100%"></p>
-<p>The key advantage of this approach is that we are able to provide a tailored <code>$find_counterfactuals()</code> interface to the task at hand. The leaf classes inherit this method from from <code>CounterfactualMethodClassif</code> or <code>CounterfactualMethodRegr</code>. For classification tasks <code>$find_counterfactuals()</code> has two arguments <code>desired_class</code> and <code>desired_prob</code> and for regression tasks it has one argument <code>desired_outcome</code>.</p>
+<p>The key advantage of this approach is that we are able to provide a tailored <code>$find_counterfactuals()</code> interface to the task at hand. The leaf classes inherit this method from <code>CounterfactualMethodClassif</code> or <code>CounterfactualMethodRegr</code>. For classification tasks <code>$find_counterfactuals()</code> has two arguments <code>desired_class</code> and <code>desired_prob</code> and for regression tasks it has one argument <code>desired_outcome</code>.</p>
 </div>
 <div id="call-graph" class="section level3">
 <h3 class="hasAnchor">
