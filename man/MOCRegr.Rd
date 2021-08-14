@@ -205,8 +205,8 @@ For computing the dominated hypervolume the \code{miesmuschel:::domhv} function 
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{centered_obj}}{(\code{logical(1)})\cr
-Should the objective values be centered? If yes, each objective value is visualized in a separate plot, since
-they (usually) have different scales. Otherwise, they are visualized in a single plot. Default is \code{TRUE}.}
+Should the objective values be centered? If set to \code{FALSE}, each objective value is visualized in a separate plot,
+since they (usually) have different scales. If set to \code{TRUE} (default), they are visualized in a single plot.}
 }
 \if{html}{\out{</div>}}
 }

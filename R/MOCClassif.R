@@ -131,8 +131,8 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     #' the generations. All values for a generation are calculated based on all nondominated individuals of that generation.
     #' For computing the dominated hypervolume the `miesmuschel:::domhv` function is used.
     #' @param centered_obj (`logical(1)`)\cr  
-    #'   Should the objective values be centered? If yes, each objective value is visualized in a separate plot, since
-    #'   they (usually) have different scales. Otherwise, they are visualized in a single plot. Default is `TRUE`.
+    #'   Should the objective values be centered? If set to `FALSE`, each objective value is visualized in a separate plot, 
+    #'   since they (usually) have different scales. If set to `TRUE` (default), they are visualized in a single plot.
     plot_statistics = function(centered_obj = TRUE) {
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
         stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)

@@ -374,6 +374,7 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
           param_set = make_param_set(X, lower = NULL, upper = NULL)
           mydesign = SamplerUnif$new(param_set)$sample(n)
           mydesign$data[sample.int(nrow(mydesign$data), nrow(X_nondom))] = X_nondom
+          mydesign$data = reset_columns(mydesign$data, p_use_orig = 0.5, max_changed = 1e15, x_interest = x_interest)
           mydesign
         }
       }
@@ -504,7 +505,8 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
     ggplot2::xlab("generations") +
     ggplot2::ggtitle("Dominated hypervolume") +
     ggplot2::theme_bw() +
-    ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))
+    ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1))))) +
+    ggplot2::theme(axis.title.y = ggplot2::element_blank())
   
   list(gg_mean, gg_min, gg_hv)
 }
@@ -534,7 +536,7 @@ comp_domhv_all_gen = function(archive, ref_point) {
 make_moc_search_plot = function(data, objectives) {
   ggplot2::ggplot(data, ggplot2::aes_string(x = objectives[[1L]], y = objectives[[2L]], alpha = "batch_nr")) +
     ggplot2::geom_point(color = "black") +
-    ggplot2::scale_alpha_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1))))) +
+    ggplot2::scale_alpha_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1), n = 5)))) +
     ggplot2::labs(alpha = "generation") +
     ggplot2::theme_bw()
 }

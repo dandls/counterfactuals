@@ -178,7 +178,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         warning("Can only consider numeric features for parallel plot. Non-numeric features have been removed.")
       }
       
-      line_colors = c(gray.colors(nrow(cfactuals), start = 0.2, end = 0.8, gamma = 2.2), "blue")
+      line_colors = c(rep("#595959", nrow(cfactuals)), "blue")
       names(line_colors) <- rownames(dt)
       dt[, rn := rownames(dt)]
  
@@ -186,14 +186,15 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         ggplot2::theme_bw() +
         ggplot2::ylim(c(-0.1, 1.1)) +
         ggplot2::theme(legend.position = "none") +
-        ggplot2::ylab("Scaled feature values") +
+        ggplot2::ylab("scaled feature values") +
+        ggplot2::xlab("variables") +
         ggplot2::scale_colour_manual(name = "rows", values = line_colors) +
         ggplot2::annotate(
-          "text", x = 1:length(numeric_cols), y = 1.05, 
+          "text", x = 1:length(numeric_cols), y = 1.05, size = 3.5,
           label = sapply(dt[, ..numeric_cols], function(x) round(max(x, na.rm = TRUE), digits = digits_min_max))
         ) +
         ggplot2::annotate(
-          "text", x = 1:length(numeric_cols), y = -0.05, 
+          "text", x = 1:length(numeric_cols), y = -0.05, size = 3.5,
           label = sapply(dt[, ..numeric_cols], function(x) round(min(x, na.rm = TRUE), digits = digits_min_max))
         )
       
