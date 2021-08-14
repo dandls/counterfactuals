@@ -48,7 +48,7 @@ knitr::include_graphics("how-to-add-new-cf-methods-res/class-diagram.png")
 
 The key advantage of this approach is that we are able to provide a tailored
 `$find_counterfactuals()` interface to the task at hand. 
-The leaf classes inherit this method from from `CounterfactualMethodClassif` or `CounterfactualMethodRegr`.
+The leaf classes inherit this method from `CounterfactualMethodClassif` or `CounterfactualMethodRegr`.
 For classification tasks `$find_counterfactuals()` has two arguments `desired_class` and `desired_prob` and for regression 
 tasks it has one argument `desired_outcome`.
 
