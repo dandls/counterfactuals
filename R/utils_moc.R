@@ -546,24 +546,33 @@ make_moc_search_plot = function(data, objectives) {
 # Conditional mutator as described in the MOC paper
 MutatorConditional = R6::R6Class("MutatorConditional", inherit = Mutator,
   public = list(
-    initialize = function(cond_sampler, param_set) {
+    initialize = function(cond_sampler, param_set, p_mut, p_mut_gen) {
       super$initialize()
       assert_class(param_set, "ParamSet")
       assert_list(cond_sampler, len = length(param_set$ids()))
       private$param_set = param_set
       private$cond_sampler = cond_sampler
+      private$p_mut = p_mut
+      private$p_mut_gen = p_mut_gen
     }
   ),
   private = list(
     cond_sampler = NULL,
     param_set = NULL,
+    p_mut = NULL,
+    p_mut_gen = NULL,
     
     .mutate = function(values, context) {
       values_mutated = copy(values)
       for (i in seq_len(nrow(values))) {
-        for (j in sample(names(values))) {
-          set(values_mutated, i, j, value = private$cond_sampler[[j]]$sample(values[i, ]))
+        if (runif(1L) < private$p_mut) {
+          for (j in sample(names(values))) {
+            if (runif(1L) < private$p_mut_gen) {
+              set(values_mutated, i, j, value = private$cond_sampler[[j]]$sample(values[i, ]))
+            }
+          }
         }
+        
       }
       values_mutated
     }
@@ -572,9 +581,7 @@ MutatorConditional = R6::R6Class("MutatorConditional", inherit = Mutator,
 
 
 make_moc_conditional_mutator = function(ps, x_interest, max_changed, p_mut, p_mut_gen, p_mut_use_orig, cond_sampler) {
-  op_seq1_mut = mut("maybe", MutatorConditional$new(cond_sampler, ps), mut("null"), p = p_mut_gen)
-  op_seq1_no_mut = mut("null")
-  op_seq1 = mut("maybe", op_seq1_mut, op_seq1_no_mut, p = p_mut)
+  op_seq1 = MutatorConditional$new(cond_sampler, ps, p_mut, p_mut_gen)
   op_seq2 = MutatorReset$new(x_interest, p_mut_use_orig, max_changed)
   mut("sequential", list(op_seq1, op_seq2))
 }
