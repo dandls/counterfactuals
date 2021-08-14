@@ -97,7 +97,7 @@
 <a href="#available-methods" class="anchor"></a>Available methods</h2>
 <p>The following counterfactual explanation methods are currently implemented:</p>
 <ul>
-<li><a href="https://arxiv.org/abs/2004.11165">Multi-Objective Counterfactual Explanations (MOC)</a></li>
+<li><a href="https://link.springer.com/chapter/10.1007%2F978-3-030-58112-1_31">Multi-Objective Counterfactual Explanations (MOC)</a></li>
 <li><a href="https://arxiv.org/abs/2104.07411">NICE: An Algorithm for Nearest Instance Counterfactual Explanations (NICE)</a></li>
 <li><a href="https://arxiv.org/abs/1907.04135">WhatIf</a></li>
 </ul>
@@ -133,7 +133,7 @@
 <code class="sourceCode R"><span class="va">x_interest</span> <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">150L</span>, <span class="op">]</span>
 <span class="va">predictor</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="va">x_interest</span><span class="op">)</span>
 <span class="co">#&gt;   setosa versicolor virginica</span>
-<span class="co">#&gt; 1      0      0.102     0.898</span></code></pre></div>
+<span class="co">#&gt; 1      0      0.104     0.896</span></code></pre></div>
 <p>We use the <code>$find_counterfactuals()</code> method to find counterfactuals for <code>x_interest</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cfactuals</span> <span class="op">=</span> <span class="va">wi_classif</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span>
@@ -150,26 +150,26 @@
 <span class="co">#&gt; Head: </span>
 <span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width</span>
 <span class="co">#&gt; 1:          5.9         3.2          4.8         1.8</span>
-<span class="co">#&gt; 2:          5.9         3.0          4.2         1.5</span>
-<span class="co">#&gt; 3:          6.1         3.0          4.6         1.4</span></code></pre></div>
+<span class="co">#&gt; 2:          6.0         2.7          5.1         1.6</span>
+<span class="co">#&gt; 3:          6.7         3.0          5.0         1.7</span></code></pre></div>
 <p>The counterfactuals are stored in the <code>$data</code> field.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="va">data</span>
 <span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width</span>
 <span class="co">#&gt; 1:          5.9         3.2          4.8         1.8</span>
-<span class="co">#&gt; 2:          5.9         3.0          4.2         1.5</span>
-<span class="co">#&gt; 3:          6.1         3.0          4.6         1.4</span>
-<span class="co">#&gt; 4:          6.0         2.7          5.1         1.6</span>
-<span class="co">#&gt; 5:          6.0         2.9          4.5         1.5</span></code></pre></div>
+<span class="co">#&gt; 2:          6.0         2.7          5.1         1.6</span>
+<span class="co">#&gt; 3:          6.7         3.0          5.0         1.7</span>
+<span class="co">#&gt; 4:          6.0         2.9          4.5         1.5</span>
+<span class="co">#&gt; 5:          5.9         3.0          4.2         1.5</span></code></pre></div>
 <p>We can evaluate the results according to various measures using the <code>$evaluate()</code> method.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width dist_x_interest nr_changed dist_train dist_target</span>
 <span class="co">#&gt; 1:          5.9         3.2          4.8         1.8      0.03354520          2          0           0</span>
-<span class="co">#&gt; 2:          5.9         3.0          4.2         1.5      0.06938559          2          0           0</span>
-<span class="co">#&gt; 3:          6.1         3.0          4.6         1.4      0.07674200          3          0           0</span>
-<span class="co">#&gt; 4:          6.0         2.7          5.1         1.6      0.05902778          3          0           0</span>
-<span class="co">#&gt; 5:          6.0         2.9          4.5         1.5      0.07403484          4          0           0</span></code></pre></div>
+<span class="co">#&gt; 2:          6.0         2.7          5.1         1.6      0.05902778          3          0           0</span>
+<span class="co">#&gt; 3:          6.7         3.0          5.0         1.7      0.07020951          3          0           0</span>
+<span class="co">#&gt; 4:          6.0         2.9          4.5         1.5      0.07403484          4          0           0</span>
+<span class="co">#&gt; 5:          5.9         3.0          4.2         1.5      0.06938559          2          0           0</span></code></pre></div>
 <p>One visualization option is to plot the frequency of changes of each feature using the <code>$plot_freq_of_feature_changes()</code> method.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_freq_of_feature_changes</span><span class="op">(</span><span class="op">)</span></code></pre></div>
