@@ -442,7 +442,8 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
     #   generations = i
     # )
     hv = data.table(
-      hv = miesmuschel:::domhv(-as.matrix(best[, ..obj_names]), nadir = -ref_point, on_worse_than_nadir = "quiet"),
+      hv = ecr::computeHV(t(best[, obj_names, with = FALSE]), ref_point),
+      #hv = miesmuschel:::domhv(-as.matrix(best[, ..obj_names]), nadir = -ref_point, on_worse_than_nadir = "quiet"),
       generations = i
     )
     
@@ -520,12 +521,12 @@ comp_domhv_all_gen = function(archive, ref_point) {
       function(i) {
         best = archive$best(seq_len(i))
         # TODO: ecr::computeHV gives slightly different results (monotonic increase of domhv)
-        # ecr::computeHV(best[, obj_names, with = FALSE]), ref_point),
-        miesmuschel:::domhv(
-          -as.matrix(best[, obj_names, with = FALSE]), 
-          nadir = -ref_point,
-          on_worse_than_nadir = "quiet"      
-        )
+        ecr::computeHV(t(best[, obj_names, with = FALSE]), ref_point)
+        # miesmuschel:::domhv(
+        #   -as.matrix(best[, obj_names, with = FALSE]), 
+        #   nadir = -ref_point,
+        #   on_worse_than_nadir = "quiet"      
+        # )
       } ,
       FUN.VALUE = numeric(1L)
     )
