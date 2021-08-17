@@ -119,7 +119,8 @@ Create a new \code{MOCRegr} object.
   lower = NULL,
   upper = NULL,
   init_strategy = "random",
-  use_conditional_mutator = FALSE
+  use_conditional_mutator = FALSE,
+  quiet = FALSE
 )}\if{html}{\out{</div>}}
 }
 
@@ -186,6 +187,9 @@ see the \code{details} section.}
 \item{\code{use_conditional_mutator}}{(\code{logical(1)})\cr
 Should a conditional mutator be used? The conditional mutator generates plausible feature values conditional
 on the values of the other feature. Default is \code{FALSE}.}
+
+\item{\code{quiet}}{(\code{logical(1)})\cr
+Should information about the optimization status be hidden? Default is \code{FALSE}.}
 }
 \if{html}{\out{</div>}}
 }

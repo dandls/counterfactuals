@@ -62,10 +62,12 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     #' @param use_conditional_mutator (`logical(1)`)\cr 
     #'   Should a conditional mutator be used? The conditional mutator generates plausible feature values conditional 
     #'   on the values of the other feature. Default is `FALSE`.
+    #'  @param quiet (`logical(1)`)\cr 
+    #'  Should information about the optimization status be hidden? Default is `FALSE`.
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, mu = 20L, 
                           n_generations = 175L, p_rec = 0.57, p_rec_gen = 0.85, p_rec_use_orig = 0.88, p_mut = 0.79, 
                           p_mut_gen = 0.56, p_mut_use_orig = 0.32, k = 1L, weights = NULL, lower = NULL, upper = NULL, 
-                          init_strategy = "random", use_conditional_mutator = FALSE) {
+                          init_strategy = "random", use_conditional_mutator = FALSE, quiet = FALSE) {
 
       super$initialize(predictor, lower, upper)
 
@@ -86,6 +88,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       assert_numeric(weights, any.missing = FALSE, len = k, null.ok = TRUE)
       assert_choice(init_strategy, choices = c("random", "sd", "icecurve", "traindata"))
       assert_flag(use_conditional_mutator)
+      assert_flag(quiet)
       
       if (use_conditional_mutator) {
         if (!requireNamespace("trtf", quietly = TRUE)) {
@@ -125,6 +128,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       private$sdevs_num_feats = sdevs_num_feats
       private$lower = lower
       private$upper = upper
+      private$quiet = quiet
     },
     
     #' @description Plots the evolution of the mean and minimum objective values together with the dominated hypervolume over
@@ -204,6 +208,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     ref_point = NULL,
     .optimizer = NULL,
     conditional_sampler = NULL,
+    quiet = NULL,
 
     run = function() {
       pred_column = private$get_pred_column()
@@ -233,7 +238,8 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
         k = private$k,
         weights = private$weights,
         init_strategy = private$init_strategy,
-        cond_sampler = private$conditional_sampler
+        cond_sampler = private$conditional_sampler,
+        quiet = private$quiet
       )
 
       unique(private$.optimizer$result[, names(private$x_interest), with = FALSE])

@@ -588,3 +588,8 @@ make_moc_conditional_mutator = function(ps, x_interest, max_changed, p_mut, p_mu
 }
 
 
+quiet = function(x) { 
+  sink(tempfile()) 
+  on.exit(sink()) 
+  invisible(force(x)) 
+} 
