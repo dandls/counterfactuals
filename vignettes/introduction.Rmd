@@ -28,12 +28,12 @@ library(randomForest)
 
 ## Classification Models
 
-To demonstrate the `counterfactuals` workflow for classification tasks, we search for counterfactual explanations for diabetes tested patients with `MOC`. 
+To illustrate the `counterfactuals` workflow for classification tasks, we search for counterfactual explanations for diabetes tested patients with `MOC`. 
 
 ### Data: Pima Indians Diabetes Database
 
 As training data we use the Pima Indians Diabetes Database from the `mlbench` package.
-The data set contains 768 observations with 8 features and the binary target variable `diabetes`:
+The data set contains 768 observations with 8 features and the binary target variable `diabetes`.
 
 ```{r, echo=FALSE}
 column_descr = data.frame(
@@ -56,7 +56,7 @@ data(PimaIndiansDiabetes, package = "mlbench")
 ```
 
 
-Converting `integerish` features to the `integer` data type ensures that counterfactuals will
+We convert `integerish` features to the `integer` data type to ensure that counterfactuals will
 only contain `integer` values for these features (for example no `2.76` pregnancies).
 
 ```{r}
@@ -68,12 +68,11 @@ PimaIndiansDiabetes$age = as.integer(PimaIndiansDiabetes$age)
 
 ### Fitting a model
 
-First we train a model to predict `diabetes`. Note that we leave out one observation from the
-training data which is our `x_interest`.
+First, we train a model to predict `diabetes`, leaving out one observation from the training data which is `x_interest`.
 
 ```{r}
-set.seed(20210716)
-rf = randomForest(diabetes ~ ., data = PimaIndiansDiabetes[-154L, ])
+set.seed(20210816)
+rf = randomForest(diabetes ~ ., data = PimaIndiansDiabetes[-499L, ])
 ```
 
 ### Setting up an iml::Predictor() object
@@ -88,32 +87,41 @@ predictor = Predictor$new(rf, type = "prob")
 
 ### Find counterfactuals
 
-For `x_interest` the model predicts:
+For `x_interest` the model predicts a class probability of 60.8% for a diabetes disease.
 
 ```{r}
-x_interest = PimaIndiansDiabetes[154L, ]
+x_interest = PimaIndiansDiabetes[499L, ]
 predictor$predict(x_interest)
 ```
 
-Now we can examine which risk factors need to be changed to obtain a predicted probability of
-at least 50% for a diabetes disease.
-
-Since we want to use `MOC` for a classification model, we initialize a `MOCClassif` object.
+Now we examine which risk factors need to be changed to reduce the predicted probability
+of diabetes to a maximum of 40%.
+Since we want to apply MOC to a classification model, we initialize a `MOCClassif` object.
+Individuals whose prediction is further away from the desired prediction than `epsilon` can be penalized. 
+Here we set `epsilon = 0` penalizing all individuals with a prediction outside the desired interval. 
+With the `fixed_features` argument, we can fix non-actionable features to their current value.
 
 ```{r, eval=FALSE}
-moc_classif = MOCClassif$new(predictor)
+moc_classif = MOCClassif$new(
+  predictor, epsilon = 0, fixed_features = c("pregnant", "age")
+)
 ```
 
-Then we use the `$find_counterfactuals()` method to find counterfactual explanations for `x_interest`. 
+Then, we use the `find_counterfactuals()` method to find counterfactual explanations for `x_interest`. 
+As we aim to find counterfactuals with a predicted probability of at most 40% for diabetes, we set the `desired_class` to 
+"pos" and the `predicted_prob` to `c(0, 0.4)`. (In the binary classification case, this is equivalent to setting 
+`desired_class` to "neg" and `predicted_prob` to `c(0.6, 1)`.)
 
 ```{r, eval=FALSE}
-cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "pos", desired_prob = c(0.5, 1))
+cfactuals = moc_classif$find_counterfactuals(
+  x_interest, desired_class = "pos", desired_prob = c(0, 0.4)
+)
 ```
 
 ```{r, echo=FALSE, results='hide', message=FALSE}
 if (!file.exists("introduction-res/cfactuals.RDS")) {
-  moc_classif = MOCClassif$new(predictor)
-  cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "pos", desired_prob = c(0.5, 1))
+  moc_classif = MOCClassif$new(predictor, epsilon = 0, fixed_features = c("pregnant", "age"))
+  cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "pos", desired_prob = c(0, 0.4))
   saveRDS(moc_classif, "introduction-res/moc_classif.RDS")
   saveRDS(cfactuals, "introduction-res/cfactuals.RDS")
 }
@@ -124,66 +132,81 @@ cfactuals = readRDS("introduction-res/cfactuals.RDS")
 
 ### The counterfactuals object
 
-The resulting `Counterfactuals` object holds the found counterfactuals and has several methods for their evaluation and 
-visualization.
+The resulting `Counterfactuals` object holds the counterfactuals in the `data` field and possesses several methods for their 
+evaluation and visualization.
 
 ```{r}
 class(cfactuals)
 ```
 
-
+Printing a `Counterfactuals` object, gives an overview over the results.
 ```{r}
 print(cfactuals)
 ```
 
-We can use the `$predict()` method to predict the outcome of the counterfactuals found.
+
+We can use the `predict()` method to predict the outcome of the counterfactuals.
 
 ```{r}
 head(cbind(cfactuals$data, cfactuals$predict()), 5L)
 ```
 
-The `$evaluate()` method returns the counterfactuals along with evaluation measures (`dist_x_interest`, `dist_target`,
-`nr_changed` and `dist_train`). Setting the `show_diff` argument to `TRUE` will show the counterfactuals as their difference
-to `x_interest`. `NA` means "no difference".
+The `evaluate()` method returns the counterfactuals along with evaluation measures: `dist_x_interest`, `dist_target`,
+`nr_changed` and `dist_train`. Setting the `show_diff` argument to `TRUE` displays the counterfactuals as their difference
+to `x_interest`: For a numeric feature, positive values indicate an increase compared to the counterfactual feature value 
+in `x_interest` and negative values indicate a decrease. For factors, the feature value is displayed if it differs from `x_interest.` 
+`NA` means “no difference” in both cases.
 
 ```{r}
 head(cfactuals$evaluate(show_diff = TRUE), 5L)
 ```
 
-To plot the frequency of feature changes across all counterfactuals, we can use the `$plot_freq_of_feature_changes()` method.
+The `plot_freq_of_feature_changes()` method plots the frequency of feature changes across all counterfactuals. Setting 
+`subset_zero = TRUE` removes all unchanged features from the plot.
 
 ```{r}
-cfactuals$plot_freq_of_feature_changes()
+cfactuals$plot_freq_of_feature_changes(subset_zero = TRUE)
 ```
 
 The parallel plot connects the (scaled) feature values of each counterfactual and highlights `x_interest` in blue.
 
-```{r, message=FALSE}
+```{r, message=FALSE, fig.height=3}
 cfactuals$plot_parallel()
 ```
 
 The white dot in the prediction surface plot represents `x_interest`. All counterfactuals that differ from `x_interest` only in the 
-selected features are represented as black dots.
+selected features are represented as black dots. The tick marks next to the axes indicate the marginal distribution of the
+counterfactuals.
 
-```{r, fig.height=3.5}
+
+```{r, fig.height=3}
 cfactuals$plot_surface(feature_names = c("mass", "glucose"))
 ```
 
 
 ### MOC diagnostics
 
-A `MOCClassif` object has several diagnostics methods.
+To evaluate the estimated Pareto front, Dandl et al. (2020) use a hypervolume indicator (Zitzler and Thiele 1998) with a 
+reference point that represents the maximal values of the objectives.
+The evolution of the hypervolume indicator can be plotted together with the evolution of mean and minimum objective values 
+using the `plot_statistics()` method.
 
-The method `$plot_search()` visualizes all individuals of all generations in a scatter plot with two objectives on the axes.
-
-```{r}
-moc_classif$plot_search()
+```{r, fig.height=2.5, results='asis'}
+moc_classif$plot_statistics()
 ```
 
-It is also possible to plot the evolution of the mean and minimum objective values together with the dominated hypervolume over the generations
+Ideally, one would like the mean value of each objective to decrease over the generations.
+However, there is often a trade-off between the objectives. Here, the mean values of dist_target and dist_train remain 
+relatively constant over the generations, indicating that it is difficult to minimize both objectives concurrently.
 
-```{r, fig.height=2, results='asis'}
-moc_classif$plot_statistics()
+This trade-off can also be seen in the scatter plot – created by the `plot_search()` method – that visualizes two selected 
+objective values of all individuals. Ideally, one would like to have a point shift to the lower left corner over the generations, 
+as this implies better objective values. Here, however, the points are shifted to a middle region, which implies that it is 
+difficult to minimize both objectives concurrently.
+
+
+```{r, fig.height=2.5}
+moc_classif$plot_search(objectives = c("dist_train", "dist_target"))
 ```
 
 
@@ -195,7 +218,7 @@ counterfactuals explanations for housing prices with `WhatIf`.
 ### Data: Boston Housing Data
 
 As training data we use the Boston Housing dataset from the `mlbench` package. 
-The data set contains 506 observations with 13 features and the (continuous) target variable `medv`:
+The data set contains 506 observations with 13 features and the (continuous) target variable `medv`.
 
 ```{r, echo=FALSE}
 # data(BostonHousing, package = "mlbench")  
@@ -228,11 +251,10 @@ data(BostonHousing, package = "mlbench")
 
 ### Fitting a model
 
-First we train a model to predict `medv`. <br> 
-Note that we leave out one observation from the training data which is our `x_interest`.
+First, we train a model to predict `medv` and again leave out one observation from the training data, which is `x_interest`.
 
 ```{r}
-set.seed(20210713)
+set.seed(20210816)
 rf = randomForest(medv ~ ., data = BostonHousing[-1L, ])
 ```
 
@@ -247,22 +269,22 @@ predictor = Predictor$new(rf)
 
 ### Find counterfactuals
 
-For `x_interest` the model predicts:
+For `x_interest` the model predicts a median housing value of 28.32.
 
 ```{r}
 x_interest = BostonHousing[1L, ]
 predictor$predict(x_interest)
 ```
 
-Since we want to use `WhatIf` for a regression model, we initialize a `WhatIfRegr` object.
+Since we want to use `WhatIf` to a regression model, we initialize a `WhatIfRegr` object. The argument `n_counterfactuals` 
+specifies the number of counterfactuals to be returned.
 
 ```{r}
 whatif_regr = WhatIfRegr$new(predictor, n_counterfactuals = 5L)
 ```
 
-Then we use the `$find_counterfactuals()` method to find counterfactual explanations for `x_interest`. Note that for
-regression tasks we only need to specify `desired_outcome`, unlike `desired_class` and `desired_probs` for
-classification tasks.
+Then, we use the `$find_counterfactuals()` method to find counterfactual explanations for `x_interest` with a predicted
+housing value in the interval [30, 32].
  
 ```{r}
 cfactuals = whatif_regr$find_counterfactuals(x_interest, desired_outcome = c(30, 32))
@@ -275,3 +297,9 @@ As a result, we obtain a `Counterfactuals` object just like for the classificati
 cfactuals
 ```
 
+
+# References
+
+Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “MultiObjective Counterfactual Explanations.” In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr, Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Publishing.
+
+Zitzler, Eckart, and Lothar Thiele. 1998. “Multiobjective Optimization Using Evolutionary Algorithms—a Comparative Case Study.” In International Conference on Parallel Problem Solving from Nature, 292–301. Springer.

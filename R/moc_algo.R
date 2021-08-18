@@ -1,6 +1,6 @@
 moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower, upper, sdevs_num_feats, 
                     epsilon,  fixed_features, max_changed, mu, n_generations, p_rec, p_rec_gen, p_rec_use_orig,
-                    p_mut, p_mut_gen, p_mut_use_orig, k, weights, init_strategy, cond_sampler = NULL) {
+                    p_mut, p_mut_gen, p_mut_use_orig, k, weights, init_strategy, cond_sampler = NULL, quiet) {
   
   codomain = ParamSet$new(list(
     ParamDbl$new("dist_target", tags = "minimize"),
@@ -88,18 +88,21 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
     recombinators = list(op_r),
     selectors = list(op_parent, op_survival)
   )
-
-  mies_init_population(
-    inst = oi, 
-    mu = mu, 
-    initializer = pop_initializer
-  )
   
+  if (quiet) {
+    quiet(mies_init_population(inst = oi, mu = mu, initializer = pop_initializer))
+  } else {
+    mies_init_population(inst = oi, mu = mu, initializer = pop_initializer)
+  }
+
   tryCatch({
     repeat {
       offspring = mies_generate_offspring(oi, lambda = mu, op_parent, op_m, op_r)
-      mies_evaluate_offspring(oi, offspring)
-      mies_survival_plus(oi, mu, op_survival)
+      if (quiet) {
+        quiet(mies_evaluate_offspring(oi, offspring))
+      } else {
+        mies_evaluate_offspring(oi, offspring)
+      }
     }
   }, terminated_error = function(cond) {
   })

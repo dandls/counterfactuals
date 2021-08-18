@@ -25,10 +25,10 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     #' @description Create a new `MOCRegr` object.
     #' @template predictor
     #' @param epsilon (`numeric(1)` | `NULL`)\cr  
-    #'   If not `NULL`, candidates whose prediction is further away from the desired prediction than epsilon are penalized.
-    #'   Default is `NULL`, which means no penalization
+    #'   If not `NULL`, candidates whose prediction is farther away from the desired prediction than epsilon are penalized.
+    #'  `NULL` (default) means no penalization
     #' @param fixed_features (`character()` | `NULL`)\cr  
-    #'   Names of features that are not allowed to change. `NULL` (default) allows to change all features.
+    #'   Names of features that are not allowed to be changed. `NULL` (default) allows all features to be changed.
     #' @param max_changed (`integerish(1)` | `NULL`)\cr  
     #'   Maximum number of feature changes. `NULL` (default) allows any number of changes.
     #' @param mu (`integerish(1)`)\cr  
@@ -36,15 +36,15 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     #' @param n_generations (`integerish(1)`)\cr  
     #'   The number of generations. Default is `175L`.   
     #' @param p_rec (`numeric(1)`)\cr  
-    #'   Probability with which an individualdevt is chosen for recombination. Default is `0.57`.
+    #'   Probability with which an individualdevt is selected for recombination. Default is `0.57`.
     #' @param p_rec_gen (`numeric(1)`)\cr  
-    #'   Probability with which a feature/gene is chosen for recombination. Default is `0.85`.  
+    #'   Probability with which a feature/gene is selected for recombination. Default is `0.85`.  
     #' @param p_rec_use_orig (`numeric(1)`)\cr  
     #'   Probability with which a feature/gene is reset to the feature value of `x_interest` after recombination. Default is `0.88`.    
     #' @param p_mut (`numeric(1)`)\cr  
-    #'   Probability with which an individual is chosen for mutation. Default is `0.79`.    
+    #'   Probability with which an individual is selected for mutation. Default is `0.79`.    
     #' @param p_mut_gen (`numeric(1)`)\cr  
-    #'   Probability with which a feature/gene is chosen for mutation. Default is `0.56`.   
+    #'   Probability with which a feature/gene is selected for mutation. Default is `0.56`.   
     #' @param p_mut_use_orig (`numeric(1)`)\cr  
     #'   Probability with which a feature/gene is reset to the feature value of `x_interest` after mutation. Default is `0.32`.    
     #' @param k (`integerish(1)`)\cr  
@@ -52,15 +52,15 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     #' @param weights (`numeric(1) | numeric(k)` | `NULL`)\cr  
     #'   The weights used to compute the weighted average distance for the forth objective. It is either a single value 
     #'   or a vector of length `k`. If it has length `k`, the first value corresponds to the nearest neighbor and so on. 
-    #'   The values should sum up to `1`. Default is `NULL` which means all neighbors are weighted equally. 
+    #'   The values should sum up to `1`. `NULL` (default) means all neighbors are weighted equally. 
     #' @template lower_upper
     #' @param init_strategy (`character(1)`)\cr  
     #'   The population initialization strategy. Can be `random` (default), `sd`, `icecurve` or `traindata`. For more information,
     #'   see the `details` section.
     #' @param use_conditional_mutator (`logical(1)`)\cr 
-    #'   Should a conditional mutator be used? The conditional mutator generates plausible feature values conditional 
+    #'   Should a conditional mutator be used? The conditional mutator generates plausible feature values based 
     #'   on the values of the other feature. Default is `FALSE`.
-    #'@param quiet (`logical(1)`)\cr 
+    #' @param quiet (`logical(1)`)\cr 
     #'  Should information about the optimization status be hidden? Default is `FALSE`.
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, mu = 20L,
                           n_generations = 175L, p_rec = 0.57, p_rec_gen = 0.85, p_rec_use_orig = 0.88, p_mut = 0.79,

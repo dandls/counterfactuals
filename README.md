@@ -11,18 +11,19 @@ coverage](https://codecov.io/gh/susanne-207/counterfactuals/branch/main/graph/ba
 <!-- badges: end -->
 
 The `counterfactuals` package provides various (model-agnostic)
-counterfactual explanation methods via a unified R6-based interface.
-Counterfactual explanation methods (or counterfactuals for short)
-address questions of the form: “For input **x**, the model predicted
-*y*. What would need to be changed in **x** for the model to predict the
-desired outcome *ỹ* instead?”.
+counterfactual explanation methods via an unified R6-based interface.
 
-Counterfactuals for denied loan applications are a common example. Here
-a counterfactual could be: “The loan was denied because the amount of
-€30k is too high given the income. If the amount had been €20k, the loan
+Counterfactual explanation methods (or counterfactuals for short)
+address questions of the form: “For input **x**<sup>**⋆**</sup>, the
+model predicted *y*. What would need to be changed in
+**x**<sup>**⋆**</sup> for the model to predict the desired outcome *ỹ*
+instead?”.  
+Denied loan applications often serve as an example; in this scenario a
+counterfactual could be: “The loan was denied because the amount of €30k
+is too high given the income. If the amount had been €20k, the loan
 would have been granted.”
 
-For an introduction to the topic, see e.g. Chapter 6 of the
+For an introduction to the topic, we recommend Chapter 6 of the
 [Interpretable Machine Learning
 book](https://christophm.github.io/interpretable-ml-book/) by Christoph
 Molnar.
@@ -34,9 +35,9 @@ implemented:
 
 -   [Multi-Objective Counterfactual Explanations
     (MOC)](https://link.springer.com/chapter/10.1007%2F978-3-030-58112-1_31)
--   [NICE: An Algorithm for Nearest Instance Counterfactual Explanations
-    (NICE)](https://arxiv.org/abs/2104.07411)
--   [WhatIf](https://arxiv.org/abs/1907.04135)
+-   [Nearest Instance Counterfactual Explanations
+    (NICE)](https://arxiv.org/abs/2104.07411) (an extended version)
+-   [WhatIf](https://arxiv.org/abs/1907.04135) (an extended version)
 
 ## Installation
 
@@ -50,10 +51,9 @@ devtools::install_github("susanne-207/counterfactuals")
 
 ## Get started
 
-In this example, we train a `randomForest` on the `iris` dataset.
-
-We then examine how a given `virginica` observation would have to change
-to be classified as `versicolor`.
+In this example, we train a `randomForest` on the `iris` dataset and
+examine how a given `virginica` observation would have to change in
+order to be classified as `versicolor`.
 
 ``` r
 library(counterfactuals)
@@ -61,40 +61,45 @@ library(randomForest)
 library(iml)
 ```
 
-First, we train the randomForest model to predict the `Species`. <br>
-Note that we leave out one observation from the training data which is
-our `x_interest`.
+First, we train a `randomForest` model to predict the target variable
+`Species`; we leave out one observation from the training data, which is
+`x_interest` (the observation to find counterfactuals for).
 
 ``` r
 rf = randomForest(Species ~ ., data = iris[-150L, ])
 ```
 
-We then create an `iml::Predictor` object, that holds the model and the
-data for analyzing the model.
+We then create an
+[`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html)
+object, which serves as a wrapper for different model types and contains
+the model and the data for its analysis.
 
 ``` r
 predictor = Predictor$new(rf, type = "prob")
 ```
 
-Now we set up an object of the counterfactual explanation method we want
-to use. Here we use `WhatIf` and since we have a classification task, we
-create an `WhatIfClassif` object.
-
-``` r
-wi_classif = WhatIfClassif$new(predictor, n_counterfactuals = 5L)
-```
-
-For `x_interest` the model predicts:
+For `x_interest` the model predicts a probability of 8% for class
+`versicolor`.
 
 ``` r
 x_interest = iris[150L, ]
 predictor$predict(x_interest)
 #>   setosa versicolor virginica
-#> 1      0      0.104     0.896
+#> 1      0       0.08      0.92
 ```
 
-We use the `$find_counterfactuals()` method to find counterfactuals for
-`x_interest`.
+Now we examine which features need to be changed to achieve a predicted
+probability of at least 50% for class `versicolor`.
+
+Here, we want to apply WhatIf, and since it is a classification task, we
+initialize a `WhatIfClassif` object.
+
+``` r
+wi_classif = WhatIfClassif$new(predictor, n_counterfactuals = 5L)
+```
+
+Then, we use the `find_counterfactuals()` method to find counterfactuals
+for `x_interest`.
 
 ``` r
 cfactuals = wi_classif$find_counterfactuals(
@@ -120,7 +125,7 @@ cfactuals
 #> 3:          6.7         3.0          5.0         1.7
 ```
 
-The counterfactuals are stored in the `$data` field.
+The counterfactuals are stored in the `data` field.
 
 ``` r
 cfactuals$data
@@ -132,8 +137,8 @@ cfactuals$data
 #> 5:          5.9         3.0          4.2         1.5
 ```
 
-We can evaluate the results according to various measures using the
-`$evaluate()` method.
+We can evaluate the results according to various quality measures using
+the `evaluate()` method.
 
 ``` r
 cfactuals$evaluate()
@@ -145,8 +150,9 @@ cfactuals$evaluate()
 #> 5:          5.9         3.0          4.2         1.5      0.06938559          2          0           0
 ```
 
-One visualization option is to plot the frequency of changes of each
-feature using the `$plot_freq_of_feature_changes()` method.
+One visualization option is to plot the frequency of feature changes
+across all counterfactuals using the `plot_freq_of_feature_changes()`
+method.
 
 ``` r
 cfactuals$plot_freq_of_feature_changes()

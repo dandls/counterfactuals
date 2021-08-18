@@ -5,15 +5,13 @@
 \title{WhatIf for Regression Tasks}
 \description{
 \code{WhatIf} selects the \code{n_counterfactual} observations from the training data that are most similar to \code{x_interest}
-and have the desired predicted outcome. As training data set \code{predictor$data$X} is taken.
+and have the desired prediction. As training data \code{predictor$data$X} is taken.
 }
 \details{
 To compute dissimilarities, the function uses Gower's dissimilarity measure (Gower, 1990),
-which is implemented in the \link[StatMatch]{gower.dist}.
-For numerical features the distances are scaled with the standard deviation of the specific feature values in the
-training data.
-Only data points with features values between \code{lower} and \code{upper} are considered as candidates for the nearest data
-observations.
+which is implemented by \link[gower]{gower_topn}.
+For numerical features, the distances are scaled with the feature value ranges observed in the training data.
+Only observations with features values between \code{lower} and \code{upper} are considered as counterfactual candidates.
 }
 \examples{
 if (require("randomForest")) {
@@ -72,7 +70,7 @@ Create a new WhatIfRegr object.
 The object (created with \code{iml::Predictor$new()}) holding the machine learning model and the data.}
 
 \item{\code{n_counterfactuals}}{(\code{integerish(1)})\cr
-The number of counterfactuals to find. Default is \code{1L}.}
+The number of counterfactuals to be found. Default is \code{1L}.}
 
 \item{\code{lower}}{(\code{numeric()} | \code{NULL})\cr
 Vector of minimum values for numeric features. If not \code{NULL}, it should be named with the corresponding feature names.

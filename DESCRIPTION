@@ -20,7 +20,8 @@ Imports:
     paradox,
     miesmuschel,
     bbotk,
-    gower
+    gower,
+    ecr
 Suggests: 
     randomForest,
     GGally,

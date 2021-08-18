@@ -3,15 +3,14 @@
 #' @description 
 #' 
 #' `WhatIf` selects the `n_counterfactual` observations from the training data that are most similar to `x_interest`
-#' and have the desired predicted outcome. As training data set `predictor$data$X` is taken.
+#' and have the desired prediction. As training data `predictor$data$X` is taken.
 #' 
 #' @details
+#' 
 #' To compute dissimilarities, the function uses Gower's dissimilarity measure (Gower, 1990), 
-#' which is implemented in the \link[StatMatch]{gower.dist}. 
-#' For numerical features the distances are scaled with the standard deviation of the specific feature values in the 
-#' training data.
-#' Only data points with features values between `lower` and `upper` are considered as candidates for the nearest data
-#' observations.
+#' which is implemented by \link[gower]{gower_topn}. 
+#' For numerical features, the distances are scaled with the feature value ranges observed in the training data.
+#' Only observations with features values between `lower` and `upper` are considered as counterfactual candidates.
 #' 
 #' @references 
 #' 
@@ -43,7 +42,7 @@ WhatIfRegr = R6::R6Class("WhatIfRegr", inherit = CounterfactualMethodRegr,
     #' @description Create a new WhatIfRegr object.
     #' @template predictor
     #' @param n_counterfactuals (`integerish(1)`)\cr
-    #'   The number of counterfactuals to find. Default is `1L`.
+    #'   The number of counterfactuals to be found. Default is `1L`.
     #' @template lower_upper
     initialize = function(predictor, n_counterfactuals = 1L, lower = NULL, upper = NULL) {
       super$initialize(predictor, lower, upper)

@@ -105,21 +105,19 @@ Create a new NICEClassif object.
 The object (created with \code{iml::Predictor$new()}) holding the machine learning model and the data.}
 
 \item{\code{optimization}}{(\code{character(1)})\cr
-The optimization strategy that determines the reward function. Can be \code{sparsity} (default), \code{proximity} or
-\code{plausibility}.}
+The reward function to optimize. Can be \code{sparsity} (default), \code{proximity} or \code{plausibility}.}
 
 \item{\code{x_nn_correct_classif}}{(\code{logical(1)})\cr
-Should only correctly classified observations be considered for the nearest neighbor search?
+Should only \emph{correctly} classified observations be considered for the nearest neighbor search?
 Default is \code{TRUE}.}
 
 \item{\code{return_multiple}}{(\code{logical(1)})\cr
-If set to \code{TRUE} (default) all created feature combinations with the desired prediction are returned.
-If set to \code{FALSE} only the feature combination with the desired prediction that has the highest reward in the last
-iteration is returned. For more information, see the \code{details} section. (TODO)}
+Should multiple counterfactuals be returned? If TRUE, the algorithm runs backwards after termination and
+returns all instances with desired predictionsFor more information, see the \code{details} section.}
 
 \item{\code{finish_early}}{(\code{logical(1)})\cr
-Should the algorithm finish after an iteration in which the feature combinations with the highest reward
-has the desired prediction? Default is \code{TRUE}.}
+Should the algorithm terminate after an iteration in which the highest reward instance has a desired prediction?
+If \code{FALSE}, the algorithm continues until \code{x_nn} is recreated.}
 }
 \if{html}{\out{</div>}}
 }

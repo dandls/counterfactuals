@@ -133,11 +133,11 @@ Create a new MOCClassif object.
 The object (created with \code{iml::Predictor$new()}) holding the machine learning model and the data.}
 
 \item{\code{epsilon}}{(\code{numeric(1)} | \code{NULL})\cr
-If not \code{NULL}, candidates whose prediction is further away from the desired prediction than epsilon are penalized.
-Default is \code{NULL}, which means no penalization}
+If not \code{NULL}, candidates whose prediction is farther away from the desired prediction than epsilon are penalized.
+\code{NULL} (default) means no penalization}
 
 \item{\code{fixed_features}}{(\code{character()} | \code{NULL})\cr
-Names of features that are not allowed to change. \code{NULL} (default) allows to change all features.}
+Names of features that are not allowed to be changed. \code{NULL} (default) allows all features to be changed.}
 
 \item{\code{max_changed}}{(\code{integerish(1)} | \code{NULL})\cr
 Maximum number of feature changes. \code{NULL} (default) allows any number of changes.}
@@ -149,19 +149,19 @@ The population size. Default is \code{20L}.}
 The number of generations. Default is \code{175L}.}
 
 \item{\code{p_rec}}{(\code{numeric(1)})\cr
-Probability with which an individual is chosen for recombination. Default is \code{0.57}.}
+Probability with which an individual is selected for recombination. Default is \code{0.57}.}
 
 \item{\code{p_rec_gen}}{(\code{numeric(1)})\cr
-Probability with which a feature/gene is chosen for recombination. Default is \code{0.85}.}
+Probability with which a feature/gene is selected for recombination. Default is \code{0.85}.}
 
 \item{\code{p_rec_use_orig}}{(\code{numeric(1)})\cr
 Probability with which a feature/gene is reset to the feature value of \code{x_interest} after recombination. Default is \code{0.88}.}
 
 \item{\code{p_mut}}{(\code{numeric(1)})\cr
-Probability with which an individual is chosen for mutation. Default is \code{0.79}.}
+Probability with which an individual is selected for mutation. Default is \code{0.79}.}
 
 \item{\code{p_mut_gen}}{(\code{numeric(1)})\cr
-Probability with which a feature/gene is chosen for mutation. Default is \code{0.56}.}
+Probability with which a feature/gene is selected for mutation. Default is \code{0.56}.}
 
 \item{\code{p_mut_use_orig}}{(\code{numeric(1)})\cr
 Probability with which a feature/gene is reset to the feature value of \code{x_interest} after mutation. Default is \code{0.32}.}
@@ -172,7 +172,7 @@ The number of nearest neighbors to use for the forth objective. Default is \code
 \item{\code{weights}}{(\code{numeric(1) | numeric(k)} | \code{NULL})\cr
 The weights used to compute the weighted average distance for the forth objective. It is either a single value
 or a vector of length \code{k}. If it has length \code{k}, the first value corresponds to the nearest neighbor and so on.
-The values should sum up to \code{1}. Default is \code{NULL} which means all neighbors are weighted equally.}
+The values should sum up to \code{1}. \code{NULL} (default) means all neighbors are weighted equally.}
 
 \item{\code{lower}}{(\code{numeric()} | \code{NULL})\cr
 Vector of minimum values for numeric features. If not \code{NULL}, it should be named with the corresponding feature names.
@@ -187,9 +187,10 @@ The population initialization strategy. Can be \code{random} (default), \code{sd
 see the \code{details} section.}
 
 \item{\code{use_conditional_mutator}}{(\code{logical(1)})\cr
-Should a conditional mutator be used? The conditional mutator generates plausible feature values conditional
-on the values of the other feature. Default is \code{FALSE}.
-@param quiet (\code{logical(1)})\cr
+Should a conditional mutator be used? The conditional mutator generates plausible feature values based
+on the values of the other feature. Default is \code{FALSE}.}
+
+\item{\code{quiet}}{(\code{logical(1)})\cr
 Should information about the optimization status be hidden? Default is \code{FALSE}.}
 }
 \if{html}{\out{</div>}}

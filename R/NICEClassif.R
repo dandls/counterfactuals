@@ -59,18 +59,16 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
     #' @description Create a new NICEClassif object.
     #' @template predictor
     #' @param optimization (`character(1)`)\cr 
-    #' The optimization strategy that determines the reward function. Can be `sparsity` (default), `proximity` or 
-    #' `plausibility`.
+    #' The reward function to optimize. Can be `sparsity` (default), `proximity` or `plausibility`.
     #' @param x_nn_correct_classif (`logical(1)`)\cr 
-    #' Should only correctly classified observations be considered for the nearest neighbor search?
+    #' Should only *correctly* classified observations be considered for the nearest neighbor search?
     #' Default is `TRUE`.
     #' @param return_multiple (`logical(1)`)\cr 
-    #' If set to `TRUE` (default) all created feature combinations with the desired prediction are returned.
-    #' If set to `FALSE` only the feature combination with the desired prediction that has the highest reward in the last 
-    #' iteration is returned. For more information, see the `details` section. (TODO)
+    #' Should multiple counterfactuals be returned? If TRUE, the algorithm runs backwards after termination and 
+    #' returns all instances with desired predictionsFor more information, see the `details` section.
     #' @param finish_early (`logical(1)`)\cr 
-    #' Should the algorithm finish after an iteration in which the feature combinations with the highest reward
-    #' has the desired prediction? Default is `TRUE`.
+    #' Should the algorithm terminate after an iteration in which the highest reward instance has a desired prediction? 
+    #' If `FALSE`, the algorithm continues until `x_nn` is recreated.
     initialize = function(predictor, optimization = "sparsity", x_nn_correct_classif = TRUE, return_multiple = TRUE,
                           finish_early = TRUE) {
       
