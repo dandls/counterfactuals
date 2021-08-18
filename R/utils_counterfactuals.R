@@ -48,7 +48,7 @@ make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest
       ggplot2::geom_contour(ggplot2::aes_string(z = "pred"), colour = "white") +
       ggplot2::guides(z = ggplot2::guide_legend(title = "pred")) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = "left")
+      ggplot2::theme(legend.position = "right")
     
     if (nrow(cfactuals_plotted) > 0L) {
       p = p + 

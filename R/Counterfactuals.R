@@ -178,11 +178,12 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         warning("Can only consider numeric features for parallel plot. Non-numeric features have been removed.")
       }
       
-      line_colors = c(rep("#595959", nrow(cfactuals)), "blue")
+      line_colors = c(rep("gray", nrow(cfactuals)), "blue")
       names(line_colors) <- rownames(dt)
       dt[, rn := rownames(dt)]
- 
-      GGally::ggparcoord(dt, 1:length(numeric_cols), groupColumn = "rn", scale = "uniminmax", showPoints = TRUE) +
+      
+      GGally::ggparcoord(dt, 1:length(numeric_cols), groupColumn = "rn", scale = "uniminmax", showPoints = TRUE,
+                         alphaLines = 0.8) +
         ggplot2::theme_bw() +
         ggplot2::ylim(c(-0.1, 1.1)) +
         ggplot2::theme(legend.position = "none") +
@@ -197,7 +198,6 @@ Counterfactuals = R6::R6Class("Counterfactuals",
           "text", x = 1:length(numeric_cols), y = -0.05, size = 3.5,
           label = sapply(dt[, ..numeric_cols], function(x) round(min(x, na.rm = TRUE), digits = digits_min_max))
         )
-      
     },
     
     #' @description Plots a bar chart of the frequency of feature changes across all counterfactuals.
@@ -212,7 +212,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       freq = self$get_freq_of_feature_changes(subset_zero)
       df_freq = data.frame(var_name = names(freq), freq = freq)
       ggplot2::ggplot(df_freq, ggplot2::aes(x = reorder(var_name, freq), y = freq)) +
-        ggplot2::geom_bar(stat = "identity") +
+        ggplot2::geom_bar(stat = "identity", width = 0.9) +
         ggplot2::labs(x = ggplot2::element_blank(), y = "Relative frequency") +
         ggplot2::coord_flip() +
         ggplot2::theme_bw()
