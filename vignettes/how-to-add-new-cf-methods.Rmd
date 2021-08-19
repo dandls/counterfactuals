@@ -20,15 +20,14 @@ options(width = 200)
 ```
 
 The variety of counterfactual explanation methods continues to grow as new techniques are actively developed in current 
-research. 
-A primary objective of the `counterfactuals` package is therefore to be quickly and intuitively extensible with new
-state-of-the art counterfactual methods.
+research. Thus, we have designed the `counterfactuals` package to be quickly extensible with new methods.
 
-In the following, we explain the integration of new methods through the exemplary integration of the  [`featureTweakR` package](https://github.com/katokohaku/featureTweakR) which implements Feature Tweaking of 
+In the following, we illustrate how further methods can be added to the package by integrating
+the [`featureTweakR`](https://github.com/katokohaku/featureTweakR) package, which implements Feature Tweaking of 
 Tolomei et al. (2017). 
 
-(Note that `featureTweakR` has a couple of limitations, e.g., that factors in the training data cause problems or that the 
-algorithm can only be applied to `randomForests` trained on standardized features.
+(Note that the `featureTweakR` package has a couple of limitations, e.g., that factors in the training data cause problems or 
+that the algorithm can only be applied to `randomForests` trained on standardized features.
 Therefore, `featureTweakR` is not part of the `counterfactuals` package, but serves as a suitable example for our purpose here.)
 
 
@@ -38,29 +37,25 @@ Before we dive into the implementation details, we briefly explain the structure
 
 ### Class diagram
 Each counterfactual method (such as `MOC`) is represented by its own `R6` class. Depending on whether it supports
-classification or regression tasks, it inherits from the (abstract) `CounterfactualMethodClassif` or
-`CounterfactualMethodRegr` class. Counterfactual methods that support both (such as `MOC`) obtain two classes (`MOCClassif` 
-and `MOCRegr`). 
+classification or regression tasks, it inherits from the (abstract) classes `CounterfactualMethodClassif` or
+`CounterfactualMethodRegr`, respectively. Counterfactual methods that support both tasks are split into two separate classes. 
+For instance, as MOC is applicable to classification and regression tasks, we implement two classes: `MOCClassif` and `MOCRegr`.
 
-```{r img_class_diagram, echo=FALSE, fig.cap="", out.width = '100%'}
+```{r img_class_diagram, echo=FALSE, fig.cap=""}
 knitr::include_graphics("how-to-add-new-cf-methods-res/class-diagram.png")
 ```
 
-The key advantage of this approach is that we are able to provide a tailored
-`$find_counterfactuals()` interface to the task at hand. 
-The leaf classes inherit this method from `CounterfactualMethodClassif` or `CounterfactualMethodRegr`.
-For classification tasks `$find_counterfactuals()` has two arguments `desired_class` and `desired_prob` and for regression 
+The key advantage of this approach is that we are able to provide a tailored `find_counterfactuals()` interface to the task at hand. 
+Leaf classes like `MOCClassif` and `MOCRegr` inherit the `find_counterfactuals()` method from `CounterfactualMethodClassif`
+or `CounterfactualMethodRegr`, respectively.
+For classification tasks `find_counterfactuals()` has two arguments `desired_class` and `desired_prob` and for regression 
 tasks it has one argument `desired_outcome`.
 
 ### Call graph
 
-The `$find_counterfactuals()` method (owned by `CounterfactualMethodClassif` and `CounterfactualMethodRegr`) calls a
-private `$run()` method. This `$run()` should be implemented by the leaf classes such as `MOCClassif` and `MOCRegr` and 
-return the found counterfactuals as `data.table` (preferably) or `data.frame`. 
-The actual structure of `$run()` is completely free, which makes it flexible to add new counterfactual methods to the package. 
-
-Based on the counterfactuals returned by `$run()`, the `$find_counterfactuals()` method then creates a `Counterfactuals` 
-object.
+The `find_counterfactuals()` method calls a private `run()` method (1) – implemented by the leaf classes – which performs the 
+search and returns the counterfactuals as a `data.table` (2). The `find_counterfactuals()` method then creates a `Counterfactuals` 
+object, which contains the counterfactuals and provides several methods for their evaluation and visualization (3).
 
 ```{r img_call_diagram, echo=FALSE, fig.cap="", out.width = '75%', out.height='60%', fig.align='center'}
 knitr::include_graphics("how-to-add-new-cf-methods-res/call-diagram.png")
@@ -69,7 +64,7 @@ knitr::include_graphics("how-to-add-new-cf-methods-res/call-diagram.png")
 
 ## Integrating a new counterfactuals explanation method
 
-To integrate Feature Tweaking, we first we need to install `featureTweakR` and `pforeach` from github and 
+To integrate Feature Tweaking, we first we need to install `featureTweakR` and `pforeach` from github, and 
 load the required libraries.
 
 ```{r, eval=FALSE}
@@ -89,11 +84,12 @@ library(iml)
 
 ### Class structure
 
-A new class is required to have at least two methods: `$initialize()` and `$run()`. The `print_parameters` is not 
-mandatory but strongly encouraged as it gives objects of that class an informative `print` output.
+A new class is required to have at least two methods: `initialize()` and `run()`. The method `print_parameters` is not 
+mandatory but strongly recommended as it gives objects of that class an informative `print` output.
 
-As explained above, depending on the supported task, the new class inherits from either `CounterfactualMethodClassif` or
-`CounterfactualMethodRegr.` Since Feature Tweaking supports classification tasks, the new class inherits from the former.
+As elaborated above, the new class inherits from either `CounterfactualMethodClassif` or `CounterfactualMethodRegr` depending 
+on its supported task. Because Feature Tweaking supports classification tasks, the new `FeatureTweaker` class inherits from
+the former.
 
 ```{r,eval=FALSE}
 FeatureTweaker = R6::R6Class("FeatureTweaker", inherit = CounterfactualMethodClassif,
@@ -112,19 +108,24 @@ FeatureTweaker = R6::R6Class("FeatureTweaker", inherit = CounterfactualMethodCla
 
 ### Implement the `$initialize` method
 
-The `$initialize()` method must have a predictor argument (for the [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object) and initalizes the super class. 
-
-
-Additionally, `$initialize()` can have further arguments that are specific to the counterfactual method such as
-`ktree`, `epsilon` and `nrep` in this case. We also fill the `$print_parameters()` method with the model specifications.
-
-(Note: For reasons of clarity, we omit argument type checks here).
+The `initialize()` method must have a predictor argument that takes an
+[`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object.  In addition, it may
+have further arguments that are specific to the counterfactual method such as `ktree`, `epsilon`, and `nrep` in this case. 
+For argument checks, we recommend the [`checkmate`](https://mllg.github.io/checkmate/) package. 
+We also fill the `print_parameters()` method with the parameters of Feature Tweaking.
 
 ```{r,eval=FALSE}
 FeatureTweaker = R6Class("FeatureTweaker", inherit = CounterfactualMethodClassif,
   
   public = list(
     initialize = function(predictor, ktree = 30L, epsilon = 0.1, nrep = 10L) {
+      checkmate::test_multi_class(predictor$model, "randomForest")
+      checkmate::assert_integerish(
+        ktree, lower = 0L, upper = rf$ntree, any.missing = FALSE, len = 1L
+      )
+      checkmate::assert_number(epsilon, lower = 1e-8)
+      checkmate::assert_integerish(nrep, lower = 0L, any.missing = FALSE, len = 1L)
+      # adds predictor to private$predictor field
       super$initialize(predictor)
       private$ktree = ktree
       private$epsilon = epsilon
@@ -150,7 +151,9 @@ FeatureTweaker = R6Class("FeatureTweaker", inherit = CounterfactualMethodClassif
 
 ### Implement the `$run` method
 
-The `$run` methods implements the search for counterfactuals.
+The `run()` method performs the search for counterfactuals. Its structure is completely free, which makes it flexible to 
+add new counterfactual methods to the `counterfactuals` package.
+
 The workflow of finding counterfactuals with the `featureTweakR` package is explained 
 [here](https://github.com/katokohaku/featureTweakR) and essentially consists of these steps:
 
@@ -166,15 +169,21 @@ tweaked = tweak(
 tweaked$suggest
 ```
 
-The rule extraction is a random process as long the `ktree` is less than the total number of trees in the `randomForest`.
-Therefore we can repeat those steps `nrep` times (e.g. by using `sapply`) to obtain multiple counterfactuals.
-We can then implement the `$run()` method as follows:
+As long as `ktree` – the number of trees to parse – is less than the total number of trees
+in the `randomForest`, the rule extraction is a random process. Hence, these steps can
+repeated `nrep` times to receive multiple counterfactuals.
 
 ```{r}
 FeatureTweaker = R6Class("FeatureTweaker", inherit = CounterfactualMethodClassif,
   
   public = list(
     initialize = function(predictor, ktree = 10L, epsilon = 0.1, nrep = 10L) {
+      checkmate::test_multi_class(predictor$model, "randomForest")
+      checkmate::assert_integerish(
+        ktree, lower = 0L, upper = rf$ntree, any.missing = FALSE, len = 1L
+      )
+      checkmate::assert_number(epsilon, lower = 1e-8)
+      checkmate::assert_integerish(nrep, lower = 0L, any.missing = FALSE, len = 1L)
       # adds predictor to private$predictor field
       super$initialize(predictor) 
       private$ktree = ktree
@@ -226,10 +235,10 @@ FeatureTweaker = R6Class("FeatureTweaker", inherit = CounterfactualMethodClassif
 
 ## Use Case
 
-Now that we have implemented `FeatureTweaker`, we can briefly look at a possible use case.
+Now, that we have implemented `FeatureTweaker`, we look at a short application.
 
-First we train a `randomForest` model on the `iris` data set and set up the [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object).
-Note that we leave out one observation from the training data which is our `x_interest`.
+First, we train a `randomForest` model on the `iris` data set and set up the [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object.
+As above, we omit one observation from the training data, which is `x_interest`.
 ```{r}
 set.seed(78546)
 X = subset(iris, select = -Species)
@@ -238,7 +247,7 @@ rf = randomForest(X, y, ntree = 20L)
 predictor = iml::Predictor$new(rf, data = iris[-120L, ], y = "Species", type = "prob")
 ```
 
-For `x_interest` the model predicts:
+For `x_interest` the model predicts `versicolor` with a class probability of 25%.
 ```{r}
 x_interest = iris[120L, ]
 predictor$predict(x_interest)
@@ -255,8 +264,9 @@ ft_classif = readRDS("how-to-add-new-cf-methods-res/ft_classif.RDS")
 cfactuals = readRDS("how-to-add-new-cf-methods-res/cfactuals.RDS")
 ```
 
-Now, we can explore the question: "What would need to be changed such that the model predicts
-class 'versicolor' with a class probability of at least 60%?" using Feature Tweaking.
+Now, we use Feature Tweaking to address the question: "What would need to be changed
+such that the model predicts `versicolor` with a class probability of at least 60%?"
+
 
 ```{r, eval=FALSE}
 # Set up FeatureTweaker
@@ -266,19 +276,20 @@ ft_classif = FeatureTweaker$new(predictor, ktree = 10L, nrep = 5L)
 cfactuals = ft_classif$find_counterfactuals(
   x_interest = iris[120L, ], desired_class = "versicolor", desired_prob = c(0.6, 1)
 )
-
-cfactuals
 ```
 
-```{r, echo=FALSE}
+Just as in the cases above for MOC and WhatIf, the result is a `Counterfactuals` object.
+
+
+```{r}
 cfactuals
 ```
 
 
 ## Comments
 
-A limitation of this basic implementation is that we would not be able to find counterfactuals for a setting with 
-`max(desired_prob) < 0.5`, since `featureTweakR::tweak` only looks for instances that would be predicted as `desired_class`
+A minor limitation of this basic implementation is that we would not be able to find counterfactuals for a setting with 
+`max(desired_prob) < 0.5`, since `featureTweakR::tweak` only searches for instances that would be predicted as `desired_class`
 by majority vote. To enable this setting we would need to change some `featureTweakR` internal code, but for the sake of 
 clarity we will not do this here.
 
