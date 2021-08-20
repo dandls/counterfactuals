@@ -193,7 +193,7 @@ reference point that represents the maximal values of the objectives.
 The evolution of the hypervolume indicator can be plotted together with the evolution of mean and minimum objective values 
 using the `plot_statistics()` method.
 
-```{r, fig.height=2.5}
+```{r, fig.height=2.5, results='asis'}
 moc_classif$plot_statistics()
 ```
 
