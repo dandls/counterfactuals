@@ -100,14 +100,14 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/TODO">counterfactuals</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://christophm.github.io/iml/">iml</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/">randomForest</a></span><span class="op">)</span></code></pre></div>
-<div id="classification-models" class="section level2">
+<div id="classification-tasks" class="section level2">
 <h2 class="hasAnchor">
-<a href="#classification-models" class="anchor"></a>Classification Models</h2>
-<p>To demonstrate the <code>counterfactuals</code> workflow for classification tasks, we search for counterfactual explanations for diabetes tested patients with <code>MOC</code>.</p>
+<a href="#classification-tasks" class="anchor"></a>Classification Tasks</h2>
+<p>To illustrate the <code>counterfactuals</code> workflow for classification tasks, we search for counterfactual explanations for diabetes tested patients with <code>MOC</code> (Dandl et al. 2020).</p>
 <div id="data-pima-indians-diabetes-database" class="section level3">
 <h3 class="hasAnchor">
 <a href="#data-pima-indians-diabetes-database" class="anchor"></a>Data: Pima Indians Diabetes Database</h3>
-<p>As training data we use the Pima Indians Diabetes Database from the <code>mlbench</code> package. The data set contains 768 observations with 8 features and the binary target variable <code>diabetes</code>:</p>
+<p>As training data we use the Pima Indians Diabetes Database from the <code>mlbench</code> package. The data set contains 768 observations with 8 features and the binary target variable <code>diabetes</code>.</p>
 <table class="table">
 <thead><tr>
 <th style="text-align:left;">
@@ -178,7 +178,7 @@ Class variable (test for diabetes)
 </table>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">PimaIndiansDiabetes</span>, package <span class="op">=</span> <span class="st">"mlbench"</span><span class="op">)</span>  </code></pre></div>
-<p>Converting <code>integerish</code> features to the <code>integer</code> data type ensures that counterfactuals will only contain <code>integer</code> values for these features (for example no <code>2.76</code> pregnancies).</p>
+<p>We convert <code>integerish</code> features to the <code>integer</code> data type to ensure that counterfactuals will only contain <code>integer</code> values for these features (for example no <code>2.76</code> pregnancies).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">PimaIndiansDiabetes</span><span class="op">$</span><span class="va">pregnant</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op">(</span><span class="va">PimaIndiansDiabetes</span><span class="op">$</span><span class="va">pregnant</span><span class="op">)</span>
 <span class="va">PimaIndiansDiabetes</span><span class="op">$</span><span class="va">glucose</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op">(</span><span class="va">PimaIndiansDiabetes</span><span class="op">$</span><span class="va">glucose</span><span class="op">)</span>
@@ -187,10 +187,10 @@ Class variable (test for diabetes)
 <div id="fitting-a-model" class="section level3">
 <h3 class="hasAnchor">
 <a href="#fitting-a-model" class="anchor"></a>Fitting a model</h3>
-<p>First we train a model to predict <code>diabetes</code>. Note that we leave out one observation from the training data which is our <code>x_interest</code>.</p>
+<p>First, we train a model to predict <code>diabetes</code>, leaving out one observation from the training data which is <code>x_interest</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">20210716</span><span class="op">)</span>
-<span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html">randomForest</a></span><span class="op">(</span><span class="va">diabetes</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">PimaIndiansDiabetes</span><span class="op">[</span><span class="op">-</span><span class="fl">154L</span>, <span class="op">]</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">20210816</span><span class="op">)</span>
+<span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html">randomForest</a></span><span class="op">(</span><span class="va">diabetes</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">PimaIndiansDiabetes</span><span class="op">[</span><span class="op">-</span><span class="fl">499L</span>, <span class="op">]</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="setting-up-an-imlpredictor-object" class="section level3">
 <h3 class="hasAnchor">
@@ -202,66 +202,72 @@ Class variable (test for diabetes)
 <div id="find-counterfactuals" class="section level3">
 <h3 class="hasAnchor">
 <a href="#find-counterfactuals" class="anchor"></a>Find counterfactuals</h3>
-<p>For <code>x_interest</code> the model predicts:</p>
+<p>For <code>x_interest</code> the model predicts a class probability of 63.4% for a diabetes disease.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">x_interest</span> <span class="op">=</span> <span class="va">PimaIndiansDiabetes</span><span class="op">[</span><span class="fl">154L</span>, <span class="op">]</span>
+<code class="sourceCode R"><span class="va">x_interest</span> <span class="op">=</span> <span class="va">PimaIndiansDiabetes</span><span class="op">[</span><span class="fl">499L</span>, <span class="op">]</span>
 <span class="va">predictor</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="va">x_interest</span><span class="op">)</span>
 <span class="co">#&gt;     neg   pos</span>
-<span class="co">#&gt; 1 0.676 0.324</span></code></pre></div>
-<p>Now we can examine which risk factors need to be changed to obtain a predicted probability of at least 50% for a diabetes disease.</p>
-<p>Since we want to use <code>MOC</code> for a classification model, we initialize a <code>MOCClassif</code> object.</p>
+<span class="co">#&gt; 1 0.366 0.634</span></code></pre></div>
+<p>Now we examine which risk factors need to be changed to reduce the predicted probability of diabetes to a maximum of 40%. Since we want to apply MOC to a classification model, we initialize a <code>MOCClassif</code> object. Individuals whose prediction is further away from the desired prediction than <code>epsilon</code> can be penalized. Here we set <code>epsilon = 0</code> penalizing all individuals with a prediction outside the desired interval. With the <code>fixed_features</code> argument, we can fix non-actionable features to their current value.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">moc_classif</span> <span class="op">=</span> <span class="va"><a href="../reference/MOCClassif.html">MOCClassif</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predictor</span><span class="op">)</span></code></pre></div>
-<p>Then we use the <code>$find_counterfactuals()</code> method to find counterfactual explanations for <code>x_interest</code>.</p>
+<code class="sourceCode R"><span class="va">moc_classif</span> <span class="op">=</span> <span class="va"><a href="../reference/MOCClassif.html">MOCClassif</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>
+  <span class="va">predictor</span>, epsilon <span class="op">=</span> <span class="fl">0</span>, fixed_features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pregnant"</span>, <span class="st">"age"</span><span class="op">)</span>
+<span class="op">)</span></code></pre></div>
+<p>Then, we use the <code>find_counterfactuals()</code> method to find counterfactuals for <code>x_interest</code>. As we aim to find counterfactuals with a predicted probability of at most 40% for diabetes, we set the <code>desired_class</code> to <code>"pos"</code> and the <code>predicted_prob</code> to <code><a href="https://rdrr.io/r/base/c.html">c(0, 0.4)</a></code>. (In the binary classification case, this is equivalent to setting <code>desired_class</code> to <code>"neg"</code> and <code>predicted_prob</code> to <code><a href="https://rdrr.io/r/base/c.html">c(0.6, 1)</a></code>.)</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cfactuals</span> <span class="op">=</span> <span class="va">moc_classif</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span><span class="va">x_interest</span>, desired_class <span class="op">=</span> <span class="st">"pos"</span>, desired_prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">cfactuals</span> <span class="op">=</span> <span class="va">moc_classif</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span>
+  <span class="va">x_interest</span>, desired_class <span class="op">=</span> <span class="st">"pos"</span>, desired_prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.4</span><span class="op">)</span>
+<span class="op">)</span></code></pre></div>
 </div>
 <div id="the-counterfactuals-object" class="section level3">
 <h3 class="hasAnchor">
 <a href="#the-counterfactuals-object" class="anchor"></a>The counterfactuals object</h3>
-<p>The resulting <code>Counterfactuals</code> object holds the found counterfactuals and has several methods for their evaluation and visualization.</p>
+<p>The resulting <code>Counterfactuals</code> object holds the counterfactuals in the <code>data</code> field and possesses several methods for their evaluation and visualization.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">cfactuals</span><span class="op">)</span>
 <span class="co">#&gt; [1] "Counterfactuals" "R6"</span></code></pre></div>
+<p>Printing a <code>Counterfactuals</code> object, gives an overview over the results.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">cfactuals</span><span class="op">)</span>
-<span class="co">#&gt; 85 Counterfactual(s) </span>
+<span class="co">#&gt; 289 Counterfactual(s) </span>
 <span class="co">#&gt;  </span>
 <span class="co">#&gt; Desired class: pos </span>
-<span class="co">#&gt; Desired predicted probability range: [0.5, 1] </span>
+<span class="co">#&gt; Desired predicted probability range: [0, 0.4] </span>
 <span class="co">#&gt;  </span>
 <span class="co">#&gt; Head: </span>
-<span class="co">#&gt;    pregnant glucose pressure triceps  insulin mass  pedigree age</span>
-<span class="co">#&gt; 1:        1     170 66.48749      42 513.4484 40.6 0.6743737  28</span>
-<span class="co">#&gt; 2:        1     153 48.86921      42 485.0000 40.6 0.6870000  23</span>
-<span class="co">#&gt; 3:        1     160 59.65362      42 485.0000 40.6 0.6870000  23</span></code></pre></div>
-<p>We can use the <code>$predict()</code> method to predict the outcome of the counterfactuals found.</p>
+<span class="co">#&gt;    pregnant glucose pressure triceps insulin mass  pedigree age</span>
+<span class="co">#&gt; 1:        7     148       70      33     145 25.1 0.1630000  55</span>
+<span class="co">#&gt; 2:        7     142       70      33     145 25.1 0.1630000  55</span>
+<span class="co">#&gt; 3:        7     130       70      33     145 25.1 0.6711319  55</span></code></pre></div>
+<p>We can use the <code><a href="https://rdrr.io/r/stats/predict.html">predict()</a></code> method to predict the outcome of the counterfactuals.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">cfactuals</span><span class="op">$</span><span class="va">data</span>, <span class="va">cfactuals</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="fl">5L</span><span class="op">)</span>
-<span class="co">#&gt;    pregnant glucose pressure triceps  insulin     mass  pedigree age   neg   pos</span>
-<span class="co">#&gt; 1:        1     170 66.48749      42 513.4484 40.60000 0.6743737  28 0.172 0.828</span>
-<span class="co">#&gt; 2:        1     153 48.86921      42 485.0000 40.60000 0.6870000  23 0.498 0.502</span>
-<span class="co">#&gt; 3:        1     160 59.65362      42 485.0000 40.60000 0.6870000  23 0.358 0.642</span>
-<span class="co">#&gt; 4:        1     160 82.00000      42 571.8164 40.60000 0.6870000  23 0.452 0.548</span>
-<span class="co">#&gt; 5:        1     156 72.98878      42 485.0000 43.26197 0.6870000  23 0.498 0.502</span></code></pre></div>
-<p>The <code>$evaluate()</code> method returns the counterfactuals along with evaluation measures (<code>dist_x_interest</code>, <code>dist_target</code>, <code>nr_changed</code> and <code>dist_train</code>). Setting the <code>show_diff</code> argument to <code>TRUE</code> will show the counterfactuals as their difference to <code>x_interest</code>. <code>NA</code> means “no difference”.</p>
+<span class="co">#&gt;    pregnant glucose pressure triceps insulin mass  pedigree age   neg   pos</span>
+<span class="co">#&gt; 1:        7     148       70      33     145 25.1 0.1630000  55 0.618 0.382</span>
+<span class="co">#&gt; 2:        7     142       70      33     145 25.1 0.1630000  55 0.700 0.300</span>
+<span class="co">#&gt; 3:        7     130       70      33     145 25.1 0.6711319  55 0.700 0.300</span>
+<span class="co">#&gt; 4:        7     137       70      33     145 25.1 0.1630000  55 0.726 0.274</span>
+<span class="co">#&gt; 5:        7     141       70      33     145 25.1 0.1630000  55 0.714 0.286</span></code></pre></div>
+<p>The <code>evaluate()</code> method returns the counterfactuals along with the evaluation measures: <code>dist_x_interest</code>, <code>dist_target</code>, <code>nr_changed</code>, and <code>dist_train</code>.<br>
+Setting the <code>show_diff</code> argument to <code>TRUE</code> displays the counterfactuals as their difference to <code>x_interest</code>: For a numeric feature, positive values indicate an increase compared to the counterfactual feature value in <code>x_interest</code> and negative values indicate a decrease. For factors, the counterfactual feature value is displayed if it differs from <code>x_interest.</code> <code>NA</code> means “no difference” in both cases.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span>show_diff <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="fl">5L</span><span class="op">)</span>
-<span class="co">#&gt;    pregnant glucose   pressure triceps insulin     mass    pedigree age dist_x_interest nr_changed dist_train dist_target</span>
-<span class="co">#&gt; 1:       NA      17 -15.512505      NA 28.4484       NA -0.01262625   5      0.04186629          5 0.02615759           0</span>
-<span class="co">#&gt; 2:       NA      NA -33.130790      NA      NA       NA          NA  NA      0.03394548          1 0.03666135           0</span>
-<span class="co">#&gt; 3:       NA       7 -22.346385      NA      NA       NA          NA  NA      0.02729287          2 0.03000874           0</span>
-<span class="co">#&gt; 4:       NA       7         NA      NA 86.8164       NA          NA  NA      0.01722447          2 0.04635221           0</span>
-<span class="co">#&gt; 5:       NA       3  -9.011221      NA      NA 2.661971          NA  NA      0.01607619          3 0.04093747           0</span></code></pre></div>
-<p>To plot the frequency of feature changes across all counterfactuals, we can use the <code>$plot_freq_of_feature_changes()</code> method.</p>
+<span class="co">#&gt;    pregnant glucose pressure triceps insulin mass  pedigree age dist_x_interest nr_changed dist_train dist_target</span>
+<span class="co">#&gt; 1:       NA     -47       NA      NA      NA   NA        NA  NA      0.02952261          1 0.05779453           0</span>
+<span class="co">#&gt; 2:       NA     -53       NA      NA      NA   NA        NA  NA      0.03329146          1 0.05402569           0</span>
+<span class="co">#&gt; 3:       NA     -65       NA      NA      NA   NA 0.5081319  NA      0.06794976          2 0.02948106           0</span>
+<span class="co">#&gt; 4:       NA     -58       NA      NA      NA   NA        NA  NA      0.03643216          1 0.05088498           0</span>
+<span class="co">#&gt; 5:       NA     -54       NA      NA      NA   NA        NA  NA      0.03391960          1 0.05339755           0</span></code></pre></div>
+<p>The <code>plot_freq_of_feature_changes()</code> method plots the frequency of feature changes across all counterfactuals.<br>
+Setting <code>subset_zero = TRUE</code> removes all unchanged features from the plot.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_freq_of_feature_changes</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_freq_of_feature_changes</span><span class="op">(</span>subset_zero <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="introduction_files/figure-html/unnamed-chunk-15-1.png" width="672"></p>
 <p>The parallel plot connects the (scaled) feature values of each counterfactual and highlights <code>x_interest</code> in blue.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_parallel</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="introduction_files/figure-html/unnamed-chunk-16-1.png" width="672"></p>
-<p>The white dot in the prediction surface plot represents <code>x_interest</code>. All counterfactuals that differ from <code>x_interest</code> only in the selected features are represented as black dots.</p>
+<p>The white dot in the prediction surface plot represents <code>x_interest</code>. All counterfactuals that differ from <code>x_interest</code> only in the selected features are represented as black dots. The tick marks next to the axes indicate the marginal distribution of the counterfactuals.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_surface</span><span class="op">(</span>feature_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mass"</span>, <span class="st">"glucose"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="introduction_files/figure-html/unnamed-chunk-17-1.png" width="672"></p>
@@ -269,32 +275,32 @@ Class variable (test for diabetes)
 <div id="moc-diagnostics" class="section level3">
 <h3 class="hasAnchor">
 <a href="#moc-diagnostics" class="anchor"></a>MOC diagnostics</h3>
-<p>A <code>MOCClassif</code> object has several diagnostics methods.</p>
-<p>The method <code>$plot_search()</code> visualizes all individuals of all generations in a scatter plot with two objectives on the axes.</p>
+<p>To evaluate the estimated Pareto front, Dandl et al. (2020) use a hypervolume indicator (Zitzler and Thiele 1998) with a reference point that represents the maximal values of the objectives. The evolution of the hypervolume indicator can be plotted together with the evolution of mean and minimum objective values using the <code>plot_statistics()</code> method.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">moc_classif</span><span class="op">$</span><span class="fu">plot_search</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p><img src="introduction_files/figure-html/unnamed-chunk-18-1.png" width="672"></p>
-<p>It is also possible to plot the evolution of the mean and minimum objective values together with the dominated hypervolume over the generations</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">moc_classif</span><span class="op">$</span><span class="fu">plot_statistics</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p>[[1]] <img src="introduction_files/figure-html/unnamed-chunk-19-1.png" width="672"> [[2]] <img src="introduction_files/figure-html/unnamed-chunk-19-2.png" width="672"> [[3]] <img src="introduction_files/figure-html/unnamed-chunk-19-3.png" width="672"></p>
+<p><img src="introduction-res/moc_stats_plots.png" width="97%"></p>
+<p>Ideally, one would like the mean value of each objective to decrease over the generations. However, there is often a trade-off between the objectives. Here, the mean values of <code>dist_target</code> and <code>dist_train</code> remain relatively constant over the generations, indicating that it is difficult to minimize both objectives concurrently.</p>
+<p>This trade-off can also be seen in the scatter plot – created by the <code>plot_search()</code> method – that visualizes two selected objective values of all individuals. Ideally, one would like to have a point shift to the lower left corner over the generations, as this implies better objective values. Here, however, the points are shifted to a middle region, which implies that it is difficult to minimize both objectives concurrently.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">moc_classif</span><span class="op">$</span><span class="fu">plot_search</span><span class="op">(</span>objectives <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"dist_train"</span>, <span class="st">"dist_target"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="introduction_files/figure-html/unnamed-chunk-21-1.png" width="672"></p>
 </div>
 </div>
-<div id="regression-models" class="section level2">
+<div id="regression-tasks" class="section level2">
 <h2 class="hasAnchor">
-<a href="#regression-models" class="anchor"></a>Regression Models</h2>
-<p>Finding counterfactuals for regression models is analogous to classification models. In this example we search for counterfactuals explanations for housing prices with <code>WhatIf</code>.</p>
+<a href="#regression-tasks" class="anchor"></a>Regression Tasks</h2>
+<p>Finding counterfactuals for regression models is analogous to classification models. In this example, we search for counterfactuals explanations for housing prices with <code>WhatIf</code> (Wexler et al. 2019).</p>
 <div id="data-boston-housing-data" class="section level3">
 <h3 class="hasAnchor">
 <a href="#data-boston-housing-data" class="anchor"></a>Data: Boston Housing Data</h3>
-<p>As training data we use the Boston Housing dataset from the <code>mlbench</code> package. The data set contains 506 observations with 13 features and the (continuous) target variable <code>medv</code>:</p>
+<p>As training data we use the Boston Housing dataset from the <code>mlbench</code> package. The data set contains 506 observations with 13 features and the (continuous) target variable <code>medv</code>.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">BostonHousing</span>, package <span class="op">=</span> <span class="st">"mlbench"</span><span class="op">)</span>  </code></pre></div>
 </div>
 <div id="fitting-a-model-1" class="section level3">
 <h3 class="hasAnchor">
 <a href="#fitting-a-model-1" class="anchor"></a>Fitting a model</h3>
-<p>First we train a model to predict <code>medv</code>. <br> Note that we leave out one observation from the training data which is our <code>x_interest</code>.</p>
+<p>First, we train a model to predict <code>medv</code> and again leave out one observation from the training data, which is <code>x_interest</code>.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">20210713</span><span class="op">)</span>
 <span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html">randomForest</a></span><span class="op">(</span><span class="va">medv</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">BostonHousing</span><span class="op">[</span><span class="op">-</span><span class="fl">1L</span>, <span class="op">]</span><span class="op">)</span></code></pre></div>
@@ -302,23 +308,23 @@ Class variable (test for diabetes)
 <div id="setting-up-an-imlpredictor-object-1" class="section level3">
 <h3 class="hasAnchor">
 <a href="#setting-up-an-imlpredictor-object-1" class="anchor"></a>Setting up an iml::Predictor() object</h3>
-<p>Then we initialize an <a href="https://christophm.github.io/iml/reference/Predictor.html"><code>iml::Predictor</code></a> object.</p>
+<p>Then, we initialize an <a href="https://christophm.github.io/iml/reference/Predictor.html"><code>iml::Predictor</code></a> object.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">predictor</span> <span class="op">=</span> <span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rf</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="find-counterfactuals-1" class="section level3">
 <h3 class="hasAnchor">
 <a href="#find-counterfactuals-1" class="anchor"></a>Find counterfactuals</h3>
-<p>For <code>x_interest</code> the model predicts:</p>
+<p>For <code>x_interest</code> the model predicts a median housing value of 28.32.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x_interest</span> <span class="op">=</span> <span class="va">BostonHousing</span><span class="op">[</span><span class="fl">1L</span>, <span class="op">]</span>
 <span class="va">predictor</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="va">x_interest</span><span class="op">)</span>
 <span class="co">#&gt;       pred</span>
 <span class="co">#&gt; 1 28.32244</span></code></pre></div>
-<p>Since we want to use <code>WhatIf</code> for a regression model, we initialize a <code>WhatIfRegr</code> object.</p>
+<p>Since we want to apply <code>WhatIf</code> to a regression model, we initialize a <code>WhatIfRegr</code> object. The argument <code>n_counterfactuals</code> specifies the number of counterfactuals to be returned.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">whatif_regr</span> <span class="op">=</span> <span class="va"><a href="../reference/WhatIfRegr.html">WhatIfRegr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predictor</span>, n_counterfactuals <span class="op">=</span> <span class="fl">5L</span><span class="op">)</span></code></pre></div>
-<p>Then we use the <code>$find_counterfactuals()</code> method to find counterfactual explanations for <code>x_interest</code>. Note that for regression tasks we only need to specify <code>desired_outcome</code>, unlike <code>desired_class</code> and <code>desired_probs</code> for classification tasks.</p>
+<p>Then, we use the <code>$find_counterfactuals()</code> method to find counterfactuals for <code>x_interest</code> with a predicted housing value in the interval [30, 32].</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cfactuals</span> <span class="op">=</span> <span class="va">whatif_regr</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span><span class="va">x_interest</span>, desired_outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">32</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
@@ -338,6 +344,13 @@ Class variable (test for diabetes)
 <span class="co">#&gt; 2: 0.02187 60  2.93    0 0.401 6.800  9.9 6.2196   1 265    15.6 393.37  5.03</span>
 <span class="co">#&gt; 3: 0.06888  0  2.46    0 0.488 6.144 62.2 2.5979   3 193    17.8 396.90  9.45</span></code></pre></div>
 </div>
+</div>
+<div id="references" class="section level1">
+<h1 class="hasAnchor">
+<a href="#references" class="anchor"></a>References</h1>
+<p>Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “MultiObjective Counterfactual Explanations.” In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr, Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Publishing.</p>
+<p>Wexler, James, Mahima Pushkarna, Tolga Bolukbasi, Martin Wattenberg, Fernanda Viégas, and Jimbo Wilson. 2019. “The What-If Tool: Interactive Probing of Machine Learning Models.” IEEE Transactions on Visualization and Computer Graphics 26 (1): 56–65.</p>
+<p>Zitzler, Eckart, and Lothar Thiele. 1998. “Multiobjective Optimization Using Evolutionary Algorithms—a Comparative Case Study.” In International Conference on Parallel Problem Solving from Nature, 292–301. Springer.</p>
 </div>
   </div>
 

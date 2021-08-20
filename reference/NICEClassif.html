@@ -218,21 +218,19 @@ reward values and their predictions.</p></dd>
 The object (created with <code>iml::Predictor$new()</code>) holding the machine learning model and the data.</p></dd>
 
 <dt><code>optimization</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code>)<br />
-The optimization strategy that determines the reward function. Can be <code>sparsity</code> (default), <code>proximity</code> or
-<code>plausibility</code>.</p></dd>
+The reward function to optimize. Can be <code>sparsity</code> (default), <code>proximity</code> or <code>plausibility</code>.</p></dd>
 
 <dt><code>x_nn_correct_classif</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>)<br />
-Should only correctly classified observations be considered for the nearest neighbor search?
+Should only <em>correctly</em> classified observations be considered for the nearest neighbor search?
 Default is <code>TRUE</code>.</p></dd>
 
 <dt><code>return_multiple</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>)<br />
-If set to <code>TRUE</code> (default) all created feature combinations with the desired prediction are returned.
-If set to <code>FALSE</code> only the feature combination with the desired prediction that has the highest reward in the last
-iteration is returned. For more information, see the <code>details</code> section. (TODO)</p></dd>
+Should multiple counterfactuals be returned? If TRUE, the algorithm runs backwards after termination and
+returns all instances with desired predictionsFor more information, see the <code>details</code> section.</p></dd>
 
 <dt><code>finish_early</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>)<br />
-Should the algorithm finish after an iteration in which the feature combinations with the highest reward
-has the desired prediction? Default is <code>TRUE</code>.</p></dd>
+Should the algorithm terminate after an iteration in which the highest reward instance has a desired prediction?
+If <code>FALSE</code>, the algorithm continues until <code>x_nn</code> is recreated.</p></dd>
 
 </dl><p></div></p>
 <p><hr>
@@ -266,17 +264,17 @@ has the desired prediction? Default is <code>TRUE</code>.</p></dd>
 <span class='op'>}</span>
 </div><div class='output co'>#&gt; [[1]]
 #&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width reward setosa versicolor
-#&gt; 1:          5.9         3.2          5.1         1.8  0.136      0      0.168
-#&gt; 2:          5.9         3.0          4.8         1.8  0.314      0      0.346
+#&gt; 1:          5.9         3.2          5.1         1.8  0.128      0      0.168
+#&gt; 2:          5.9         3.0          4.8         1.8  0.290      0      0.330
 #&gt;    virginica
 #&gt; 1:     0.832
-#&gt; 2:     0.654
+#&gt; 2:     0.670
 #&gt; 
 #&gt; [[2]]
 #&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width reward setosa versicolor
-#&gt; 1:          5.9         3.2          4.8         1.8  0.154      0       0.66
+#&gt; 1:          5.9         3.2          4.8         1.8   0.17      0      0.646
 #&gt;    virginica
-#&gt; 1:      0.34
+#&gt; 1:     0.354
 #&gt; </div><div class='input'>
 </div></pre>
   </div>

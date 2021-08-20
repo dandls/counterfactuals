@@ -89,17 +89,20 @@
 <a href="#counterfactuals" class="anchor"></a>counterfactuals</h1></div>
 <!-- badges: start -->
 
-<p>The <code>counterfactuals</code> package provides various (model-agnostic) counterfactual explanation methods via a unified R6-based interface. Counterfactual explanation methods (or counterfactuals for short) address questions of the form: “For input <strong>x</strong>, the model predicted <em>y</em>. What would need to be changed in <strong>x</strong> for the model to predict the desired outcome <em>ỹ</em> instead?”.</p>
-<p>Counterfactuals for denied loan applications are a common example. Here a counterfactual could be: “The loan was denied because the amount of €30k is too high given the income. If the amount had been €20k, the loan would have been granted.”</p>
-<p>For an introduction to the topic, see e.g. Chapter 6 of the <a href="https://christophm.github.io/interpretable-ml-book/">Interpretable Machine Learning book</a> by Christoph Molnar.</p>
+<p>The <code>counterfactuals</code> package provides various (model-agnostic) counterfactual explanation methods via an unified R6-based interface.</p>
+<p>Counterfactual explanation methods (or counterfactuals for short) address questions of the form: “For input <strong>x</strong><sup><strong>⋆</strong></sup>, the model predicted <em>y</em>. What would need to be changed in <strong>x</strong><sup><strong>⋆</strong></sup> for the model to predict the desired outcome <em>ỹ</em> instead?”.<br>
+Denied loan applications often serve as an example; in this scenario a counterfactual could be: “The loan was denied because the amount of €30k is too high given the income. If the amount had been €20k, the loan would have been granted.”</p>
+<p>For an introduction to the topic, we recommend Chapter 6 of the <a href="https://christophm.github.io/interpretable-ml-book/">Interpretable Machine Learning book</a> by Christoph Molnar.</p>
 <div id="available-methods" class="section level2">
 <h2 class="hasAnchor">
 <a href="#available-methods" class="anchor"></a>Available methods</h2>
 <p>The following counterfactual explanation methods are currently implemented:</p>
 <ul>
 <li><a href="https://link.springer.com/chapter/10.1007%2F978-3-030-58112-1_31">Multi-Objective Counterfactual Explanations (MOC)</a></li>
-<li><a href="https://arxiv.org/abs/2104.07411">NICE: An Algorithm for Nearest Instance Counterfactual Explanations (NICE)</a></li>
-<li><a href="https://arxiv.org/abs/1907.04135">WhatIf</a></li>
+<li>
+<a href="https://arxiv.org/abs/2104.07411">Nearest Instance Counterfactual Explanations (NICE)</a> (an extended version)</li>
+<li>
+<a href="https://arxiv.org/abs/1907.04135">WhatIf</a> (an extended version)</li>
 </ul>
 </div>
 <div id="installation" class="section level2">
@@ -113,28 +116,28 @@
 <div id="get-started" class="section level2">
 <h2 class="hasAnchor">
 <a href="#get-started" class="anchor"></a>Get started</h2>
-<p>In this example, we train a <code>randomForest</code> on the <code>iris</code> dataset.</p>
-<p>We then examine how a given <code>virginica</code> observation would have to change to be classified as <code>versicolor</code>.</p>
+<p>In this example, we train a <code>randomForest</code> on the <code>iris</code> dataset and examine how a given <code>virginica</code> observation would have to change in order to be classified as <code>versicolor</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/TODO">counterfactuals</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/">randomForest</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://christophm.github.io/iml/">iml</a></span><span class="op">)</span></code></pre></div>
-<p>First, we train the randomForest model to predict the <code>Species</code>. <br> Note that we leave out one observation from the training data which is our <code>x_interest</code>.</p>
+<p>First, we train a <code>randomForest</code> model to predict the target variable <code>Species</code>; we leave out one observation from the training data, which is <code>x_interest</code> (the observation to find counterfactuals for).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html">randomForest</a></span><span class="op">(</span><span class="va">Species</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="op">-</span><span class="fl">150L</span>, <span class="op">]</span><span class="op">)</span></code></pre></div>
-<p>We then create an <code><a href="https://christophm.github.io/iml/reference/Predictor.html">iml::Predictor</a></code> object, that holds the model and the data for analyzing the model.</p>
+<p>We then create an <a href="https://christophm.github.io/iml/reference/Predictor.html"><code>iml::Predictor</code></a> object, which serves as a wrapper for different model types and contains the model and the data for its analysis.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">predictor</span> <span class="op">=</span> <span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rf</span>, type <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span></code></pre></div>
-<p>Now we set up an object of the counterfactual explanation method we want to use. Here we use <code>WhatIf</code> and since we have a classification task, we create an <code>WhatIfClassif</code> object.</p>
+<p>For <code>x_interest</code> the model predicts a probability of 8% for class <code>versicolor</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">wi_classif</span> <span class="op">=</span> <span class="va"><a href="reference/WhatIfClassif.html">WhatIfClassif</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predictor</span>, n_counterfactuals <span class="op">=</span> <span class="fl">5L</span><span class="op">)</span></code></pre></div>
-<p>For <code>x_interest</code> the model predicts:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x_interest</span> <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">150L</span>, <span class="op">]</span>
 <span class="va">predictor</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="va">x_interest</span><span class="op">)</span>
 <span class="co">#&gt;   setosa versicolor virginica</span>
-<span class="co">#&gt; 1      0      0.104     0.896</span></code></pre></div>
-<p>We use the <code>$find_counterfactuals()</code> method to find counterfactuals for <code>x_interest</code>.</p>
+<span class="co">#&gt; 1      0       0.08      0.92</span></code></pre></div>
+<p>Now we examine which features need to be changed to achieve a predicted probability of at least 50% for class <code>versicolor</code>.</p>
+<p>Here, we want to apply WhatIf, and since it is a classification task, we initialize a <code>WhatIfClassif</code> object.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">wi_classif</span> <span class="op">=</span> <span class="va"><a href="reference/WhatIfClassif.html">WhatIfClassif</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predictor</span>, n_counterfactuals <span class="op">=</span> <span class="fl">5L</span><span class="op">)</span></code></pre></div>
+<p>Then, we use the <code>find_counterfactuals()</code> method to find counterfactuals for <code>x_interest</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cfactuals</span> <span class="op">=</span> <span class="va">wi_classif</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span>
   <span class="va">x_interest</span>, desired_class <span class="op">=</span> <span class="st">"versicolor"</span>, desired_prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>
@@ -152,7 +155,7 @@
 <span class="co">#&gt; 1:          5.9         3.2          4.8         1.8</span>
 <span class="co">#&gt; 2:          6.0         2.7          5.1         1.6</span>
 <span class="co">#&gt; 3:          6.7         3.0          5.0         1.7</span></code></pre></div>
-<p>The counterfactuals are stored in the <code>$data</code> field.</p>
+<p>The counterfactuals are stored in the <code>data</code> field.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="va">data</span>
 <span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width</span>
@@ -161,7 +164,7 @@
 <span class="co">#&gt; 3:          6.7         3.0          5.0         1.7</span>
 <span class="co">#&gt; 4:          6.0         2.9          4.5         1.5</span>
 <span class="co">#&gt; 5:          5.9         3.0          4.2         1.5</span></code></pre></div>
-<p>We can evaluate the results according to various measures using the <code>$evaluate()</code> method.</p>
+<p>We can evaluate the results according to various quality measures using the <code>evaluate()</code> method.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width dist_x_interest nr_changed dist_train dist_target</span>
@@ -170,7 +173,7 @@
 <span class="co">#&gt; 3:          6.7         3.0          5.0         1.7      0.07020951          3          0           0</span>
 <span class="co">#&gt; 4:          6.0         2.9          4.5         1.5      0.07403484          4          0           0</span>
 <span class="co">#&gt; 5:          5.9         3.0          4.2         1.5      0.06938559          2          0           0</span></code></pre></div>
-<p>One visualization option is to plot the frequency of changes of each feature using the <code>$plot_freq_of_feature_changes()</code> method.</p>
+<p>One visualization option is to plot the frequency of feature changes across all counterfactuals using the <code>plot_freq_of_feature_changes()</code> method.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_freq_of_feature_changes</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-10-1.png"><!-- --></p>

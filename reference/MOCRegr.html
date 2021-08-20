@@ -234,7 +234,8 @@ The object used for optimization.</p></dd>
   lower <span class='op'>=</span> <span class='cn'>NULL</span>,
   upper <span class='op'>=</span> <span class='cn'>NULL</span>,
   init_strategy <span class='op'>=</span> <span class='st'>"random"</span>,
-  use_conditional_mutator <span class='op'>=</span> <span class='cn'>FALSE</span>
+  use_conditional_mutator <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  quiet <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></pre><p></div></p>
 
 <h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
@@ -243,11 +244,11 @@ The object used for optimization.</p></dd>
 The object (created with <code>iml::Predictor$new()</code>) holding the machine learning model and the data.</p></dd>
 
 <dt><code>epsilon</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> | <code>NULL</code>)<br />
-If not <code>NULL</code>, candidates whose prediction is further away from the desired prediction than epsilon are penalized.
-Default is <code>NULL</code>, which means no penalization</p></dd>
+If not <code>NULL</code>, candidates whose prediction is farther away from the desired prediction than epsilon are penalized.
+<code>NULL</code> (default) means no penalization</p></dd>
 
 <dt><code>fixed_features</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> | <code>NULL</code>)<br />
-Names of features that are not allowed to change. <code>NULL</code> (default) allows to change all features.</p></dd>
+Names of features that are not allowed to be changed. <code>NULL</code> (default) allows all features to be changed.</p></dd>
 
 <dt><code>max_changed</code></dt><dd><p>(<code>integerish(1)</code> | <code>NULL</code>)<br />
 Maximum number of feature changes. <code>NULL</code> (default) allows any number of changes.</p></dd>
@@ -259,19 +260,19 @@ The population size. Default is <code>20L</code>.</p></dd>
 The number of generations. Default is <code>175L</code>.</p></dd>
 
 <dt><code>p_rec</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
-Probability with which an individualdevt is chosen for recombination. Default is <code>0.57</code>.</p></dd>
+Probability with which an individualdevt is selected for recombination. Default is <code>0.57</code>.</p></dd>
 
 <dt><code>p_rec_gen</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
-Probability with which a feature/gene is chosen for recombination. Default is <code>0.85</code>.</p></dd>
+Probability with which a feature/gene is selected for recombination. Default is <code>0.85</code>.</p></dd>
 
 <dt><code>p_rec_use_orig</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
 Probability with which a feature/gene is reset to the feature value of <code>x_interest</code> after recombination. Default is <code>0.88</code>.</p></dd>
 
 <dt><code>p_mut</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
-Probability with which an individual is chosen for mutation. Default is <code>0.79</code>.</p></dd>
+Probability with which an individual is selected for mutation. Default is <code>0.79</code>.</p></dd>
 
 <dt><code>p_mut_gen</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
-Probability with which a feature/gene is chosen for mutation. Default is <code>0.56</code>.</p></dd>
+Probability with which a feature/gene is selected for mutation. Default is <code>0.56</code>.</p></dd>
 
 <dt><code>p_mut_use_orig</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
 Probability with which a feature/gene is reset to the feature value of <code>x_interest</code> after mutation. Default is <code>0.32</code>.</p></dd>
@@ -282,7 +283,7 @@ The number of nearest neighbors to use for the forth objective. Default is <code
 <dt><code>weights</code></dt><dd><p>(<code>numeric(1) | numeric(k)</code> | <code>NULL</code>)<br />
 The weights used to compute the weighted average distance for the forth objective. It is either a single value
 or a vector of length <code>k</code>. If it has length <code>k</code>, the first value corresponds to the nearest neighbor and so on.
-The values should sum up to <code>1</code>. Default is <code>NULL</code> which means all neighbors are weighted equally.</p></dd>
+The values should sum up to <code>1</code>. <code>NULL</code> (default) means all neighbors are weighted equally.</p></dd>
 
 <dt><code>lower</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> | <code>NULL</code>)<br />
 Vector of minimum values for numeric features. If not <code>NULL</code>, it should be named with the corresponding feature names.
@@ -297,8 +298,11 @@ The population initialization strategy. Can be <code>random</code> (default), <c
 see the <code>details</code> section.</p></dd>
 
 <dt><code>use_conditional_mutator</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>)<br />
-Should a conditional mutator be used? The conditional mutator generates plausible feature values conditional
+Should a conditional mutator be used? The conditional mutator generates plausible feature values based
 on the values of the other feature. Default is <code>FALSE</code>.</p></dd>
+
+<dt><code>quiet</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>)<br />
+Should information about the optimization status be hidden? Default is <code>FALSE</code>.</p></dd>
 
 </dl><p></div></p>
 <p><hr>
@@ -362,9 +366,9 @@ and "dist_train".</p></dd>
   <span class='co'># Plot evolution</span>
   <span class='va'>moc_regr</span><span class='op'>$</span><span class='fu'>plot_statistics</span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>}</span>
-</div><div class='output co'>#&gt; <span class='message'>`x_interest` was removed from results.</span></div><div class='output co'>#&gt; [[1]]</div><div class='img'><img src='MOCRegr-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
-#&gt; [[2]]</div><div class='img'><img src='MOCRegr-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; 
-#&gt; [[3]]</div><div class='img'><img src='MOCRegr-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; </div><div class='input'>
+</div><div class='output co'>#&gt; <span class='message'>`x_interest` was removed from results.</span></div><div class='output co'>#&gt; <span class='error'>Error: .onLoad failed in loadNamespace() for 'tcltk', details:</span>
+#&gt; <span class='error'>  call: fun(libname, pkgname)</span>
+#&gt; <span class='error'>  error: X11 library is missing: install XQuartz from www.xquartz.org</span></div><div class='input'>
 
 </div></pre>
   </div>
