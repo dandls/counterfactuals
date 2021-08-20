@@ -193,9 +193,20 @@ reference point that represents the maximal values of the objectives.
 The evolution of the hypervolume indicator can be plotted together with the evolution of mean and minimum objective values 
 using the `plot_statistics()` method.
 
-```{r, fig.height=2.5, results='asis'}
+```{r, fig.height=2.5, results='asis', eval=FALSE}
 moc_classif$plot_statistics()
 ```
+
+```{r, echo=FALSE, eval=FALSE}
+sp = moc_classif$plot_statistics()
+p = cowplot::plot_grid(sp[[1]], sp[[2]], sp[[3]], nrow = 3)
+ggplot2::ggsave("introduction-res/moc_stats_plots.png", p, width = 9, height = 6)
+```
+
+```{r, echo=FALSE, out.width='97%'}
+knitr::include_graphics("introduction-res/moc_stats_plots.png")
+```
+
 
 Ideally, one would like the mean value of each objective to decrease over the generations.
 However, there is often a trade-off between the objectives. Here, the mean values of `dist_target` and `dist_train` remain 
