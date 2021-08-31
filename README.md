@@ -11,7 +11,7 @@ coverage](https://codecov.io/gh/susanne-207/counterfactuals/branch/main/graph/ba
 <!-- badges: end -->
 
 The `counterfactuals` package provides various (model-agnostic)
-counterfactual explanation methods via an unified R6-based interface.
+counterfactual explanation methods via a unified R6-based interface.
 
 Counterfactual explanation methods (or counterfactuals for short)
 address questions of the form: “For input **x**<sup>**⋆**</sup>, the

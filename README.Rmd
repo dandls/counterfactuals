@@ -23,7 +23,7 @@ set.seed(12345)
 [![Codecov test coverage](https://codecov.io/gh/susanne-207/counterfactuals/branch/main/graph/badge.svg)](https://codecov.io/gh/susanne-207/counterfactuals?branch=main)
 <!-- badges: end -->
 
-The `counterfactuals` package provides various (model-agnostic) counterfactual explanation methods via an unified R6-based interface.
+The `counterfactuals` package provides various (model-agnostic) counterfactual explanation methods via a unified R6-based interface.
 
 Counterfactual explanation methods (or counterfactuals for short) address questions of the form: 
 "For input $\mathbf{x^{\star}}$, the model predicted $y$. What would
