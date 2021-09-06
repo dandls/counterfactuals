@@ -1,4 +1,4 @@
-#' MOC (Multi-objective counterfactual explanations) for Classification Tasks
+#' MOC (Multi-Objective Counterfactual Explanations) for Classification Tasks
 #' 
 #' @template moc_info
 #' 
@@ -24,7 +24,7 @@
 MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
 
   public = list(
-    #' @description Create a new MOCClassif object.
+    #' @description Create a new `MOCClassif` object.
     #' @template predictor
     #' @param epsilon (`numeric(1)` | `NULL`)\cr  
     #'   If not `NULL`, candidates whose prediction is farther away from the desired prediction than epsilon are penalized.
@@ -42,17 +42,17 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     #' @param p_rec_gen (`numeric(1)`)\cr  
     #'   Probability with which a feature/gene is selected for recombination. Default is `0.85`.  
     #' @param p_rec_use_orig (`numeric(1)`)\cr  
-    #'   Probability with which a feature/gene is reset to the feature value of `x_interest` after recombination. Default is `0.88`.    
+    #'   Probability with which a feature/gene is reset to its original value in `x_interest` after recombination. Default is `0.88`.    
     #' @param p_mut (`numeric(1)`)\cr  
     #'   Probability with which an individual is selected for mutation. Default is `0.79`.    
     #' @param p_mut_gen (`numeric(1)`)\cr  
     #'   Probability with which a feature/gene is selected for mutation. Default is `0.56`.   
     #' @param p_mut_use_orig (`numeric(1)`)\cr  
-    #'   Probability with which a feature/gene is reset to the feature value of `x_interest` after mutation. Default is `0.32`.    
+    #'   Probability with which a feature/gene is reset to its original value in `x_interest` after mutation. Default is `0.32`.    
     #' @param k (`integerish(1)`)\cr  
     #'   The number of nearest neighbors to use for the forth objective. Default is `1L`.
     #' @param weights (`numeric(1) | numeric(k)` | `NULL`)\cr  
-    #'   The weights used to compute the weighted average distance for the forth objective. It is either a single value 
+    #'   The weights used to compute the weighted sum of dissimilarities for the forth objective. It is either a single value 
     #'   or a vector of length `k`. If it has length `k`, the first value corresponds to the nearest neighbor and so on. 
     #'   The values should sum up to `1`. `NULL` (default) means all neighbors are weighted equally. 
     #' @template lower_upper
@@ -132,8 +132,8 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     },
     
     #' @description Plots the evolution of the mean and minimum objective values together with the dominated hypervolume over
-    #' the generations. All values for a generation are calculated based on all nondominated individuals of that generation.
-    #' For computing the dominated hypervolume the `miesmuschel:::domhv` function is used.
+    #' the generations. All values for a generation are computed based on all non-dominated individuals that emerged until 
+    #' that generation.
     #' @param centered_obj (`logical(1)`)\cr  
     #'   Should the objective values be centered? If set to `FALSE`, each objective value is visualized in a separate plot, 
     #'   since they (usually) have different scales. If set to `TRUE` (default), they are visualized in a single plot.
@@ -149,9 +149,8 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     },
     
     #' @description Calculates the dominated hypervolume of each generation. 
-    #' The `miesmuschel:::domhv` function is used for this.
     #' 
-    #' @return A `data.table` with the dominated hypervolume of each generation
+    #' @return A `data.table` with the dominated hypervolume of each generation.
     get_dominated_hv = function() {
       if (is.null(self$optimizer)) {
         stop("There are no results yet. Please run `$find_counterfactuals` first.")
@@ -159,7 +158,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       comp_domhv_all_gen(self$optimizer$archive, private$ref_point)
     },
     
-    #' @description Visualizes all individuals of all generations in a scatter plot with two objectives on the axes.
+    #' @description Visualizes two selected objective values of all emerged individuals in a scatter plot.
     #' @param objectives (`character(2)`)\cr  
     #'   The two objectives to be shown in the plot. Possible values are: "dist_target", "dist_x_interest, "nr_changed" 
     #'   and "dist_train".

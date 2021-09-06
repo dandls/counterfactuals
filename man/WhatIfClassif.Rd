@@ -4,15 +4,13 @@
 \alias{WhatIfClassif}
 \title{WhatIf for Classification Tasks}
 \description{
-\code{WhatIf} selects the \code{n_counterfactual} observations from the training data that are most similar to \code{x_interest}
-and have the desired predicted probabilities for the desired class. As training data \code{predictor$data$X}
-is taken.
+WhatIf returns the \code{n_counterfactual} observations from \code{predictor$data$X} that are most similar to \code{x_interest} and whose
+prediction for the \code{desired_class} is in \code{desired_probs}.
 }
 \details{
-To compute dissimilarities, the function uses Gower's dissimilarity measure (Gower, 1990),
-which is implemented by \link[gower]{gower_topn}.
-For numerical features, the distances are scaled with the feature value ranges observed in the training data.
-Only observations with features values between \code{lower} and \code{upper} are considered as counterfactual candidates.
+The dissimilarities are computed using Gower's dissimilarity measure (Gower, 1990) implemented by \link[gower]{gower_topn}. \cr
+Only observations whose features values lie between the corresponding values in \code{lower} and \code{upper} are considered
+counterfactual candidates.
 }
 \examples{
 if (require("randomForest")) {
@@ -78,12 +76,14 @@ The object (created with \code{iml::Predictor$new()}) holding the machine learni
 The number of counterfactuals to be found. Default is \code{1L}.}
 
 \item{\code{lower}}{(\code{numeric()} | \code{NULL})\cr
-Vector of minimum values for numeric features. If not \code{NULL}, it should be named with the corresponding feature names.
-If \code{NULL} (default) \code{lower} is taken for each numeric feature as its minimum value in \code{predictor$data$X}.}
+Vector of minimum values for numeric features.
+If \code{NULL} (default), the element for each numeric feature in \code{lower} is taken as its minimum value in \code{predictor$data$X}.
+If not \code{NULL}, it should be named with the corresponding feature names.}
 
 \item{\code{upper}}{(\code{numeric()} | \code{NULL})\cr
-Vector of maximum values for numeric features. If not \code{NULL}, it should be named with the corresponding feature names.
-If \code{NULL} (default) \code{upper} is taken for each numeric feature as its maximum value in \code{predictor$data$X}.}
+Vector of maximum values for numeric features.
+If \code{NULL} (default), the element for each numeric feature in \code{upper} is taken as its maximum value in \code{predictor$data$X}.
+If not \code{NULL}, it should be named with the corresponding feature names.}
 }
 \if{html}{\out{</div>}}
 }

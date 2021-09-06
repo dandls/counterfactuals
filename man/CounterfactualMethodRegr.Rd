@@ -49,12 +49,14 @@ Creates a new CounterfactualMethodRegr object.
 The object (created with \code{iml::Predictor$new()}) holding the machine learning model and the data.}
 
 \item{\code{lower}}{(\code{numeric()} | \code{NULL})\cr
-Vector of minimum values for numeric features. If not \code{NULL}, it should be named with the corresponding feature names.
-If \code{NULL} (default) \code{lower} is taken for each numeric feature as its minimum value in \code{predictor$data$X}.}
+Vector of minimum values for numeric features.
+If \code{NULL} (default), the element for each numeric feature in \code{lower} is taken as its minimum value in \code{predictor$data$X}.
+If not \code{NULL}, it should be named with the corresponding feature names.}
 
 \item{\code{upper}}{(\code{numeric()} | \code{NULL})\cr
-Vector of maximum values for numeric features. If not \code{NULL}, it should be named with the corresponding feature names.
-If \code{NULL} (default) \code{upper} is taken for each numeric feature as its maximum value in \code{predictor$data$X}.}
+Vector of maximum values for numeric features.
+If \code{NULL} (default), the element for each numeric feature in \code{upper} is taken as its maximum value in \code{predictor$data$X}.
+If not \code{NULL}, it should be named with the corresponding feature names.}
 }
 \if{html}{\out{</div>}}
 }

@@ -2,30 +2,35 @@
 % Please edit documentation in R/NICEClassif.R
 \name{NICEClassif}
 \alias{NICEClassif}
-\title{NICE (Nearest Instance Counterfactual Explanations) for Classification Task}
+\title{NICE (Nearest Instance Counterfactual Explanations) for Classification Tasks}
 \description{
-NICE (Brughmans and Martens, 2021) starts the counterfactual search for \code{x_interest} by finding its nearest
-(optionally) correctly classified neighbor \code{x_nn}. The \link[UBL]{distances} function that implements the
-Heterogeneous Euclidean Overlap Method (HEOM) (Wilson and Martinez, 1997) is used to compute the distances. \cr
-Once \code{x_nn} was found, NICE iteratively replaces feature values of \code{x_interest} with the corresponding values of \code{x_nn} to optimize
-some predefined reward function. Available reward functions are \code{sparsity} \code{proximity} and \code{plausibility}. \cr
-Our NICE implementation is equivalent to the original version if \code{return_multiple = FALSE}, \code{finish_early = TRUE} and
-\code{x_nn_correct_classif = TRUE}.
+NICE (Brughmans and Martens, 2021) searches for counterfactuals by iteratively replacing feature values
+of \code{x_interest} with the corresponding value of its most similar (optionally) correctly classified instance \code{x_nn}.
 }
 \details{
-In the first iteration, NICE creates new instances by replacing one feature of \code{x_interest} with the corresponding
-values of \code{x_nn} in each instance. Thus, if \code{x_nn} differs from \code{x_interest} in \code{d} features, \code{d} instances are created. \cr
-Then, the rewards of each instances are calculated with the chosen reward function. \cr
-In the second iteration, new instances are created by replacing one feature of the instance with the highest reward
-in the previous iteration. \cr
+NICE starts the counterfactual search for \code{x_interest} by finding its most similar (optionally) correctly classified
+neighbor \code{x_nn}.
+In the first iteration, NICE creates new instances by replacing a different feature value of \code{x_interest} with the corresponding
+value of \code{x_nn} in each new instance. Thus, if \code{x_nn} differs from \code{x_interest} in \code{d} features, \code{d} new instances are created. \cr
+Then, the reward values for the created instances are computed with the chosen reward function.
+Available reward functions are \code{sparsity}, \code{proximity}, and \code{plausibility}. \cr
+In the second iteration, NICE creates \code{d-1} new instances by replacing a different feature value of the highest
+reward instance of the previous iteration with the corresponding value of \code{x_interest}, and so on. \cr
 If \code{finish_early = TRUE}, the algorithm terminates when the predicted probability for
-the \code{desired_class} of the instance with the highest reward, is in \code{desired_prob}. If \code{finish_early = FALSE}, the algorithm
+the \code{desired_class} of the highest reward instance is in \code{desired_prob}; if \code{finish_early = FALSE}, the algorithm
 continues until \code{x_nn} is recreated. \cr
 Once the algorithm terminated, it depends on \code{return_multiple} which instances
-are returned as counterfactuals. If \code{return_multiple = FALSE}, then only the instance with the highest reward in the
-last iteration is returned as counterfactual. If \code{return_multiple = TRUE}, then all instances of all iterations
-whose predicted probability for the \code{desired_class} is in \code{desired_prob} are returned as counterfactuals. \cr
-Note that if \code{finish_early = FALSE} and \code{return_multiple = FALSE}, then \code{x_nn} is returned as single counterfactual.
+are returned as counterfactuals: if \code{return_multiple = FALSE}, then only the highest reward instance in the
+last iteration is returned as counterfactual; if \code{return_multiple = TRUE}, then all instances of all iterations
+whose predicted probability for the \code{desired_class} is in \code{desired_prob} are returned as counterfactuals.
+
+If \code{finish_early = FALSE} and \code{return_multiple = FALSE}, then \code{x_nn} is returned as single counterfactual.
+
+The function computes the dissimilarities using Gower's dissimilarity measure (Gower, 1990) implemented by
+\link[gower]{gower_topn}.
+
+This NICE implementation corresponds to the original version of Brughmans and Martens (2021) when
+\code{return_multiple = FALSE}, \code{finish_early = TRUE}, and \code{x_nn_correct_classif = TRUE}.
 }
 \examples{
 if (require("randomForest")) {
@@ -49,8 +54,7 @@ if (require("randomForest")) {
 Brughmans, D., & Martens, D. (2021). NICE: An Algorithm for Nearest Instance Counterfactual Explanations.
 arXiv preprint arXiv:2104.07411.
 
-Wilson, D Randall, and Tony R Martinez. 1997. “Improved Heterogeneous Distance Functions.” Journal of Artificial
-Intelligence Research 6: 1–34.
+Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
 }
 \section{Super classes}{
 \code{\link[counterfactuals:CounterfactualMethod]{counterfactuals::CounterfactualMethod}} -> \code{\link[counterfactuals:CounterfactualMethodClassif]{counterfactuals::CounterfactualMethodClassif}} -> \code{NICEClassif}
@@ -59,11 +63,11 @@ Intelligence Research 6: 1–34.
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
 \item{\code{x_nn}}{(\code{logical(1)}) \cr
-The nearest neighbor.}
+The most similar (optionally) correctly classified instance of \code{x_interest}.}
 
 \item{\code{archive}}{(\code{list()}) \cr
-A list that stores the history of the algorithm. For each algorithm iteration it has one element.
-A element contains a \code{data.table} that stores all feature combinations in this iterations together with their
+A list that stores the history of the algorithm run. For each iteration, it has one element containing
+a \code{data.table}, which stores all created instances of this iteration together with their
 reward values and their predictions.}
 }
 \if{html}{\out{</div>}}
@@ -108,16 +112,16 @@ The object (created with \code{iml::Predictor$new()}) holding the machine learni
 The reward function to optimize. Can be \code{sparsity} (default), \code{proximity} or \code{plausibility}.}
 
 \item{\code{x_nn_correct_classif}}{(\code{logical(1)})\cr
-Should only \emph{correctly} classified observations be considered for the nearest neighbor search?
+Should only \emph{correctly} classified observations be considered for the most similar instance search?
 Default is \code{TRUE}.}
 
 \item{\code{return_multiple}}{(\code{logical(1)})\cr
-Should multiple counterfactuals be returned? If TRUE, the algorithm runs backwards after termination and
-returns all instances with desired predictionsFor more information, see the \code{details} section.}
+Should multiple counterfactuals be returned? If TRUE, NICE returns all created instances whose prediction is in
+the desired interval. For more information, see the \code{details} section.}
 
 \item{\code{finish_early}}{(\code{logical(1)})\cr
-Should the algorithm terminate after an iteration in which the highest reward instance has a desired prediction?
-If \code{FALSE}, the algorithm continues until \code{x_nn} is recreated.}
+Should the algorithm terminate after an iteration in which the prediction of the highest reward instance is in
+the desired interval. If \code{FALSE}, the algorithm continues until \code{x_nn} is recreated.}
 }
 \if{html}{\out{</div>}}
 }

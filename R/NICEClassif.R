@@ -1,28 +1,32 @@
-#' NICE (Nearest Instance Counterfactual Explanations) for Classification Task
+#' NICE (Nearest Instance Counterfactual Explanations) for Classification Tasks
 #' 
-#' @description NICE (Brughmans and Martens, 2021) starts the counterfactual search for `x_interest` by finding its nearest
-#' (optionally) correctly classified neighbor `x_nn`. The \link[UBL]{distances} function that implements the 
-#' Heterogeneous Euclidean Overlap Method (HEOM) (Wilson and Martinez, 1997) is used to compute the distances. \cr 
-#' Once `x_nn` was found, NICE iteratively replaces feature values of `x_interest` with the corresponding values of `x_nn` to optimize
-#' some predefined reward function. Available reward functions are `sparsity` `proximity` and `plausibility`. \cr 
-#' Our NICE implementation is equivalent to the original version if `return_multiple = FALSE`, `finish_early = TRUE` and
-#' `x_nn_correct_classif = TRUE`.
+#' @description NICE (Brughmans and Martens, 2021) searches for counterfactuals by iteratively replacing feature values
+#' of `x_interest` with the corresponding value of its most similar (optionally) correctly classified instance `x_nn`. 
 #' 
 #' @details 
-#' In the first iteration, NICE creates new instances by replacing one feature of `x_interest` with the corresponding 
-#' values of `x_nn` in each instance. Thus, if `x_nn` differs from `x_interest` in `d` features, `d` instances are created. \cr 
-#' Then, the rewards of each instances are calculated with the chosen reward function. \cr 
-#' In the second iteration, new instances are created by replacing one feature of the instance with the highest reward 
-#' in the previous iteration. \cr 
+#' NICE starts the counterfactual search for `x_interest` by finding its most similar (optionally) correctly classified 
+#' neighbor `x_nn`.
+#' In the first iteration, NICE creates new instances by replacing a different feature value of `x_interest` with the corresponding 
+#' value of `x_nn` in each new instance. Thus, if `x_nn` differs from `x_interest` in `d` features, `d` new instances are created. \cr 
+#' Then, the reward values for the created instances are computed with the chosen reward function.
+#' Available reward functions are `sparsity`, `proximity`, and `plausibility`. \cr 
+#' In the second iteration, NICE creates `d-1` new instances by replacing a different feature value of the highest
+#' reward instance of the previous iteration with the corresponding value of `x_interest`, and so on. \cr 
 #' If `finish_early = TRUE`, the algorithm terminates when the predicted probability for
-#' the `desired_class` of the instance with the highest reward, is in `desired_prob`. If `finish_early = FALSE`, the algorithm
+#' the `desired_class` of the highest reward instance is in `desired_prob`; if `finish_early = FALSE`, the algorithm
 #' continues until `x_nn` is recreated. \cr 
 #' Once the algorithm terminated, it depends on `return_multiple` which instances
-#' are returned as counterfactuals. If `return_multiple = FALSE`, then only the instance with the highest reward in the
-#' last iteration is returned as counterfactual. If `return_multiple = TRUE`, then all instances of all iterations
-#' whose predicted probability for the `desired_class` is in `desired_prob` are returned as counterfactuals. \cr
-#' Note that if `finish_early = FALSE` and `return_multiple = FALSE`, then `x_nn` is returned as single counterfactual.
+#' are returned as counterfactuals: if `return_multiple = FALSE`, then only the highest reward instance in the
+#' last iteration is returned as counterfactual; if `return_multiple = TRUE`, then all instances of all iterations
+#' whose predicted probability for the `desired_class` is in `desired_prob` are returned as counterfactuals.
 #' 
+#' If `finish_early = FALSE` and `return_multiple = FALSE`, then `x_nn` is returned as single counterfactual.
+#' 
+#' The function computes the dissimilarities using Gower's dissimilarity measure (Gower, 1990) implemented by 
+#' \link[gower]{gower_topn}. 
+#' 
+#' This NICE implementation corresponds to the original version of Brughmans and Martens (2021) when
+#' `return_multiple = FALSE`, `finish_early = TRUE`, and `x_nn_correct_classif = TRUE`.
 #' 
 #' 
 #' @references 
@@ -30,8 +34,7 @@
 #' Brughmans, D., & Martens, D. (2021). NICE: An Algorithm for Nearest Instance Counterfactual Explanations. 
 #' arXiv preprint arXiv:2104.07411.
 #' 
-#' Wilson, D Randall, and Tony R Martinez. 1997. “Improved Heterogeneous Distance Functions.” Journal of Artificial 
-#' Intelligence Research 6: 1–34.
+#' Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
 #' 
 #' 
 #' @examples 
@@ -61,14 +64,14 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
     #' @param optimization (`character(1)`)\cr 
     #' The reward function to optimize. Can be `sparsity` (default), `proximity` or `plausibility`.
     #' @param x_nn_correct_classif (`logical(1)`)\cr 
-    #' Should only *correctly* classified observations be considered for the nearest neighbor search?
+    #' Should only *correctly* classified observations be considered for the most similar instance search?
     #' Default is `TRUE`.
     #' @param return_multiple (`logical(1)`)\cr 
-    #' Should multiple counterfactuals be returned? If TRUE, the algorithm runs backwards after termination and 
-    #' returns all instances with desired predictionsFor more information, see the `details` section.
+    #' Should multiple counterfactuals be returned? If TRUE, NICE returns all created instances whose prediction is in
+    #' the desired interval. For more information, see the `details` section.
     #' @param finish_early (`logical(1)`)\cr 
-    #' Should the algorithm terminate after an iteration in which the highest reward instance has a desired prediction? 
-    #' If `FALSE`, the algorithm continues until `x_nn` is recreated.
+    #' Should the algorithm terminate after an iteration in which the prediction of the highest reward instance is in
+    #' the desired interval. If `FALSE`, the algorithm continues until `x_nn` is recreated.
     initialize = function(predictor, optimization = "sparsity", x_nn_correct_classif = TRUE, return_multiple = TRUE,
                           finish_early = TRUE) {
       
@@ -105,7 +108,7 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
   
   active = list(
     #' @field x_nn (`logical(1)`) \cr
-    #'  The nearest neighbor. 
+    #'  The most similar (optionally) correctly classified instance of `x_interest`. 
     x_nn = function(value) {
       if (missing(value)) {
         private$.x_nn
@@ -115,8 +118,8 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
     },
     
     #' @field archive (`list()`) \cr
-    #' A list that stores the history of the algorithm. For each algorithm iteration it has one element.
-    #' A element contains a `data.table` that stores all feature combinations in this iterations together with their
+    #' A list that stores the history of the algorithm run. For each iteration, it has one element containing
+    #' a `data.table`, which stores all created instances of this iteration together with their
     #' reward values and their predictions.
     archive = function(value) {
       if (missing(value)) {
@@ -214,7 +217,7 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
       }
       
       if (private$return_multiple) {
-        # Run backwards through archive and look for candidates that fulfill desired properties
+        # Run backwards through archive and look for candidates whose prediction is in desired_prob
         cfs = lapply(private$.archive, function(iter) {
           iter[between(iter[[desired_class]], desired_prob[1L], desired_prob[2L]), names(X_candidates), with = FALSE]
         })

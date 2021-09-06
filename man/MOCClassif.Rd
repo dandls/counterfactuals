@@ -2,15 +2,15 @@
 % Please edit documentation in R/MOCClassif.R
 \name{MOCClassif}
 \alias{MOCClassif}
-\title{MOC (Multi-objective counterfactual explanations) for Classification Tasks}
+\title{MOC (Multi-Objective Counterfactual Explanations) for Classification Tasks}
 \description{
-\code{MOC} (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
+MOC (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
 to minimize are:
 \enumerate{
-\item {Distance between \code{x_interest} and \code{desired_prob}}
-\item {Distance between \code{x_interest} and a candidate}
+\item {Distance to \code{desired_prob}}
+\item {Dissimilarity to \code{x_interest}}
 \item {Number of feature changes}
-\item {(Weighted) average distance between a candidate and its \code{k} nearest observed data points}
+\item {(Weighted) sum of dissimilarities to the \code{k} nearest observed data points}
 }
 
 For optimization it uses the NSGA II algorithm (Deb et. al 2002) with mixed integer evolutionary
@@ -19,22 +19,19 @@ strategies by Li et al. (2013).
 \details{
 Several population initialization strategies are available:
 \enumerate{
-\item {\code{random}: Sample from numerical feature ranges and discrete feature values from \code{predictor$data$X}.
-Some features values are randomly reset to the values of \code{x_interest}.}
-\item {\code{icecurve}: Sample from numerical feature ranges and discrete feature values from \code{predictor$data$X}.
-The higher the ICE curve variance of a feature, the lower the probability that
-values of this feature are reset to the values of \code{x_interest}.}
-\item {\code{sd}: Sample from numerical feature ranges that are limited by the feature standard deviations extracted
-from \code{predictor$data$X}. For non-numerical features, the \code{random} strategy is used.
-Some features values are randomly reset to the values of \code{x_interest}.}
-\item {\code{traindata}: Initializes the first population using observations from \code{predictor$data$X} that are nondominated.
-Some features values are randomly reset to the values of \code{x_interest}. If not enough nondominated observations are found,
-remaining individuals are created using the \code{random} strategy.}
+\item {\code{random}: Feature values of new individuals are sampled from the range of observed values in \code{predictor$data$X}.
+Some features values are randomly reset to their initial value in \code{x_interest}.}
+\item {\code{sd}: Like \code{random}, except that the sample ranges of numerical features are limited to one standard
+deviation from the initial value in \code{x_interest}.}
+\item {\code{icecurve}: As in \code{random}, feature values are sampled from the range of observed values in \code{predictor$data$X}.
+Then, however, features are reset with probabilities relative to the feature importance: the higher the importance
+of a feature the higher the probability that its values differ from the value in \code{x_interest}.
+The feature importance is measured using ICE curves (Goldstein et al. 2015).}
+\item {\code{traindata}: Contrary to the other strategies, feature values are drawn from (non-dominated) previous
+observations in \code{predictor$data$X}; if not enough non-dominated observations are available, remaining individuals
+are initialized by random sampling. Subsequently, some features values are randomly reset to their initial value
+in \code{x_interest} (as for \code{random}).}
 }
-
-The R package \code{miesmuschel} implements the mixed integer evolutionary strategies.\cr
-To compute dissimilarities, the function uses Gower's dissimilarity measure (Gower, 1990),
-which is implemented in the \link[StatMatch]{gower.dist}.
 }
 \examples{
 if (require("randomForest")) {
@@ -62,6 +59,10 @@ Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Pu
 
 Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. A. M. T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
 IEEE transactions on evolutionary computation, 6(2), 182-197.
+
+Goldstein, Alex, Adam Kapelner, Justin Bleich, and Emil Pitkin. 2015. "Peeking Inside the Black Box: Visualizing
+Statistical Learning with Plots of Individual Conditional Expectation." Journal of Computational and Graphical
+Statistics 24 (1): 44–65. https: //doi.org/10.1080/10618600.2014.907095.
 
 Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
 
@@ -101,7 +102,7 @@ The object used for optimization.}
 \if{html}{\out{<a id="method-new"></a>}}
 \if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
-Create a new MOCClassif object.
+Create a new \code{MOCClassif} object.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{MOCClassif$new(
   predictor,
@@ -155,7 +156,7 @@ Probability with which an individual is selected for recombination. Default is \
 Probability with which a feature/gene is selected for recombination. Default is \code{0.85}.}
 
 \item{\code{p_rec_use_orig}}{(\code{numeric(1)})\cr
-Probability with which a feature/gene is reset to the feature value of \code{x_interest} after recombination. Default is \code{0.88}.}
+Probability with which a feature/gene is reset to its original value in \code{x_interest} after recombination. Default is \code{0.88}.}
 
 \item{\code{p_mut}}{(\code{numeric(1)})\cr
 Probability with which an individual is selected for mutation. Default is \code{0.79}.}
@@ -164,23 +165,25 @@ Probability with which an individual is selected for mutation. Default is \code{
 Probability with which a feature/gene is selected for mutation. Default is \code{0.56}.}
 
 \item{\code{p_mut_use_orig}}{(\code{numeric(1)})\cr
-Probability with which a feature/gene is reset to the feature value of \code{x_interest} after mutation. Default is \code{0.32}.}
+Probability with which a feature/gene is reset to its original value in \code{x_interest} after mutation. Default is \code{0.32}.}
 
 \item{\code{k}}{(\code{integerish(1)})\cr
 The number of nearest neighbors to use for the forth objective. Default is \code{1L}.}
 
 \item{\code{weights}}{(\code{numeric(1) | numeric(k)} | \code{NULL})\cr
-The weights used to compute the weighted average distance for the forth objective. It is either a single value
+The weights used to compute the weighted sum of dissimilarities for the forth objective. It is either a single value
 or a vector of length \code{k}. If it has length \code{k}, the first value corresponds to the nearest neighbor and so on.
 The values should sum up to \code{1}. \code{NULL} (default) means all neighbors are weighted equally.}
 
 \item{\code{lower}}{(\code{numeric()} | \code{NULL})\cr
-Vector of minimum values for numeric features. If not \code{NULL}, it should be named with the corresponding feature names.
-If \code{NULL} (default) \code{lower} is taken for each numeric feature as its minimum value in \code{predictor$data$X}.}
+Vector of minimum values for numeric features.
+If \code{NULL} (default), the element for each numeric feature in \code{lower} is taken as its minimum value in \code{predictor$data$X}.
+If not \code{NULL}, it should be named with the corresponding feature names.}
 
 \item{\code{upper}}{(\code{numeric()} | \code{NULL})\cr
-Vector of maximum values for numeric features. If not \code{NULL}, it should be named with the corresponding feature names.
-If \code{NULL} (default) \code{upper} is taken for each numeric feature as its maximum value in \code{predictor$data$X}.}
+Vector of maximum values for numeric features.
+If \code{NULL} (default), the element for each numeric feature in \code{upper} is taken as its maximum value in \code{predictor$data$X}.
+If not \code{NULL}, it should be named with the corresponding feature names.}
 
 \item{\code{init_strategy}}{(\code{character(1)})\cr
 The population initialization strategy. Can be \code{random} (default), \code{sd}, \code{icecurve} or \code{traindata}. For more information,
@@ -201,8 +204,8 @@ Should information about the optimization status be hidden? Default is \code{FAL
 \if{latex}{\out{\hypertarget{method-plot_statistics}{}}}
 \subsection{Method \code{plot_statistics()}}{
 Plots the evolution of the mean and minimum objective values together with the dominated hypervolume over
-the generations. All values for a generation are calculated based on all nondominated individuals of that generation.
-For computing the dominated hypervolume the \code{miesmuschel:::domhv} function is used.
+the generations. All values for a generation are computed based on all non-dominated individuals that emerged until
+that generation.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{MOCClassif$plot_statistics(centered_obj = TRUE)}\if{html}{\out{</div>}}
 }
@@ -222,20 +225,19 @@ since they (usually) have different scales. If set to \code{TRUE} (default), the
 \if{latex}{\out{\hypertarget{method-get_dominated_hv}{}}}
 \subsection{Method \code{get_dominated_hv()}}{
 Calculates the dominated hypervolume of each generation.
-The \code{miesmuschel:::domhv} function is used for this.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{MOCClassif$get_dominated_hv()}\if{html}{\out{</div>}}
 }
 
 \subsection{Returns}{
-A \code{data.table} with the dominated hypervolume of each generation
+A \code{data.table} with the dominated hypervolume of each generation.
 }
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-plot_search"></a>}}
 \if{latex}{\out{\hypertarget{method-plot_search}{}}}
 \subsection{Method \code{plot_search()}}{
-Visualizes all individuals of all generations in a scatter plot with two objectives on the axes.
+Visualizes two selected objective values of all emerged individuals in a scatter plot.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{MOCClassif$plot_search(objectives = c("dist_target", "dist_x_interest"))}\if{html}{\out{</div>}}
 }

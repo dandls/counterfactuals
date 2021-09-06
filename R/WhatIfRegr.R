@@ -2,15 +2,13 @@
 #' 
 #' @description 
 #' 
-#' `WhatIf` selects the `n_counterfactual` observations from the training data that are most similar to `x_interest`
-#' and have the desired prediction. As training data `predictor$data$X` is taken.
+#' WhatIf returns the `n_counterfactual` observations from `predictor$data$X` that are most similar to `x_interest` and whose
+#' prediction is in `desired_outcome`.
 #' 
 #' @details
-#' 
-#' To compute dissimilarities, the function uses Gower's dissimilarity measure (Gower, 1990), 
-#' which is implemented by \link[gower]{gower_topn}. 
-#' For numerical features, the distances are scaled with the feature value ranges observed in the training data.
-#' Only observations with features values between `lower` and `upper` are considered as counterfactual candidates.
+#' The dissimilarities are computed using Gower's dissimilarity measure (Gower, 1990) implemented by \link[gower]{gower_topn}. \cr
+#' Only observations whose features values lie between the corresponding values in `lower` and `upper` are considered 
+#' counterfactual candidates.
 #' 
 #' @references 
 #' 

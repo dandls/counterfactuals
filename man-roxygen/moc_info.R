@@ -1,11 +1,11 @@
 #' @description 
-#' `MOC` (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
+#' MOC (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
 #' to minimize are:
 #' \enumerate{
-#'    \item {Distance between `x_interest` and `desired_prob`}
-#'    \item {Distance between `x_interest` and a candidate}
+#'    \item {Distance to `desired_prob`}
+#'    \item {Dissimilarity to `x_interest`}
 #'    \item {Number of feature changes}
-#'    \item {(Weighted) average distance between a candidate and its `k` nearest observed data points}
+#'    \item {(Weighted) sum of dissimilarities to the `k` nearest observed data points}
 #' }  
 #' 
 #' For optimization it uses the NSGA II algorithm (Deb et. al 2002) with mixed integer evolutionary 
@@ -15,22 +15,20 @@
 #' 
 #' Several population initialization strategies are available:
 #' \enumerate{
-#'    \item {`random`: Sample from numerical feature ranges and discrete feature values from `predictor$data$X`. 
-#'    Some features values are randomly reset to the values of `x_interest`.}
-#'    \item {`icecurve`: Sample from numerical feature ranges and discrete feature values from `predictor$data$X`. 
-#'    The higher the ICE curve variance of a feature, the lower the probability that
-#'    values of this feature are reset to the values of `x_interest`.}
-#'    \item {`sd`: Sample from numerical feature ranges that are limited by the feature standard deviations extracted
-#'    from `predictor$data$X`. For non-numerical features, the `random` strategy is used. 
-#'    Some features values are randomly reset to the values of `x_interest`.}
-#'    \item {`traindata`: Initializes the first population using observations from `predictor$data$X` that are nondominated. 
-#'    Some features values are randomly reset to the values of `x_interest`. If not enough nondominated observations are found, 
-#'    remaining individuals are created using the `random` strategy.}
+#'    \item {`random`: Feature values of new individuals are sampled from the range of observed values in `predictor$data$X`.
+#'    Some features values are randomly reset to their initial value in `x_interest`.}
+#'    \item {`sd`: Like `random`, except that the sample ranges of numerical features are limited to one standard 
+#'    deviation from the initial value in `x_interest`.}
+#'    \item {`icecurve`: As in `random`, feature values are sampled from the range of observed values in `predictor$data$X`. 
+#'    Then, however, features are reset with probabilities relative to the feature importance: the higher the importance 
+#'    of a feature the higher the probability that its values differ from the value in `x_interest`. 
+#'    The feature importance is measured using ICE curves (Goldstein et al. 2015).} 
+#'    \item {`traindata`: Contrary to the other strategies, feature values are drawn from (non-dominated) previous
+#'    observations in `predictor$data$X`; if not enough non-dominated observations are available, remaining individuals
+#'    are initialized by random sampling. Subsequently, some features values are randomly reset to their initial value 
+#'    in `x_interest` (as for `random`).}  
 #' }  
 #' 
-#' The R package `miesmuschel` implements the mixed integer evolutionary strategies.\cr
-#' To compute dissimilarities, the function uses Gower's dissimilarity measure (Gower, 1990), 
-#' which is implemented in the \link[StatMatch]{gower.dist}. 
 #' 
 #' @references 
 #'
@@ -40,6 +38,10 @@
 #' 
 #' Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. A. M. T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II. 
 #' IEEE transactions on evolutionary computation, 6(2), 182-197.
+#' 
+#' Goldstein, Alex, Adam Kapelner, Justin Bleich, and Emil Pitkin. 2015. "Peeking Inside the Black Box: Visualizing 
+#' Statistical Learning with Plots of Individual Conditional Expectation." Journal of Computational and Graphical 
+#' Statistics 24 (1): 44–65. https: //doi.org/10.1080/10618600.2014.907095.
 #' 
 #' Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
 #' 
