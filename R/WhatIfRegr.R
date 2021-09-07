@@ -2,11 +2,12 @@
 #' 
 #' @description 
 #' 
-#' WhatIf returns the `n_counterfactual` observations from `predictor$data$X` that are most similar to `x_interest` and whose
-#' prediction is in `desired_outcome`.
+#' WhatIf returns the `n_counterfactual` most similar observations to `x_interest` from observations in `predictor$data$X` 
+#' whose prediction is in the `desired_outcome` interval.
+#' 
 #' 
 #' @details
-#' The dissimilarities are computed using Gower's dissimilarity measure (Gower, 1990) implemented by \link[gower]{gower_topn}. \cr
+#' The dissimilarities are computed using Gower's dissimilarity measure (Gower, 1971). \cr
 #' Only observations whose features values lie between the corresponding values in `lower` and `upper` are considered 
 #' counterfactual candidates.
 #' 
@@ -18,6 +19,7 @@
 #' Interactive probing of machine learning models. IEEE transactions on visualization and computer graphics, 26(1), 56–65.
 #' 
 #' @examples 
+#' \dontrun{
 #' if (require("randomForest")) {
 #'   set.seed(123456)
 #'   # Train a model
@@ -31,6 +33,7 @@
 #'   )
 #'   # Print the results
 #'   cfactuals
+#' }
 #' }
 #' 
 #' @export

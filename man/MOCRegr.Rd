@@ -7,14 +7,14 @@
 MOC (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
 to minimize are:
 \enumerate{
-\item {Distance to \code{desired_prob}}
-\item {Dissimilarity to \code{x_interest}}
+\item {Distance to \code{desired_prob} (classification tasks) or \code{desired_prob} (regression tasks)}
+\item {Dissimilarity to \code{x_interest} measured by Gower's dissimilarity measure (Gower, 1971)}
 \item {Number of feature changes}
 \item {(Weighted) sum of dissimilarities to the \code{k} nearest observed data points}
 }
 
-For optimization it uses the NSGA II algorithm (Deb et. al 2002) with mixed integer evolutionary
-strategies by Li et al. (2013).
+For optimization, it uses the NSGA II algorithm (Deb et. al 2002) with mixed integer evolutionary
+strategies of Li et al. (2013).
 }
 \details{
 Several population initialization strategies are available:
@@ -24,8 +24,8 @@ Some features values are randomly reset to their initial value in \code{x_intere
 \item {\code{sd}: Like \code{random}, except that the sample ranges of numerical features are limited to one standard
 deviation from the initial value in \code{x_interest}.}
 \item {\code{icecurve}: As in \code{random}, feature values are sampled from the range of observed values in \code{predictor$data$X}.
-Then, however, features are reset with probabilities relative to the feature importance: the higher the importance
-of a feature the higher the probability that its values differ from the value in \code{x_interest}.
+Then, however, features are reset with probabilities relative to their importance: the higher the importance
+of a feature, the higher the probability that its values differ from the value in \code{x_interest}.
 The feature importance is measured using ICE curves (Goldstein et al. 2015).}
 \item {\code{traindata}: Contrary to the other strategies, feature values are drawn from (non-dominated) previous
 observations in \code{predictor$data$X}; if not enough non-dominated observations are available, remaining individuals
@@ -34,6 +34,7 @@ in \code{x_interest} (as for \code{random}).}
 }
 }
 \examples{
+\dontrun{
 if (require("randomForest")) {
   # Train a model
   rf = randomForest(mpg ~ ., data = mtcars)
@@ -47,7 +48,7 @@ if (require("randomForest")) {
   # Plot evolution
   moc_regr$plot_statistics()
 }
-
+}
 
 }
 \references{
@@ -64,8 +65,9 @@ Statistics 24 (1): 44–65. https: //doi.org/10.1080/10618600.2014.907095.
 
 Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
 
-R. Li et al., "Mixed Integer Evolution Strategies for Parameter Optimization," in Evolutionary Computation, vol. 21, no. 1,
-pp. 29-64, March 2013, doi: 10.1162/EVCO_a_00059.
+Li, Rui, Michael T. M. Emmerich, Jeroen Eggermont, Thomas Bäck, M. Schütz, J. Dijkstra, and J. H. C. Reiber. 2013.
+"Mixed Integer Evolution Strategies for Parameter Optimization." Evolutionary Computation 21 (1): 29–64. https:
+//doi.org/10.1162/EVCO_a_00059.
 }
 \section{Super classes}{
 \code{\link[counterfactuals:CounterfactualMethod]{counterfactuals::CounterfactualMethod}} -> \code{\link[counterfactuals:CounterfactualMethodRegr]{counterfactuals::CounterfactualMethodRegr}} -> \code{MOCRegr}
@@ -170,7 +172,7 @@ The number of nearest neighbors to use for the forth objective. Default is \code
 
 \item{\code{weights}}{(\code{numeric(1) | numeric(k)} | \code{NULL})\cr
 The weights used to compute the weighted sum of dissimilarities for the forth objective. It is either a single value
-or a vector of length \code{k}. If it has length \code{k}, the first value corresponds to the nearest neighbor and so on.
+or a vector of length \code{k}. If it has length \code{k}, the i-th element specifies the weight of the i-th closest point.
 The values should sum up to \code{1}. \code{NULL} (default) means all neighbors are weighted equally.}
 
 \item{\code{lower}}{(\code{numeric()} | \code{NULL})\cr

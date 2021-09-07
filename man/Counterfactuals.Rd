@@ -4,13 +4,12 @@
 \alias{Counterfactuals}
 \title{Counterfactuals Class}
 \description{
-A \code{Counterfactuals} object should be created by \link{CounterfactualMethodRegr} or \link{CounterfactualMethodClassif}.
+A \code{Counterfactuals} object should be created by the \verb{$find_counterfactuals} method of \link{CounterfactualMethodRegr}
+or \link{CounterfactualMethodClassif}.
 It contains the counterfactuals and has several methods for their evaluation and visualization.
 }
 \references{
 Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
-
-Kaufman, L. and Rousseeuw, P.J. (1990), Finding Groups in Data: An Introduction to Cluster Analysis. Wiley, New York.
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
@@ -21,7 +20,7 @@ For regression tasks it has one element \code{desired_outcome} (\link{Counterfac
 classification tasks two elements \code{desired_class} and \code{desired_prob} (\link{CounterfactualMethodRegr}).}
 
 \item{\code{data}}{(\code{data.table})\cr
-The counterfactuals.}
+The counterfactuals for \code{x_interest}.}
 
 \item{\code{x_interest}}{(\code{data.table(1)}) \cr
 A single row with the observation of interest.}
@@ -71,7 +70,7 @@ A \link[paradox]{ParamSet} based on the features of \code{predictor$data$X}.}
 \item{\code{desired}}{(\code{list(1)} | \code{list(2)})\cr
 A \code{list} with the desired properties of the counterfactuals. For regression tasks it should have one
 element \code{desired_outcome} (\link{CounterfactualMethodRegr}) and for classification tasks two elements
-\code{desired_class} and \code{desired_prob} (\link{CounterfactualMethodRegr}).}
+\code{desired_class} and \code{desired_prob} (\link{CounterfactualMethodClassif}).}
 }
 \if{html}{\out{</div>}}
 }
@@ -80,7 +79,7 @@ element \code{desired_outcome} (\link{CounterfactualMethodRegr}) and for classif
 \if{html}{\out{<a id="method-evaluate"></a>}}
 \if{latex}{\out{\hypertarget{method-evaluate}{}}}
 \subsection{Method \code{evaluate()}}{
-Evaluates the counterfactuals. It returns the counterfactuals along with evaluation \code{measures} in additional
+Evaluates the counterfactuals. It returns the counterfactuals together with the evaluation \code{measures} in additional
 columns.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$evaluate(
@@ -98,20 +97,20 @@ columns.
 The name of one or more evaluation measures.
 The following measures are available:
 \itemize{
-\item \code{dist_x_interest}: The distance of a counterfactual to \code{x_interest}. It is measured by the extension of the
-Gower's distance proposed by Kaufman and Rousseeuw (1990) and implemented by
-\link[StatMatch]{gower.dist}.
-\item \code{dist_target}: The absolute distance of the prediction of a counterfactual to the \code{desired_outcome}
+\item \code{dist_x_interest}: The distance of a counterfactual to \code{x_interest}. It is measured using Gower's
+dissimilarity measure (Gower, 1971)
+\item \code{dist_target}: The absolute distance of the prediction for a counterfactual to the \code{desired_outcome}
 (regression task) or \code{desired_prob} (classification task).
 \item \code{nr_changed}: The number of feature changes w.r.t. \code{x_interest}.
-\item \code{dist_train}: The (possibly weighted) distance to the \code{k} nearest training points.
+\item \code{dist_train}: The (weighted) distance to the \code{k} nearest training points. It is measured using Gower's
+dissimilarity measure (Gower, 1971)
 }}
 
 \item{\code{show_diff}}{(\code{logical(1)})\cr
-Should the counterfactuals be displayed as their differences from \code{x_interest}? (Default is \code{FALSE}.)
-If set to \code{TRUE}, numeric features values of \code{x_interest} are substracted from the corresponding feature values
-of the counterfactuals. Non-numeric features are displayed with their actual counterfactuals value.
-No difference is indicated by \code{NA}.}
+Should the counterfactuals be displayed as their differences to \code{x_interest}? (Default is \code{FALSE}).
+If set to \code{TRUE}, positive values for numeric features indicate an increase compared to the feature value in
+\code{x_interest}, negative values indicate a decrease. For factors, the feature value is displayed if it differs
+from \code{x_interest}; \code{NA} means "no difference" in both cases.}
 
 \item{\code{k}}{(\code{integerish(1)}) \cr
 How many nearest training points should be considered for computing the \code{dist_train} measure? Default is \code{1L}.}
@@ -119,7 +118,7 @@ How many nearest training points should be considered for computing the \code{di
 \item{\code{weights}}{(\code{numeric(k)} | \code{NULL}) \cr
 How should the \code{k} nearest training points be weighted when computing the \code{dist_train} measure? If \code{NULL}
 (default) then all \code{k} points are weighted equally. If a numeric vector of length \code{k} is given, the i-th element
-determines the weight of the i-th closest point.}
+specifies the weight of the i-th closest point.}
 }
 \if{html}{\out{</div>}}
 }
@@ -128,7 +127,7 @@ determines the weight of the i-th closest point.}
 \if{html}{\out{<a id="method-predict"></a>}}
 \if{latex}{\out{\hypertarget{method-predict}{}}}
 \subsection{Method \code{predict()}}{
-Predicts the target values of the counterfactuals.
+Returns the predictions for the counterfactuals.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$predict()}\if{html}{\out{</div>}}
 }
@@ -138,8 +137,8 @@ Predicts the target values of the counterfactuals.
 \if{html}{\out{<a id="method-plot_parallel"></a>}}
 \if{latex}{\out{\hypertarget{method-plot_parallel}{}}}
 \subsection{Method \code{plot_parallel()}}{
-Plots a parallel plot of the (scaled) feature values of the counterfactuals. \code{x_interest} is shown
-in blue.
+Plots a parallel plot that connects the (scaled) feature values of each counterfactual and highlights
+\code{x_interest} in blue.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$plot_parallel(
   feature_names = NULL,
@@ -152,12 +151,12 @@ in blue.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{feature_names}}{(\code{character} | \code{NULL})\cr
-The names of the (numeric) features to plot. If \code{NULL} (default) all features are plotted.}
+The names of the (numeric) features to display. If \code{NULL} (default) all features are displayed.}
 
 \item{\code{row_ids}}{(\code{integerish} | \code{NULL})\cr
-The row ids of the counterfactuals to plot. If \code{NULL} (default) all counterfactuals are plotted.}
+The row ids of the counterfactuals to display. If \code{NULL} (default) all counterfactuals are displayed.}
 
-\item{\code{digits_min_max}}{Number of digits for the rounding the minimum and maximum features values. Default is \code{3L}.}
+\item{\code{digits_min_max}}{Maximum number for the displayed digits of the the minimum and maximum features values. Default is \code{2L}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -166,7 +165,7 @@ The row ids of the counterfactuals to plot. If \code{NULL} (default) all counter
 \if{html}{\out{<a id="method-plot_freq_of_feature_changes"></a>}}
 \if{latex}{\out{\hypertarget{method-plot_freq_of_feature_changes}{}}}
 \subsection{Method \code{plot_freq_of_feature_changes()}}{
-Plots a bar chart of the frequency of feature changes across all counterfactuals.
+Plots a bar chart with the frequency of feature changes across all counterfactuals.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$plot_freq_of_feature_changes(subset_zero = FALSE)}\if{html}{\out{</div>}}
 }
@@ -175,7 +174,7 @@ Plots a bar chart of the frequency of feature changes across all counterfactuals
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{subset_zero}}{(\code{logical(1)})\cr
-Should features that have no changes be excluded from the plot? Default is \code{FALSE}.}
+Should unchanged features be excluded from the plot? Default is \code{FALSE}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -193,7 +192,7 @@ Returns the frequency of feature changes across all counterfactuals.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{subset_zero}}{(\code{logical(1)})\cr
-Should features that have no changes be excluded from the plot? Default is \code{FALSE}.}
+Should unchanged features be excluded? Default is \code{FALSE}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -205,13 +204,7 @@ A (named) \code{numeric} vector with the frequency of feature changes.
 \if{html}{\out{<a id="method-plot_surface"></a>}}
 \if{latex}{\out{\hypertarget{method-plot_surface}{}}}
 \subsection{Method \code{plot_surface()}}{
-Creates a surface plot for two features. \code{x_interest} is represented as bright dot and
-all counterfactuals that differ from \code{x_interest} \strong{only} in the selected features are represented as black dots.
-\itemize{
-\item (\code{numeric}, \code{numeric}): surface plot
-\item (\code{non-numeric}, \code{non-numeric}): heatmap
-\item (\code{numeric}, \code{non-numeric}): line graph
-}
+
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$plot_surface(feature_names, grid_size = 250L)}\if{html}{\out{</div>}}
 }
@@ -223,7 +216,7 @@ all counterfactuals that differ from \code{x_interest} \strong{only} in the sele
 The names of the features to plot.}
 
 \item{\code{grid_size}}{(\code{integerish(1)})\cr
-The grid size of the plot. Ignored in case of two \code{non-numeric} features. Default is \code{250L}.}
+The grid size of the plot. It is ignored in case of two \code{non-numeric} features. Default is \code{250L}.}
 }
 \if{html}{\out{</div>}}
 }

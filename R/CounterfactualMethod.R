@@ -35,7 +35,7 @@ CounterfactualMethod = R6::R6Class("CounterfactualMethod",
     },
     
     #' @description 
-    #' Print a `CounterfactualMethod` object.
+    #' Prints a `CounterfactualMethod` object.
     #' The method calls a (private) `$print_parameters()` method which should be implemented by the leaf classes.
     print = function() {
       cat("Counterfactual explanation method: ", class(self)[1], "\n")

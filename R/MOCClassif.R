@@ -3,6 +3,7 @@
 #' @template moc_info
 #' 
 #' @examples 
+#' \dontrun{
 #' if (require("randomForest")) {
 #'   # Train a model
 #'   rf = randomForest(Species ~ ., data = iris)
@@ -18,7 +19,7 @@
 #'   # Plot evolution
 #'   moc_classif$plot_statistics()
 #' }
-#' 
+#' }
 #' 
 #' @export
 MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
@@ -53,7 +54,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     #'   The number of nearest neighbors to use for the forth objective. Default is `1L`.
     #' @param weights (`numeric(1) | numeric(k)` | `NULL`)\cr  
     #'   The weights used to compute the weighted sum of dissimilarities for the forth objective. It is either a single value 
-    #'   or a vector of length `k`. If it has length `k`, the first value corresponds to the nearest neighbor and so on. 
+    #'   or a vector of length `k`. If it has length `k`, the i-th element specifies the weight of the i-th closest point.
     #'   The values should sum up to `1`. `NULL` (default) means all neighbors are weighted equally. 
     #' @template lower_upper
     #' @param init_strategy (`character(1)`)\cr  

@@ -7,7 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-In this document, we explain the `counterfactuals` workflow for both a classification and a regression task.
+In the following, we explain the `counterfactuals` workflow for both a classification and a regression task.
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
   fig.height = 3,
   comment = "#>"
 )
-options(width = 130)
+options(width = 200)
 ```
 
 ```{r setup, message=FALSE}
@@ -28,11 +28,12 @@ library(randomForest)
 
 ## Classification Tasks
 
-To illustrate the `counterfactuals` workflow for classification tasks, we search for counterfactual explanations for diabetes tested patients with `MOC` (Dandl et al. 2020). 
+To illustrate the `counterfactuals` workflow for classification tasks, we search for counterfactuals for 
+diabetes-tested patients with `MOC` (Dandl et al. 2020). 
 
 ### Data: Pima Indians Diabetes Database
 
-As training data we use the Pima Indians Diabetes Database from the `mlbench` package.
+As training data, we use the Pima Indians Diabetes Database from the `mlbench` package.
 The data set contains 768 observations with 8 features and the binary target variable `diabetes`.
 
 ```{r, echo=FALSE}
@@ -41,9 +42,11 @@ column_descr = data.frame(
     cbind("pregnant", "Number of times pregnant"),
     cbind("glucose", "Plasma glucose concentration (glucose tolerance test)"),
     cbind("pressure", "Diastolic blood pressure (mm Hg)"),
-    cbind("mass", "Body mass index (weight in kg/(height in m)\\^2)"),
+    cbind("triceps", "Triceps skin fold thickness (mm)"),
+    cbind("insulin", "2-Hour serum insulin (mu U/ml)"),
+    cbind("mass", "Body mass index"),
     cbind("pedigree", "Diabetes pedigree function"),
-    cbind("age", "	Age (years)"),
+    cbind("age", "Age (years)"),
     cbind("diabetes", "Class variable (test for diabetes)")
   )
 )
@@ -56,7 +59,7 @@ data(PimaIndiansDiabetes, package = "mlbench")
 ```
 
 
-We convert `integerish` features to the `integer` data type to ensure that counterfactuals will
+We convert `integerish` features to the `integer` data type to ensure that the counterfactuals will
 only contain `integer` values for these features (for example no `2.76` pregnancies).
 
 ```{r}
@@ -68,7 +71,7 @@ PimaIndiansDiabetes$age = as.integer(PimaIndiansDiabetes$age)
 
 ### Fitting a model
 
-First, we train a model to predict `diabetes`, leaving out one observation from the training data which is `x_interest`.
+First, we train a model to predict `diabetes`, omitting one observation from the training data, which is `x_interest`.
 
 ```{r}
 set.seed(20210816)
@@ -87,18 +90,17 @@ predictor = Predictor$new(rf, type = "prob")
 
 ### Find counterfactuals
 
-For `x_interest` the model predicts a class probability of 63.4% for a diabetes disease.
+For `x_interest`, the model predicts a diabetes probability of 63.4%.
 
 ```{r}
 x_interest = PimaIndiansDiabetes[499L, ]
 predictor$predict(x_interest)
 ```
 
-Now we examine which risk factors need to be changed to reduce the predicted probability
-of diabetes to a maximum of 40%.
+Now, I examine which risk factors need to be changed to reduce the predicted diabetes probability to a maximum of 40%.\
 Since we want to apply MOC to a classification model, we initialize a `MOCClassif` object.
-Individuals whose prediction is further away from the desired prediction than `epsilon` can be penalized. 
-Here we set `epsilon = 0` penalizing all individuals with a prediction outside the desired interval. 
+Individuals whose prediction is farther away from the desired prediction than `epsilon` can be penalized.
+Here we set `epsilon = 0`, penalizing all individuals whose prediction is outside the desired interval. 
 With the `fixed_features` argument, we can fix non-actionable features to their current value.
 
 ```{r, eval=FALSE}
@@ -108,9 +110,9 @@ moc_classif = MOCClassif$new(
 ```
 
 Then, we use the `find_counterfactuals()` method to find counterfactuals for `x_interest`. 
-As we aim to find counterfactuals with a predicted probability of at most 40% for diabetes, we set the `desired_class` to 
-`"pos"` and the `predicted_prob` to `c(0, 0.4)`. (In the binary classification case, this is equivalent to setting 
-`desired_class` to `"neg"` and `predicted_prob` to `c(0.6, 1)`.)
+As we aim to find counterfactuals with a predicted diabetes probability of at most 40%, we set the `desired_class` to 
+`"pos"` and the `predicted_prob` to `c(0, 0.4)`; in the binary classification case, this is equivalent to setting 
+`desired_class` to `"neg"` and `predicted_prob` to `c(0.6, 1)`.
 
 ```{r, eval=FALSE}
 cfactuals = moc_classif$find_counterfactuals(
@@ -139,7 +141,7 @@ evaluation and visualization.
 class(cfactuals)
 ```
 
-Printing a `Counterfactuals` object, gives an overview over the results.
+Printing a `Counterfactuals` object, gives an overview of the results.
 ```{r}
 print(cfactuals)
 ```
@@ -151,13 +153,12 @@ We can use the `predict()` method to predict the outcome of the counterfactuals.
 head(cbind(cfactuals$data, cfactuals$predict()), 5L)
 ```
 
-The `evaluate()` method returns the counterfactuals along with the evaluation measures: `dist_x_interest`, `dist_target`,
+The `evaluate()` method returns the counterfactuals along with the evaluation measures `dist_x_interest`, `dist_target`,
 `nr_changed`, and `dist_train`. \
 Setting the `show_diff` argument to `TRUE` displays the counterfactuals as their difference
-to `x_interest`: For a numeric feature, positive values indicate an increase compared to the counterfactual feature value 
-in `x_interest` and negative values indicate a decrease. For factors, the counterfactual feature value is displayed if it 
-differs from `x_interest.` 
-`NA` means “no difference” in both cases.
+to `x_interest`: for a numeric feature, positive values indicate an increase compared to the feature value in `x_interest`
+and negative values indicate a decrease; for factors, the counterfactual feature value is displayed if it 
+differs from `x_interest.`; `NA` means "no difference" in both cases.
 
 ```{r}
 head(cfactuals$evaluate(show_diff = TRUE), 5L)
@@ -166,18 +167,18 @@ head(cfactuals$evaluate(show_diff = TRUE), 5L)
 The `plot_freq_of_feature_changes()` method plots the frequency of feature changes across all counterfactuals. \
 Setting `subset_zero = TRUE` removes all unchanged features from the plot.
 
-```{r}
+```{r, fig.height=2}
 cfactuals$plot_freq_of_feature_changes(subset_zero = TRUE)
 ```
 
 The parallel plot connects the (scaled) feature values of each counterfactual and highlights `x_interest` in blue.
 
-```{r, message=FALSE, fig.height=3}
+```{r, message=FALSE, fig.height=2.5}
 cfactuals$plot_parallel()
 ```
 
 The white dot in the prediction surface plot represents `x_interest`. All counterfactuals that differ from `x_interest` only in the 
-selected features are represented as black dots. The tick marks next to the axes indicate the marginal distribution of the
+selected features are displayed as black dots. The tick marks next to the axes indicate the marginal distribution of the
 counterfactuals.
 
 
@@ -207,31 +208,31 @@ ggplot2::ggsave("introduction-res/moc_stats_plots.png", p, width = 9, height = 6
 knitr::include_graphics("introduction-res/moc_stats_plots.png")
 ```
 
-
-Ideally, one would like the mean value of each objective to decrease over the generations.
+Ideally, one would like the mean value of each objective to decrease over the generations, leading to an increase of the
+hypervolume.
 However, there is often a trade-off between the objectives. Here, the mean values of `dist_target` and `dist_train` remain 
-relatively constant over the generations, indicating that it is difficult to minimize both objectives concurrently.
+relatively constant over the generations, indicating that it is difficult to minimize both objectives simultaneously.
 
-This trade-off can also be seen in the scatter plot – created by the `plot_search()` method – that visualizes two selected 
+This trade-off can also be seen in the scatter plot---created by the `plot_search()` method---that visualizes two selected 
 objective values of all individuals. Ideally, one would like to have a point shift to the lower left corner over the generations, 
-as this implies better objective values. Here, however, the points are shifted to a middle region, which implies that it is 
-difficult to minimize both objectives concurrently.
-
+which implies better objective values. Here, the points for the objectives `dist_train` and `dist_target` are shifted to
+a middle region, which underlines the difficulty of minimizing both objectives simultaneously.
 
 ```{r, fig.height=2.5}
 moc_classif$plot_search(objectives = c("dist_train", "dist_target"))
 ```
 
+The exact interdependence between the objectives depends on the task at hand.
 
 ## Regression Tasks
 
-Finding counterfactuals for regression models is analogous to classification models. In this example, we search for
-counterfactuals explanations for housing prices with `WhatIf` (Wexler et al. 2019).
+Finding counterfactuals for regression models is analogous to classification models. In this example, we use 
+`WhatIf` (Wexler et al. 2019) to search for counterfactuals for housing prices.
 
 ### Data: Boston Housing Data
 
-As training data we use the Boston Housing dataset from the `mlbench` package. 
-The data set contains 506 observations with 13 features and the (continuous) target variable `medv`.
+As training data, we use the Boston Housing dataset from the `mlbench` package. 
+The dataset contains 506 observations with 13 features and the (continuous) target variable `medv`.
 
 ```{r, echo=FALSE}
 # data(BostonHousing, package = "mlbench")  
@@ -264,7 +265,7 @@ data(BostonHousing, package = "mlbench")
 
 ### Fitting a model
 
-First, we train a model to predict `medv` and again leave out one observation from the training data, which is `x_interest`.
+First, we train a model to predict `medv`, again omitting `x_interest` from the training data.
 
 ```{r}
 set.seed(20210713)
@@ -282,7 +283,7 @@ predictor = Predictor$new(rf)
 
 ### Find counterfactuals
 
-For `x_interest` the model predicts a median housing value of 28.32.
+For `x_interest`, the model predicts a median housing value of 28.32.
 
 ```{r}
 x_interest = BostonHousing[1L, ]
@@ -290,13 +291,13 @@ predictor$predict(x_interest)
 ```
 
 Since we want to apply `WhatIf` to a regression model, we initialize a `WhatIfRegr` object. The argument `n_counterfactuals` 
-specifies the number of counterfactuals to be returned.
+specifies the number of counterfactuals to return.
 
 ```{r}
 whatif_regr = WhatIfRegr$new(predictor, n_counterfactuals = 5L)
 ```
 
-Then, we use the `$find_counterfactuals()` method to find counterfactuals for `x_interest` with a predicted
+Then, we use the `find_counterfactuals()` method to find counterfactuals for `x_interest` with a predicted
 housing value in the interval [30, 32].
  
 ```{r}
@@ -305,7 +306,7 @@ cfactuals = whatif_regr$find_counterfactuals(x_interest, desired_outcome = c(30,
 
 ### The counterfactuals object
 
-As a result, we obtain a `Counterfactuals` object just like for the classification task.
+As a result, we obtain a `Counterfactuals` object, just like for the classification task.
 
 ```{r}
 cfactuals

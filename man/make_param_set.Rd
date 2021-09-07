@@ -19,7 +19,7 @@ Vector of maximum values for numeric features. If not NULL, it should be named w
 If NULL (default) upper is taken for each numeric feature as its maximum value in \code{dt}.}
 }
 \value{
-A \link[paradox]{ParamSet} with the features of \code{dt}.
+A \link[paradox]{ParamSet} for the features of \code{dt}.
 }
 \description{
 Creates a \link[paradox]{ParamSet} for the columns of \code{dt}. Depending on the class of a column, a different

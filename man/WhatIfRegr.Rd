@@ -4,15 +4,16 @@
 \alias{WhatIfRegr}
 \title{WhatIf for Regression Tasks}
 \description{
-WhatIf returns the \code{n_counterfactual} observations from \code{predictor$data$X} that are most similar to \code{x_interest} and whose
-prediction is in \code{desired_outcome}.
+WhatIf returns the \code{n_counterfactual} most similar observations to \code{x_interest} from observations in \code{predictor$data$X}
+whose prediction is in the \code{desired_outcome} interval.
 }
 \details{
-The dissimilarities are computed using Gower's dissimilarity measure (Gower, 1990) implemented by \link[gower]{gower_topn}. \cr
+The dissimilarities are computed using Gower's dissimilarity measure (Gower, 1971) implemented by \link[gower]{gower_topn}. \cr
 Only observations whose features values lie between the corresponding values in \code{lower} and \code{upper} are considered
 counterfactual candidates.
 }
 \examples{
+\dontrun{
 if (require("randomForest")) {
   set.seed(123456)
   # Train a model
@@ -26,6 +27,7 @@ if (require("randomForest")) {
   )
   # Print the results
   cfactuals
+}
 }
 
 }

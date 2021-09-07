@@ -17,7 +17,7 @@
 #' Vector of maximum values for numeric features. If not NULL, it should be named with the corresponding feature names. 
 #' If NULL (default) upper is taken for each numeric feature as its maximum value in `dt`.
 #' 
-#' @return A \link[paradox]{ParamSet} with the features of `dt`.
+#' @return A \link[paradox]{ParamSet} for the features of `dt`.
 #' 
 #' @md
 make_param_set = function(dt, lower = NULL, upper = NULL) {

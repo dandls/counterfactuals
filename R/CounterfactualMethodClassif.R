@@ -1,11 +1,11 @@
 #' Base class for Counterfactual Explanation Methods for Classification Tasks
 #' 
 #' @description 
-#' Abstract base class for counterfactual explanation methods for classifcation task.
+#' Abstract base class for counterfactual explanation methods for classifcation tasks.
 #' 
 #' `CounterfactualMethodClassif` can only be initialized for classification tasks. Child classes inherit the (public) 
 #' `$find_counterfactuals()` method, which calls a (private) `$run()` method. This `$run()` method should be implemented 
-#' by the child classes and return the counterfactuals as `data.table` (preferably) or `data.frame`.
+#' by the child classes and return the counterfactuals as a `data.table` (preferably) or a `data.frame`.
 #' 
 #' @section Inheritance:
 #' Child classes: \link{MOCClassif}, \link{WhatIfClassif}, \link{NICEClassif}
@@ -27,16 +27,18 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit
     
     #' @description 
     #' 
-    #' Runs the counterfactual explanation method and returns the counterfactuals.
-    #' It searches for counterfactuals that have a predicted probability `desired_prob` for the `desired_class`.
+    #' Runs the counterfactual method and returns the counterfactuals.
+    #' It searches for counterfactuals that have a predicted probability in the interval `desired_prob` for the 
+    #' `desired_class`.
     #' 
     #' @template x_interest
     #' @param desired_class (`character(1)` | `NULL`) \cr
     #'   The desired class. If `NULL` (default) then `predictor$class` is taken.
     #' @param desired_prob (`numeric(1)` | `numeric(2)`) \cr
     #'   The desired predicted probability of the `desired_class`. It can be a numeric scalar or a vector with two
-    #'   numeric values that specify a probability range. 
+    #'   numeric values that specify a probability interval. 
     #'   For hard classification tasks this can be set to `0` or `1`, respectively.
+    #'   A scalar is internally converted to an interval.
     #'   
     #' @return A \link{Counterfactuals} object containing the results.
     find_counterfactuals = function(x_interest, desired_class = NULL, desired_prob = c(0.5, 1)) {

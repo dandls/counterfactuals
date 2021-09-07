@@ -13,17 +13,16 @@
 #' In the second iteration, NICE creates `d-1` new instances by replacing a different feature value of the highest
 #' reward instance of the previous iteration with the corresponding value of `x_interest`, and so on. \cr 
 #' If `finish_early = TRUE`, the algorithm terminates when the predicted probability for
-#' the `desired_class` of the highest reward instance is in `desired_prob`; if `finish_early = FALSE`, the algorithm
-#' continues until `x_nn` is recreated. \cr 
+#' the `desired_class` of the highest reward instance is in the interval `desired_prob`; if `finish_early = FALSE`, the 
+#' algorithm continues until `x_nn` is recreated. \cr 
 #' Once the algorithm terminated, it depends on `return_multiple` which instances
 #' are returned as counterfactuals: if `return_multiple = FALSE`, then only the highest reward instance in the
 #' last iteration is returned as counterfactual; if `return_multiple = TRUE`, then all instances of all iterations
-#' whose predicted probability for the `desired_class` is in `desired_prob` are returned as counterfactuals.
+#' whose predicted probability for the `desired_class` is in the interval `desired_prob` are returned as counterfactuals.
 #' 
 #' If `finish_early = FALSE` and `return_multiple = FALSE`, then `x_nn` is returned as single counterfactual.
 #' 
-#' The function computes the dissimilarities using Gower's dissimilarity measure (Gower, 1990) implemented by 
-#' \link[gower]{gower_topn}. 
+#' The function computes the dissimilarities using Gower's dissimilarity measure (Gower, 1971). 
 #' 
 #' This NICE implementation corresponds to the original version of Brughmans and Martens (2021) when
 #' `return_multiple = FALSE`, `finish_early = TRUE`, and `x_nn_correct_classif = TRUE`.
@@ -38,6 +37,7 @@
 #' 
 #' 
 #' @examples 
+#' \dontrun{
 #' if (require("randomForest")) {
 #'   # Train a model
 #'   rf = randomForest(Species ~ ., data = iris)
@@ -53,6 +53,7 @@
 #'   # Print archive
 #'   nice_classif$archive
 #' }
+#' }
 #' 
 #' @export
 NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
@@ -67,8 +68,8 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
     #' Should only *correctly* classified observations be considered for the most similar instance search?
     #' Default is `TRUE`.
     #' @param return_multiple (`logical(1)`)\cr 
-    #' Should multiple counterfactuals be returned? If TRUE, NICE returns all created instances whose prediction is in
-    #' the desired interval. For more information, see the `details` section.
+    #' Should multiple counterfactuals be returned? If TRUE, NICE returns all created instances whose prediction for
+    #' `desired_class` is in the interval `desired_prob`. For more information, see the `details` section.
     #' @param finish_early (`logical(1)`)\cr 
     #' Should the algorithm terminate after an iteration in which the prediction of the highest reward instance is in
     #' the desired interval. If `FALSE`, the algorithm continues until `x_nn` is recreated.

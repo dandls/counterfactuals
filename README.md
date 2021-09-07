@@ -13,18 +13,17 @@ coverage](https://codecov.io/gh/susanne-207/counterfactuals/branch/main/graph/ba
 The `counterfactuals` package provides various (model-agnostic)
 counterfactual explanation methods via a unified R6-based interface.
 
-Counterfactual explanation methods (or counterfactuals for short)
-address questions of the form: “For input **x**<sup>**⋆**</sup>, the
-model predicted *y*. What would need to be changed in
-**x**<sup>**⋆**</sup> for the model to predict the desired outcome *ỹ*
-instead?”.  
-Denied loan applications often serve as an example; in this scenario a
-counterfactual could be: “The loan was denied because the amount of €30k
-is too high given the income. If the amount had been €20k, the loan
-would have been granted.”
+Counterfactual explanation methods address questions of the form: “For
+input **x**<sup>**⋆**</sup>, the model predicted *y*. What needs to be
+changed in **x**<sup>**⋆**</sup> for the model to predict a desired
+outcome *ỹ* instead?”.  
+Denied loan applications serve as a common example; here a
+counterfactual explanation (or counterfactual for short) could be: “The
+loan was denied because the amount of €30k is too high given the income.
+If the amount had been €20k, the loan would have been granted.”
 
-For an introduction to the topic, we recommend Chapter 6 of the
-[Interpretable Machine Learning
+For an introduction to counterfactual explanation methods, we recommend
+Chapter 6 of the [Interpretable Machine Learning
 book](https://christophm.github.io/interpretable-ml-book/) by Christoph
 Molnar.
 
@@ -61,22 +60,29 @@ library(randomForest)
 library(iml)
 ```
 
+### Fitting a model
+
 First, we train a `randomForest` model to predict the target variable
-`Species`; we leave out one observation from the training data, which is
-`x_interest` (the observation to find counterfactuals for).
+`Species`, omitting one observation from the training data, which is
+`x_interest` (the observation *x*<sup>⋆</sup> for which we want to find
+counterfactuals).
 
 ``` r
 rf = randomForest(Species ~ ., data = iris[-150L, ])
 ```
 
+### Setting up an iml::Predictor() object
+
 We then create an
 [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html)
-object, which serves as a wrapper for different model types and contains
+object, which serves as a wrapper for different model types; it contains
 the model and the data for its analysis.
 
 ``` r
 predictor = Predictor$new(rf, type = "prob")
 ```
+
+### Find counterfactuals
 
 For `x_interest` the model predicts a probability of 8% for class
 `versicolor`.
@@ -88,11 +94,11 @@ predictor$predict(x_interest)
 #> 1      0       0.08      0.92
 ```
 
-Now we examine which features need to be changed to achieve a predicted
-probability of at least 50% for class `versicolor`.
+Now, we examine what needs to be changed in `x_interest` so that the
+model predicts a probability of at least 50% for class `versicolor`.
 
-Here, we want to apply WhatIf, and since it is a classification task, we
-initialize a `WhatIfClassif` object.
+Here, we want to apply WhatIf and since it is a classification task, we
+create a `WhatIfClassif` object.
 
 ``` r
 wi_classif = WhatIfClassif$new(predictor, n_counterfactuals = 5L)
@@ -107,8 +113,10 @@ cfactuals = wi_classif$find_counterfactuals(
 )
 ```
 
-`cfactuals` is a `Counterfactuals` object that contains the found
-counterfactuals and provides several methods for their evaluation and
+### The counterfactuals object
+
+`cfactuals` is a `Counterfactuals` object that contains the
+counterfactuals and has several methods for their evaluation and
 visualization.
 
 ``` r
@@ -137,8 +145,8 @@ cfactuals$data
 #> 5:          5.9         3.0          4.2         1.5
 ```
 
-We can evaluate the results according to various quality measures using
-the `evaluate()` method.
+Using the `evaluate()` method, we can evaluate the counterfactuals using
+various quality measures.
 
 ``` r
 cfactuals$evaluate()
@@ -159,3 +167,13 @@ cfactuals$plot_freq_of_feature_changes()
 ```
 
 ![](man/figures/README-unnamed-chunk-10-1.png)<!-- -->
+
+Another visualization option is a parallel plot—created with the
+`plot_parallel()` method—that connects the (scaled) feature values of
+each counterfactual and highlights `x_interest` in blue.
+
+``` r
+cfactuals$plot_parallel()
+```
+
+![](man/figures/README-unnamed-chunk-11-1.png)<!-- -->

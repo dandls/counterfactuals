@@ -26,13 +26,14 @@ whose predicted probability for the \code{desired_class} is in \code{desired_pro
 
 If \code{finish_early = FALSE} and \code{return_multiple = FALSE}, then \code{x_nn} is returned as single counterfactual.
 
-The function computes the dissimilarities using Gower's dissimilarity measure (Gower, 1990) implemented by
+The function computes the dissimilarities using Gower's dissimilarity measure (Gower, 1971) implemented by
 \link[gower]{gower_topn}.
 
 This NICE implementation corresponds to the original version of Brughmans and Martens (2021) when
 \code{return_multiple = FALSE}, \code{finish_early = TRUE}, and \code{x_nn_correct_classif = TRUE}.
 }
 \examples{
+\dontrun{
 if (require("randomForest")) {
   # Train a model
   rf = randomForest(Species ~ ., data = iris)
@@ -47,6 +48,7 @@ if (require("randomForest")) {
   cfactuals$data
   # Print archive
   nice_classif$archive
+}
 }
 
 }

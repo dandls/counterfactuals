@@ -4,11 +4,11 @@
 \alias{CounterfactualMethodRegr}
 \title{Base class for Counterfactual Explanation Methods for Regression Tasks}
 \description{
-Abstract base class for counterfactual explanation methods for regression task.
+Abstract base class for counterfactual explanation methods for regression tasks.
 
 \code{CounterfactualMethodRegr} can only be initialized for regression tasks. Child classes inherit the (public)
 \verb{$find_counterfactuals()} method, which calls a (private) \verb{$run()} method. This \verb{$run()} method should be implemented
-by the child classes and return the counterfactuals as \code{data.table} (preferably) or \code{data.frame}.
+by the child classes and return the counterfactuals as a \code{data.table} (preferably) or a \code{data.frame}.
 }
 \section{Inheritance}{
 
@@ -77,7 +77,7 @@ A single row with the observation of interest.}
 
 \item{\code{desired_outcome}}{(\code{numeric(1)} | \code{numeric(2)}) \cr
 The desired predicted outcome. It can be a numeric scalar or a vector with two numeric values that specify an
-outcome range.}
+outcome interval. A scalar is internally converted to an interval.}
 }
 \if{html}{\out{</div>}}
 }

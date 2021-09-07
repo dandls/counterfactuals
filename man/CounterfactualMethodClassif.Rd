@@ -4,11 +4,11 @@
 \alias{CounterfactualMethodClassif}
 \title{Base class for Counterfactual Explanation Methods for Classification Tasks}
 \description{
-Abstract base class for counterfactual explanation methods for classifcation task.
+Abstract base class for counterfactual explanation methods for classifcation tasks.
 
 \code{CounterfactualMethodClassif} can only be initialized for classification tasks. Child classes inherit the (public)
 \verb{$find_counterfactuals()} method, which calls a (private) \verb{$run()} method. This \verb{$run()} method should be implemented
-by the child classes and return the counterfactuals as \code{data.table} (preferably) or \code{data.frame}.
+by the child classes and return the counterfactuals as a \code{data.table} (preferably) or a \code{data.frame}.
 }
 \section{Inheritance}{
 
@@ -66,7 +66,8 @@ If not \code{NULL}, it should be named with the corresponding feature names.}
 \if{latex}{\out{\hypertarget{method-find_counterfactuals}{}}}
 \subsection{Method \code{find_counterfactuals()}}{
 Runs the counterfactual explanation method and returns the counterfactuals.
-It searches for counterfactuals that have a predicted probability \code{desired_prob} for the \code{desired_class}.
+It searches for counterfactuals that have a predicted probability in the interval \code{desired_prob} for the
+\code{desired_class}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CounterfactualMethodClassif$find_counterfactuals(
   x_interest,
@@ -86,8 +87,9 @@ The desired class. If \code{NULL} (default) then \code{predictor$class} is taken
 
 \item{\code{desired_prob}}{(\code{numeric(1)} | \code{numeric(2)}) \cr
 The desired predicted probability of the \code{desired_class}. It can be a numeric scalar or a vector with two
-numeric values that specify a probability range.
-For hard classification tasks this can be set to \code{0} or \code{1}, respectively.}
+numeric values that specify a probability interval.
+For hard classification tasks this can be set to \code{0} or \code{1}, respectively.
+A scalar is internally converted to an interval.}
 }
 \if{html}{\out{</div>}}
 }
