@@ -19,12 +19,12 @@ knitr::opts_chunk$set(
 options(width = 200)
 ```
 
-In the following, we illustrate how further methods can be added to the package by integrating
+In the following, we illustrate how further methods can be added to the `counterfactuals` package by integrating
 the [`featureTweakR`](https://github.com/katokohaku/featureTweakR) package, which implements Feature Tweaking of 
 Tolomei et al. (2017). 
 
 (Note that the `featureTweakR` package has a couple of limitations, e.g., that factors in the training data cause problems or 
-that the algorithm can only be applied to `randomForests` trained on standardized features.
+that the algorithm is only applicable to `randomForests` trained on standardized features.
 Therefore, `featureTweakR` is not part of the `counterfactuals` package, but serves as a suitable example for our purpose here.)
 
 
@@ -38,7 +38,7 @@ supports classification or regression tasks, it inherits from the (abstract) `Co
 `CounterfactualMethodRegr` classes, respectively. Counterfactual methods that support both tasks are split into two separate classes;
 for instance, as MOC is applicable to classification and regression tasks, we implement two classes: `MOCClassif` and `MOCRegr`.
 
-```{r img_class_diagram, echo=FALSE, fig.cap="", out.width = '90%', fig.align='center'}
+```{r img_class_diagram, echo=FALSE, fig.cap="", out.width = '70%', fig.align='center'}
 knitr::include_graphics("how-to-add-new-cf-methods-res/class-diagram.png")
 ```
 
@@ -54,7 +54,7 @@ The `find_counterfactuals()` method calls a private `run()` method (1)---impleme
 search and returns the counterfactuals as a `data.table` (2). The `find_counterfactuals()` method then creates a `Counterfactuals` 
 object, which contains the counterfactuals and provides several methods for their evaluation and visualization (3).
 
-```{r img_call_diagram, echo=FALSE, fig.cap="", out.width = '75%', out.height='60%', fig.align='center'}
+```{r img_call_diagram, echo=FALSE, fig.cap="", out.width = '60%', out.height='60%', fig.align='center'}
 knitr::include_graphics("how-to-add-new-cf-methods-res/call-diagram.png")
 ```
 
@@ -289,7 +289,7 @@ cfactuals
 
 A minor limitation of this basic implementation is that we would not be able to find counterfactuals for a setting with 
 `max(desired_prob) < 0.5`, since `featureTweakR::tweak` only searches for instances that would be predicted as `desired_class`
-by majority vote. To enable this setting we would need to change some `featureTweakR` internal code, but for the sake of 
+by majority vote. To enable this setting, we would need to change some `featureTweakR` internal code, but for the sake of 
 clarity we will not do this here.
 
 

@@ -7,28 +7,28 @@
 MOC (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
 to minimize are:
 \enumerate{
-\item {Distance to \code{desired_prob} (classification tasks) or \code{desired_prob} (regression tasks)}
-\item {Dissimilarity to \code{x_interest} measured by Gower's dissimilarity measure (Gower, 1971)}
-\item {Number of feature changes}
-\item {(Weighted) sum of dissimilarities to the \code{k} nearest observed data points}
+\item {Distance to \code{desired_prob} (classification tasks) or \code{desired_prob} (regression tasks).}
+\item {Dissimilarity to \code{x_interest} measured by Gower's dissimilarity measure (Gower 1971).}
+\item {Number of feature changes.}
+\item {(Weighted) sum of dissimilarities to the \code{k} nearest data points in \code{predictor$data$X}.}
 }
 
 For optimization, it uses the NSGA II algorithm (Deb et. al 2002) with mixed integer evolutionary
-strategies of Li et al. (2013).
+strategies (Li et al. 2013).
 }
 \details{
 Several population initialization strategies are available:
 \enumerate{
-\item {\code{random}: Feature values of new individuals are sampled from the range of observed values in \code{predictor$data$X}.
+\item {\code{random}: Feature values of new individuals are sampled from the feature value ranges in \code{predictor$data$X}.
 Some features values are randomly reset to their initial value in \code{x_interest}.}
 \item {\code{sd}: Like \code{random}, except that the sample ranges of numerical features are limited to one standard
-deviation from the initial value in \code{x_interest}.}
-\item {\code{icecurve}: As in \code{random}, feature values are sampled from the range of observed values in \code{predictor$data$X}.
+deviation from their initial value in \code{x_interest}.}
+\item {\code{icecurve}: As in \code{random}, feature values are sampled from the feature value ranges in \code{predictor$data$X}.
 Then, however, features are reset with probabilities relative to their importance: the higher the importance
-of a feature, the higher the probability that its values differ from the value in \code{x_interest}.
+of a feature, the higher the probability that its values differ from its value in \code{x_interest}.
 The feature importance is measured using ICE curves (Goldstein et al. 2015).}
-\item {\code{traindata}: Contrary to the other strategies, feature values are drawn from (non-dominated) previous
-observations in \code{predictor$data$X}; if not enough non-dominated observations are available, remaining individuals
+\item {\code{traindata}: Contrary to the other strategies, feature values are drawn from (non-dominated) data points
+in \code{predictor$data$X}; if not enough non-dominated data points are available, remaining individuals
 are initialized by random sampling. Subsequently, some features values are randomly reset to their initial value
 in \code{x_interest} (as for \code{random}).}
 }
@@ -40,12 +40,12 @@ if (require("randomForest")) {
   rf = randomForest(mpg ~ ., data = mtcars)
   # Create a predictor object
   predictor = iml::Predictor$new(rf)
-  # Find counterfactuals
+  # Find counterfactuals for x_interest
   moc_regr = MOCRegr$new(predictor, n_generations = 30L)
   cfactuals = moc_regr$find_counterfactuals(x_interest = mtcars[1L, ], desired_outcome = c(22, 26))
-  # Print the results
+  # Print the counterfactuals
   cfactuals$data
-  # Plot evolution
+  # Plot evolution of hypervolume and mean and minimum objective values 
   moc_regr$plot_statistics()
 }
 }
@@ -134,8 +134,8 @@ Create a new \code{MOCRegr} object.
 The object (created with \code{iml::Predictor$new()}) holding the machine learning model and the data.}
 
 \item{\code{epsilon}}{(\code{numeric(1)} | \code{NULL})\cr
-If not \code{NULL}, candidates whose prediction is farther away from the desired prediction than epsilon are penalized.
-\code{NULL} (default) means no penalization}
+If not \code{NULL}, candidates whose prediction is farther away from the interval \code{desired_outcome}
+than \code{epsilon} are penalized. \code{NULL} (default) means no penalization.}
 
 \item{\code{fixed_features}}{(\code{character()} | \code{NULL})\cr
 Names of features that are not allowed to be changed. \code{NULL} (default) allows all features to be changed.}
@@ -150,7 +150,7 @@ The population size. Default is \code{20L}.}
 The number of generations. Default is \code{175L}.}
 
 \item{\code{p_rec}}{(\code{numeric(1)})\cr
-Probability with which an individualdevt is selected for recombination. Default is \code{0.57}.}
+Probability with which an individual is selected for recombination. Default is \code{0.57}.}
 
 \item{\code{p_rec_gen}}{(\code{numeric(1)})\cr
 Probability with which a feature/gene is selected for recombination. Default is \code{0.85}.}
@@ -168,12 +168,12 @@ Probability with which a feature/gene is selected for mutation. Default is \code
 Probability with which a feature/gene is reset to its original value in \code{x_interest} after mutation. Default is \code{0.32}.}
 
 \item{\code{k}}{(\code{integerish(1)})\cr
-The number of nearest neighbors to use for the forth objective. Default is \code{1L}.}
+The number of data points to use for the forth objective. Default is \code{1L}.}
 
 \item{\code{weights}}{(\code{numeric(1) | numeric(k)} | \code{NULL})\cr
 The weights used to compute the weighted sum of dissimilarities for the forth objective. It is either a single value
-or a vector of length \code{k}. If it has length \code{k}, the i-th element specifies the weight of the i-th closest point.
-The values should sum up to \code{1}. \code{NULL} (default) means all neighbors are weighted equally.}
+or a vector of length \code{k}. If it has length \code{k}, the i-th element specifies the weight of the i-th closest data point.
+The values should sum up to \code{1}. \code{NULL} (default) means all data points are weighted equally.}
 
 \item{\code{lower}}{(\code{numeric()} | \code{NULL})\cr
 Vector of minimum values for numeric features.
@@ -246,7 +246,7 @@ Visualizes two selected objective values of all emerged individuals in a scatter
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{objectives}}{(\code{character(2)})\cr
-The two objectives to be shown in the plot. Possible values are: "dist_target", "dist_x_interest, "nr_changed"
+The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "nr_changed",
 and "dist_train".}
 }
 \if{html}{\out{</div>}}

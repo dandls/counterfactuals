@@ -8,7 +8,7 @@ WhatIf returns the \code{n_counterfactual} most similar observations to \code{x_
 whose prediction is in the \code{desired_outcome} interval.
 }
 \details{
-The dissimilarities are computed using Gower's dissimilarity measure (Gower, 1971) implemented by \link[gower]{gower_topn}. \cr
+The dissimilarities are computed using Gower's dissimilarity measure (Gower 1971). \cr
 Only observations whose features values lie between the corresponding values in \code{lower} and \code{upper} are considered
 counterfactual candidates.
 }
@@ -20,7 +20,7 @@ if (require("randomForest")) {
   rf = randomForest(mpg ~ ., data = mtcars)
   # Create a predictor object
   predictor = iml::Predictor$new(rf)
-  # Find counterfactuals
+  # Find counterfactuals for x_interest
   wi_regr = WhatIfRegr$new(predictor, n_counterfactuals = 5L)
   cfactuals = wi_regr$find_counterfactuals(
     x_interest = mtcars[1L, ], desired_outcome = c(22, 26)
@@ -71,7 +71,7 @@ Create a new WhatIfRegr object.
 The object (created with \code{iml::Predictor$new()}) holding the machine learning model and the data.}
 
 \item{\code{n_counterfactuals}}{(\code{integerish(1)})\cr
-The number of counterfactuals to be found. Default is \code{1L}.}
+The number of counterfactuals to return Default is \code{1L}.}
 
 \item{\code{lower}}{(\code{numeric()} | \code{NULL})\cr
 Vector of minimum values for numeric features.

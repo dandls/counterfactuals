@@ -7,7 +7,7 @@
 #' 
 #' 
 #' @details
-#' The dissimilarities are computed using Gower's dissimilarity measure (Gower, 1971). \cr
+#' The dissimilarities are computed using Gower's dissimilarity measure (Gower 1971). \cr
 #' Only observations whose features values lie between the corresponding values in `lower` and `upper` are considered 
 #' counterfactual candidates.
 #' 
@@ -26,7 +26,7 @@
 #'   rf = randomForest(mpg ~ ., data = mtcars)
 #'   # Create a predictor object
 #'   predictor = iml::Predictor$new(rf)
-#'   # Find counterfactuals
+#'   # Find counterfactuals for x_interest
 #'   wi_regr = WhatIfRegr$new(predictor, n_counterfactuals = 5L)
 #'   cfactuals = wi_regr$find_counterfactuals(
 #'     x_interest = mtcars[1L, ], desired_outcome = c(22, 26)
@@ -43,7 +43,7 @@ WhatIfRegr = R6::R6Class("WhatIfRegr", inherit = CounterfactualMethodRegr,
     #' @description Create a new WhatIfRegr object.
     #' @template predictor
     #' @param n_counterfactuals (`integerish(1)`)\cr
-    #'   The number of counterfactuals to be found. Default is `1L`.
+    #'   The number of counterfactuals to return Default is `1L`.
     #' @template lower_upper
     initialize = function(predictor, n_counterfactuals = 1L, lower = NULL, upper = NULL) {
       super$initialize(predictor, lower, upper)

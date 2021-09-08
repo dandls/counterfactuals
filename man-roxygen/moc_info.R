@@ -2,29 +2,29 @@
 #' MOC (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
 #' to minimize are:
 #' \enumerate{
-#'    \item {Distance to `desired_prob` (classification tasks) or `desired_prob` (regression tasks)}
-#'    \item {Dissimilarity to `x_interest` measured by Gower's dissimilarity measure (Gower, 1971)}
-#'    \item {Number of feature changes}
-#'    \item {(Weighted) sum of dissimilarities to the `k` nearest observed data points}
+#'    \item {Distance to `desired_prob` (classification tasks) or `desired_prob` (regression tasks).}
+#'    \item {Dissimilarity to `x_interest` measured by Gower's dissimilarity measure (Gower 1971).}
+#'    \item {Number of feature changes.}
+#'    \item {(Weighted) sum of dissimilarities to the `k` nearest data points in `predictor$data$X`.}
 #' }  
 #' 
 #' For optimization, it uses the NSGA II algorithm (Deb et. al 2002) with mixed integer evolutionary 
-#' strategies of Li et al. (2013). 
+#' strategies (Li et al. 2013). 
 #' 
 #' @details 
 #' 
 #' Several population initialization strategies are available:
 #' \enumerate{
-#'    \item {`random`: Feature values of new individuals are sampled from the range of observed values in `predictor$data$X`.
+#'    \item {`random`: Feature values of new individuals are sampled from the feature value ranges in `predictor$data$X`.
 #'    Some features values are randomly reset to their initial value in `x_interest`.}
 #'    \item {`sd`: Like `random`, except that the sample ranges of numerical features are limited to one standard 
-#'    deviation from the initial value in `x_interest`.}
-#'    \item {`icecurve`: As in `random`, feature values are sampled from the range of observed values in `predictor$data$X`. 
+#'    deviation from their initial value in `x_interest`.}
+#'    \item {`icecurve`: As in `random`, feature values are sampled from the feature value ranges in `predictor$data$X`. 
 #'    Then, however, features are reset with probabilities relative to their importance: the higher the importance 
-#'    of a feature, the higher the probability that its values differ from the value in `x_interest`. 
+#'    of a feature, the higher the probability that its values differ from its value in `x_interest`. 
 #'    The feature importance is measured using ICE curves (Goldstein et al. 2015).} 
-#'    \item {`traindata`: Contrary to the other strategies, feature values are drawn from (non-dominated) previous
-#'    observations in `predictor$data$X`; if not enough non-dominated observations are available, remaining individuals
+#'    \item {`traindata`: Contrary to the other strategies, feature values are drawn from (non-dominated) data points
+#'    in `predictor$data$X`; if not enough non-dominated data points are available, remaining individuals
 #'    are initialized by random sampling. Subsequently, some features values are randomly reset to their initial value 
 #'    in `x_interest` (as for `random`).}  
 #' }  

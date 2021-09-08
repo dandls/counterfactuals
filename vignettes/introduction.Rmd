@@ -7,7 +7,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-In the following, we explain the `counterfactuals` workflow for both a classification and a regression task.
+In the following, we explain the `counterfactuals` workflow for both a classification and a regression task using
+concrete use cases.
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -100,7 +101,7 @@ predictor$predict(x_interest)
 Now, I examine which risk factors need to be changed to reduce the predicted diabetes probability to a maximum of 40%.\
 Since we want to apply MOC to a classification model, we initialize a `MOCClassif` object.
 Individuals whose prediction is farther away from the desired prediction than `epsilon` can be penalized.
-Here we set `epsilon = 0`, penalizing all individuals whose prediction is outside the desired interval. 
+Here, we set `epsilon = 0`, penalizing all individuals whose prediction is outside the desired interval. 
 With the `fixed_features` argument, we can fix non-actionable features to their current value.
 
 ```{r, eval=FALSE}
@@ -146,8 +147,7 @@ Printing a `Counterfactuals` object, gives an overview of the results.
 print(cfactuals)
 ```
 
-
-We can use the `predict()` method to predict the outcome of the counterfactuals.
+The `predict()` method returns the predictions for the counterfactuals.
 
 ```{r}
 head(cbind(cfactuals$data, cfactuals$predict()), 5L)

@@ -4,30 +4,29 @@
 \alias{NICEClassif}
 \title{NICE (Nearest Instance Counterfactual Explanations) for Classification Tasks}
 \description{
-NICE (Brughmans and Martens, 2021) searches for counterfactuals by iteratively replacing feature values
+NICE (Brughmans and Martens 2021) searches for counterfactuals by iteratively replacing feature values
 of \code{x_interest} with the corresponding value of its most similar (optionally) correctly classified instance \code{x_nn}.
 }
 \details{
 NICE starts the counterfactual search for \code{x_interest} by finding its most similar (optionally) correctly classified
-neighbor \code{x_nn}.
+neighbor \code{x_nn}. \cr
 In the first iteration, NICE creates new instances by replacing a different feature value of \code{x_interest} with the corresponding
 value of \code{x_nn} in each new instance. Thus, if \code{x_nn} differs from \code{x_interest} in \code{d} features, \code{d} new instances are created. \cr
 Then, the reward values for the created instances are computed with the chosen reward function.
 Available reward functions are \code{sparsity}, \code{proximity}, and \code{plausibility}. \cr
 In the second iteration, NICE creates \code{d-1} new instances by replacing a different feature value of the highest
 reward instance of the previous iteration with the corresponding value of \code{x_interest}, and so on. \cr
-If \code{finish_early = TRUE}, the algorithm terminates when the predicted probability for
-the \code{desired_class} of the highest reward instance is in \code{desired_prob}; if \code{finish_early = FALSE}, the algorithm
-continues until \code{x_nn} is recreated. \cr
+If \code{finish_early = TRUE}, the algorithm terminates when the predicted \code{desired_class} probability for
+the highest reward instance is in the interval \code{desired_prob}; if \code{finish_early = FALSE}, the
+algorithm continues until \code{x_nn} is recreated. \cr
 Once the algorithm terminated, it depends on \code{return_multiple} which instances
 are returned as counterfactuals: if \code{return_multiple = FALSE}, then only the highest reward instance in the
-last iteration is returned as counterfactual; if \code{return_multiple = TRUE}, then all instances of all iterations
-whose predicted probability for the \code{desired_class} is in \code{desired_prob} are returned as counterfactuals.
+last iteration is returned as counterfactual; if \code{return_multiple = TRUE}, then all instances (of all iterations)
+whose predicted \code{desired_class} probability is in the interval \code{desired_prob} are returned as counterfactuals.
 
 If \code{finish_early = FALSE} and \code{return_multiple = FALSE}, then \code{x_nn} is returned as single counterfactual.
 
-The function computes the dissimilarities using Gower's dissimilarity measure (Gower, 1971) implemented by
-\link[gower]{gower_topn}.
+The function computes the dissimilarities using Gower's dissimilarity measure (Gower 1971).
 
 This NICE implementation corresponds to the original version of Brughmans and Martens (2021) when
 \code{return_multiple = FALSE}, \code{finish_early = TRUE}, and \code{x_nn_correct_classif = TRUE}.
@@ -68,7 +67,7 @@ Gower, J. C. (1971), "A general coefficient of similarity and some of its proper
 The most similar (optionally) correctly classified instance of \code{x_interest}.}
 
 \item{\code{archive}}{(\code{list()}) \cr
-A list that stores the history of the algorithm run. For each iteration, it has one element containing
+A list that stores the history of the algorithm run. For each algorithm iteration, it has one element containing
 a \code{data.table}, which stores all created instances of this iteration together with their
 reward values and their predictions.}
 }
@@ -114,16 +113,16 @@ The object (created with \code{iml::Predictor$new()}) holding the machine learni
 The reward function to optimize. Can be \code{sparsity} (default), \code{proximity} or \code{plausibility}.}
 
 \item{\code{x_nn_correct_classif}}{(\code{logical(1)})\cr
-Should only \emph{correctly} classified observations be considered for the most similar instance search?
+Should only \emph{correctly} classified data points in \code{predictor$data$X} be considered for the most similar instance search?
 Default is \code{TRUE}.}
 
 \item{\code{return_multiple}}{(\code{logical(1)})\cr
-Should multiple counterfactuals be returned? If TRUE, NICE returns all created instances whose prediction is in
-the desired interval. For more information, see the \code{details} section.}
+Should multiple counterfactuals be returned? If TRUE, the algorithm returns all created instances whose \code{desired_class}
+prediction is in the interval \code{desired_prob}. For more information, see the \code{Details} section.}
 
 \item{\code{finish_early}}{(\code{logical(1)})\cr
-Should the algorithm terminate after an iteration in which the prediction of the highest reward instance is in
-the desired interval. If \code{FALSE}, the algorithm continues until \code{x_nn} is recreated.}
+Should the algorithm terminate after an iteration in which the \code{desired_class} prediction for the highest reward instance
+is in the interval \code{desired_prob}. If \code{FALSE}, the algorithm continues until \code{x_nn} is recreated.}
 }
 \if{html}{\out{</div>}}
 }

@@ -65,6 +65,8 @@ If not \code{NULL}, it should be named with the corresponding feature names.}
 \if{html}{\out{<a id="method-find_counterfactuals"></a>}}
 \if{latex}{\out{\hypertarget{method-find_counterfactuals}{}}}
 \subsection{Method \code{find_counterfactuals()}}{
+Runs the counterfactual method and returns the counterfactuals.
+It searches for counterfactuals that have a predicted outcome in the interval \code{desired_outcome}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CounterfactualMethodRegr$find_counterfactuals(x_interest, desired_outcome)}\if{html}{\out{</div>}}
 }

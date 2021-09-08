@@ -6,7 +6,7 @@
 #' whose prediction for the `desired_class` is in the `desired_probs` interval.
 #' 
 #' @details
-#' The dissimilarities are computed using Gower's dissimilarity measure (Gower, 1971) implemented. \cr
+#' The dissimilarities are computed using Gower's dissimilarity measure (Gower 1971) implemented. \cr
 #' Only observations whose features values lie between the corresponding values in `lower` and `upper` are considered 
 #' counterfactual candidates.
 #' 
@@ -24,7 +24,7 @@
 #'   rf = randomForest(Species ~ ., data = iris)
 #'   # Create a predictor object
 #'   predictor = iml::Predictor$new(rf, type = "prob")
-#'   # Find counterfactuals
+#'   # Find counterfactuals for x_interest
 #'   wi_classif = WhatIfClassif$new(predictor, n_counterfactuals = 5L)
 #'   cfactuals = wi_classif$find_counterfactuals(
 #'     x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
@@ -41,7 +41,7 @@ WhatIfClassif = R6::R6Class("WhatIfClassif", inherit = CounterfactualMethodClass
     #' @description Create a new WhatIfClassif object.
     #' @template predictor
     #' @param n_counterfactuals (`integerish(1)`)\cr
-    #'   The number of counterfactuals to be found. Default is `1L`.
+    #'   The number of counterfactuals to return. Default is `1L`.
     #' @template lower_upper
     initialize = function(predictor, n_counterfactuals = 1L, lower = NULL, upper = NULL) {
       super$initialize(predictor, lower, upper)

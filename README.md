@@ -145,7 +145,7 @@ cfactuals$data
 #> 5:          5.9         3.0          4.2         1.5
 ```
 
-Using the `evaluate()` method, we can evaluate the counterfactuals using
+With the `evaluate()` method, we can evaluate the counterfactuals using
 various quality measures.
 
 ``` r

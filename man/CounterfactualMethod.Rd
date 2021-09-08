@@ -51,7 +51,7 @@ If not \code{NULL}, it should be named with the corresponding feature names.}
 \if{html}{\out{<a id="method-print"></a>}}
 \if{latex}{\out{\hypertarget{method-print}{}}}
 \subsection{Method \code{print()}}{
-Print a \code{CounterfactualMethod} object.
+Prints a \code{CounterfactualMethod} object.
 The method calls a (private) \verb{$print_parameters()} method which should be implemented by the leaf classes.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CounterfactualMethod$print()}\if{html}{\out{</div>}}

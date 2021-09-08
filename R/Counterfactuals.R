@@ -59,18 +59,17 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     },
     
     #' @description 
-    #' Evaluates the counterfactuals. It returns the counterfactuals together with the evaluation `measures` in additional 
-    #' columns.
+    #' Evaluates the counterfactuals. It returns the counterfactuals together with the evaluation `measures`.
     #' @param measures (`character`) \cr
     #'  The name of one or more evaluation measures.
     #'  The following measures are available: 
-    #'   * `dist_x_interest`: The distance of a counterfactual to `x_interest`, measured using Gower's 
-    #'   dissimilarity measure (Gower, 1971)  
-    #'   * `dist_target`: The absolute distance of the prediction for a counterfactual to the `desired_outcome`
-    #'                    (regression task) or `desired_prob` (classification task).      
+    #'   * `dist_x_interest`: The distance of a counterfactual to `x_interest` measured by Gower's 
+    #'   dissimilarity measure (Gower 1971).  
+    #'   * `dist_target`: The absolute distance of the prediction for a counterfactual to the interval `desired_outcome`
+    #'                    (regression tasks) or `desired_prob` (classification tasks).      
     #'   * `nr_changed`: The number of feature changes w.r.t. `x_interest`.   
-    #'   * `dist_train`: The (weighted) distance to the `k` nearest training data points, measured using Gower's 
-    #'   dissimilarity measure (Gower, 1971)
+    #'   * `dist_train`: The (weighted) distance to the `k` nearest training data points measured by Gower's 
+    #'   dissimilarity measure (Gower 1971)
     #' 
     #' @param show_diff (`logical(1)`)\cr
     #'  Should the counterfactuals be displayed as their differences to `x_interest`? Default is `FALSE`.
@@ -143,7 +142,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #'  The names of the (numeric) features to display. If `NULL` (default) all features are displayed.
     #' @param row_ids (`integerish` | `NULL`)\cr
     #'  The row ids of the counterfactuals to display. If `NULL` (default) all counterfactuals are displayed.
-    #' @param digits_min_max Maximum number for the displayed digits of the the minimum and maximum features values. Default is `2L`.
+    #' @param digits_min_max Maximum number of digits for the minimum and maximum features values. Default is `2L`.
     plot_parallel = function(feature_names = NULL, row_ids = NULL, digits_min_max = 2L) {
       
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
@@ -240,10 +239,9 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #' all counterfactuals that differ from `x_interest` **only** in the two selected features are represented as black dots.
     #' The tick marks next to the axes show the marginal distribution of the counterfactuals. \cr
     #' The exact plot type depends on the selected feature types:
-    #' 
-    #'  * 2\* `numeric`: surface plot
-    #'  * 2\* `non-numeric`: heatmap
-    #'  * 1\*`numeric`, 1\* `non-numeric`: line graph
+    #'  * 2 \* `numeric`: surface plot
+    #'  * 2 \* `non-numeric`: heatmap
+    #'  * 1 \* `numeric`, 1 \* `non-numeric`: line graph
     #' @param feature_names (`character(2)`)\cr
     #'  The names of the features to plot.
     #' @param grid_size (`integerish(1)`)\cr

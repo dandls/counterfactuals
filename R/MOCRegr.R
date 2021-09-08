@@ -9,12 +9,12 @@
 #'   rf = randomForest(mpg ~ ., data = mtcars)
 #'   # Create a predictor object
 #'   predictor = iml::Predictor$new(rf)
-#'   # Find counterfactuals
+#'   # Find counterfactuals for x_interest
 #'   moc_regr = MOCRegr$new(predictor, n_generations = 30L)
 #'   cfactuals = moc_regr$find_counterfactuals(x_interest = mtcars[1L, ], desired_outcome = c(22, 26))
-#'   # Print the results
+#'   # Print the counterfactuals
 #'   cfactuals$data
-#'   # Plot evolution
+#'   # Plot evolution of hypervolume and mean and minimum objective values 
 #'   moc_regr$plot_statistics()
 #' }
 #' }
@@ -26,8 +26,8 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     #' @description Create a new `MOCRegr` object.
     #' @template predictor
     #' @param epsilon (`numeric(1)` | `NULL`)\cr  
-    #'   If not `NULL`, candidates whose prediction is farther away from the desired prediction than epsilon are penalized.
-    #'  `NULL` (default) means no penalization
+    #'   If not `NULL`, candidates whose prediction is farther away from the interval `desired_outcome` 
+    #'   than `epsilon` are penalized. `NULL` (default) means no penalization.  
     #' @param fixed_features (`character()` | `NULL`)\cr  
     #'   Names of features that are not allowed to be changed. `NULL` (default) allows all features to be changed.
     #' @param max_changed (`integerish(1)` | `NULL`)\cr  
@@ -37,7 +37,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     #' @param n_generations (`integerish(1)`)\cr  
     #'   The number of generations. Default is `175L`.   
     #' @param p_rec (`numeric(1)`)\cr  
-    #'   Probability with which an individualdevt is selected for recombination. Default is `0.57`.
+    #'   Probability with which an individual is selected for recombination. Default is `0.57`.
     #' @param p_rec_gen (`numeric(1)`)\cr  
     #'   Probability with which a feature/gene is selected for recombination. Default is `0.85`.  
     #' @param p_rec_use_orig (`numeric(1)`)\cr  
@@ -49,11 +49,11 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     #' @param p_mut_use_orig (`numeric(1)`)\cr  
     #'   Probability with which a feature/gene is reset to its original value in `x_interest` after mutation. Default is `0.32`.    
     #' @param k (`integerish(1)`)\cr  
-    #'   The number of nearest neighbors to use for the forth objective. Default is `1L`.
+    #'   The number of data points to use for the forth objective. Default is `1L`.
     #' @param weights (`numeric(1) | numeric(k)` | `NULL`)\cr  
     #'   The weights used to compute the weighted sum of dissimilarities for the forth objective. It is either a single value 
-    #'   or a vector of length `k`. If it has length `k`, the i-th element specifies the weight of the i-th closest point.
-    #'   The values should sum up to `1`. `NULL` (default) means all neighbors are weighted equally. 
+    #'   or a vector of length `k`. If it has length `k`, the i-th element specifies the weight of the i-th closest data point.
+    #'   The values should sum up to `1`. `NULL` (default) means all data points are weighted equally. 
     #' @template lower_upper
     #' @param init_strategy (`character(1)`)\cr  
     #'   The population initialization strategy. Can be `random` (default), `sd`, `icecurve` or `traindata`. For more information,
@@ -159,7 +159,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     
     #' @description Visualizes two selected objective values of all emerged individuals in a scatter plot.
     #' @param objectives (`character(2)`)\cr  
-    #'   The two objectives to be shown in the plot. Possible values are: "dist_target", "dist_x_interest, "nr_changed" 
+    #'   The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "nr_changed",
     #'   and "dist_train".
     plot_search = function(objectives = c("dist_target", "dist_x_interest")) {
       if (!requireNamespace("ggplot2", quietly = TRUE)) {

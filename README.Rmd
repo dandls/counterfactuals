@@ -79,7 +79,7 @@ predictor = Predictor$new(rf, type = "prob")
 
 ### Find counterfactuals
 
-For `x_interest` the model predicts a probability of 8% for class `versicolor`.
+For `x_interest`, the model predicts a probability of 8% for class `versicolor`.
 
 ```{r}
 x_interest = iris[150L, ]
