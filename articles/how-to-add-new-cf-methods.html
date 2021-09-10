@@ -95,9 +95,8 @@
 
     
     
-<p>The variety of counterfactual explanation methods continues to grow as new techniques are actively developed in current research. Thus, we have designed the <code>counterfactuals</code> package to be quickly extensible with new methods.</p>
-<p>In the following, we illustrate how further methods can be added to the package by integrating the <a href="https://github.com/katokohaku/featureTweakR"><code>featureTweakR</code></a> package, which implements Feature Tweaking of Tolomei et al. (2017).</p>
-<p>(Note that the <code>featureTweakR</code> package has a couple of limitations, e.g., that factors in the training data cause problems or that the algorithm can only be applied to <code>randomForests</code> trained on standardized features. Therefore, <code>featureTweakR</code> is not part of the <code>counterfactuals</code> package, but serves as a suitable example for our purpose here.)</p>
+<p>In the following, we illustrate how further methods can be added to the <code>counterfactuals</code> package by integrating the <a href="https://github.com/katokohaku/featureTweakR"><code>featureTweakR</code></a> package, which implements Feature Tweaking of Tolomei et al. (2017).</p>
+<p>(Note that the <code>featureTweakR</code> package has a couple of limitations, e.g., that factors in the training data cause problems or that the algorithm is only applicable to <code>randomForests</code> trained on standardized features. Therefore, <code>featureTweakR</code> is not part of the <code>counterfactuals</code> package, but serves as a suitable example for our purpose here.)</p>
 <div id="structure-of-the-counterfactuals-package" class="section level2">
 <h2 class="hasAnchor">
 <a href="#structure-of-the-counterfactuals-package" class="anchor"></a>Structure of the counterfactuals package</h2>
@@ -105,21 +104,21 @@
 <div id="class-diagram" class="section level3">
 <h3 class="hasAnchor">
 <a href="#class-diagram" class="anchor"></a>Class diagram</h3>
-<p>Each counterfactual method (such as <code>MOC</code>) is represented by its own <code>R6</code> class. Depending on whether it supports classification or regression tasks, it inherits from the (abstract) classes <code>CounterfactualMethodClassif</code> or <code>CounterfactualMethodRegr</code>, respectively. Counterfactual methods that support both tasks are split into two separate classes. For instance, as MOC is applicable to classification and regression tasks, we implement two classes: <code>MOCClassif</code> and <code>MOCRegr</code>.</p>
-<p><img src="how-to-add-new-cf-methods-res/class-diagram.png" width="2108"></p>
-<p>The key advantage of this approach is that we are able to provide a tailored <code>find_counterfactuals()</code> interface to the task at hand. Leaf classes like <code>MOCClassif</code> and <code>MOCRegr</code> inherit the <code>find_counterfactuals()</code> method from <code>CounterfactualMethodClassif</code> or <code>CounterfactualMethodRegr</code>, respectively. For classification tasks <code>find_counterfactuals()</code> has two arguments <code>desired_class</code> and <code>desired_prob</code> and for regression tasks it has one argument <code>desired_outcome</code>.</p>
+<p>Each counterfactual method is represented by its own <code>R6</code> class. Depending on whether a counterfactual method supports classification or regression tasks, it inherits from the (abstract) <code>CounterfactualMethodClassif</code> or <code>CounterfactualMethodRegr</code> classes, respectively. Counterfactual methods that support both tasks are split into two separate classes; for instance, as MOC is applicable to classification and regression tasks, we implement two classes: <code>MOCClassif</code> and <code>MOCRegr</code>.</p>
+<p><img src="how-to-add-new-cf-methods-res/class-diagram.png" width="70%" style="display: block; margin: auto;"></p>
+<p>Leaf classes (like <code>MOCClassif</code> and <code>MOCRegr</code>) inherit the <code>find_counterfactuals()</code> method from <code>CounterfactualMethodClassif</code> or <code>CounterfactualMethodRegr</code>, respectively. The key advantage of this approach is that we are able to provide a tailored <code>find_counterfactuals()</code> interface to the task at hand: for classification tasks <code>find_counterfactuals()</code> has two arguments <code>desired_class</code> and <code>desired_prob</code> and for regression tasks it has one argument <code>desired_outcome</code>.</p>
 </div>
 <div id="call-graph" class="section level3">
 <h3 class="hasAnchor">
 <a href="#call-graph" class="anchor"></a>Call graph</h3>
-<p>The <code>find_counterfactuals()</code> method calls a private <code>run()</code> method (1) – implemented by the leaf classes – which performs the search and returns the counterfactuals as a <code>data.table</code> (2). The <code>find_counterfactuals()</code> method then creates a <code>Counterfactuals</code> object, which contains the counterfactuals and provides several methods for their evaluation and visualization (3).</p>
-<p><img src="how-to-add-new-cf-methods-res/call-diagram.png" width="75%" height="60%" style="display: block; margin: auto;"></p>
+<p>The <code>find_counterfactuals()</code> method calls a private <code>run()</code> method (1)—implemented by the leaf classes—which performs the search and returns the counterfactuals as a <code>data.table</code> (2). The <code>find_counterfactuals()</code> method then creates a <code>Counterfactuals</code> object, which contains the counterfactuals and provides several methods for their evaluation and visualization (3).</p>
+<p><img src="how-to-add-new-cf-methods-res/call-diagram.png" width="60%" height="60%" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div id="integrating-a-new-counterfactuals-explanation-method" class="section level2">
 <h2 class="hasAnchor">
 <a href="#integrating-a-new-counterfactuals-explanation-method" class="anchor"></a>Integrating a new counterfactuals explanation method</h2>
-<p>To integrate Feature Tweaking, we first we need to install <code>featureTweakR</code> and <code>pforeach</code> from github, and load the required libraries.</p>
+<p>To integrate Feature Tweaking, we first we need to install <code>featureTweakR</code> and <code>pforeach</code> and load the required libraries.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"katokohaku/featureTweakR"</span><span class="op">)</span>
 <span class="co"># required for FeatureTweakeR</span>
@@ -134,8 +133,8 @@
 <div id="class-structure" class="section level3">
 <h3 class="hasAnchor">
 <a href="#class-structure" class="anchor"></a>Class structure</h3>
-<p>A new class is required to have at least two methods: <code>initialize()</code> and <code>run()</code>. The method <code>print_parameters</code> is not mandatory but strongly recommended as it gives objects of that class an informative <code>print</code> output.</p>
-<p>As elaborated above, the new class inherits from either <code>CounterfactualMethodClassif</code> or <code>CounterfactualMethodRegr</code> depending on its supported task. Because Feature Tweaking supports classification tasks, the new <code>FeatureTweaker</code> class inherits from the former.</p>
+<p>A new leaf class needs at least two methods: <code>initialize()</code> and <code>run()</code>. The method <code>print_parameters()</code> is not mandatory, but strongly recommended as it gives objects of that class an informative <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> output.</p>
+<p>As elaborated above, the new class inherits from either <code>CounterfactualMethodClassif</code> or <code>CounterfactualMethodRegr</code>, depending on which task it supports. Because Feature Tweaking supports classification tasks, the new <code>FeatureTweaker</code> class inherits from the former.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">FeatureTweaker</span> <span class="op">=</span> <span class="fu">R6</span><span class="fu">::</span><span class="kw"><a href="https://r6.r-lib.org/reference/R6Class.html">R6Class</a></span><span class="op">(</span><span class="st">"FeatureTweaker"</span>, inherit <span class="op">=</span> <span class="va">CounterfactualMethodClassif</span>,
   
@@ -159,7 +158,7 @@
   
   public <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
     initialize <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">predictor</span>, <span class="va">ktree</span> <span class="op">=</span> <span class="fl">30L</span>, <span class="va">epsilon</span> <span class="op">=</span> <span class="fl">0.1</span>, <span class="va">nrep</span> <span class="op">=</span> <span class="fl">10L</span><span class="op">)</span> <span class="op">{</span>
-      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkMultiClass.html">test_multi_class</a></span><span class="op">(</span><span class="va">predictor</span><span class="op">$</span><span class="va">model</span>, <span class="st">"randomForest"</span><span class="op">)</span>
+      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkMultiClass.html">assert_multi_class</a></span><span class="op">(</span><span class="va">predictor</span><span class="op">$</span><span class="va">model</span>, <span class="st">"randomForest"</span><span class="op">)</span>
       <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkIntegerish.html">assert_integerish</a></span><span class="op">(</span>
         <span class="va">ktree</span>, lower <span class="op">=</span> <span class="fl">0L</span>, upper <span class="op">=</span> <span class="va">rf</span><span class="op">$</span><span class="va">ntree</span>, any.missing <span class="op">=</span> <span class="cn">FALSE</span>, len <span class="op">=</span> <span class="fl">1L</span>
       <span class="op">)</span>
@@ -200,16 +199,16 @@
 <span class="va">es</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/featureTweakR/man/set.eSatisfactory.html">set.eSatisfactory</a></span><span class="op">(</span><span class="va">rules</span>, epsiron <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span>
 <span class="co"># Compute counterfactuals</span>
 <span class="va">tweaked</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/featureTweakR/man/tweak.html">tweak</a></span><span class="op">(</span>
-  <span class="va">es</span>, <span class="va">rf</span>, <span class="va">x_interest</span>, label.from <span class="op">=</span> <span class="va">y_hat_interest</span>, label.to <span class="op">=</span> <span class="st">"versicolor"</span>, .dopar <span class="op">=</span> <span class="cn">FALSE</span>
+  <span class="va">es</span>, <span class="va">rf</span>, <span class="va">x_interest</span>, label.from <span class="op">=</span> <span class="va">...</span>, label.to <span class="op">=</span> <span class="va">...</span>, .dopar <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span>
 <span class="va">tweaked</span><span class="op">$</span><span class="va">suggest</span></code></pre></div>
-<p>As long as <code>ktree</code> – the number of trees to parse – is less than the total number of trees in the <code>randomForest</code>, the rule extraction is a random process. Hence, these steps can repeated <code>nrep</code> times to receive multiple counterfactuals.</p>
+<p>As long as <code>ktree</code>—the number of trees to parse—is smaller than the total number of trees in the <code>randomForest</code>, the rule extraction is a random process. Hence, these steps can be repeated <code>nrep</code> times to obtain multiple counterfactuals.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">FeatureTweaker</span> <span class="op">=</span> <span class="kw"><a href="https://r6.r-lib.org/reference/R6Class.html">R6Class</a></span><span class="op">(</span><span class="st">"FeatureTweaker"</span>, inherit <span class="op">=</span> <span class="va">CounterfactualMethodClassif</span>,
   
   public <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
     initialize <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">predictor</span>, <span class="va">ktree</span> <span class="op">=</span> <span class="fl">10L</span>, <span class="va">epsilon</span> <span class="op">=</span> <span class="fl">0.1</span>, <span class="va">nrep</span> <span class="op">=</span> <span class="fl">10L</span><span class="op">)</span> <span class="op">{</span>
-      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkMultiClass.html">test_multi_class</a></span><span class="op">(</span><span class="va">predictor</span><span class="op">$</span><span class="va">model</span>, <span class="st">"randomForest"</span><span class="op">)</span>
+      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkMultiClass.html">assert_multi_class</a></span><span class="op">(</span><span class="va">predictor</span><span class="op">$</span><span class="va">model</span>, <span class="st">"randomForest"</span><span class="op">)</span>
       <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkIntegerish.html">assert_integerish</a></span><span class="op">(</span>
         <span class="va">ktree</span>, lower <span class="op">=</span> <span class="fl">0L</span>, upper <span class="op">=</span> <span class="va">rf</span><span class="op">$</span><span class="va">ntree</span>, any.missing <span class="op">=</span> <span class="cn">FALSE</span>, len <span class="op">=</span> <span class="fl">1L</span>
       <span class="op">)</span>
@@ -234,6 +233,7 @@
       <span class="va">class_x_interest</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">y_hat_interest</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html">which.max</a></span><span class="op">(</span><span class="va">y_hat_interest</span><span class="op">)</span><span class="op">]</span>
       <span class="va">rf</span> <span class="op">=</span> <span class="va">predictor</span><span class="op">$</span><span class="va">model</span>
       
+      <span class="co"># Repeat the counterfactual search `nrep` times</span>
       <span class="va">cfs_list</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span><span class="op">(</span><span class="va">private</span><span class="op">$</span><span class="va">nrep</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="op">{</span>
         <span class="va">rules</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/featureTweakR/man/getRules.html">getRules</a></span><span class="op">(</span><span class="va">rf</span>, ktree <span class="op">=</span> <span class="va">private</span><span class="op">$</span><span class="va">ktree</span>, resample <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
         <span class="va">e_satisfactory</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/featureTweakR/man/set.eSatisfactory.html">set.eSatisfactory</a></span><span class="op">(</span><span class="va">rules</span>, epsiron <span class="op">=</span> <span class="va">private</span><span class="op">$</span><span class="va">epsilon</span><span class="op">)</span>
@@ -245,13 +245,13 @@
       <span class="op">}</span>, simplify <span class="op">=</span> <span class="cn">FALSE</span>, USE.NAMES <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
       
       <span class="va">cfs</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html">rbindlist</a></span><span class="op">(</span><span class="va">cfs_list</span><span class="op">)</span>
-      <span class="co"># Only return counterfactuals that fullfill desired_prob</span>
+      <span class="co"># Return only counterfactuals whose prediction is in `desired_prob`</span>
       <span class="va">in_desired_prob</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/between.html">between</a></span><span class="op">(</span>
         <span class="va">predictor</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="va">cfs</span><span class="op">)</span><span class="op">[[</span><span class="va">private</span><span class="op">$</span><span class="va">desired_class</span><span class="op">]</span><span class="op">]</span>, <span class="va">private</span><span class="op">$</span><span class="va">desired_prob</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span>, <span class="va">private</span><span class="op">$</span><span class="va">desired_prob</span><span class="op">[</span><span class="fl">2L</span><span class="op">]</span>
       <span class="op">)</span>
       
       <span class="va">cfs</span><span class="op">[</span><span class="va">in_desired_prob</span><span class="op">]</span>
-      <span class="co"># Only return unique counterfactuals</span>
+      <span class="co"># Return only unique counterfactuals</span>
       <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html">unique</a></span><span class="op">(</span><span class="va">cfs</span><span class="op">)</span>
     <span class="op">}</span>,
     
@@ -267,21 +267,21 @@
 <div id="use-case" class="section level2">
 <h2 class="hasAnchor">
 <a href="#use-case" class="anchor"></a>Use Case</h2>
-<p>Now, that we have implemented <code>FeatureTweaker</code>, we look at a short application.</p>
-<p>First, we train a <code>randomForest</code> model on the <code>iris</code> data set and set up the <a href="https://christophm.github.io/iml/reference/Predictor.html"><code>iml::Predictor</code></a> object. As above, we omit one observation from the training data, which is <code>x_interest</code>.</p>
+<p>Now, that we have implemented <code>FeatureTweaker</code>, let’s look at a short application to the <code>iris</code> dataset.</p>
+<p>First, we train a <code>randomForest</code> model on the <code>iris</code> data set and set up the <a href="https://christophm.github.io/iml/reference/Predictor.html"><code>iml::Predictor</code></a> object, omitting <code>x_interest</code> from the training data.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">78546</span><span class="op">)</span>
 <span class="va">X</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/subset.data.table.html">subset</a></span><span class="op">(</span><span class="va">iris</span>, select <span class="op">=</span> <span class="op">-</span><span class="va">Species</span><span class="op">)</span>
 <span class="va">y</span> <span class="op">=</span> <span class="va">iris</span><span class="op">$</span><span class="va">Species</span>
 <span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html">randomForest</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, ntree <span class="op">=</span> <span class="fl">20L</span><span class="op">)</span>
 <span class="va">predictor</span> <span class="op">=</span> <span class="fu">iml</span><span class="fu">::</span><span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rf</span>, data <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="op">-</span><span class="fl">120L</span>, <span class="op">]</span>, y <span class="op">=</span> <span class="st">"Species"</span>, type <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span></code></pre></div>
-<p>For <code>x_interest</code> the model predicts <code>versicolor</code> with a class probability of 25%.</p>
+<p>For <code>x_interest</code>, the model predicts a probability of 25% for <code>versicolor</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x_interest</span> <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">120L</span>, <span class="op">]</span>
 <span class="va">predictor</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="va">x_interest</span><span class="op">)</span>
 <span class="co">#&gt;   setosa versicolor virginica</span>
 <span class="co">#&gt; 1      0       0.25      0.75</span></code></pre></div>
-<p>Now, we use Feature Tweaking to address the question: “What would need to be changed such that the model predicts <code>versicolor</code> with a class probability of at least 60%?”</p>
+<p>Now, we use Feature Tweaking to address the question: "What would need to change in <code>x_interest</code> for the model to predict a probability of at least 60% for<code>versicolor</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Set up FeatureTweaker</span>
 <span class="va">ft_classif</span> <span class="op">=</span> <span class="va">FeatureTweaker</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predictor</span>, ktree <span class="op">=</span> <span class="fl">10L</span>, nrep <span class="op">=</span> <span class="fl">5L</span><span class="op">)</span>
@@ -290,7 +290,7 @@
 <span class="va">cfactuals</span> <span class="op">=</span> <span class="va">ft_classif</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span>
   x_interest <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">120L</span>, <span class="op">]</span>, desired_class <span class="op">=</span> <span class="st">"versicolor"</span>, desired_prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">1</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
-<p>Just as in the cases above for MOC and WhatIf, the result is a <code>Counterfactuals</code> object.</p>
+<p>Just as for the existing methods, the result is a <code>Counterfactuals</code> object.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cfactuals</span>
 <span class="co">#&gt; 4 Counterfactual(s) </span>
@@ -307,7 +307,7 @@
 <div id="comments" class="section level2">
 <h2 class="hasAnchor">
 <a href="#comments" class="anchor"></a>Comments</h2>
-<p>A minor limitation of this basic implementation is that we would not be able to find counterfactuals for a setting with <code>max(desired_prob) &lt; 0.5</code>, since <code><a href="https://rdrr.io/pkg/featureTweakR/man/tweak.html">featureTweakR::tweak</a></code> only searches for instances that would be predicted as <code>desired_class</code> by majority vote. To enable this setting we would need to change some <code>featureTweakR</code> internal code, but for the sake of clarity we will not do this here.</p>
+<p>A minor limitation of this basic implementation is that we would not be able to find counterfactuals for a setting with <code>max(desired_prob) &lt; 0.5</code>, since <code><a href="https://rdrr.io/pkg/featureTweakR/man/tweak.html">featureTweakR::tweak</a></code> only searches for instances that would be predicted as <code>desired_class</code> by majority vote. To enable this setting, we would need to change some <code>featureTweakR</code> internal code, but for the sake of clarity we will not do this here.</p>
 </div>
 <div id="references" class="section level2">
 <h2 class="hasAnchor">

@@ -40,10 +40,10 @@
 
 
 <meta property="og:title" content="Base class for Counterfactual Explanation Methods for Classification Tasks — CounterfactualMethodClassif" />
-<meta property="og:description" content="Abstract base class for counterfactual explanation methods for classifcation task.
+<meta property="og:description" content="Abstract base class for counterfactual explanation methods for classifcation tasks.
 CounterfactualMethodClassif can only be initialized for classification tasks. Child classes inherit the (public)
 $find_counterfactuals() method, which calls a (private) $run() method. This $run() method should be implemented
-by the child classes and return the counterfactuals as data.table (preferably) or data.frame." />
+by the child classes and return the counterfactuals as a data.table (preferably) or a data.frame." />
 
 
 
@@ -135,10 +135,10 @@ by the child classes and return the counterfactuals as data.table (preferably) o
     </div>
 
     <div class="ref-description">
-    <p>Abstract base class for counterfactual explanation methods for classifcation task.</p>
+    <p>Abstract base class for counterfactual explanation methods for classifcation tasks.</p>
 <p><code>CounterfactualMethodClassif</code> can only be initialized for classification tasks. Child classes inherit the (public)
 <code>$find_counterfactuals()</code> method, which calls a (private) <code>$run()</code> method. This <code>$run()</code> method should be implemented
-by the child classes and return the counterfactuals as <code>data.table</code> (preferably) or <code>data.frame</code>.</p>
+by the child classes and return the counterfactuals as a <code>data.table</code> (preferably) or a <code>data.frame</code>.</p>
     </div>
 
 
@@ -178,18 +178,21 @@ by the child classes and return the counterfactuals as <code>data.table</code> (
 The object (created with <code>iml::Predictor$new()</code>) holding the machine learning model and the data.</p></dd>
 
 <dt><code>lower</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> | <code>NULL</code>)<br />
-Vector of minimum values for numeric features. If not <code>NULL</code>, it should be named with the corresponding feature names.
-If <code>NULL</code> (default) <code>lower</code> is taken for each numeric feature as its minimum value in <code>predictor$data$X</code>.</p></dd>
+Vector of minimum values for numeric features.
+If <code>NULL</code> (default), the element for each numeric feature in <code>lower</code> is taken as its minimum value in <code>predictor$data$X</code>.
+If not <code>NULL</code>, it should be named with the corresponding feature names.</p></dd>
 
 <dt><code>upper</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> | <code>NULL</code>)<br />
-Vector of maximum values for numeric features. If not <code>NULL</code>, it should be named with the corresponding feature names.
-If <code>NULL</code> (default) <code>upper</code> is taken for each numeric feature as its maximum value in <code>predictor$data$X</code>.</p></dd>
+Vector of maximum values for numeric features.
+If <code>NULL</code> (default), the element for each numeric feature in <code>upper</code> is taken as its maximum value in <code>predictor$data$X</code>.
+If not <code>NULL</code>, it should be named with the corresponding feature names.</p></dd>
 
 </dl><p></div></p>
 <p><hr>
 <a id="method-find_counterfactuals"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>find_counterfactuals()</code></h3>
-<p>Runs the counterfactual explanation method and returns the counterfactuals.
-It searches for counterfactuals that have a predicted probability <code>desired_prob</code> for the <code>desired_class</code>.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p>Runs the counterfactual method and returns the counterfactuals.
+It searches for counterfactuals that have a predicted probability in the interval <code>desired_prob</code> for the
+<code>desired_class</code>.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
 <p><div class="r"></p><pre><span class='va'>CounterfactualMethodClassif</span><span class='op'>$</span><span class='fu'>find_counterfactuals</span><span class='op'>(</span>
   <span class='va'>x_interest</span>,
   desired_class <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -206,8 +209,9 @@ The desired class. If <code>NULL</code> (default) then <code>predictor$class</co
 
 <dt><code>desired_prob</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> | <code><a href='https://rdrr.io/r/base/numeric.html'>numeric(2)</a></code>) <br />
 The desired predicted probability of the <code>desired_class</code>. It can be a numeric scalar or a vector with two
-numeric values that specify a probability range.
-For hard classification tasks this can be set to <code>0</code> or <code>1</code>, respectively.</p></dd>
+numeric values that specify a probability interval.
+For hard classification tasks this can be set to <code>0</code> or <code>1</code>, respectively.
+A scalar is internally converted to an interval.</p></dd>
 
 </dl><p></div></p>
 <h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Returns</h4>

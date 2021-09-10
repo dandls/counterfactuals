@@ -163,17 +163,19 @@
 The object (created with <code>iml::Predictor$new()</code>) holding the machine learning model and the data.</p></dd>
 
 <dt><code>lower</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> | <code>NULL</code>)<br />
-Vector of minimum values for numeric features. If not <code>NULL</code>, it should be named with the corresponding feature names.
-If <code>NULL</code> (default) <code>lower</code> is taken for each numeric feature as its minimum value in <code>predictor$data$X</code>.</p></dd>
+Vector of minimum values for numeric features.
+If <code>NULL</code> (default), the element for each numeric feature in <code>lower</code> is taken as its minimum value in <code>predictor$data$X</code>.
+If not <code>NULL</code>, it should be named with the corresponding feature names.</p></dd>
 
 <dt><code>upper</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> | <code>NULL</code>)<br />
-Vector of maximum values for numeric features. If not <code>NULL</code>, it should be named with the corresponding feature names.
-If <code>NULL</code> (default) <code>upper</code> is taken for each numeric feature as its maximum value in <code>predictor$data$X</code>.</p></dd>
+Vector of maximum values for numeric features.
+If <code>NULL</code> (default), the element for each numeric feature in <code>upper</code> is taken as its maximum value in <code>predictor$data$X</code>.
+If not <code>NULL</code>, it should be named with the corresponding feature names.</p></dd>
 
 </dl><p></div></p>
 <p><hr>
 <a id="method-print"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code><a href='https://rdrr.io/r/base/print.html'>print()</a></code></h3>
-<p>Print a <code>CounterfactualMethod</code> object.
+<p>Prints a <code>CounterfactualMethod</code> object.
 The method calls a (private) <code>$print_parameters()</code> method which should be implemented by the leaf classes.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
 <p><div class="r"></p><pre><span class='va'>CounterfactualMethod</span><span class='op'>$</span><span class='fu'>print</span><span class='op'>(</span><span class='op'>)</span></pre><p></div></p>
 

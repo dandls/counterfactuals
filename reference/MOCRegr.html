@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MOC (Multi-objective counterfactual explanations) for Regression Tasks — MOCRegr • counterfactuals</title>
+<title>MOC (Multi-Objective Counterfactual Explanations) for Regression Tasks — MOCRegr • counterfactuals</title>
 
 
 <!-- jquery -->
@@ -39,17 +39,17 @@
 
 
 
-<meta property="og:title" content="MOC (Multi-objective counterfactual explanations) for Regression Tasks — MOCRegr" />
+<meta property="og:title" content="MOC (Multi-Objective Counterfactual Explanations) for Regression Tasks — MOCRegr" />
 <meta property="og:description" content="MOC (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
 to minimize are:
-Distance between x_interest and desired_prob
-Distance between x_interest and a candidate
-Number of feature changes
-(Weighted) average distance between a candidate and its k nearest observed data points
+Distance to desired_prob (classification tasks) or desired_prob (regression tasks).
+Dissimilarity to x_interest measured by Gower's dissimilarity measure (Gower 1971).
+Number of feature changes.
+(Weighted) sum of dissimilarities to the k nearest data points in predictor$data$X.
 
 
-For optimization it uses the NSGA II algorithm (Deb et. al 2002) with mixed integer evolutionary
-strategies by Li et al. (2013)." />
+For optimization, it uses the NSGA II algorithm (Deb et. al 2002) with mixed integer evolutionary
+strategies (Li et al. 2013)." />
 
 
 
@@ -135,22 +135,22 @@ strategies by Li et al. (2013)." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>MOC (Multi-objective counterfactual explanations) for Regression Tasks</h1>
+    <h1>MOC (Multi-Objective Counterfactual Explanations) for Regression Tasks</h1>
     <small class="dont-index">Source: <a href='https://github.com/TODO/issues/blob/master/R/MOCRegr.R'><code>R/MOCRegr.R</code></a></small>
     <div class="hidden name"><code>MOCRegr.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>MOC</code> (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
+    <p>MOC (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
 to minimize are:</p><ol>
-<li><p>Distance between <code>x_interest</code> and <code>desired_prob</code></p></li>
-<li><p>Distance between <code>x_interest</code> and a candidate</p></li>
-<li><p>Number of feature changes</p></li>
-<li><p>(Weighted) average distance between a candidate and its <code>k</code> nearest observed data points</p></li>
+<li><p>Distance to <code>desired_prob</code> (classification tasks) or <code>desired_prob</code> (regression tasks).</p></li>
+<li><p>Dissimilarity to <code>x_interest</code> measured by Gower's dissimilarity measure (Gower 1971).</p></li>
+<li><p>Number of feature changes.</p></li>
+<li><p>(Weighted) sum of dissimilarities to the <code>k</code> nearest data points in <code>predictor$data$X</code>.</p></li>
 </ol>
 
-<p>For optimization it uses the NSGA II algorithm (Deb et. al 2002) with mixed integer evolutionary
-strategies by Li et al. (2013).</p>
+<p>For optimization, it uses the NSGA II algorithm (Deb et. al 2002) with mixed integer evolutionary
+strategies (Li et al. 2013).</p>
     </div>
 
 
@@ -158,22 +158,20 @@ strategies by Li et al. (2013).</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Several population initialization strategies are available:</p><ol>
-<li><p><code>random</code>: Sample from numerical feature ranges and discrete feature values from <code>predictor$data$X</code>.
-Some features values are randomly reset to the values of <code>x_interest</code>.</p></li>
-<li><p><code>icecurve</code>: Sample from numerical feature ranges and discrete feature values from <code>predictor$data$X</code>.
-The higher the ICE curve variance of a feature, the lower the probability that
-values of this feature are reset to the values of <code>x_interest</code>.</p></li>
-<li><p><code>sd</code>: Sample from numerical feature ranges that are limited by the feature standard deviations extracted
-from <code>predictor$data$X</code>. For non-numerical features, the <code>random</code> strategy is used.
-Some features values are randomly reset to the values of <code>x_interest</code>.</p></li>
-<li><p><code>traindata</code>: Initializes the first population using observations from <code>predictor$data$X</code> that are nondominated.
-Some features values are randomly reset to the values of <code>x_interest</code>. If not enough nondominated observations are found,
-remaining individuals are created using the <code>random</code> strategy.</p></li>
+<li><p><code>random</code>: Feature values of new individuals are sampled from the feature value ranges in <code>predictor$data$X</code>.
+Some features values are randomly reset to their initial value in <code>x_interest</code>.</p></li>
+<li><p><code>sd</code>: Like <code>random</code>, except that the sample ranges of numerical features are limited to one standard
+deviation from their initial value in <code>x_interest</code>.</p></li>
+<li><p><code>icecurve</code>: As in <code>random</code>, feature values are sampled from the feature value ranges in <code>predictor$data$X</code>.
+Then, however, features are reset with probabilities relative to their importance: the higher the importance
+of a feature, the higher the probability that its values differ from its value in <code>x_interest</code>.
+The feature importance is measured using ICE curves (Goldstein et al. 2015).</p></li>
+<li><p><code>traindata</code>: Contrary to the other strategies, feature values are drawn from (non-dominated) data points
+in <code>predictor$data$X</code>; if not enough non-dominated data points are available, remaining individuals
+are initialized by random sampling. Subsequently, some features values are randomly reset to their initial value
+in <code>x_interest</code> (as for <code>random</code>).</p></li>
 </ol>
 
-<p>The R package <code>miesmuschel</code> implements the mixed integer evolutionary strategies.<br />
-To compute dissimilarities, the function uses Gower's dissimilarity measure (Gower, 1990),
-which is implemented in the <a href='https://rdrr.io/pkg/StatMatch/man/gower.dist.html'>gower.dist</a>.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “Multi-Objective Counterfactual Explanations.”
@@ -181,9 +179,13 @@ In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mi
 Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Publishing.</p>
 <p>Deb, K., Pratap, A., Agarwal, S., &amp; Meyarivan, T. A. M. T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
 IEEE transactions on evolutionary computation, 6(2), 182-197.</p>
+<p>Goldstein, Alex, Adam Kapelner, Justin Bleich, and Emil Pitkin. 2015. "Peeking Inside the Black Box: Visualizing
+Statistical Learning with Plots of Individual Conditional Expectation." Journal of Computational and Graphical
+Statistics 24 (1): 44–65. https: //doi.org/10.1080/10618600.2014.907095.</p>
 <p>Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.</p>
-<p>R. Li et al., "Mixed Integer Evolution Strategies for Parameter Optimization," in Evolutionary Computation, vol. 21, no. 1,
-pp. 29-64, March 2013, doi: 10.1162/EVCO_a_00059.</p>
+<p>Li, Rui, Michael T. M. Emmerich, Jeroen Eggermont, Thomas Bäck, M. Schütz, J. Dijkstra, and J. H. C. Reiber. 2013.
+"Mixed Integer Evolution Strategies for Parameter Optimization." Evolutionary Computation 21 (1): 29–64. https:
+//doi.org/10.1162/EVCO_a_00059.</p>
     <h2 class="hasAnchor" id="super-classes"><a class="anchor" href="#super-classes"></a>Super classes</h2>
 
     <p><code><a href='CounterfactualMethod.html'>counterfactuals::CounterfactualMethod</a></code> -&gt; <code><a href='CounterfactualMethodRegr.html'>counterfactuals::CounterfactualMethodRegr</a></code> -&gt; <code>MOCRegr</code></p>
@@ -244,8 +246,8 @@ The object used for optimization.</p></dd>
 The object (created with <code>iml::Predictor$new()</code>) holding the machine learning model and the data.</p></dd>
 
 <dt><code>epsilon</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> | <code>NULL</code>)<br />
-If not <code>NULL</code>, candidates whose prediction is farther away from the desired prediction than epsilon are penalized.
-<code>NULL</code> (default) means no penalization</p></dd>
+If not <code>NULL</code>, candidates whose prediction is farther away from the interval <code>desired_outcome</code>
+than <code>epsilon</code> are penalized. <code>NULL</code> (default) means no penalization.</p></dd>
 
 <dt><code>fixed_features</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> | <code>NULL</code>)<br />
 Names of features that are not allowed to be changed. <code>NULL</code> (default) allows all features to be changed.</p></dd>
@@ -260,13 +262,13 @@ The population size. Default is <code>20L</code>.</p></dd>
 The number of generations. Default is <code>175L</code>.</p></dd>
 
 <dt><code>p_rec</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
-Probability with which an individualdevt is selected for recombination. Default is <code>0.57</code>.</p></dd>
+Probability with which an individual is selected for recombination. Default is <code>0.57</code>.</p></dd>
 
 <dt><code>p_rec_gen</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
 Probability with which a feature/gene is selected for recombination. Default is <code>0.85</code>.</p></dd>
 
 <dt><code>p_rec_use_orig</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
-Probability with which a feature/gene is reset to the feature value of <code>x_interest</code> after recombination. Default is <code>0.88</code>.</p></dd>
+Probability with which a feature/gene is reset to its original value in <code>x_interest</code> after recombination. Default is <code>0.88</code>.</p></dd>
 
 <dt><code>p_mut</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
 Probability with which an individual is selected for mutation. Default is <code>0.79</code>.</p></dd>
@@ -275,23 +277,25 @@ Probability with which an individual is selected for mutation. Default is <code>
 Probability with which a feature/gene is selected for mutation. Default is <code>0.56</code>.</p></dd>
 
 <dt><code>p_mut_use_orig</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>)<br />
-Probability with which a feature/gene is reset to the feature value of <code>x_interest</code> after mutation. Default is <code>0.32</code>.</p></dd>
+Probability with which a feature/gene is reset to its original value in <code>x_interest</code> after mutation. Default is <code>0.32</code>.</p></dd>
 
 <dt><code>k</code></dt><dd><p>(<code>integerish(1)</code>)<br />
-The number of nearest neighbors to use for the forth objective. Default is <code>1L</code>.</p></dd>
+The number of data points to use for the forth objective. Default is <code>1L</code>.</p></dd>
 
 <dt><code>weights</code></dt><dd><p>(<code>numeric(1) | numeric(k)</code> | <code>NULL</code>)<br />
-The weights used to compute the weighted average distance for the forth objective. It is either a single value
-or a vector of length <code>k</code>. If it has length <code>k</code>, the first value corresponds to the nearest neighbor and so on.
-The values should sum up to <code>1</code>. <code>NULL</code> (default) means all neighbors are weighted equally.</p></dd>
+The weights used to compute the weighted sum of dissimilarities for the forth objective. It is either a single value
+or a vector of length <code>k</code>. If it has length <code>k</code>, the i-th element specifies the weight of the i-th closest data point.
+The values should sum up to <code>1</code>. <code>NULL</code> (default) means all data points are weighted equally.</p></dd>
 
 <dt><code>lower</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> | <code>NULL</code>)<br />
-Vector of minimum values for numeric features. If not <code>NULL</code>, it should be named with the corresponding feature names.
-If <code>NULL</code> (default) <code>lower</code> is taken for each numeric feature as its minimum value in <code>predictor$data$X</code>.</p></dd>
+Vector of minimum values for numeric features.
+If <code>NULL</code> (default), the element for each numeric feature in <code>lower</code> is taken as its minimum value in <code>predictor$data$X</code>.
+If not <code>NULL</code>, it should be named with the corresponding feature names.</p></dd>
 
 <dt><code>upper</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> | <code>NULL</code>)<br />
-Vector of maximum values for numeric features. If not <code>NULL</code>, it should be named with the corresponding feature names.
-If <code>NULL</code> (default) <code>upper</code> is taken for each numeric feature as its maximum value in <code>predictor$data$X</code>.</p></dd>
+Vector of maximum values for numeric features.
+If <code>NULL</code> (default), the element for each numeric feature in <code>upper</code> is taken as its maximum value in <code>predictor$data$X</code>.
+If not <code>NULL</code>, it should be named with the corresponding feature names.</p></dd>
 
 <dt><code>init_strategy</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code>)<br />
 The population initialization strategy. Can be <code>random</code> (default), <code>sd</code>, <code>icecurve</code> or <code>traindata</code>. For more information,
@@ -308,8 +312,8 @@ Should information about the optimization status be hidden? Default is <code>FAL
 <p><hr>
 <a id="method-plot_statistics"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>plot_statistics()</code></h3>
 <p>Plots the evolution of the mean and minimum objective values together with the dominated hypervolume over
-the generations. All values for a generation are calculated based on all nondominated individuals of that generation.
-For computing the dominated hypervolume the <code>miesmuschel:::domhv</code> function is used.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+the generations. All values for a generation are computed based on all non-dominated individuals that emerged until
+that generation.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
 <p><div class="r"></p><pre><span class='va'>MOCRegr</span><span class='op'>$</span><span class='fu'>plot_statistics</span><span class='op'>(</span>centered_obj <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre><p></div></p>
 
 <h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
@@ -321,21 +325,20 @@ since they (usually) have different scales. If set to <code>TRUE</code> (default
 </dl><p></div></p>
 <p><hr>
 <a id="method-get_dominated_hv"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>get_dominated_hv()</code></h3>
-<p>Calculates the dominated hypervolume of each generation.
-The <code>miesmuschel:::domhv</code> function is used for this.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p>Calculates the dominated hypervolume of each generation.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
 <p><div class="r"></p><pre><span class='va'>MOCRegr</span><span class='op'>$</span><span class='fu'>get_dominated_hv</span><span class='op'>(</span><span class='op'>)</span></pre><p></div></p>
 
 <h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Returns</h4>
-<p>A <code>data.table</code> with the dominated hypervolume of each generation</p>
+<p>A <code>data.table</code> with the dominated hypervolume of each generation.</p>
 <p><hr>
 <a id="method-plot_search"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>plot_search()</code></h3>
-<p>Visualizes all individuals of all generations in a scatter plot with two objectives on the axes.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p>Visualizes two selected objective values of all emerged individuals in a scatter plot.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
 <p><div class="r"></p><pre><span class='va'>MOCRegr</span><span class='op'>$</span><span class='fu'>plot_search</span><span class='op'>(</span>objectives <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"dist_target"</span>, <span class='st'>"dist_x_interest"</span><span class='op'>)</span><span class='op'>)</span></pre><p></div></p>
 
 <h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
 <p><div class="arguments"></p><dl>
 <dt><code>objectives</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/character.html'>character(2)</a></code>)<br />
-The two objectives to be shown in the plot. Possible values are: "dist_target", "dist_x_interest, "nr_changed"
+The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "nr_changed",
 and "dist_train".</p></dd>
 
 </dl><p></div></p>
@@ -353,22 +356,21 @@ and "dist_train".</p></dd>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='st'><a href='https://www.stat.berkeley.edu/~breiman/RandomForests/'>"randomForest"</a></span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='st'><a href='https://www.stat.berkeley.edu/~breiman/RandomForests/'>"randomForest"</a></span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='co'># Train a model</span>
   <span class='va'>rf</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/randomForest/man/randomForest.html'>randomForest</a></span><span class='op'>(</span><span class='va'>mpg</span> <span class='op'>~</span> <span class='va'>.</span>, data <span class='op'>=</span> <span class='va'>mtcars</span><span class='op'>)</span>
   <span class='co'># Create a predictor object</span>
   <span class='va'>predictor</span> <span class='op'>=</span> <span class='fu'>iml</span><span class='fu'>::</span><span class='va'><a href='https://christophm.github.io/iml/reference/Predictor.html'>Predictor</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>rf</span><span class='op'>)</span>
-  <span class='co'># Find counterfactuals</span>
+  <span class='co'># Find counterfactuals for x_interest</span>
   <span class='va'>moc_regr</span> <span class='op'>=</span> <span class='va'>MOCRegr</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>predictor</span>, n_generations <span class='op'>=</span> <span class='fl'>30L</span><span class='op'>)</span>
   <span class='va'>cfactuals</span> <span class='op'>=</span> <span class='va'>moc_regr</span><span class='op'>$</span><span class='fu'>find_counterfactuals</span><span class='op'>(</span>x_interest <span class='op'>=</span> <span class='va'>mtcars</span><span class='op'>[</span><span class='fl'>1L</span>, <span class='op'>]</span>, desired_outcome <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>22</span>, <span class='fl'>26</span><span class='op'>)</span><span class='op'>)</span>
-  <span class='co'># Print the results</span>
+  <span class='co'># Print the counterfactuals</span>
   <span class='va'>cfactuals</span><span class='op'>$</span><span class='va'>data</span>
-  <span class='co'># Plot evolution</span>
+  <span class='co'># Plot evolution of hypervolume and mean and minimum objective values </span>
   <span class='va'>moc_regr</span><span class='op'>$</span><span class='fu'>plot_statistics</span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>}</span>
-</div><div class='output co'>#&gt; <span class='message'>`x_interest` was removed from results.</span></div><div class='output co'>#&gt; <span class='error'>Error: .onLoad failed in loadNamespace() for 'tcltk', details:</span>
-#&gt; <span class='error'>  call: fun(libname, pkgname)</span>
-#&gt; <span class='error'>  error: X11 library is missing: install XQuartz from www.xquartz.org</span></div><div class='input'>
+<span class='op'>}</span>
 
 </div></pre>
   </div>

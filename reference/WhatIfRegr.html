@@ -40,8 +40,8 @@
 
 
 <meta property="og:title" content="WhatIf for Regression Tasks — WhatIfRegr" />
-<meta property="og:description" content="WhatIf selects the n_counterfactual observations from the training data that are most similar to x_interest
-and have the desired prediction. As training data predictor$data$X is taken." />
+<meta property="og:description" content="WhatIf returns the n_counterfactual most similar observations to x_interest from observations in predictor$data$X
+whose prediction is in the desired_outcome interval." />
 
 
 
@@ -133,18 +133,17 @@ and have the desired prediction. As training data predictor$data$X is taken." />
     </div>
 
     <div class="ref-description">
-    <p><code>WhatIf</code> selects the <code>n_counterfactual</code> observations from the training data that are most similar to <code>x_interest</code>
-and have the desired prediction. As training data <code>predictor$data$X</code> is taken.</p>
+    <p>WhatIf returns the <code>n_counterfactual</code> most similar observations to <code>x_interest</code> from observations in <code>predictor$data$X</code>
+whose prediction is in the <code>desired_outcome</code> interval.</p>
     </div>
 
 
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>To compute dissimilarities, the function uses Gower's dissimilarity measure (Gower, 1990),
-which is implemented by <a href='https://rdrr.io/pkg/gower/man/gower_topn.html'>gower_topn</a>.
-For numerical features, the distances are scaled with the feature value ranges observed in the training data.
-Only observations with features values between <code>lower</code> and <code>upper</code> are considered as counterfactual candidates.</p>
+    <p>The dissimilarities are computed using Gower's dissimilarity measure (Gower 1971). <br />
+Only observations whose features values lie between the corresponding values in <code>lower</code> and <code>upper</code> are considered
+counterfactual candidates.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.</p>
@@ -180,15 +179,17 @@ Interactive probing of machine learning models. IEEE transactions on visualizati
 The object (created with <code>iml::Predictor$new()</code>) holding the machine learning model and the data.</p></dd>
 
 <dt><code>n_counterfactuals</code></dt><dd><p>(<code>integerish(1)</code>)<br />
-The number of counterfactuals to be found. Default is <code>1L</code>.</p></dd>
+The number of counterfactuals to return Default is <code>1L</code>.</p></dd>
 
 <dt><code>lower</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> | <code>NULL</code>)<br />
-Vector of minimum values for numeric features. If not <code>NULL</code>, it should be named with the corresponding feature names.
-If <code>NULL</code> (default) <code>lower</code> is taken for each numeric feature as its minimum value in <code>predictor$data$X</code>.</p></dd>
+Vector of minimum values for numeric features.
+If <code>NULL</code> (default), the element for each numeric feature in <code>lower</code> is taken as its minimum value in <code>predictor$data$X</code>.
+If not <code>NULL</code>, it should be named with the corresponding feature names.</p></dd>
 
 <dt><code>upper</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> | <code>NULL</code>)<br />
-Vector of maximum values for numeric features. If not <code>NULL</code>, it should be named with the corresponding feature names.
-If <code>NULL</code> (default) <code>upper</code> is taken for each numeric feature as its maximum value in <code>predictor$data$X</code>.</p></dd>
+Vector of maximum values for numeric features.
+If <code>NULL</code> (default), the element for each numeric feature in <code>upper</code> is taken as its maximum value in <code>predictor$data$X</code>.
+If not <code>NULL</code>, it should be named with the corresponding feature names.</p></dd>
 
 </dl><p></div></p>
 <p><hr>
@@ -205,13 +206,14 @@ If <code>NULL</code> (default) <code>upper</code> is taken for each numeric feat
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='st'><a href='https://www.stat.berkeley.edu/~breiman/RandomForests/'>"randomForest"</a></span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='st'><a href='https://www.stat.berkeley.edu/~breiman/RandomForests/'>"randomForest"</a></span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>123456</span><span class='op'>)</span>
   <span class='co'># Train a model</span>
   <span class='va'>rf</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/randomForest/man/randomForest.html'>randomForest</a></span><span class='op'>(</span><span class='va'>mpg</span> <span class='op'>~</span> <span class='va'>.</span>, data <span class='op'>=</span> <span class='va'>mtcars</span><span class='op'>)</span>
   <span class='co'># Create a predictor object</span>
   <span class='va'>predictor</span> <span class='op'>=</span> <span class='fu'>iml</span><span class='fu'>::</span><span class='va'><a href='https://christophm.github.io/iml/reference/Predictor.html'>Predictor</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>rf</span><span class='op'>)</span>
-  <span class='co'># Find counterfactuals</span>
+  <span class='co'># Find counterfactuals for x_interest</span>
   <span class='va'>wi_regr</span> <span class='op'>=</span> <span class='va'>WhatIfRegr</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>predictor</span>, n_counterfactuals <span class='op'>=</span> <span class='fl'>5L</span><span class='op'>)</span>
   <span class='va'>cfactuals</span> <span class='op'>=</span> <span class='va'>wi_regr</span><span class='op'>$</span><span class='fu'>find_counterfactuals</span><span class='op'>(</span>
     x_interest <span class='op'>=</span> <span class='va'>mtcars</span><span class='op'>[</span><span class='fl'>1L</span>, <span class='op'>]</span>, desired_outcome <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>22</span>, <span class='fl'>26</span><span class='op'>)</span>
@@ -219,15 +221,8 @@ If <code>NULL</code> (default) <code>upper</code> is taken for each numeric feat
   <span class='co'># Print the results</span>
   <span class='va'>cfactuals</span>
 <span class='op'>}</span>
-</div><div class='output co'>#&gt; 5 Counterfactual(s) 
-#&gt;  
-#&gt; Desired outcome range: [22, 26] 
-#&gt;  
-#&gt; Head: 
-#&gt;    cyl  disp  hp drat   wt  qsec vs am gear carb
-#&gt; 1:   4 121.0 109 4.11 2.78 18.60  1  1    4    2
-#&gt; 2:   4 108.0  93 3.85 2.32 18.61  1  1    4    1
-#&gt; 3:   4 140.8  95 3.92 3.15 22.90  1  0    4    2</div><div class='input'>
+<span class='op'>}</span>
+
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

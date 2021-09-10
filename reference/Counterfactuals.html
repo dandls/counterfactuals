@@ -40,7 +40,8 @@
 
 
 <meta property="og:title" content="Counterfactuals Class — Counterfactuals" />
-<meta property="og:description" content="A Counterfactuals object should be created by CounterfactualMethodRegr or CounterfactualMethodClassif.
+<meta property="og:description" content="A Counterfactuals object should be created by the $find_counterfactuals method of CounterfactualMethodRegr
+or CounterfactualMethodClassif.
 It contains the counterfactuals and has several methods for their evaluation and visualization." />
 
 
@@ -133,7 +134,8 @@ It contains the counterfactuals and has several methods for their evaluation and
     </div>
 
     <div class="ref-description">
-    <p>A <code>Counterfactuals</code> object should be created by <a href='CounterfactualMethodRegr.html'>CounterfactualMethodRegr</a> or <a href='CounterfactualMethodClassif.html'>CounterfactualMethodClassif</a>.
+    <p>A <code>Counterfactuals</code> object should be created by the <code>$find_counterfactuals</code> method of <a href='CounterfactualMethodRegr.html'>CounterfactualMethodRegr</a>
+or <a href='CounterfactualMethodClassif.html'>CounterfactualMethodClassif</a>.
 It contains the counterfactuals and has several methods for their evaluation and visualization.</p>
     </div>
 
@@ -142,17 +144,16 @@ It contains the counterfactuals and has several methods for their evaluation and
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.</p>
-<p>Kaufman, L. and Rousseeuw, P.J. (1990), Finding Groups in Data: An Introduction to Cluster Analysis. Wiley, New York.</p>
     <h2 class="hasAnchor" id="active-bindings"><a class="anchor" href="#active-bindings"></a>Active bindings</h2>
 
     <p><div class="r6-active-bindings"></p><dl>
 <dt><code>desired</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/list.html'>list(1)</a></code> | <code><a href='https://rdrr.io/r/base/list.html'>list(2)</a></code>)<br />
 A <code>list</code> with the desired properties of the counterfactuals.
 For regression tasks it has one element <code>desired_outcome</code> (<a href='CounterfactualMethodRegr.html'>CounterfactualMethodRegr</a>) and for
-classification tasks two elements <code>desired_class</code> and <code>desired_prob</code> (<a href='CounterfactualMethodRegr.html'>CounterfactualMethodRegr</a>).</p></dd>
+classification tasks two elements <code>desired_class</code> and <code>desired_prob</code> (<a href='CounterfactualMethodClassif.html'>CounterfactualMethodClassif</a>).</p></dd>
 
 <dt><code>data</code></dt><dd><p>(<code>data.table</code>)<br />
-The counterfactuals.</p></dd>
+The counterfactuals for <code>x_interest</code>.</p></dd>
 
 <dt><code>x_interest</code></dt><dd><p>(<code>data.table(1)</code>) <br />
 A single row with the observation of interest.</p></dd>
@@ -177,7 +178,7 @@ A single row with the observation of interest.</p></dd>
 <p><hr>
 <a id="method-new"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>new()</code></h3>
 <p>Creates a new <code>Counterfactuals</code> object.
-This method should only be called within the <code>$find_counterfactuals</code> methods of <a href='CounterfactualMethodRegr.html'>CounterfactualMethodRegr</a>
+This method should only be called by the <code>$find_counterfactuals</code> methods of <a href='CounterfactualMethodRegr.html'>CounterfactualMethodRegr</a>
 and <a href='CounterfactualMethodClassif.html'>CounterfactualMethodClassif</a>.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
 <p><div class="r"></p><pre><span class='va'>Counterfactuals</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>cfactuals</span>, <span class='va'>predictor</span>, <span class='va'>x_interest</span>, <span class='va'>param_set</span>, <span class='va'>desired</span><span class='op'>)</span></pre><p></div></p>
 
@@ -196,15 +197,14 @@ A single row with the observation of interest.</p></dd>
 A <a href='https://paradox.mlr-org.com/reference/ParamSet.html'>ParamSet</a> based on the features of <code>predictor$data$X</code>.</p></dd>
 
 <dt><code>desired</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/list.html'>list(1)</a></code> | <code><a href='https://rdrr.io/r/base/list.html'>list(2)</a></code>)<br />
-A <code>list</code> with the desired properties of the counterfactuals. For regression tasks it should have one
-element <code>desired_outcome</code> (<a href='CounterfactualMethodRegr.html'>CounterfactualMethodRegr</a>) and for classification tasks two elements
-<code>desired_class</code> and <code>desired_prob</code> (<a href='CounterfactualMethodRegr.html'>CounterfactualMethodRegr</a>).</p></dd>
+A <code>list</code> with the desired properties of the counterfactuals. It should have one element <code>desired_outcome</code> for
+regression tasks (<a href='CounterfactualMethodRegr.html'>CounterfactualMethodRegr</a>) and two elements <code>desired_class</code> and <code>desired_prob</code>
+for classification tasks (<a href='CounterfactualMethodClassif.html'>CounterfactualMethodClassif</a>).</p></dd>
 
 </dl><p></div></p>
 <p><hr>
 <a id="method-evaluate"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>evaluate()</code></h3>
-<p>Evaluates the counterfactuals. It returns the counterfactuals along with evaluation <code>measures</code> in additional
-columns.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p>Evaluates the counterfactuals. It returns the counterfactuals together with the evaluation <code>measures</code>.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
 <p><div class="r"></p><pre><span class='va'>Counterfactuals</span><span class='op'>$</span><span class='fu'>evaluate</span><span class='op'>(</span>
   measures <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"dist_x_interest"</span>, <span class='st'>"dist_target"</span>, <span class='st'>"nr_changed"</span>, <span class='st'>"dist_train"</span><span class='op'>)</span>,
   show_diff <span class='op'>=</span> <span class='cn'>FALSE</span>,
@@ -218,20 +218,20 @@ columns.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#argume
 The name of one or more evaluation measures.
 The following measures are available:
 <ul>
-<li><p><code>dist_x_interest</code>: The distance of a counterfactual to <code>x_interest</code>. It is measured by the extension of the
-Gower's distance proposed by Kaufman and Rousseeuw (1990) and implemented by
-<a href='https://rdrr.io/pkg/StatMatch/man/gower.dist.html'>gower.dist</a>.</p></li>
-<li><p><code>dist_target</code>: The absolute distance of the prediction of a counterfactual to the <code>desired_outcome</code>
-(regression task) or <code>desired_prob</code> (classification task).</p></li>
+<li><p><code>dist_x_interest</code>: The distance of a counterfactual to <code>x_interest</code> measured by Gower's
+dissimilarity measure (Gower 1971).</p></li>
+<li><p><code>dist_target</code>: The absolute distance of the prediction for a counterfactual to the interval <code>desired_outcome</code>
+(regression tasks) or <code>desired_prob</code> (classification tasks).</p></li>
 <li><p><code>nr_changed</code>: The number of feature changes w.r.t. <code>x_interest</code>.</p></li>
-<li><p><code>dist_train</code>: The (possibly weighted) distance to the <code>k</code> nearest training points.</p></li>
+<li><p><code>dist_train</code>: The (weighted) distance to the <code>k</code> nearest training data points measured by Gower's
+dissimilarity measure (Gower 1971)</p></li>
 </ul></p></dd>
 
 <dt><code>show_diff</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>)<br />
-Should the counterfactuals be displayed as their differences from <code>x_interest</code>? (Default is <code>FALSE</code>.)
-If set to <code>TRUE</code>, numeric features values of <code>x_interest</code> are substracted from the corresponding feature values
-of the counterfactuals. Non-numeric features are displayed with their actual counterfactuals value.
-No difference is indicated by <code>NA</code>.</p></dd>
+Should the counterfactuals be displayed as their differences to <code>x_interest</code>? Default is <code>FALSE</code>.
+If set to <code>TRUE</code>, positive values for numeric features indicate an increase compared to the feature value in
+<code>x_interest</code>, negative values indicate a decrease. For factors, the feature value is displayed if it differs
+from <code>x_interest</code>; <code>NA</code> means "no difference" in both cases.</p></dd>
 
 <dt><code>k</code></dt><dd><p>(<code>integerish(1)</code>) <br />
 How many nearest training points should be considered for computing the <code>dist_train</code> measure? Default is <code>1L</code>.</p></dd>
@@ -239,18 +239,18 @@ How many nearest training points should be considered for computing the <code>di
 <dt><code>weights</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/numeric.html'>numeric(k)</a></code> | <code>NULL</code>) <br />
 How should the <code>k</code> nearest training points be weighted when computing the <code>dist_train</code> measure? If <code>NULL</code>
 (default) then all <code>k</code> points are weighted equally. If a numeric vector of length <code>k</code> is given, the i-th element
-determines the weight of the i-th closest point.</p></dd>
+specifies the weight of the i-th closest data point.</p></dd>
 
 </dl><p></div></p>
 <p><hr>
 <a id="method-predict"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code><a href='https://rdrr.io/r/stats/predict.html'>predict()</a></code></h3>
-<p>Predicts the target values of the counterfactuals.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p>Returns the predictions for the counterfactuals.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
 <p><div class="r"></p><pre><span class='va'>Counterfactuals</span><span class='op'>$</span><span class='fu'>predict</span><span class='op'>(</span><span class='op'>)</span></pre><p></div></p>
 
 <p><hr>
 <a id="method-plot_parallel"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>plot_parallel()</code></h3>
-<p>Plots a parallel plot of the (scaled) feature values of the counterfactuals. <code>x_interest</code> is shown
-in blue.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p>Plots a parallel plot that connects the (scaled) feature values of each counterfactual and highlights
+<code>x_interest</code> in blue.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
 <p><div class="r"></p><pre><span class='va'>Counterfactuals</span><span class='op'>$</span><span class='fu'>plot_parallel</span><span class='op'>(</span>
   feature_names <span class='op'>=</span> <span class='cn'>NULL</span>,
   row_ids <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -260,23 +260,23 @@ in blue.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#argume
 <h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
 <p><div class="arguments"></p><dl>
 <dt><code>feature_names</code></dt><dd><p>(<code>character</code> | <code>NULL</code>)<br />
-The names of the (numeric) features to plot. If <code>NULL</code> (default) all features are plotted.</p></dd>
+The names of the (numeric) features to display. If <code>NULL</code> (default) all features are displayed.</p></dd>
 
 <dt><code>row_ids</code></dt><dd><p>(<code>integerish</code> | <code>NULL</code>)<br />
-The row ids of the counterfactuals to plot. If <code>NULL</code> (default) all counterfactuals are plotted.</p></dd>
+The row ids of the counterfactuals to display. If <code>NULL</code> (default) all counterfactuals are displayed.</p></dd>
 
-<dt><code>digits_min_max</code></dt><dd><p>Number of digits for the rounding the minimum and maximum features values. Default is <code>3L</code>.</p></dd>
+<dt><code>digits_min_max</code></dt><dd><p>Maximum number of digits for the minimum and maximum features values. Default is <code>2L</code>.</p></dd>
 
 </dl><p></div></p>
 <p><hr>
 <a id="method-plot_freq_of_feature_changes"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>plot_freq_of_feature_changes()</code></h3>
-<p>Plots a bar chart of the frequency of feature changes across all counterfactuals.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
+<p>Plots a bar chart with the frequency of feature changes across all counterfactuals.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
 <p><div class="r"></p><pre><span class='va'>Counterfactuals</span><span class='op'>$</span><span class='fu'>plot_freq_of_feature_changes</span><span class='op'>(</span>subset_zero <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre><p></div></p>
 
 <h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
 <p><div class="arguments"></p><dl>
 <dt><code>subset_zero</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>)<br />
-Should features that have no changes be excluded from the plot? Default is <code>FALSE</code>.</p></dd>
+Should unchanged features be excluded from the plot? Default is <code>FALSE</code>.</p></dd>
 
 </dl><p></div></p>
 <p><hr>
@@ -287,18 +287,20 @@ Should features that have no changes be excluded from the plot? Default is <code
 <h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Arguments</h4>
 <p><div class="arguments"></p><dl>
 <dt><code>subset_zero</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>)<br />
-Should features that have no changes be excluded from the plot? Default is <code>FALSE</code>.</p></dd>
+Should unchanged features be excluded? Default is <code>FALSE</code>.</p></dd>
 
 </dl><p></div></p>
 <h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Returns</h4>
 <p>A (named) <code>numeric</code> vector with the frequency of feature changes.</p>
 <p><hr>
 <a id="method-plot_surface"></a></p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method <code>plot_surface()</code></h3>
-<p>Creates a surface plot for two features. <code>x_interest</code> is represented as bright dot and
-all counterfactuals that differ from <code>x_interest</code> <strong>only</strong> in the selected features are represented as black dots.</p><ul>
-<li><p>(<code>numeric</code>, <code>numeric</code>): surface plot</p></li>
-<li><p>(<code>non-numeric</code>, <code>non-numeric</code>): heatmap</p></li>
-<li><p>(<code>numeric</code>, <code>non-numeric</code>): line graph</p></li>
+<p>Creates a surface plot for two features. <code>x_interest</code> is represented as white dot and
+all counterfactuals that differ from <code>x_interest</code> <strong>only</strong> in the two selected features are represented as black dots.
+The tick marks next to the axes show the marginal distribution of the counterfactuals. <br />
+The exact plot type depends on the selected feature types:</p><ul>
+<li><p>2 \* <code>numeric</code>: surface plot</p></li>
+<li><p>2 \* <code>non-numeric</code>: heatmap</p></li>
+<li><p>1 \* <code>numeric</code>, 1 \* <code>non-numeric</code>: line graph</p></li>
 </ul>
 <h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Usage</h4>
 <p><div class="r"></p><pre><span class='va'>Counterfactuals</span><span class='op'>$</span><span class='fu'>plot_surface</span><span class='op'>(</span><span class='va'>feature_names</span>, grid_size <span class='op'>=</span> <span class='fl'>250L</span><span class='op'>)</span></pre><p></div></p>
@@ -309,7 +311,7 @@ all counterfactuals that differ from <code>x_interest</code> <strong>only</stron
 The names of the features to plot.</p></dd>
 
 <dt><code>grid_size</code></dt><dd><p>(<code>integerish(1)</code>)<br />
-The grid size of the plot. Ignored in case of two <code>non-numeric</code> features. Default is <code>250L</code>.</p></dd>
+The grid size of the plot. It is ignored in case of two <code>non-numeric</code> features. Default is <code>250L</code>.</p></dd>
 
 </dl><p></div></p>
 <p><hr>
