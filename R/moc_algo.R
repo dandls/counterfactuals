@@ -29,6 +29,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
     terminator = bbotk::trm("gens", generations = n_generations)
   )
   
+  # Mutator
   if (is.null(cond_sampler)) {
     op_m = make_moc_mutator(
       ps = param_set_flex, 
@@ -51,7 +52,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
     )
   }
   
-  
+  # Recombinator
   op_r = make_moc_recombinator(
     ps = param_set_flex, 
     x_interest = x_interest, 
@@ -60,7 +61,8 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
     p_rec_gen = p_rec_gen, 
     p_rec_use_orig = p_rec_use_orig
   )
-
+  
+  # Selectors
   # TODO: Replace this by tournament selection
   op_parent = sel("best")
   
@@ -103,6 +105,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
       } else {
         mies_evaluate_offspring(oi, offspring)
       }
+      mies_survival_plus(oi, mu, op_survival)
     }
   }, terminated_error = function(cond) {
   })
