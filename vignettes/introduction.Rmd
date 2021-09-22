@@ -112,8 +112,8 @@ moc_classif = MOCClassif$new(
 
 Then, we use the `find_counterfactuals()` method to find counterfactuals for `x_interest`. 
 As we aim to find counterfactuals with a predicted diabetes probability of at most 40%, we set the `desired_class` to 
-`"pos"` and the `predicted_prob` to `c(0, 0.4)`; in the binary classification case, this is equivalent to setting 
-`desired_class` to `"neg"` and `predicted_prob` to `c(0.6, 1)`.
+`"pos"` and the `desired_prob` to `c(0, 0.4)`; in the binary classification case, this is equivalent to setting 
+`desired_class` to `"neg"` and `desired_prob` to `c(0.6, 1)`.
 
 ```{r, eval=FALSE}
 cfactuals = moc_classif$find_counterfactuals(
