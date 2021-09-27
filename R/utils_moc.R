@@ -166,8 +166,8 @@ ScalorNondomPenalized = R6::R6Class("ScalorNondomPenalized", inherit = Scalor,
       # Add penalization for individuals with -dist_target lower than -epsilon
       epsilon = params$epsilon
       if (is.null(epsilon)) epsilon = Inf
-      is_penalized = fitnesses[colnames(fitnesses) == "dist_target"] < -epsilon
-      sorted[is_penalized] = max(sorted) + order(fitnesses[colnames(fitnesses) == "dist_target"][is_penalized])
+      is_penalized = fitnesses[, colnames(fitnesses) == "dist_target"] < -epsilon
+      sorted[is_penalized] = max(sorted) + rank(-(fitnesses[, colnames(fitnesses) == "dist_target"][is_penalized]))
       front_indexes = sort(unique(sorted))
       fronts = lapply(split(as.data.frame(fitnesses), sorted), as.matrix)
       subranks = lapply(fronts, function(x) rank(dist_crowding_custom(x, values)) / (length(x) + 1))
