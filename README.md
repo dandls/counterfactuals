@@ -25,7 +25,8 @@ If the amount had been €20k, the loan would have been granted.”
 For an introduction to counterfactual explanation methods, we recommend
 Chapter 6 of the [Interpretable Machine Learning
 book](https://christophm.github.io/interpretable-ml-book/) by Christoph
-Molnar.
+Molnar. The package is based on the R code underyling [Multi-Objective Counterfactual Explanations
+    (MOC)](https://link.springer.com/chapter/10.1007%2F978-3-030-58112-1_31).
 
 ## Available methods
 
