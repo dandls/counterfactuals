@@ -171,7 +171,7 @@ arXiv preprint arXiv:2104.07411.</p>
     <h2 class="hasAnchor" id="active-bindings"><a class="anchor" href="#active-bindings"></a>Active bindings</h2>
 
     <p><div class="r6-active-bindings"></p><dl>
-<dt><code>x_nn</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>) <br />
+<dt><code>x_nn</code></dt><dd><p>(<code>logical(1)</code>) <br />
 The most similar (optionally) correctly classified instance of <code>x_interest</code>.</p></dd>
 
 <dt><code>archive</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/list.html'>list()</a></code>) <br />
@@ -212,18 +212,18 @@ reward values and their predictions.</p></dd>
 <dt><code>predictor</code></dt><dd><p>(<a href='https://christophm.github.io/iml/reference/Predictor.html'>Predictor</a>)<br />
 The object (created with <code>iml::Predictor$new()</code>) holding the machine learning model and the data.</p></dd>
 
-<dt><code>optimization</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code>)<br />
+<dt><code>optimization</code></dt><dd><p>(<code>character(1)</code>)<br />
 The reward function to optimize. Can be <code>sparsity</code> (default), <code>proximity</code> or <code>plausibility</code>.</p></dd>
 
-<dt><code>x_nn_correct_classif</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>)<br />
+<dt><code>x_nn_correct_classif</code></dt><dd><p>(<code>logical(1)</code>)<br />
 Should only <em>correctly</em> classified data points in <code>predictor$data$X</code> be considered for the most similar instance search?
 Default is <code>TRUE</code>.</p></dd>
 
-<dt><code>return_multiple</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>)<br />
+<dt><code>return_multiple</code></dt><dd><p>(<code>logical(1)</code>)<br />
 Should multiple counterfactuals be returned? If TRUE, the algorithm returns all created instances whose <code>desired_class</code>
 prediction is in the interval <code>desired_prob</code>. For more information, see the <code>Details</code> section.</p></dd>
 
-<dt><code>finish_early</code></dt><dd><p>(<code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>)<br />
+<dt><code>finish_early</code></dt><dd><p>(<code>logical(1)</code>)<br />
 Should the algorithm terminate after an iteration in which the <code>desired_class</code> prediction for the highest reward instance
 is in the interval <code>desired_prob</code>. If <code>FALSE</code>, the algorithm continues until <code>x_nn</code> is recreated.</p></dd>
 
@@ -242,25 +242,25 @@ is in the interval <code>desired_prob</code>. If <code>FALSE</code>, the algorit
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='kw'>if</span> <span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='st'><a href='https://www.stat.berkeley.edu/~breiman/RandomForests/'>"randomForest"</a></span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='co'># Train a model</span>
-  <span class='va'>rf</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/randomForest/man/randomForest.html'>randomForest</a></span><span class='op'>(</span><span class='va'>Species</span> <span class='op'>~</span> <span class='va'>.</span>, data <span class='op'>=</span> <span class='va'>iris</span><span class='op'>)</span>
-  <span class='co'># Create a predictor object</span>
-  <span class='va'>predictor</span> <span class='op'>=</span> <span class='fu'>iml</span><span class='fu'>::</span><span class='va'><a href='https://christophm.github.io/iml/reference/Predictor.html'>Predictor</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>rf</span>, type <span class='op'>=</span> <span class='st'>"prob"</span><span class='op'>)</span>
-  <span class='co'># Find counterfactuals</span>
-  <span class='va'>nice_classif</span> <span class='op'>=</span> <span class='va'>NICEClassif</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>predictor</span><span class='op'>)</span>
-  <span class='va'>cfactuals</span> <span class='op'>=</span> <span class='va'>nice_classif</span><span class='op'>$</span><span class='fu'>find_counterfactuals</span><span class='op'>(</span>
-    x_interest <span class='op'>=</span> <span class='va'>iris</span><span class='op'>[</span><span class='fl'>150L</span>, <span class='op'>]</span>, desired_class <span class='op'>=</span> <span class='st'>"versicolor"</span>, desired_prob <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.5</span>, <span class='fl'>1</span><span class='op'>)</span>
-  <span class='op'>)</span>
-  <span class='co'># Print the results</span>
-  <span class='va'>cfactuals</span><span class='op'>$</span><span class='va'>data</span>
-  <span class='co'># Print archive</span>
-  <span class='va'>nice_classif</span><span class='op'>$</span><span class='va'>archive</span>
-<span class='op'>}</span>
-<span class='op'>}</span>
-
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='st'><a href='https://www.stat.berkeley.edu/~breiman/RandomForests/'>"randomForest"</a></span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'>  <span class='co'># Train a model</span></span>
+<span class='r-in'>  <span class='va'>rf</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/randomForest/man/randomForest.html'>randomForest</a></span><span class='op'>(</span><span class='va'>Species</span> <span class='op'>~</span> <span class='va'>.</span>, data <span class='op'>=</span> <span class='va'>iris</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='co'># Create a predictor object</span></span>
+<span class='r-in'>  <span class='va'>predictor</span> <span class='op'>=</span> <span class='fu'>iml</span><span class='fu'>::</span><span class='va'><a href='https://christophm.github.io/iml/reference/Predictor.html'>Predictor</a></span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>rf</span>, type <span class='op'>=</span> <span class='st'>"prob"</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='co'># Find counterfactuals</span></span>
+<span class='r-in'>  <span class='va'>nice_classif</span> <span class='op'>=</span> <span class='va'>NICEClassif</span><span class='op'>$</span><span class='fu'>new</span><span class='op'>(</span><span class='va'>predictor</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='va'>cfactuals</span> <span class='op'>=</span> <span class='va'>nice_classif</span><span class='op'>$</span><span class='fu'>find_counterfactuals</span><span class='op'>(</span></span>
+<span class='r-in'>    x_interest <span class='op'>=</span> <span class='va'>iris</span><span class='op'>[</span><span class='fl'>150L</span>, <span class='op'>]</span>, desired_class <span class='op'>=</span> <span class='st'>"versicolor"</span>, desired_prob <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.5</span>, <span class='fl'>1</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='op'>)</span></span>
+<span class='r-in'>  <span class='co'># Print the results</span></span>
+<span class='r-in'>  <span class='va'>cfactuals</span><span class='op'>$</span><span class='va'>data</span></span>
+<span class='r-in'>  <span class='co'># Print archive</span></span>
+<span class='r-in'>  <span class='va'>nice_classif</span><span class='op'>$</span><span class='va'>archive</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
