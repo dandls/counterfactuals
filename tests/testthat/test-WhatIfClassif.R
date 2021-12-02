@@ -55,8 +55,9 @@ test_that("$find_counterfactuals with specified `desired_outcome` returns the sa
   set.seed(54542142)
   iris_pred_binary = iml::Predictor$new(rf, type = "prob", class = desired_class)
   wi_binary = WhatIfClassif$new(iris_pred_binary, n_counterfactuals = n)
-  cfactuals_bin = expect_message(wi_binary$find_counterfactuals(x_interest), "was set to")
-
+  expect_message(wi_binary$find_counterfactuals(x_interest), "was set to")
+  cfactuals_bin = wi_binary$find_counterfactuals(x_interest)
+  
   set.seed(54542142)
   iris_pred_multiclass = iml::Predictor$new(rf, type = "prob")
   wi_multiclass = WhatIfClassif$new(iris_pred_multiclass, n_counterfactuals = n)
