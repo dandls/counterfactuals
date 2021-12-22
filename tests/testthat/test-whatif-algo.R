@@ -14,7 +14,8 @@ test_that("whatif_algo returns correct counterfactuals", {
     x_interest = x_interest,
     pred_column = "versicolor",
     desired_y_hat_range = desired,
-    X_search = mod$data$X
+    X_search = mod$data$X,
+    distance_function = NULL
   )
   
   expect_data_table(res, nrows = n, types = sapply(iris[, -5L], class))
@@ -42,7 +43,8 @@ test_that("whatif_algo returns warning and empty data.table with correct columns
       x_interest = x_interest,
       pred_column = "pred",
       desired_y_hat_range = c(5, 10),
-      X_search = mod$data$X
+      X_search = mod$data$X,
+      distance_function = NULL
     )
   })
   
@@ -50,3 +52,22 @@ test_that("whatif_algo returns warning and empty data.table with correct columns
 })
 
 
+test_that("whatif_algo returns error message if distance_function returns incorrect format", {
+  rf = get_rf_classif_iris()
+  ps = make_param_set(iris, lower = NULL, upper = NULL)
+  mod = Predictor$new(rf, data = iris, y = "Species")
+  x_interest = iris[1L, -5L]
+  desired = c(0.7, 1)
+  n = 5L
+  expect_snapshot_error({
+    res = whatif_algo(
+      predictor = mod,
+      n_cfactuals = n,
+      x_interest = x_interest,
+      pred_column = "versicolor",
+      desired_y_hat_range = desired,
+      X_search = mod$data$X,
+      distance_function = function(x, y, data) "a"
+    )
+  })
+})

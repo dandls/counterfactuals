@@ -1,7 +1,7 @@
 # Wrapper for gower::gower_dist and gower::gower_topn
 # The original functions have the (for us undesired) behavior to skip constant variables and show a warning. 
 # We correct for this behavior with custom wrappers
-gower_dist = function(x, y) {
+gower_dist = function(x, y, data) {
   myWarnings = NULL
   wHandler = function(w) {
     if (grepl("skipping variable with zero", w$message)) {
@@ -16,6 +16,9 @@ gower_dist = function(x, y) {
     dists = dists * (1 - length(myWarnings) / ncol(x))
   }
   dists[is.na(dists)] = 0
+  if (!is.matrix(dists)) {
+    dists = t(dists)
+  }
   dists
 }
 

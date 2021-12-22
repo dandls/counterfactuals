@@ -43,8 +43,8 @@ WhatIfClassif = R6::R6Class("WhatIfClassif", inherit = CounterfactualMethodClass
     #' @param n_counterfactuals (`integerish(1)`)\cr
     #'   The number of counterfactuals to return. Default is `1L`.
     #' @template lower_upper
-    initialize = function(predictor, n_counterfactuals = 1L, lower = NULL, upper = NULL) {
-      super$initialize(predictor, lower, upper)
+    initialize = function(predictor, n_counterfactuals = 1L, lower = NULL, upper = NULL, distance_function = NULL) {
+      super$initialize(predictor, lower, upper, distance_function)
       assert_integerish(n_counterfactuals, lower = 1L, any.missing = FALSE, len = 1L)
       private$n_counterfactuals = n_counterfactuals
       X_search = private$predictor$data$X
@@ -73,7 +73,8 @@ WhatIfClassif = R6::R6Class("WhatIfClassif", inherit = CounterfactualMethodClass
         x_interest = private$x_interest, 
         pred_column = pred_column, 
         desired_y_hat_range = private$desired_prob,
-        X_search = private$X_search
+        X_search = private$X_search,
+        distance_function = private$distance_function
       )
     },
     

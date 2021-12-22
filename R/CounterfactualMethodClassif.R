@@ -18,8 +18,8 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit
     #' @description Creates a new `CounterfactualMethodClassif` object.
     #' @template predictor
     #' @template lower_upper
-    initialize = function(predictor, lower = NULL, upper = NULL) {
-      super$initialize(predictor, lower, upper)
+    initialize = function(predictor, lower = NULL, upper = NULL, distance_function = NULL) {
+      super$initialize(predictor, lower, upper, distance_function)
       if (private$predictor$task != "classification") {
         stop(sprintf("%s only works for classification tasks.", class(self)[1]))
       }
