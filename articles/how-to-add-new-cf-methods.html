@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">counterfactuals</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -65,14 +61,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/TODO/issues/">
-    <span class="fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
-      </ul>
+<ul class="nav navbar-nav navbar-right"></ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -88,82 +77,82 @@
       <h1 data-toc-skip>How to extend the package</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/TODO/issues/blob/master/vignettes/how-to-add-new-cf-methods.Rmd"><code>vignettes/how-to-add-new-cf-methods.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="NA/NA/NA/blob/HEAD/vignettes/how-to-add-new-cf-methods.Rmd"><code>vignettes/how-to-add-new-cf-methods.Rmd</code></a></small>
       <div class="hidden name"><code>how-to-add-new-cf-methods.Rmd</code></div>
 
     </div>
 
     
     
-<p>In the following, we illustrate how further methods can be added to the <code>counterfactuals</code> package by integrating the <a href="https://github.com/katokohaku/featureTweakR"><code>featureTweakR</code></a> package, which implements Feature Tweaking of Tolomei et al. (2017).</p>
+<p>In the following, we illustrate how further methods can be added to the <code>counterfactuals</code> package by integrating the <a href="https://github.com/katokohaku/featureTweakR" class="external-link"><code>featureTweakR</code></a> package, which implements Feature Tweaking of Tolomei et al. (2017).</p>
 <p>(Note that the <code>featureTweakR</code> package has a couple of limitations, e.g., that factors in the training data cause problems or that the algorithm is only applicable to <code>randomForests</code> trained on standardized features. Therefore, <code>featureTweakR</code> is not part of the <code>counterfactuals</code> package, but serves as a suitable example for our purpose here.)</p>
-<div id="structure-of-the-counterfactuals-package" class="section level2">
-<h2 class="hasAnchor">
-<a href="#structure-of-the-counterfactuals-package" class="anchor"></a>Structure of the counterfactuals package</h2>
+<div class="section level2">
+<h2 id="structure-of-the-counterfactuals-package">Structure of the counterfactuals package<a class="anchor" aria-label="anchor" href="#structure-of-the-counterfactuals-package"></a>
+</h2>
 <p>Before we dive into the implementation details, we briefly explain the structure of the <code>counterfactuals</code> package.</p>
-<div id="class-diagram" class="section level3">
-<h3 class="hasAnchor">
-<a href="#class-diagram" class="anchor"></a>Class diagram</h3>
+<div class="section level3">
+<h3 id="class-diagram">Class diagram<a class="anchor" aria-label="anchor" href="#class-diagram"></a>
+</h3>
 <p>Each counterfactual method is represented by its own <code>R6</code> class. Depending on whether a counterfactual method supports classification or regression tasks, it inherits from the (abstract) <code>CounterfactualMethodClassif</code> or <code>CounterfactualMethodRegr</code> classes, respectively. Counterfactual methods that support both tasks are split into two separate classes; for instance, as MOC is applicable to classification and regression tasks, we implement two classes: <code>MOCClassif</code> and <code>MOCRegr</code>.</p>
 <p><img src="how-to-add-new-cf-methods-res/class-diagram.png" width="70%" style="display: block; margin: auto;"></p>
 <p>Leaf classes (like <code>MOCClassif</code> and <code>MOCRegr</code>) inherit the <code>find_counterfactuals()</code> method from <code>CounterfactualMethodClassif</code> or <code>CounterfactualMethodRegr</code>, respectively. The key advantage of this approach is that we are able to provide a tailored <code>find_counterfactuals()</code> interface to the task at hand: for classification tasks <code>find_counterfactuals()</code> has two arguments <code>desired_class</code> and <code>desired_prob</code> and for regression tasks it has one argument <code>desired_outcome</code>.</p>
 </div>
-<div id="call-graph" class="section level3">
-<h3 class="hasAnchor">
-<a href="#call-graph" class="anchor"></a>Call graph</h3>
+<div class="section level3">
+<h3 id="call-graph">Call graph<a class="anchor" aria-label="anchor" href="#call-graph"></a>
+</h3>
 <p>The <code>find_counterfactuals()</code> method calls a private <code>run()</code> method (1)—implemented by the leaf classes—which performs the search and returns the counterfactuals as a <code>data.table</code> (2). The <code>find_counterfactuals()</code> method then creates a <code>Counterfactuals</code> object, which contains the counterfactuals and provides several methods for their evaluation and visualization (3).</p>
 <p><img src="how-to-add-new-cf-methods-res/call-diagram.png" width="60%" height="60%" style="display: block; margin: auto;"></p>
 </div>
 </div>
-<div id="integrating-a-new-counterfactuals-explanation-method" class="section level2">
-<h2 class="hasAnchor">
-<a href="#integrating-a-new-counterfactuals-explanation-method" class="anchor"></a>Integrating a new counterfactuals explanation method</h2>
+<div class="section level2">
+<h2 id="integrating-a-new-counterfactuals-explanation-method">Integrating a new counterfactuals explanation method<a class="anchor" aria-label="anchor" href="#integrating-a-new-counterfactuals-explanation-method"></a>
+</h2>
 <p>To integrate Feature Tweaking, we first we need to install <code>featureTweakR</code> and <code>pforeach</code> and load the required libraries.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"katokohaku/featureTweakR"</span><span class="op">)</span>
 <span class="co"># required for FeatureTweakeR</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"hoxo-m/pforeach"</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/TODO">counterfactuals</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/">randomForest</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">featureTweakR</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com">data.table</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r6.r-lib.org">R6</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://christophm.github.io/iml/">iml</a></span><span class="op">)</span></code></pre></div>
-<div id="class-structure" class="section level3">
-<h3 class="hasAnchor">
-<a href="#class-structure" class="anchor"></a>Class structure</h3>
-<p>A new leaf class needs at least two methods: <code>initialize()</code> and <code>run()</code>. The method <code>print_parameters()</code> is not mandatory, but strongly recommended as it gives objects of that class an informative <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> output.</p>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/TODO" class="external-link">counterfactuals</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/" class="external-link">randomForest</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">featureTweakR</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com" class="external-link">data.table</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r6.r-lib.org" class="external-link">R6</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://christophm.github.io/iml/" class="external-link">iml</a></span><span class="op">)</span></code></pre></div>
+<div class="section level3">
+<h3 id="class-structure">Class structure<a class="anchor" aria-label="anchor" href="#class-structure"></a>
+</h3>
+<p>A new leaf class needs at least two methods: <code>initialize()</code> and <code>run()</code>. The method <code>print_parameters()</code> is not mandatory, but strongly recommended as it gives objects of that class an informative <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> output.</p>
 <p>As elaborated above, the new class inherits from either <code>CounterfactualMethodClassif</code> or <code>CounterfactualMethodRegr</code>, depending on which task it supports. Because Feature Tweaking supports classification tasks, the new <code>FeatureTweaker</code> class inherits from the former.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">FeatureTweaker</span> <span class="op">=</span> <span class="fu">R6</span><span class="fu">::</span><span class="kw"><a href="https://r6.r-lib.org/reference/R6Class.html">R6Class</a></span><span class="op">(</span><span class="st">"FeatureTweaker"</span>, inherit <span class="op">=</span> <span class="va">CounterfactualMethodClassif</span>,
+<code class="sourceCode R"><span class="va">FeatureTweaker</span> <span class="op">=</span> <span class="fu">R6</span><span class="fu">::</span><span class="kw"><a href="https://r6.r-lib.org/reference/R6Class.html" class="external-link">R6Class</a></span><span class="op">(</span><span class="st">"FeatureTweaker"</span>, inherit <span class="op">=</span> <span class="va">CounterfactualMethodClassif</span>,
   
-  public <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
+  public <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
     initialize <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span><span class="op">}</span>
   <span class="op">)</span>,
   
-  private <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
+  private <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
     run <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span><span class="op">}</span>,
     
     print_parameters <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span><span class="op">}</span>
   <span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 </div>
-<div id="implement-the-initialize-method" class="section level3">
-<h3 class="hasAnchor">
-<a href="#implement-the-initialize-method" class="anchor"></a>Implement the <code>$initialize</code> method</h3>
-<p>The <code>initialize()</code> method must have a predictor argument that takes an <a href="https://christophm.github.io/iml/reference/Predictor.html"><code>iml::Predictor</code></a> object. In addition, it may have further arguments that are specific to the counterfactual method such as <code>ktree</code>, <code>epsilon</code>, and <code>nrep</code> in this case. For argument checks, we recommend the <a href="https://mllg.github.io/checkmate/"><code>checkmate</code></a> package. We also fill the <code>print_parameters()</code> method with the parameters of Feature Tweaking.</p>
+<div class="section level3">
+<h3 id="implement-the-initialize-method">Implement the <code>$initialize</code> method<a class="anchor" aria-label="anchor" href="#implement-the-initialize-method"></a>
+</h3>
+<p>The <code>initialize()</code> method must have a predictor argument that takes an <a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link"><code>iml::Predictor</code></a> object. In addition, it may have further arguments that are specific to the counterfactual method such as <code>ktree</code>, <code>epsilon</code>, and <code>nrep</code> in this case. For argument checks, we recommend the <a href="https://mllg.github.io/checkmate/" class="external-link"><code>checkmate</code></a> package. We also fill the <code>print_parameters()</code> method with the parameters of Feature Tweaking.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">FeatureTweaker</span> <span class="op">=</span> <span class="kw"><a href="https://r6.r-lib.org/reference/R6Class.html">R6Class</a></span><span class="op">(</span><span class="st">"FeatureTweaker"</span>, inherit <span class="op">=</span> <span class="va">CounterfactualMethodClassif</span>,
+<code class="sourceCode R"><span class="va">FeatureTweaker</span> <span class="op">=</span> <span class="kw"><a href="https://r6.r-lib.org/reference/R6Class.html" class="external-link">R6Class</a></span><span class="op">(</span><span class="st">"FeatureTweaker"</span>, inherit <span class="op">=</span> <span class="va">CounterfactualMethodClassif</span>,
   
-  public <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
+  public <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
     initialize <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">predictor</span>, <span class="va">ktree</span> <span class="op">=</span> <span class="fl">30L</span>, <span class="va">epsilon</span> <span class="op">=</span> <span class="fl">0.1</span>, <span class="va">nrep</span> <span class="op">=</span> <span class="fl">10L</span><span class="op">)</span> <span class="op">{</span>
-      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkMultiClass.html">assert_multi_class</a></span><span class="op">(</span><span class="va">predictor</span><span class="op">$</span><span class="va">model</span>, <span class="st">"randomForest"</span><span class="op">)</span>
-      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkIntegerish.html">assert_integerish</a></span><span class="op">(</span>
+      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkMultiClass.html" class="external-link">assert_multi_class</a></span><span class="op">(</span><span class="va">predictor</span><span class="op">$</span><span class="va">model</span>, <span class="st">"randomForest"</span><span class="op">)</span>
+      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkIntegerish.html" class="external-link">assert_integerish</a></span><span class="op">(</span>
         <span class="va">ktree</span>, lower <span class="op">=</span> <span class="fl">0L</span>, upper <span class="op">=</span> <span class="va">rf</span><span class="op">$</span><span class="va">ntree</span>, any.missing <span class="op">=</span> <span class="cn">FALSE</span>, len <span class="op">=</span> <span class="fl">1L</span>
       <span class="op">)</span>
-      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkNumber.html">assert_number</a></span><span class="op">(</span><span class="va">epsilon</span>, lower <span class="op">=</span> <span class="fl">1e-8</span><span class="op">)</span>
-      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkIntegerish.html">assert_integerish</a></span><span class="op">(</span><span class="va">nrep</span>, lower <span class="op">=</span> <span class="fl">0L</span>, any.missing <span class="op">=</span> <span class="cn">FALSE</span>, len <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span>
+      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkNumber.html" class="external-link">assert_number</a></span><span class="op">(</span><span class="va">epsilon</span>, lower <span class="op">=</span> <span class="fl">1e-8</span><span class="op">)</span>
+      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkIntegerish.html" class="external-link">assert_integerish</a></span><span class="op">(</span><span class="va">nrep</span>, lower <span class="op">=</span> <span class="fl">0L</span>, any.missing <span class="op">=</span> <span class="cn">FALSE</span>, len <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span>
       <span class="co"># adds predictor to private$predictor field</span>
       <span class="va">super</span><span class="op">$</span><span class="fu">initialize</span><span class="op">(</span><span class="va">predictor</span><span class="op">)</span>
       <span class="va">private</span><span class="op">$</span><span class="va">ktree</span> <span class="op">=</span> <span class="va">ktree</span>
@@ -172,7 +161,7 @@
     <span class="op">}</span>
   <span class="op">)</span>,
   
-  private <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
+  private <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
     ktree <span class="op">=</span> <span class="cn">NULL</span>,
     epsilon <span class="op">=</span> <span class="cn">NULL</span>,
     n_rep <span class="op">=</span> <span class="cn">NULL</span>,
@@ -180,40 +169,40 @@
     run <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span><span class="op">}</span>,
     
     print_parameters <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span>
-      <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">" - epsilon: "</span>, <span class="va">private</span><span class="op">$</span><span class="va">epsilon</span>, <span class="st">"\n"</span><span class="op">)</span>
-      <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">" - ktree: "</span>, <span class="va">private</span><span class="op">$</span><span class="va">ktree</span>, <span class="st">"\n"</span><span class="op">)</span>
-      <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">" - n_rep: "</span>, <span class="va">private</span><span class="op">$</span><span class="va">n_rep</span><span class="op">)</span>
+      <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">" - epsilon: "</span>, <span class="va">private</span><span class="op">$</span><span class="va">epsilon</span>, <span class="st">"\n"</span><span class="op">)</span>
+      <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">" - ktree: "</span>, <span class="va">private</span><span class="op">$</span><span class="va">ktree</span>, <span class="st">"\n"</span><span class="op">)</span>
+      <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">" - n_rep: "</span>, <span class="va">private</span><span class="op">$</span><span class="va">n_rep</span><span class="op">)</span>
     <span class="op">}</span>
   <span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 </div>
-<div id="implement-the-run-method" class="section level3">
-<h3 class="hasAnchor">
-<a href="#implement-the-run-method" class="anchor"></a>Implement the <code>$run</code> method</h3>
+<div class="section level3">
+<h3 id="implement-the-run-method">Implement the <code>$run</code> method<a class="anchor" aria-label="anchor" href="#implement-the-run-method"></a>
+</h3>
 <p>The <code>run()</code> method performs the search for counterfactuals. Its structure is completely free, which makes it flexible to add new counterfactual methods to the <code>counterfactuals</code> package.</p>
-<p>The workflow of finding counterfactuals with the <code>featureTweakR</code> package is explained <a href="https://github.com/katokohaku/featureTweakR">here</a> and essentially consists of these steps:</p>
+<p>The workflow of finding counterfactuals with the <code>featureTweakR</code> package is explained <a href="https://github.com/katokohaku/featureTweakR" class="external-link">here</a> and essentially consists of these steps:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Rule extraction</span>
-<span class="va">rules</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/featureTweakR/man/getRules.html">getRules</a></span><span class="op">(</span><span class="va">rf</span>, ktree <span class="op">=</span> <span class="fl">5L</span><span class="op">)</span>
+<span class="va">rules</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/featureTweakR/man/getRules.html" class="external-link">getRules</a></span><span class="op">(</span><span class="va">rf</span>, ktree <span class="op">=</span> <span class="fl">5L</span><span class="op">)</span>
 <span class="co"># Get e-satisfactory instance </span>
-<span class="va">es</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/featureTweakR/man/set.eSatisfactory.html">set.eSatisfactory</a></span><span class="op">(</span><span class="va">rules</span>, epsiron <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span>
+<span class="va">es</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/featureTweakR/man/set.eSatisfactory.html" class="external-link">set.eSatisfactory</a></span><span class="op">(</span><span class="va">rules</span>, epsiron <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span>
 <span class="co"># Compute counterfactuals</span>
-<span class="va">tweaked</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/featureTweakR/man/tweak.html">tweak</a></span><span class="op">(</span>
+<span class="va">tweaked</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/featureTweakR/man/tweak.html" class="external-link">tweak</a></span><span class="op">(</span>
   <span class="va">es</span>, <span class="va">rf</span>, <span class="va">x_interest</span>, label.from <span class="op">=</span> <span class="va">...</span>, label.to <span class="op">=</span> <span class="va">...</span>, .dopar <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span>
 <span class="va">tweaked</span><span class="op">$</span><span class="va">suggest</span></code></pre></div>
 <p>As long as <code>ktree</code>—the number of trees to parse—is smaller than the total number of trees in the <code>randomForest</code>, the rule extraction is a random process. Hence, these steps can be repeated <code>nrep</code> times to obtain multiple counterfactuals.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">FeatureTweaker</span> <span class="op">=</span> <span class="kw"><a href="https://r6.r-lib.org/reference/R6Class.html">R6Class</a></span><span class="op">(</span><span class="st">"FeatureTweaker"</span>, inherit <span class="op">=</span> <span class="va">CounterfactualMethodClassif</span>,
+<code class="sourceCode R"><span class="va">FeatureTweaker</span> <span class="op">=</span> <span class="kw"><a href="https://r6.r-lib.org/reference/R6Class.html" class="external-link">R6Class</a></span><span class="op">(</span><span class="st">"FeatureTweaker"</span>, inherit <span class="op">=</span> <span class="va">CounterfactualMethodClassif</span>,
   
-  public <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
+  public <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
     initialize <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">predictor</span>, <span class="va">ktree</span> <span class="op">=</span> <span class="fl">10L</span>, <span class="va">epsilon</span> <span class="op">=</span> <span class="fl">0.1</span>, <span class="va">nrep</span> <span class="op">=</span> <span class="fl">10L</span><span class="op">)</span> <span class="op">{</span>
-      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkMultiClass.html">assert_multi_class</a></span><span class="op">(</span><span class="va">predictor</span><span class="op">$</span><span class="va">model</span>, <span class="st">"randomForest"</span><span class="op">)</span>
-      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkIntegerish.html">assert_integerish</a></span><span class="op">(</span>
+      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkMultiClass.html" class="external-link">assert_multi_class</a></span><span class="op">(</span><span class="va">predictor</span><span class="op">$</span><span class="va">model</span>, <span class="st">"randomForest"</span><span class="op">)</span>
+      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkIntegerish.html" class="external-link">assert_integerish</a></span><span class="op">(</span>
         <span class="va">ktree</span>, lower <span class="op">=</span> <span class="fl">0L</span>, upper <span class="op">=</span> <span class="va">rf</span><span class="op">$</span><span class="va">ntree</span>, any.missing <span class="op">=</span> <span class="cn">FALSE</span>, len <span class="op">=</span> <span class="fl">1L</span>
       <span class="op">)</span>
-      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkNumber.html">assert_number</a></span><span class="op">(</span><span class="va">epsilon</span>, lower <span class="op">=</span> <span class="fl">1e-8</span><span class="op">)</span>
-      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkIntegerish.html">assert_integerish</a></span><span class="op">(</span><span class="va">nrep</span>, lower <span class="op">=</span> <span class="fl">0L</span>, any.missing <span class="op">=</span> <span class="cn">FALSE</span>, len <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span>
+      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkNumber.html" class="external-link">assert_number</a></span><span class="op">(</span><span class="va">epsilon</span>, lower <span class="op">=</span> <span class="fl">1e-8</span><span class="op">)</span>
+      <span class="fu">checkmate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/checkmate/man/checkIntegerish.html" class="external-link">assert_integerish</a></span><span class="op">(</span><span class="va">nrep</span>, lower <span class="op">=</span> <span class="fl">0L</span>, any.missing <span class="op">=</span> <span class="cn">FALSE</span>, len <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span>
       <span class="co"># adds predictor to private$predictor field</span>
       <span class="va">super</span><span class="op">$</span><span class="fu">initialize</span><span class="op">(</span><span class="va">predictor</span><span class="op">)</span> 
       <span class="va">private</span><span class="op">$</span><span class="va">ktree</span> <span class="op">=</span> <span class="va">ktree</span>
@@ -222,7 +211,7 @@
     <span class="op">}</span>
   <span class="op">)</span>,
   
-  private <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>
+  private <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
     ktree <span class="op">=</span> <span class="cn">NULL</span>,
     epsilon <span class="op">=</span> <span class="cn">NULL</span>,
     nrep <span class="op">=</span> <span class="cn">NULL</span>,
@@ -230,51 +219,51 @@
     run <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span>
       <span class="va">predictor</span> <span class="op">=</span> <span class="va">private</span><span class="op">$</span><span class="va">predictor</span>
       <span class="va">y_hat_interest</span> <span class="op">=</span> <span class="va">predictor</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="va">private</span><span class="op">$</span><span class="va">x_interest</span><span class="op">)</span>
-      <span class="va">class_x_interest</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">y_hat_interest</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html">which.max</a></span><span class="op">(</span><span class="va">y_hat_interest</span><span class="op">)</span><span class="op">]</span>
+      <span class="va">class_x_interest</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">y_hat_interest</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">y_hat_interest</span><span class="op">)</span><span class="op">]</span>
       <span class="va">rf</span> <span class="op">=</span> <span class="va">predictor</span><span class="op">$</span><span class="va">model</span>
       
       <span class="co"># Repeat the counterfactual search `nrep` times</span>
-      <span class="va">cfs_list</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span><span class="op">(</span><span class="va">private</span><span class="op">$</span><span class="va">nrep</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="op">{</span>
-        <span class="va">rules</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/featureTweakR/man/getRules.html">getRules</a></span><span class="op">(</span><span class="va">rf</span>, ktree <span class="op">=</span> <span class="va">private</span><span class="op">$</span><span class="va">ktree</span>, resample <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-        <span class="va">e_satisfactory</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/featureTweakR/man/set.eSatisfactory.html">set.eSatisfactory</a></span><span class="op">(</span><span class="va">rules</span>, epsiron <span class="op">=</span> <span class="va">private</span><span class="op">$</span><span class="va">epsilon</span><span class="op">)</span>
-        <span class="va">tweaks</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/featureTweakR/man/tweak.html">tweak</a></span><span class="op">(</span>
+      <span class="va">cfs_list</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">private</span><span class="op">$</span><span class="va">nrep</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="op">{</span>
+        <span class="va">rules</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/featureTweakR/man/getRules.html" class="external-link">getRules</a></span><span class="op">(</span><span class="va">rf</span>, ktree <span class="op">=</span> <span class="va">private</span><span class="op">$</span><span class="va">ktree</span>, resample <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+        <span class="va">e_satisfactory</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/featureTweakR/man/set.eSatisfactory.html" class="external-link">set.eSatisfactory</a></span><span class="op">(</span><span class="va">rules</span>, epsiron <span class="op">=</span> <span class="va">private</span><span class="op">$</span><span class="va">epsilon</span><span class="op">)</span>
+        <span class="va">tweaks</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/featureTweakR/man/tweak.html" class="external-link">tweak</a></span><span class="op">(</span>
           <span class="va">e_satisfactory</span>, <span class="va">rf</span>, <span class="va">private</span><span class="op">$</span><span class="va">x_interest</span>, label.from <span class="op">=</span> <span class="va">class_x_interest</span>, 
           label.to <span class="op">=</span> <span class="va">private</span><span class="op">$</span><span class="va">desired_class</span>, .dopar <span class="op">=</span> <span class="cn">FALSE</span>
         <span class="op">)</span>
         <span class="va">tweaks</span><span class="op">$</span><span class="va">suggest</span>
       <span class="op">}</span>, simplify <span class="op">=</span> <span class="cn">FALSE</span>, USE.NAMES <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
       
-      <span class="va">cfs</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html">rbindlist</a></span><span class="op">(</span><span class="va">cfs_list</span><span class="op">)</span>
+      <span class="va">cfs</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="va">cfs_list</span><span class="op">)</span>
       <span class="co"># Return only counterfactuals whose prediction is in `desired_prob`</span>
-      <span class="va">in_desired_prob</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/between.html">between</a></span><span class="op">(</span>
+      <span class="va">in_desired_prob</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/between.html" class="external-link">between</a></span><span class="op">(</span>
         <span class="va">predictor</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="va">cfs</span><span class="op">)</span><span class="op">[[</span><span class="va">private</span><span class="op">$</span><span class="va">desired_class</span><span class="op">]</span><span class="op">]</span>, <span class="va">private</span><span class="op">$</span><span class="va">desired_prob</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span>, <span class="va">private</span><span class="op">$</span><span class="va">desired_prob</span><span class="op">[</span><span class="fl">2L</span><span class="op">]</span>
       <span class="op">)</span>
       
       <span class="va">cfs</span><span class="op">[</span><span class="va">in_desired_prob</span><span class="op">]</span>
       <span class="co"># Return only unique counterfactuals</span>
-      <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html">unique</a></span><span class="op">(</span><span class="va">cfs</span><span class="op">)</span>
+      <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">cfs</span><span class="op">)</span>
     <span class="op">}</span>,
     
     print_parameters <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span>
-      <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">" - epsilon: "</span>, <span class="va">private</span><span class="op">$</span><span class="va">epsilon</span>, <span class="st">"\n"</span><span class="op">)</span>
-      <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">" - ktree: "</span>, <span class="va">private</span><span class="op">$</span><span class="va">ktree</span>, <span class="st">"\n"</span><span class="op">)</span>
-      <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">" - n_rep: "</span>, <span class="va">private</span><span class="op">$</span><span class="va">n_rep</span><span class="op">)</span>
+      <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">" - epsilon: "</span>, <span class="va">private</span><span class="op">$</span><span class="va">epsilon</span>, <span class="st">"\n"</span><span class="op">)</span>
+      <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">" - ktree: "</span>, <span class="va">private</span><span class="op">$</span><span class="va">ktree</span>, <span class="st">"\n"</span><span class="op">)</span>
+      <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">" - n_rep: "</span>, <span class="va">private</span><span class="op">$</span><span class="va">n_rep</span><span class="op">)</span>
     <span class="op">}</span>
   <span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 </div>
 </div>
-<div id="use-case" class="section level2">
-<h2 class="hasAnchor">
-<a href="#use-case" class="anchor"></a>Use Case</h2>
+<div class="section level2">
+<h2 id="use-case">Use Case<a class="anchor" aria-label="anchor" href="#use-case"></a>
+</h2>
 <p>Now, that we have implemented <code>FeatureTweaker</code>, let’s look at a short application to the <code>iris</code> dataset.</p>
-<p>First, we train a <code>randomForest</code> model on the <code>iris</code> data set and set up the <a href="https://christophm.github.io/iml/reference/Predictor.html"><code>iml::Predictor</code></a> object, omitting <code>x_interest</code> from the training data.</p>
+<p>First, we train a <code>randomForest</code> model on the <code>iris</code> data set and set up the <a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link"><code>iml::Predictor</code></a> object, omitting <code>x_interest</code> from the training data.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">78546</span><span class="op">)</span>
-<span class="va">X</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/subset.data.table.html">subset</a></span><span class="op">(</span><span class="va">iris</span>, select <span class="op">=</span> <span class="op">-</span><span class="va">Species</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">78546</span><span class="op">)</span>
+<span class="va">X</span> <span class="op">=</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/subset.data.table.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">iris</span>, select <span class="op">=</span> <span class="op">-</span><span class="va">Species</span><span class="op">)</span>
 <span class="va">y</span> <span class="op">=</span> <span class="va">iris</span><span class="op">$</span><span class="va">Species</span>
-<span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html">randomForest</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, ntree <span class="op">=</span> <span class="fl">20L</span><span class="op">)</span>
-<span class="va">predictor</span> <span class="op">=</span> <span class="fu">iml</span><span class="fu">::</span><span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rf</span>, data <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="op">-</span><span class="fl">120L</span>, <span class="op">]</span>, y <span class="op">=</span> <span class="st">"Species"</span>, type <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span></code></pre></div>
+<span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html" class="external-link">randomForest</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, ntree <span class="op">=</span> <span class="fl">20L</span><span class="op">)</span>
+<span class="va">predictor</span> <span class="op">=</span> <span class="fu">iml</span><span class="fu">::</span><span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rf</span>, data <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="op">-</span><span class="fl">120L</span>, <span class="op">]</span>, y <span class="op">=</span> <span class="st">"Species"</span>, type <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span></code></pre></div>
 <p>For <code>x_interest</code>, the model predicts a probability of 25% for <code>versicolor</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x_interest</span> <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">120L</span>, <span class="op">]</span>
@@ -288,7 +277,7 @@
 
 <span class="co"># Find counterfactuals and create Counterfactuals Object</span>
 <span class="va">cfactuals</span> <span class="op">=</span> <span class="va">ft_classif</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span>
-  x_interest <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">120L</span>, <span class="op">]</span>, desired_class <span class="op">=</span> <span class="st">"versicolor"</span>, desired_prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">1</span><span class="op">)</span>
+  x_interest <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">120L</span>, <span class="op">]</span>, desired_class <span class="op">=</span> <span class="st">"versicolor"</span>, desired_prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">1</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 <p>Just as for the existing methods, the result is a <code>Counterfactuals</code> object.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -304,15 +293,15 @@
 <span class="co">#&gt; 2:            6         2.2         4.90        1.45</span>
 <span class="co">#&gt; 3:            6         2.2         4.85        1.50</span></code></pre></div>
 </div>
-<div id="comments" class="section level2">
-<h2 class="hasAnchor">
-<a href="#comments" class="anchor"></a>Comments</h2>
-<p>A minor limitation of this basic implementation is that we would not be able to find counterfactuals for a setting with <code>max(desired_prob) &lt; 0.5</code>, since <code><a href="https://rdrr.io/pkg/featureTweakR/man/tweak.html">featureTweakR::tweak</a></code> only searches for instances that would be predicted as <code>desired_class</code> by majority vote. To enable this setting, we would need to change some <code>featureTweakR</code> internal code, but for the sake of clarity we will not do this here.</p>
+<div class="section level2">
+<h2 id="comments">Comments<a class="anchor" aria-label="anchor" href="#comments"></a>
+</h2>
+<p>A minor limitation of this basic implementation is that we would not be able to find counterfactuals for a setting with <code>max(desired_prob) &lt; 0.5</code>, since <code><a href="https://rdrr.io/pkg/featureTweakR/man/tweak.html" class="external-link">featureTweakR::tweak</a></code> only searches for instances that would be predicted as <code>desired_class</code> by majority vote. To enable this setting, we would need to change some <code>featureTweakR</code> internal code, but for the sake of clarity we will not do this here.</p>
 </div>
-<div id="references" class="section level2">
-<h2 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h2>
-<p>Tolomei, G., Silvestri, F., Haines, A., Lalmas, M.: Interpretable Predictions of Tree-based Ensembles via Actionable Feature Tweaking. In: Proceedings of the 23rd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining. pp. 465–474. KDD ’17, ACM, New York, NY, USA (2017). <a href="https://doi.org/10.1145/3097983.3098039" class="uri">https://doi.org/10.1145/3097983.3098039</a>, <a href="http://doi.acm.org/10.1145/3097983.3098039" class="uri">http://doi.acm.org/10.1145/3097983.3098039</a></p>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<p>Tolomei, G., Silvestri, F., Haines, A., Lalmas, M.: Interpretable Predictions of Tree-based Ensembles via Actionable Feature Tweaking. In: Proceedings of the 23rd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining. pp. 465–474. KDD ’17, ACM, New York, NY, USA (2017). <a href="https://doi.org/10.1145/3097983.3098039" class="external-link uri">https://doi.org/10.1145/3097983.3098039</a>, <a href="http://doi.acm.org/10.1145/3097983.3098039" class="external-link uri">http://doi.acm.org/10.1145/3097983.3098039</a></p>
 </div>
   </div>
 
@@ -327,11 +316,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Susanne Dandl, Andreas Hofheinz.</p>
+  <p></p>
+<p>Developed by Susanne Dandl, Andreas Hofheinz.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -339,6 +330,8 @@
 
   
 
+
+  
 
   </body>
 </html>

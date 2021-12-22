@@ -1,8 +1,8 @@
 pandoc: 2.7.3
-pkgdown: 1.6.1
+pkgdown: 2.0.1
 pkgdown_sha: ~
 articles:
   how-to-add-new-cf-methods: how-to-add-new-cf-methods.html
   introduction: introduction.html
-last_built: 2021-12-02T17:55Z
+last_built: 2021-12-22T16:26Z
 
