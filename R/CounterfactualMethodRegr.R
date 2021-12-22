@@ -77,6 +77,8 @@ CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = Cou
   private = list(
     desired_outcome = NULL,
  
-    get_pred_column = function() {1L}
+    get_pred_column = function() {
+      names(private$predictor$predict(private$predictor$data$X[1L]))[[1L]]
+    }
   )
 )
