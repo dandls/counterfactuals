@@ -80,8 +80,12 @@ NICERegr = R6::R6Class("NICEClassif",
     #' Ignored if `x_nn_correct_classif = FALSE`.
     #' TODO: default
     initialize = function(predictor, optimization = "sparsity", x_nn_correct_classif = TRUE, margin_correct_classif = NULL, 
-                          return_multiple = TRUE, finish_early = TRUE) {
-      super$initialize(predictor)
+                          return_multiple = TRUE, finish_early = TRUE, distance_function = NULL) {
+      
+      if (is.null(distance_function)) {
+        distance_function = gower_dist
+      }
+      super$initialize(predictor, distance_function = distance_function)
       assert_choice(optimization, choices = c("sparsity", "proximity", "plausibility"))
       assert_flag(x_nn_correct_classif)
       assert_flag(return_multiple)
@@ -166,7 +170,8 @@ NICERegr = R6::R6Class("NICEClassif",
         candidates_x_nn = private$candidates_x_nn,
         ae_model = private$ae_model,
         ae_preprocessor = private$ae_preprocessor,
-        archive = private$.archive
+        archive = private$.archive,
+        distance_function = private$distance_function
       )
 
       private$.x_nn = res$x_nn

@@ -74,9 +74,12 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
     #' Should the algorithm terminate after an iteration in which the `desired_class` prediction for the highest reward instance 
     #' is in the interval `desired_prob`. If `FALSE`, the algorithm continues until `x_nn` is recreated.
     initialize = function(predictor, optimization = "sparsity", x_nn_correct_classif = TRUE, return_multiple = TRUE,
-                          finish_early = TRUE) {
+                          finish_early = TRUE, distance_function = NULL) {
       
-      super$initialize(predictor)
+      if (is.null(distance_function)) {
+        distance_function = gower_dist
+      }
+      super$initialize(predictor, distance_function = distance_function)
       assert_choice(optimization, choices = c("sparsity", "proximity", "plausibility"))
       assert_flag(x_nn_correct_classif)
       assert_flag(return_multiple)
@@ -161,7 +164,8 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
         candidates_x_nn = private$candidates_x_nn,
         ae_model = private$ae_model,
         ae_preprocessor = private$ae_preprocessor,
-        archive = private$.archive
+        archive = private$.archive,
+        distance_function = private$distance_function
       )
       
       private$.x_nn = res$x_nn

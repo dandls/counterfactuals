@@ -131,7 +131,7 @@ test_that("evaluate returns correct results", {
   ps = cf$.__enclos_env__$private$param_set
   expect_identical(
     sort(cf_eval$dist_x_interest), 
-    sort(as.vector(StatMatch::gower.dist(cf$data, cf$x_interest, rngs = ps$upper - ps$lower)))
+    sort(as.vector(gower_dist(cf$data, cf$x_interest, cf$.__enclos_env__$private$predictor$data$X)))
   )
 })
 

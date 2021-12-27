@@ -9,8 +9,8 @@ whatif_algo = function(predictor, n_cfactuals, x_interest, pred_column, desired_
   if (nrow(X_search) == 0L) {
     return(X_search)
   }
-  
+
   dist_matrix = eval_distance(distance_function, x_interest, X_search, predictor$data$X)
-  idx = sort(as.vector(dist_matrix), index.return = TRUE)$ix[seq_len(n_cfactuals)]
+  idx = top_n_indices(as.vector(dist_matrix), n = n_cfactuals)
   X_search[idx]
 }

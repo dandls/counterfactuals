@@ -1,5 +1,5 @@
 nice_algo = function(predictor, return_multiple, finish_early, optimization, x_interest, pred_column, 
-                      desired_y_hat_range, candidates_x_nn, ae_model, ae_preprocessor, archive) {
+                      desired_y_hat_range, candidates_x_nn, ae_model, ae_preprocessor, archive, distance_function) {
   
   res_list = list(
     x_nn = NULL, 
@@ -16,7 +16,9 @@ nice_algo = function(predictor, return_multiple, finish_early, optimization, x_i
     return(res_list)
   }
   
-  x_nn = candidates_x_nn[gower_topn(x_interest, candidates_x_nn, n = 1L)$index]
+  dist_matrix = eval_distance(distance_function, x_interest, candidates_x_nn, predictor$data$X)
+  idx = top_n_indices(as.vector(dist_matrix), n = 1L)
+  x_nn = candidates_x_nn[idx]
   x_current = copy(x_interest)
   
   finished = FALSE
@@ -27,7 +29,8 @@ nice_algo = function(predictor, return_multiple, finish_early, optimization, x_i
     d_f_x_current = dist_to_interval(f_x_current, desired_y_hat_range)
     d_f_X_candidates = dist_to_interval(f_X_candidates, desired_y_hat_range)
     rewards = compute_rewards(
-      optimization, d_f_x_current, d_f_X_candidates, X_candidates, x_interest, x_current, ae_preprocessor, ae_model
+      predictor, optimization, d_f_x_current, d_f_X_candidates, X_candidates, x_interest, x_current, ae_preprocessor, 
+      ae_model, distance_function
     )
     x_current = X_candidates[which.max(rewards)]
     archive = c(
@@ -67,14 +70,14 @@ create_candidates = function(x_current, x_nn) {
   X_candidates
 }
 
-compute_rewards = function(optimization, d_f_x_current, d_f_X_candidates, X_candidates, x_interest, x_current, 
-                           ae_preprocessor, ae_model) {
-
+compute_rewards = function(predictor, optimization, d_f_x_current, d_f_X_candidates, X_candidates, x_interest, x_current, 
+                           ae_preprocessor, ae_model, distance_function) {
+  
   if (optimization == "sparsity") {
     rewards = d_f_x_current - d_f_X_candidates
   } else if (optimization == "proximity") {
-    d_X_candidates = gower_dist(X_candidates, x_interest)
-    d_x_current = gower_dist(x_current, x_interest)
+    d_X_candidates = as.vector(eval_distance(distance_function, X_candidates, x_interest, predictor$data$X))
+    d_x_current = as.vector(eval_distance(distance_function, x_current, x_interest, predictor$data$X))
     rewards = (d_f_x_current - d_f_X_candidates) / (d_X_candidates - d_x_current + sqrt(.Machine$double.eps))
   } else {
     X_candidates_pp = ae_preprocessor$preprocess(X_candidates)
