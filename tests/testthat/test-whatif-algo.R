@@ -15,15 +15,15 @@ test_that("whatif_algo returns correct counterfactuals", {
     pred_column = "versicolor",
     desired_y_hat_range = desired,
     X_search = mod$data$X,
-    distance_function = NULL
+    distance_function = gower_dist
   )
   
   expect_data_table(res, nrows = n, types = sapply(iris[, -5L], class))
   expect_names(names(res), identical.to = names(iris[, -5L]))
   expect_numeric(mod$predict(res)[["versicolor"]], lower = desired[1L], upper = desired[2L])
   
-  versicolor_only = subset(iris, Species == "versicolor", select = -Species)
-  dist_vector = as.vector(gower_dist(x_interest, versicolor_only))
+  versicolor_only = setDT(subset(iris, Species == "versicolor", select = -Species))
+  dist_vector = as.vector(gower_dist(x_interest, versicolor_only, as.data.table(iris)))
   cf_expected = as.data.table(head(versicolor_only[order(dist_vector), ], n))
   expect_identical(res, cf_expected)
 })

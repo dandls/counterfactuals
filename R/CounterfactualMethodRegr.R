@@ -19,7 +19,7 @@ CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = Cou
     #' @template predictor
     #' @template lower_upper
     initialize = function(predictor, lower = NULL, upper = NULL, distance_function = NULL) {
-      super$initialize(predictor, lower, upper)
+      super$initialize(predictor, lower, upper, distance_function)
       if (private$predictor$task != "regression") {
         stop(sprintf("%s only works for regression tasks.", class(self)[1]))
       }

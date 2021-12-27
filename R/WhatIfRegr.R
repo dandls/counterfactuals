@@ -7,7 +7,6 @@
 #' 
 #' 
 #' @details
-#' The dissimilarities are computed using Gower's dissimilarity measure (Gower 1971). \cr
 #' Only observations whose features values lie between the corresponding values in `lower` and `upper` are considered 
 #' counterfactual candidates.
 #' 
@@ -45,7 +44,15 @@ WhatIfRegr = R6::R6Class("WhatIfRegr", inherit = CounterfactualMethodRegr,
     #' @param n_counterfactuals (`integerish(1)`)\cr
     #'   The number of counterfactuals to return Default is `1L`.
     #' @template lower_upper
+    #' @param distance_function (`function()` | `NULL`)\cr 
+    #'  The distance function used to compute the distances between `x_interest` and the training data points. 
+    #'  The function must have three arguments: `x`, `y`, and `data` and return a `double` matrix. If set to `NULL` 
+    #'  (default), then Gower distance (Gower 1971) is used.
     initialize = function(predictor, n_counterfactuals = 1L, lower = NULL, upper = NULL, distance_function = NULL) {
+      
+      if (is.null(distance_function)) {
+        distance_function = gower_dist
+      }
       super$initialize(predictor, lower, upper, distance_function)
       assert_integerish(n_counterfactuals, lower = 1L, any.missing = FALSE, len = 1L)
       private$n_counterfactuals = n_counterfactuals
