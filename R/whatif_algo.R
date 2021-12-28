@@ -11,6 +11,6 @@ whatif_algo = function(predictor, n_cfactuals, x_interest, pred_column, desired_
   }
 
   dist_matrix = eval_distance(distance_function, x_interest, X_search, predictor$data$X)
-  idx = top_n_indices(as.vector(dist_matrix), n = n_cfactuals)
+  idx = smallest_n_indices(as.vector(dist_matrix), n = n_cfactuals)
   X_search[idx]
 }

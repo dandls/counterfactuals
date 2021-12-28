@@ -17,7 +17,7 @@ nice_algo = function(predictor, return_multiple, finish_early, optimization, x_i
   }
   
   dist_matrix = eval_distance(distance_function, x_interest, candidates_x_nn, predictor$data$X)
-  idx = top_n_indices(as.vector(dist_matrix), n = 1L)
+  idx = smallest_n_indices(as.vector(dist_matrix), n = 1L)
   x_nn = candidates_x_nn[idx]
   x_current = copy(x_interest)
   

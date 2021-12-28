@@ -5,7 +5,7 @@
 \title{NICE (Nearest Instance Counterfactual Explanations) for Classification Tasks}
 \description{
 NICE (Brughmans and Martens 2021) searches for counterfactuals by iteratively replacing feature values
-of \code{x_interest} with the corresponding value of its most similar (optionally) correctly classified instance \code{x_nn}.
+of \code{x_interest} with the corresponding value of its most similar (optionally correctly classified) instance \code{x_nn}.
 }
 \details{
 NICE starts the counterfactual search for \code{x_interest} by finding its most similar (optionally) correctly classified
@@ -99,7 +99,8 @@ Create a new NICEClassif object.
   optimization = "sparsity",
   x_nn_correct_classif = TRUE,
   return_multiple = TRUE,
-  finish_early = TRUE
+  finish_early = TRUE,
+  distance_function = NULL
 )}\if{html}{\out{</div>}}
 }
 

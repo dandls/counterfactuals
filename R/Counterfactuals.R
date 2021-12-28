@@ -293,17 +293,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
       cat("Head: \n")
       print(head(private$.data, 3L))
-    },
-    
-    #' @description Set the distance function used in the second and fourth evaluation measure.
-    #' @param distance_function (`function()` | `NULL`)\cr 
-    #'  The distance function must have three arguments:
-    #'  `x`, `y`, and `data` and return a `double` matrix. If set to `NULL` (default), then Gower distance (Gower 1971) is used.
-    set_distance_function = function(distance_function) {
-      assert_function(distance_function, args = c("x", "y", "data"), ordered = TRUE, null.ok = TRUE)
-      private$.distance_function = distance_function
     }
-
   ),
   active = list(
     #' @field desired (`list(1)` | `list(2)`)\cr
@@ -336,12 +326,15 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
     },
     #' @field distance_function (`function()`) \cr
-    #'   The distance function used in the second and fourth evaluation measure.
+    #'  The distance function used in the second and fourth evaluation measure.
+    #'  The function must have three arguments:
+    #'  `x`, `y`, and `data` and return a `double` matrix. If set to `NULL` (default), then Gower distance (Gower 1971) is used.
     distance_function = function(value) {
       if (missing(value)) {
         private$.distance_function
       } else {
-        stop("`$distance_function` is read only. Use `set_distance_function` to override the `distance_function`", call. = FALSE)
+        assert_function(value, args = c("x", "y", "data"), ordered = TRUE)
+        private$.distance_function = value
       }
     }
   ),

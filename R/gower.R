@@ -1,3 +1,4 @@
+# TODO: Speed up
 gower_dist = function(x, y, data) {
   assert_data_table(data)
   ranges = data[, sapply(.SD, function(x) ifelse(is.numeric(x), max(x, na.rm = TRUE) - min(x, na.rm = TRUE), NA))]

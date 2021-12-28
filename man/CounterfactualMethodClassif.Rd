@@ -39,7 +39,12 @@ Child classes: \link{MOCClassif}, \link{WhatIfClassif}, \link{NICEClassif}
 \subsection{Method \code{new()}}{
 Creates a new \code{CounterfactualMethodClassif} object.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CounterfactualMethodClassif$new(predictor, lower = NULL, upper = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CounterfactualMethodClassif$new(
+  predictor,
+  lower = NULL,
+  upper = NULL,
+  distance_function = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
