@@ -67,7 +67,8 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     #'  Should information about the optimization status be hidden? Default is `FALSE`.
     #' @param distance_function (`function()` | `NULL`)\cr 
     #'  The distance function to be used in the second and fourth objective. The function must have three arguments:
-    #'  `x`, `y`, and `data` and return a `double` matrix. If set to `NULL` (default), then Gower distance (Gower 1971) is used.
+    #'  `x`, `y`, and `data` and return a `double` matrix with `nrow(x)` rows and `nrow(y)` columns. 
+    #'  If set to `NULL` (default), then Gower distance (Gower 1971) is used.
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, mu = 20L, 
                           n_generations = 175L, p_rec = 0.57, p_rec_gen = 0.85, p_rec_use_orig = 0.88, p_mut = 0.79, 
                           p_mut_gen = 0.56, p_mut_use_orig = 0.32, k = 1L, weights = NULL, lower = NULL, upper = NULL, 

@@ -26,8 +26,6 @@ whose predicted \code{desired_class} probability is in the interval \code{desire
 
 If \code{finish_early = FALSE} and \code{return_multiple = FALSE}, then \code{x_nn} is returned as single counterfactual.
 
-The function computes the dissimilarities using Gower's dissimilarity measure (Gower 1971).
-
 This NICE implementation corresponds to the original version of Brughmans and Martens (2021) when
 \code{return_multiple = FALSE}, \code{finish_early = TRUE}, and \code{x_nn_correct_classif = TRUE}.
 }
@@ -124,6 +122,11 @@ prediction is in the interval \code{desired_prob}. For more information, see the
 \item{\code{finish_early}}{(\code{logical(1)})\cr
 Should the algorithm terminate after an iteration in which the \code{desired_class} prediction for the highest reward instance
 is in the interval \code{desired_prob}. If \code{FALSE}, the algorithm continues until \code{x_nn} is recreated.}
+
+\item{\code{distance_function}}{(\verb{function()} | \code{NULL})\cr
+The distance function used to compute the distances between \code{x_interest} and the training data points for finding \code{x_nn}.
+The function must have three arguments: \code{x}, \code{y}, and \code{data} and return a \code{double} matrix with \code{nrow(x)} rows
+and \code{nrow(y)} columns. If set to \code{NULL} (default), then Gower distance (Gower 1971) is used.}
 }
 \if{html}{\out{</div>}}
 }

@@ -42,12 +42,7 @@ Suggests:
 License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.1.2
-VignetteBuilder: 
-    knitr, 
-    randomForest,
-    featureTweakR,
-    mlbench,
-    GGally
+VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
 Remotes:

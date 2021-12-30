@@ -131,6 +131,11 @@ prediction is in the interval \code{desired_prob}. For more information, see the
 \item{\code{finish_early}}{(\code{logical(1)})\cr
 Should the algorithm terminate after an iteration in which the \code{desired_class} prediction for the highest reward instance
 is in the interval \code{desired_prob}. If \code{FALSE}, the algorithm continues until \code{x_nn} is recreated.}
+
+\item{\code{distance_function}}{(\verb{function()} | \code{NULL})\cr
+The distance function used to compute the distances between \code{x_interest} and the training data points for finding \code{x_nn}.
+The function must have three arguments: \code{x}, \code{y}, and \code{data} and return a \code{double} matrix with \code{nrow(x)} rows
+and \code{nrow(y)} columns. If set to \code{NULL} (default), then Gower distance (Gower 1971) is used.}
 }
 \if{html}{\out{</div>}}
 }

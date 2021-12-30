@@ -79,6 +79,10 @@ NICERegr = R6::R6Class("NICEClassif",
     #' classification tasks only, this is a design to mimic the search for `x_nn` for regression tasks.
     #' Ignored if `x_nn_correct_classif = FALSE`.
     #' TODO: default
+    #' @param distance_function (`function()` | `NULL`)\cr 
+    #'  The distance function used to compute the distances between `x_interest` and the training data points for finding `x_nn`. 
+    #'  The function must have three arguments: `x`, `y`, and `data` and return a `double` matrix with `nrow(x)` rows 
+    #'  and `nrow(y)` columns. If set to `NULL` (default), then Gower distance (Gower 1971) is used.
     initialize = function(predictor, optimization = "sparsity", x_nn_correct_classif = TRUE, margin_correct_classif = NULL, 
                           return_multiple = TRUE, finish_early = TRUE, distance_function = NULL) {
       

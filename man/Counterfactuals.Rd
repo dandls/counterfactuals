@@ -43,7 +43,6 @@ The function must have three arguments:
 \item \href{#method-get_freq_of_feature_changes}{\code{Counterfactuals$get_freq_of_feature_changes()}}
 \item \href{#method-plot_surface}{\code{Counterfactuals$plot_surface()}}
 \item \href{#method-print}{\code{Counterfactuals$print()}}
-\item \href{#method-set_distance_function}{\code{Counterfactuals$set_distance_function()}}
 \item \href{#method-clone}{\code{Counterfactuals$clone()}}
 }
 }
@@ -243,25 +242,6 @@ Prints the \code{Counterfactuals} object.
 \if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$print()}\if{html}{\out{</div>}}
 }
 
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-set_distance_function"></a>}}
-\if{latex}{\out{\hypertarget{method-set_distance_function}{}}}
-\subsection{Method \code{set_distance_function()}}{
-Set the distance function used in the second and fourth evaluation measure.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$set_distance_function(distance_function)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{distance_function}}{(\verb{function()} | \code{NULL})\cr
-The distance function must have three arguments:
-\code{x}, \code{y}, and \code{data} and return a \code{double} matrix. If set to \code{NULL} (default), then Gower distance (Gower 1971) is used.}
-}
-\if{html}{\out{</div>}}
-}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-clone"></a>}}

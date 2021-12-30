@@ -44,8 +44,8 @@ WhatIfClassif = R6::R6Class("WhatIfClassif", inherit = CounterfactualMethodClass
     #' @template lower_upper
     #' @param distance_function (`function()` | `NULL`)\cr 
     #'  The distance function used to compute the distances between `x_interest` and the training data points. 
-    #'  The function must have three arguments: `x`, `y`, and `data` and return a `double` matrix. If set to `NULL` 
-    #'  (default), then Gower distance (Gower 1971) is used.
+    #'  The function must have three arguments: `x`, `y`, and `data` and return a `double` matrix with `nrow(x)` rows 
+    #'  and `nrow(y)` columns. If set to `NULL` (default), then Gower distance (Gower 1971) is used.
     initialize = function(predictor, n_counterfactuals = 1L, lower = NULL, upper = NULL, distance_function = NULL) {
       
       if (is.null(distance_function)) {
