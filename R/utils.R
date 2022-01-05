@@ -21,9 +21,9 @@ smallest_n_indices = function(x, n = 1L) {
 #' @param distance_function (`function()`)\cr
 #'   A distance function to evaluate.
 #' @param x (`data.frame() | numeric()`)\cr
-#'   A vector, a matrix or a data frame containing variables that should be used in the computation of the distance.
+#'   A matrix or a data frame containing variables that should be used in the computation of the distance.
 #' @param y (`data.frame() | numeric()`)\cr
-#'   A vector, a matrix or a data.frame containing variables that should be used in the computation of the distance.
+#'   A matrix or a data.frame containing variables that should be used in the computation of the distance.
 #' @param data (`data.frame()` | `NULL`)\cr
 #'   A data.frame or data.table containing the entire data set. This can be used to compute statistics used in the 
 #'   computation of the distance, e.g., standard deviation or range. 
