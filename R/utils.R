@@ -16,7 +16,7 @@ smallest_n_indices = function(x, n = 1L) {
 #' Evaluates a distance function and checks for correct output format
 #' 
 #' @description This function serves as an evaluation wrapper for some distance function. It checks that the output 
-#' of `distance_function` is a `double` matrix with `nrow(x)` rows and `nrow(y)` columns as expected.
+#' of `distance_function` is a `numeric` matrix with `nrow(x)` rows and `nrow(y)` columns as expected.
 #' 
 #' @param distance_function (`function()`)\cr
 #'   A distance function to evaluate.
@@ -30,7 +30,7 @@ smallest_n_indices = function(x, n = 1L) {
 eval_distance = function(distance_function, x, y, data = NULL) {
   dist_matrix = distance_function(x, y, data)
   if (!test_matrix(dist_matrix, mode = "double", nrows = nrow(x), ncols = nrow(y))) {
-    stop("`distance_function` must return a double matrix with `nrow(x)` rows and `nrow(y)` columns.")
+    stop("`distance_function` must return a `double` matrix with `nrow(x)` rows and `nrow(y)` columns.")
   }
   dist_matrix
 }

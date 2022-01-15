@@ -14,8 +14,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-In this example, we demonstrate how customized distance functions can be used in counterfactual methods (e.g. `WhatIfClassif`) 
-and the resulting `Counterfactuals` object. 
+In this example, we demonstrate how customized distance functions can be used in counterfactual methods (e.g. `MOCClassif`)
+and the resulting `Counterfactuals` object. <br>
+By default, `MOCClassif` uses the Gower distance (Gower 1971) for the second and forth MOC objective (Dandl et al. 2020). 
+In this example we want to use the scaled euclidean distance instead. 
+
+### Set up
 
 ```{r example, message=FALSE}
 library(counterfactuals)
@@ -23,47 +27,56 @@ library(randomForest)
 library(iml)
 ```
 
-### Set up
-
 ```{r}
 rf = randomForest(Species ~ ., data = iris[-150L, ])
 predictor = Predictor$new(rf, type = "prob")
 x_interest = iris[150L, ]
-predictor$predict(x_interest)
 ```
 
 ### Customize the distance function in counterfactual methods
 
-By default, `MOCClassif` uses the Gower distance for the second and forth MOC objective. 
-We can customize the function by using the `distance_function` argument in the `initiliaze()` method. <br>
-A customized distance function must have three arguments: `x`, `y`, and `data` and return a double matrix with `nrow(x)`
-rows and `nrow(y)` columns.  <br>
-The `data` argument contains `predictor$data$X` and can be used to calculate statistics used by the distance measure, 
-e.g., standard deviation or range. 
+A new distance function must have three arguments: `x`, `y`, and `data`, and it must return a `numeric` 
+matrix with `nrow(x)` rows and `nrow(y)` columns.  <br>
+Internally, for `MOCClassif`:
+
+- `x` is set to the individuals of the current generation
+- `y` is set to `x_interest` for the second objective and to the `k` nearest training points for the fourth objective
+- `data` is set to `predictor$data$X`, which can be used to calculate the statistics used by the distance measure, e.g., 
+the standard deviations or value ranges.
+
+All arguments are passed as `data.table`s.
+
 
 ```{r}
 scaled_euclidean_distance = function(x, y, data) {
-    means = data[, lapply(.SD, mean)]
-    sds = data[, lapply(.SD, sd)]
-    x_scaled = scale(x, center = means, scale = sds)
-    y_scaled = scale(y, center = means, scale = sds)
-
-    res = matrix(NA, nrow = nrow(x_scaled), ncol = nrow(y_scaled))
-    for (i in 1:nrow(x_scaled)) {
-      for (j in 1:nrow(y_scaled)) {
-        res[i, j] = sqrt(sum(((x_scaled[i, ] - y_scaled[j, ])^2)))
-      }
+  means = data[, lapply(.SD, mean)]
+  sds = data[, lapply(.SD, sd)]
+  x_scaled = scale(x, center = means, scale = sds)
+  y_scaled = scale(y, center = means, scale = sds)
+  
+  res = matrix(NA, nrow = nrow(x_scaled), ncol = nrow(y_scaled))
+  for (i in seq_len(nrow(x_scaled))) {
+    for (j in seq_len(nrow(y_scaled))) {
+      res[i, j] = sqrt(sum(((x_scaled[i, ] - y_scaled[j, ])^2)))
     }
-    res
+  }
+  res
 }
 ```
 
-```{r, results='hide'}
+Then we pass our distance function to `MOCClassif` with the `distance_function` argument.
+
+```{r}
 moc_classif = MOCClassif$new(
   predictor, 
   n_generations = 10L, 
   distance_function = scaled_euclidean_distance
 )
+```
+
+`MOCClassif` now uses the scaled euclidean distance for the second and forth MOC objective.
+
+```{r, results='hide', message=FALSE}
 cfactuals = moc_classif$find_counterfactuals(
   x_interest, 
   desired_class = "versicolor",
@@ -71,12 +84,12 @@ cfactuals = moc_classif$find_counterfactuals(
 )
 ```
 
-```{r}
-cfactuals
-```
-
 
 ### Customize the distance function in the Counterfactuals object
+
+By default, the `Counterfactuals$evaluate` method uses the Gower distance to compute the second and forth evaluation 
+measure. <br>
+This can be customized by setting the `distance_function` active binding.
 
 ```{r}
 cfactuals$distance_function = scaled_euclidean_distance
@@ -87,6 +100,10 @@ head(cfactuals$evaluate(), 3L)
 ```
 
 
+## References
 
+Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “MultiObjective Counterfactual Explanations.” In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr, Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Publishing.
+
+Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
 
 
