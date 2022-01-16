@@ -46,14 +46,14 @@ make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest
     p = ggplot2::ggplot(data = dt_grid, ggplot2::aes_string(x = x_feat_name, y = y_feat_name)) + 
       ggplot2::geom_tile(ggplot2::aes_string(fill = "pred")) +
       ggplot2::geom_contour(ggplot2::aes_string(z = "pred"), colour = "white") +
+      ggplot2::geom_rug(ggplot2::aes_string(x = x_feat_name, y = y_feat_name), predictor$data$X) +
       ggplot2::guides(z = ggplot2::guide_legend(title = "pred")) +
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position = "right")
     
     if (nrow(cfactuals_plotted) > 0L) {
       p = p + 
-        ggplot2::geom_point(ggplot2::aes_string(x = x_feat_name, y = y_feat_name), cfactuals_plotted, colour = "black") +
-        ggplot2::geom_rug(ggplot2::aes_string(x = x_feat_name, y = y_feat_name), cfactuals_plotted)
+        ggplot2::geom_point(ggplot2::aes_string(x = x_feat_name, y = y_feat_name), cfactuals_plotted, colour = "black")
     }
     
     p = p + ggplot2::geom_point(ggplot2::aes_string(x = x_feat_name, y = y_feat_name), x_interest, colour = "white")
@@ -81,12 +81,12 @@ make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest
       ggplot2::geom_line(
         ggplot2::aes_string(x = num_feature, y = "pred", group = cat_feature, color = cat_feature), dt_grid
       ) +
+      ggplot2::geom_rug(ggplot2::aes_string(x = num_feature), predictor$data$X, sides = "b") +
       ggplot2::theme_bw()
     
     if (nrow(cfactuals_plotted) > 0L) {
       p = p +
-        ggplot2::geom_point(ggplot2::aes_string(x = num_feature, y = "pred"), cfactuals_plotted, colour = "black") +
-        ggplot2::geom_rug(ggplot2::aes_string(x = num_feature, y = "pred"), cfactuals_plotted)
+        ggplot2::geom_point(ggplot2::aes_string(x = num_feature, y = "pred"), cfactuals_plotted, colour = "black")
     }
     
     p = p +
