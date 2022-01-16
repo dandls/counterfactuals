@@ -50,3 +50,24 @@ test_that("whatif_algo returns warning and empty data.table with correct columns
 })
 
 
+test_that("whatif_algo search space is restricted to unique obervations", {
+  iris_dupl = rbind(iris, iris)
+  rf = randomForest::randomForest(Species ~ ., data = iris_dupl, ntree = 20L)
+  ps = make_param_set(iris_dupl, lower = NULL, upper = NULL)
+  mod = Predictor$new(rf, data = iris_dupl, y = "Species")
+  x_interest = iris_dupl[1L, -5L]
+  desired = c(0.7, 1)
+  n = 5L
+  res = whatif_algo(
+    predictor = mod,
+    n_cfactuals = n,
+    x_interest = x_interest,
+    pred_column = "versicolor",
+    desired_y_hat_range = desired,
+    X_search = mod$data$X
+  )
+  expect_identical(unique(res), res)
+})
+
+
+
