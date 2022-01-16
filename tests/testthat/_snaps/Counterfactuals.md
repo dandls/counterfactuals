@@ -32,5 +32,5 @@
 
 ---
 
-    `distance_function` must return a double matrix with `nrow(x)` rows and `nrow(y)` columns.
+    `distance_function` must return a `double` matrix with `nrow(x)` rows and `nrow(y)` columns.
 

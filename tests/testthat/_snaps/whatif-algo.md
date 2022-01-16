@@ -9,5 +9,5 @@
 
 # whatif_algo returns error message if distance_function returns incorrect format
 
-    `distance_function` must return a double matrix with `nrow(x)` rows and `nrow(y)` columns.
+    `distance_function` must return a `double` matrix with `nrow(x)` rows and `nrow(y)` columns.
 
