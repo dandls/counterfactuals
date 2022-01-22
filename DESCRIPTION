@@ -19,6 +19,7 @@ Imports:
     data.table,
     paradox,
     miesmuschel,
+    mlr3misc,
     bbotk,
     gower,
     ecr
@@ -38,7 +39,10 @@ Suggests:
     rmarkdown,
     basefun,
     featureTweakR,
-    mlbench
+    mlbench,
+    mlr3pipelines,
+    mlr3learners,
+    Rtsne
 License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.1.2
