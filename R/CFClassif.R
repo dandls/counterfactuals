@@ -241,10 +241,13 @@ CFClassif = R6::R6Class("CFClassif", inherit = CounterfactualMethodClassif,
         cfactuals = cfactuals[!x_interest, on = names(cfactuals)]
         message("`x_interest` was removed from results.")
       }
+
+      predictor_prot = iml::Predictor$new(private$predictor_prot, type = "prob", 
+        data = private$predictor$data$X)
       
       Counterfactuals$new(
         cfactuals = cfactuals, 
-        predictor = private$predictor,
+        predictor = predictor_prot,
         x_interest = private$x_interest, 
         param_set = private$param_set,   
         desired = list("desired_class" = desired_class, "desired_prob" = desired_prob)
@@ -287,6 +290,7 @@ CFClassif = R6::R6Class("CFClassif", inherit = CounterfactualMethodClassif,
     conditional_sampler = NULL,
     quiet = NULL,
     protected = NULL,
+    predictor_prot = NULL,
 
     get_pred_column = function() {
       paste0("prob.", private$desired_class)
@@ -299,19 +303,33 @@ CFClassif = R6::R6Class("CFClassif", inherit = CounterfactualMethodClassif,
 
     run = function() {
       pred_column = private$get_pred_column()
-      prot_predictor = private$get_prot_predictor()
+      private$predictor_prot = private$get_prot_predictor()
+      x_interest = private$x_interest
+      fixed_features = private$fixed_features
+
+      # switch protected attribute of x_interest to desired class and keep it fixed
+      value_protected = x_interest[[private$protected]]
+      # keep as factor variable
+      if (is.factor(value_protected)) {
+        labels_protected = levels(value_protected)
+        x_interest[[private$protected]] = factor(private$desired_class,
+          levels = labels_protected, labels = labels_protected)
+      } else {
+        x_interest[[private$protected]] = private$desired_class
+      }
+      fixed_features = c(fixed_features, private$protected)
       
       private$.optimizer = cf_algo(
         predictor = private$predictor,
-        predictor_prot = prot_predictor,
-        x_interest = private$x_interest,
+        predictor_prot = private$predictor_prot,
+        x_interest = x_interest,
         pred_column = pred_column,
         param_set = private$param_set,
         lower = private$lower,
         upper = private$upper,
         sdevs_num_feats = private$sdevs_num_feats,
         epsilon = private$epsilon,
-        fixed_features = private$fixed_features,
+        fixed_features = fixed_features,
         max_changed = private$max_changed,
         mu = private$mu,
         n_generations = private$n_generations,
