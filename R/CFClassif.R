@@ -245,6 +245,10 @@ CFClassif = R6::R6Class("CFClassif", inherit = CounterfactualMethodClassif,
       predictor_prot = iml::Predictor$new(private$predictor_prot, type = "prob", 
         data = private$predictor$data$X)
       
+      # remove counterfactuals with a predicted class probability >= 0.5
+      pl.id = c(predictor_prot$predict(cfactuals)[private$desired_class] >= 0.5)
+      cfactuals = cfactuals[pl.id,]
+
       Counterfactuals$new(
         cfactuals = cfactuals, 
         predictor = predictor_prot,

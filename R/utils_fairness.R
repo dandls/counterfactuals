@@ -28,7 +28,7 @@ make_fitness_function_cf = function(predictor, predictor_protected, x_interest, 
   }
 }
 
-plot_counterfactuals = function(cfactuals, data) {
+plot_counterfactuals = function(cfactuals, data, attribute = NULL) {
     library("ggplot2")
     require_namespaces("Rtsne")
     setDT(data)
@@ -36,21 +36,21 @@ plot_counterfactuals = function(cfactuals, data) {
     
     cdf = cfactuals$data[, role := "counterfactuals"]
     idf = cfactuals$x_interest[, role := "x_interest"]
-    df = rbind(cdf, idf, data[, colnames(cdf), with = FALSE])
+    df = rbind(idf, cdf, data[, colnames(cdf), with = FALSE])
     df = unique(df)
     X = model.matrix( ~ ., data = df)
     X = Rtsne::normalize_input(X)
     rtdf = Rtsne::Rtsne(X)$Y
     edf = cbind(data.frame(rtdf), df[, "role", with = FALSE])
-
-    ggplot(edf, aes(x = X1, y = X2, color = role, shape = role, size = role, fill = role)) +
-      geom_point() +
-      theme_minimal() + 
-      scale_shape_manual(values = c(23,1,22)) +
-      scale_size_manual(values = 2*c(2,.5,5)) + 
+    if (!is.null(attribute)) edf = cbind(edf,  df[, attribute, with = FALSE])
+    ggplot(edf, aes(x = X1, y = X2, color = role, shape = role, size = role)) +
+      geom_point(aes_string(color = eval(attribute))) +
+      theme_minimal() +
+      scale_shape_manual(values = c(18,16,15)) +
+      scale_size_manual(values = 2*c(3,.7,4.5)) +
+      scale_color_brewer() +
       theme(
-          legend.title = element_blank(),
-          legend.position = "bottom"
+          legend.title = element_blank()
       )
 }
 
