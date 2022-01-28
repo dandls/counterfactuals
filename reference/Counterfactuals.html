@@ -168,7 +168,7 @@ dissimilarity measure (Gower 1971).</p></li>
 (regression tasks) or <code>desired_prob</code> (classification tasks).</p></li>
 <li><p><code>nr_changed</code>: The number of feature changes w.r.t. <code>x_interest</code>.</p></li>
 <li><p><code>dist_train</code>: The (weighted) distance to the <code>k</code> nearest training data points measured by Gower's
-dissimilarity measure (Gower 1971)</p></li>
+dissimilarity measure (Gower 1971).</p></li>
 </ul></dd>
 
 
@@ -205,7 +205,7 @@ specifies the weight of the i-th closest data point.</p></dd>
 
 </div><p></p><hr><a id="method-plot_parallel"></a><div class="section">
 <h3 id="method-plot-parallel-">Method <code>plot_parallel()</code><a class="anchor" aria-label="anchor" href="#method-plot-parallel-"></a></h3>
-<p>Plots a parallel plot that connects the (scaled) feature values of each counterfactual and highlights
+<p>Plots a parallel plot that connects the (scaled) numeric feature values of each counterfactual and highlights
 <code>x_interest</code> in blue.</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">plot_parallel</span><span class="op">(</span>
@@ -274,12 +274,12 @@ Should unchanged features be excluded? Default is <code>FALSE</code>.</p></dd>
 
 </div><p></p><hr><a id="method-plot_surface"></a><div class="section">
 <h3 id="method-plot-surface-">Method <code>plot_surface()</code><a class="anchor" aria-label="anchor" href="#method-plot-surface-"></a></h3>
-<p>Creates a surface plot for two features. <code>x_interest</code> is represented as white dot and
+<p>Creates a surface plot for two features. <code>x_interest</code> is represented as a white dot and
 all counterfactuals that differ from <code>x_interest</code> <strong>only</strong> in the two selected features are represented as black dots.
-The tick marks next to the axes show the marginal distribution of the counterfactuals. <br>
-The exact plot type depends on the selected feature types:</p><ul><li><p>2 \* <code>numeric</code>: surface plot</p></li>
-<li><p>2 \* <code>non-numeric</code>: heatmap</p></li>
-<li><p>1 \* <code>numeric</code>, 1 \* <code>non-numeric</code>: line graph</p></li>
+The tick marks next to the axes show the marginal distribution of the observed data (<code>predictor$data$X</code>). <br>
+The exact plot type depends on the selected feature types and number of features:</p><ul><li><p>2 numeric features: surface plot</p></li>
+<li><p>2 non-numeric features: heatmap</p></li>
+<li><p>1 numeric or non-numeric feature: line graph</p></li>
 </ul><div class="section">
 <h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">plot_surface</span><span class="op">(</span><span class="va">feature_names</span>, grid_size <span class="op">=</span> <span class="fl">250L</span><span class="op">)</span></code></pre></div><p></p></div>
@@ -340,7 +340,7 @@ The grid size of the plot. It is ignored in case of two <code>non-numeric</code>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer></div>
