@@ -2,7 +2,7 @@
 % Please edit documentation in R/CounterfactualMethod.R
 \name{CounterfactualMethod}
 \alias{CounterfactualMethod}
-\title{Base class for Explanation Counterfactual Methods}
+\title{Base class for Counterfactual Explanation Methods}
 \description{
 Abstract base class for counterfactual explanation methods.
 }

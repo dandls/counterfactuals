@@ -2,11 +2,12 @@
 #'
 #' @description NICE (Brughmans and Martens 2021) searches for counterfactuals by iteratively replacing feature values
 #' of `x_interest` with the corresponding value of its most similar (optionally correctly predicted) instance `x_nn`.
+#' While the original method is only applicable to classification tasks (see \link{NICEClassif}), this implementation extend it to regression tasks.
 #'
 #' @details
-#' NICE starts the counterfactual search for `x_interest` by finding its most similar (optionally) correctly classified
-#' neighbor `x_nn`. 
-#' TODO: Explain regression tasks
+#' NICE starts the counterfactual search for `x_interest` by finding its most similar (optionally) correctly predicted
+#' neighbor `x_nn` with(in) the desired prediction (range). Correctly predicted means that the prediction of `x_nn` is less 
+#' than a user-specified `margin_correct_classif` away from the true outcome of `x_nn`.
 #' \cr
 #' In the first iteration, NICE creates new instances by replacing a different feature value of `x_interest` with the corresponding
 #' value of `x_nn` in each new instance. Thus, if `x_nn` differs from `x_interest` in `d` features, `d` new instances are created. \cr
@@ -25,7 +26,6 @@
 #' If `finish_early = FALSE` and `return_multiple = FALSE`, then `x_nn` is returned as single counterfactual.
 #'
 #' The function computes the dissimilarities using Gower's dissimilarity measure (Gower 1971).
-#'
 #'
 #'
 #' @references
@@ -69,11 +69,11 @@ NICERegr = R6::R6Class("NICEClassif",
     #' Should only *correctly* classified data points in `predictor$data$X` be considered for the most similar instance search?
     #' Default is `TRUE`.
     #' @param return_multiple (`logical(1)`)\cr
-    #' Should multiple counterfactuals be returned? If TRUE, the algorithm returns all created instances whose `desired_class`
-    #' prediction is in the interval `desired_prob`. For more information, see the `Details` section.
+    #' Should multiple counterfactuals be returned? If TRUE, the algorithm returns all created instances whose
+    #' prediction is in the interval `desired_outcome`. For more information, see the `Details` section.
     #' @param finish_early (`logical(1)`)\cr
-    #' Should the algorithm terminate after an iteration in which the `desired_class` prediction for the highest reward instance
-    #' is in the interval `desired_prob`. If `FALSE`, the algorithm continues until `x_nn` is recreated.
+    #' Should the algorithm terminate after an iteration in which the prediction for the highest reward instance
+    #' is in the interval `desired_outcome`. If `FALSE`, the algorithm continues until `x_nn` is recreated.
     #' @param margin_correct_classif (`numeric(1)` | `NULL`)\cr
     #' The accepted margin for considering a prediction as "correct". As the initial version of NICE was designed for
     #' classification tasks only, this is a design to mimic the search for `x_nn` for regression tasks.

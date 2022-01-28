@@ -467,7 +467,7 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
     gg_mean = ggplot2::ggplot(dt_agg_mean) + 
       ggplot2::geom_line(ggplot2::aes(x = generation, y = value, color = variable)) +
       ggplot2::xlab("generations") +
-      ggplot2::ggtitle("Mean objective values (normalized)") +
+      ggplot2::ggtitle("Mean objective values (scaled)") +
       ggplot2::theme_bw() +
       ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1))))) +
       ggplot2::theme(legend.title = ggplot2::element_blank(), axis.title.y = ggplot2::element_blank())
@@ -475,7 +475,7 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
     gg_min = ggplot2::ggplot(dt_agg_min) + 
       ggplot2::geom_line(ggplot2::aes(x = generation, y = value, color = variable)) +
       ggplot2::xlab("generations") +
-      ggplot2::ggtitle("Minimum objective values (normalized)") +
+      ggplot2::ggtitle("Minimum objective values (scaled)") +
       ggplot2::theme_bw() +
       ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1))))) +
       ggplot2::theme(legend.title = ggplot2::element_blank(), axis.title.y = ggplot2::element_blank())

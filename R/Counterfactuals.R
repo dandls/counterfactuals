@@ -69,7 +69,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #'                    (regression tasks) or `desired_prob` (classification tasks).      
     #'   * `nr_changed`: The number of feature changes w.r.t. `x_interest`.   
     #'   * `dist_train`: The (weighted) distance to the `k` nearest training data points measured by Gower's 
-    #'   dissimilarity measure (Gower 1971)
+    #'   dissimilarity measure (Gower 1971).
     #' 
     #' @param show_diff (`logical(1)`)\cr
     #'  Should the counterfactuals be displayed as their differences to `x_interest`? Default is `FALSE`.
@@ -135,7 +135,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       private$predictor$predict(private$.data) 
     },
     
-    #' @description Plots a parallel plot that connects the (scaled) feature values of each counterfactual and highlights
+    #' @description Plots a parallel plot that connects the (scaled) numeric feature values of each counterfactual and highlights
     #' `x_interest` in blue.
     #' 
     #' @param feature_names (`character` | `NULL`)\cr
@@ -235,13 +235,13 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       sort(freq, decreasing = TRUE)
     },
     
-    #' @description Creates a surface plot for two features. `x_interest` is represented as white dot and 
+    #' @description Creates a surface plot for two features. `x_interest` is represented as a white dot and 
     #' all counterfactuals that differ from `x_interest` **only** in the two selected features are represented as black dots.
-    #' The tick marks next to the axes show the marginal distribution of the counterfactuals. \cr
-    #' The exact plot type depends on the selected feature types:
-    #'  * 2 \* `numeric`: surface plot
-    #'  * 2 \* `non-numeric`: heatmap
-    #'  * 1 \* `numeric`, 1 \* `non-numeric`: line graph
+    #' The tick marks next to the axes show the marginal distribution of the observed data (`predictor$data$X`). \cr
+    #' The exact plot type depends on the selected feature types and number of features:
+    #'  * 2 numeric features: surface plot
+    #'  * 2 non-numeric features: heatmap
+    #'  * 1 numeric or non-numeric feature: line graph
     #' @param feature_names (`character(2)`)\cr
     #'  The names of the features to plot.
     #' @param grid_size (`integerish(1)`)\cr
