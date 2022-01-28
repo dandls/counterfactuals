@@ -45,12 +45,23 @@ plot_counterfactuals = function(cfactuals, data, attribute = NULL) {
     if (!is.null(attribute)) edf = cbind(edf,  df[, attribute, with = FALSE])
     ggplot(edf, aes(x = X1, y = X2, color = role, shape = role, size = role)) +
       geom_point(aes_string(color = eval(attribute))) +
+      geom_point(data=edf %>%
+          filter(role %in% "counterfactuals"),
+        pch = 23,
+        size=4,
+        colour = "black") +
       theme_minimal() +
       scale_shape_manual(values = c(18,16,15)) +
-      scale_size_manual(values = 2*c(3,.7,4.5)) +
-      scale_color_brewer() +
+      scale_size_manual(values = 2*c(3,.7,5)) +
+      scale_colour_brewer(palette = "Set1") +
       theme(
-          legend.title = element_blank()
+          legend.title = element_blank(),
+          axis.text.x=element_blank(),
+          axis.text.y=element_blank(),
+          axis.ticks=element_blank(),
+          axis.title.x=element_blank(),
+          axis.title.y=element_blank(),
+          legend.position = "bottom"
       )
 }
 
