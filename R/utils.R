@@ -11,3 +11,9 @@ dist_to_interval = function(x, interval) {
     ifelse(between(z, interval[1L], interval[2L]), 0, min(abs(z - interval)))
   })
 }
+
+quiet = function(x) { 
+  sink(tempfile()) 
+  on.exit(sink()) 
+  invisible(force(x)) 
+} 

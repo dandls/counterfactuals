@@ -273,20 +273,20 @@ make_moc_recombinator = function(ps, x_interest, max_changed, p_rec, p_rec_gen, 
 
 
 make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, flex_cols, sdevs, lower, upper, 
-                                    predictor, fitness_function, mu) {
+                                    predictor, fitness_function, mu, p_use_orig = 0.5) {
   function(param_set, n) {
     
     if (init_strategy == "random") {
       f_design = function(ps, n) {
         mydesign = SamplerUnif$new(ps)$sample(n)
-        mydesign$data = reset_columns(mydesign$data, p_use_orig = 0.5, max_changed = 1e15, x_interest = x_interest)
+        mydesign$data = reset_columns(mydesign$data, p_use_orig, max_changed = 1e15, x_interest = x_interest)
         mydesign
       }
     } else if (init_strategy == "sd") {
       if (length(sdevs) == 0L) {
         f_design = function(ps, n) {
           mydesign = SamplerUnif$new(ps)$sample(n)
-          mydesign$data = reset_columns(mydesign$data, p_use_orig = 0.5, max_changed = 1e15, x_interest = x_interest)
+          mydesign$data = reset_columns(mydesign$data, p_use_orig, max_changed = 1e15, x_interest = x_interest)
           mydesign
         }
       } else {
@@ -300,7 +300,7 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
           param_set_init = make_param_set(X, lower = lower_bounds, upper = upper_bounds)
           function(ps, n) {
             mydesign = SamplerUnif$new(param_set_init)$sample(n)
-            mydesign$data = reset_columns(mydesign$data, p_use_orig = 0.5, max_changed = 1e15, x_interest = x_interest)
+            mydesign$data = reset_columns(mydesign$data, p_use_orig, max_changed = 1e15, x_interest = x_interest)
             mydesign
           }
         }
@@ -374,7 +374,7 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
           param_set = make_param_set(X, lower = NULL, upper = NULL)
           mydesign = SamplerUnif$new(param_set)$sample(n)
           mydesign$data[sample.int(nrow(mydesign$data), nrow(X_nondom))] = X_nondom
-          mydesign$data = reset_columns(mydesign$data, p_use_orig = 0.5, max_changed = 1e15, x_interest = x_interest)
+          mydesign$data = reset_columns(mydesign$data, p_use_orig, max_changed = 1e15, x_interest = x_interest)
           mydesign
         }
       }
@@ -588,8 +588,3 @@ make_moc_conditional_mutator = function(ps, x_interest, max_changed, p_mut, p_mu
 }
 
 
-quiet = function(x) { 
-  sink(tempfile()) 
-  on.exit(sink()) 
-  invisible(force(x)) 
-} 
