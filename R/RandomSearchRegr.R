@@ -1,38 +1,40 @@
-#' Random Search for Classification Tasks
+#' Random Search for Regression Tasks
 #'
-#' @template moc_info
+#' @template random_search_info
 #'
 #' @examples
 #' \dontrun{
 #' if (require("randomForest")) {
 #'   # Train a model
-#'   rf = randomForest(Species ~ ., data = iris)
+#'   rf = randomForest(mpg ~ ., data = mtcars)
 #'   # Create a predictor object
-#'   predictor = iml::Predictor$new(rf, type = "prob")
+#'   predictor = iml::Predictor$new(rf)
 #'   # Find counterfactuals for x_interest
-#'   rs_classif = RandomSearchClassif$new(predictor, n_generations = 30L)
-#'   cfactuals = rs_classif$find_counterfactuals(
-#'     x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
-#'   )
+#'   rs_regr = RandomSearchRegr$new(predictor, n_generations = 30L)
+#'   cfactuals = rs_regr$find_counterfactuals(x_interest = mtcars[1L, ], desired_outcome = c(22, 26))
 #'   # Print the counterfactuals
 #'   cfactuals$data
-#'   # Plot evolution of hypervolume and mean and minimum objective values
-#'   rs_classif$plot_statistics()
+#'   # Plot evolution of hypervolume and mean and minimum objective values 
+#'   rs_regr$plot_statistics()
 #' }
 #' }
 #'
 #' @export
-RandomSearchClassif = R6::R6Class("RandomSearchClassif",
-  inherit = CounterfactualMethodClassif,
+RandomSearchRegr = R6::R6Class("RandomSearchRegr",
+  inherit = CounterfactualMethodRegr,
   public = list(
-    #' @description Create a new `RandomSearchClassif` object.
+    #' @description Create a new `RandomSearchRegr` object.
     #' @template predictor
     #' @param fixed_features (`character()` | `NULL`)\cr
     #'   Names of features that are not allowed to be changed. `NULL` (default) allows all features to be changed.
     #' @param max_changed (`integerish(1)` | `NULL`)\cr
     #'   Maximum number of feature changes. `NULL` (default) allows any number of changes.
-    #' @param n_samples (`integerish(1)`)\cr
-    #'   The number of random samples drawn. Default is `3500L`.
+    #' @param mu (`integerish(1)`)\cr  
+    #'   The population size. Default is `20L`. The total number of random samples is set to `mu * n_generations`.
+    #'   See @description for further details.
+    #' @param n_generations (`integerish(1)`)\cr  
+    #'   The number of generations. Default is `175L`. The total number of random samples is set to `mu * n_generations`.
+    #'   See @description for further details.
     #' @param p_use_orig (`numeric(1)`)\cr
     #'   Probability with which a feature/gene is reset to its original value in `x_interest` after random sampling. Default is `0.5`.
     #' @param k (`integerish(1)`)\cr
@@ -44,7 +46,6 @@ RandomSearchClassif = R6::R6Class("RandomSearchClassif",
     #' @template lower_upper
     initialize = function(predictor, fixed_features = NULL, max_changed = NULL, mu = 20L, n_generations = 175L,
                           p_use_orig = 0.5, k = 1L, weights = NULL, lower = NULL, upper = NULL) {
-      
       super$initialize(predictor, lower, upper)
 
       if (!is.null(fixed_features)) {
@@ -55,7 +56,7 @@ RandomSearchClassif = R6::R6Class("RandomSearchClassif",
       assert_integerish(n_generations, lower = 1, len = 1L)
       assert_number(k, lower = 1, upper = nrow(private$predictor$data$X))
       assert_numeric(weights, any.missing = FALSE, len = k, null.ok = TRUE)
-      
+
       private$fixed_features = fixed_features
       private$max_changed = max_changed
       private$mu = mu
@@ -126,7 +127,7 @@ RandomSearchClassif = R6::R6Class("RandomSearchClassif",
   private = list(
     fixed_features = NULL,
     max_changed = NULL,
-    mu = NULL, 
+    mu = NULL,
     n_generations = NULL,
     p_use_orig = NULL,
     k = NULL,
@@ -142,15 +143,16 @@ RandomSearchClassif = R6::R6Class("RandomSearchClassif",
       archive_folds
     },
     run = function() {
+      
       pred_column = private$get_pred_column()
       y_hat_interest = private$predictor$predict(private$x_interest)[[pred_column]]
-      private$ref_point = c(min(abs(y_hat_interest - private$desired_prob)), 1, ncol(private$x_interest), 1)
+      private$ref_point = c(min(abs(y_hat_interest - private$desired_outcome)), 1, ncol(private$x_interest), 1)
 
       private$.optimizer = random_search_algo(
         predictor = private$predictor,
         x_interest = private$x_interest,
         pred_column = pred_column,
-        target = private$desired_prob,
+        target = private$desired_outcome,
         param_set = private$param_set,
         lower = private$lower,
         upper = private$upper,

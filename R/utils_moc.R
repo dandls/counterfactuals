@@ -380,7 +380,7 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
       }
       f_design = make_f_design(predictor$data$X, flex_cols, x_interest, sdevs_num_feats)
     }
-    
+
     my_design = f_design(param_set, n)
     x_interest_reorderd = x_interest[, names(my_design$data), with = FALSE]
     

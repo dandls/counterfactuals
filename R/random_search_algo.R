@@ -41,7 +41,7 @@ random_search_algo = function(predictor, x_interest, pred_column, target, param_
     mu = n_samples,
     p_use_orig = p_use_orig
   )
-
+  
   quiet(mies_init_population(inst = oi, mu = n_samples, initializer = pop_initializer))
   bbotk::assign_result_default(oi)
   
