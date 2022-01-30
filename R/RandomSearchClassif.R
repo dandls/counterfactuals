@@ -31,8 +31,12 @@ RandomSearchClassif = R6::R6Class("RandomSearchClassif",
     #'   Names of features that are not allowed to be changed. `NULL` (default) allows all features to be changed.
     #' @param max_changed (`integerish(1)` | `NULL`)\cr
     #'   Maximum number of feature changes. `NULL` (default) allows any number of changes.
-    #' @param n_samples (`integerish(1)`)\cr
-    #'   The number of random samples drawn. Default is `3500L`.
+    #' @param mu (`integerish(1)`)\cr  
+    #'   The population size. Default is `20L`. The total number of random samples is set to `mu * n_generations`.
+    #'   See @description for further details.
+    #' @param n_generations (`integerish(1)`)\cr  
+    #'   The number of generations. Default is `175L`. The total number of random samples is set to `mu * n_generations`.
+    #'   See @description for further details.
     #' @param p_use_orig (`numeric(1)`)\cr
     #'   Probability with which a feature/gene is reset to its original value in `x_interest` after random sampling. Default is `0.5`.
     #' @param k (`integerish(1)`)\cr
@@ -70,6 +74,7 @@ RandomSearchClassif = R6::R6Class("RandomSearchClassif",
     #' @description Plots the evolution of the mean and minimum objective values together with the dominated hypervolume over
     #' the generations. All values for a generation are computed based on all non-dominated individuals that emerged until
     #' that generation.
+    #' TODO: Describe folds
     #' @param centered_obj (`logical(1)`)\cr
     #'   Should the objective values be centered? If set to `FALSE`, each objective value is visualized in a separate plot,
     #'   since they (usually) have different scales. If set to `TRUE` (default), they are visualized in a single plot.
@@ -86,7 +91,8 @@ RandomSearchClassif = R6::R6Class("RandomSearchClassif",
     },
 
     #' @description Calculates the dominated hypervolume of each generation.
-    #'
+    #' TODO: Describe folds
+    #' 
     #' @return A `data.table` with the dominated hypervolume of each generation.
     get_dominated_hv = function() {
       if (is.null(self$optimizer)) {
@@ -97,6 +103,7 @@ RandomSearchClassif = R6::R6Class("RandomSearchClassif",
     },
 
     #' @description Visualizes two selected objective values of all emerged individuals in a scatter plot.
+    #' TODO: Describe folds
     #' @param objectives (`character(2)`)\cr
     #'   The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "nr_changed",
     #'   and "dist_train".
@@ -145,8 +152,8 @@ RandomSearchClassif = R6::R6Class("RandomSearchClassif",
       pred_column = private$get_pred_column()
       y_hat_interest = private$predictor$predict(private$x_interest)[[pred_column]]
       private$ref_point = c(min(abs(y_hat_interest - private$desired_prob)), 1, ncol(private$x_interest), 1)
-
-      private$.optimizer = random_search_algo(
+      
+      private$.optimizer = moc_algo(
         predictor = private$predictor,
         x_interest = private$x_interest,
         pred_column = pred_column,
@@ -154,12 +161,21 @@ RandomSearchClassif = R6::R6Class("RandomSearchClassif",
         param_set = private$param_set,
         lower = private$lower,
         upper = private$upper,
+        sdevs_num_feats = NULL,
+        epsilon = NULL,
         fixed_features = private$fixed_features,
         max_changed = private$max_changed,
-        n_samples = private$n_generations * private$mu,
+        mu = private$mu * private$n_generations,
+        n_generations = 0,
+        p_rec = NULL,
+        p_rec_gen = NULL,
+        p_rec_use_orig = NULL,
+        p_mut = NULL,
+        p_mut_gen = NULL,
+        p_mut_use_orig = NULL,
         k = private$k,
         weights = private$weights,
-        p_use_orig = private$p_use_orig
+        init_strategy = "random"
       )
 
       unique(private$.optimizer$result[, names(private$x_interest), with = FALSE])

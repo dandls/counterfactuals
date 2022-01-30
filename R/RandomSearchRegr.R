@@ -147,8 +147,8 @@ RandomSearchRegr = R6::R6Class("RandomSearchRegr",
       pred_column = private$get_pred_column()
       y_hat_interest = private$predictor$predict(private$x_interest)[[pred_column]]
       private$ref_point = c(min(abs(y_hat_interest - private$desired_outcome)), 1, ncol(private$x_interest), 1)
-
-      private$.optimizer = random_search_algo(
+      
+      private$.optimizer = moc_algo(
         predictor = private$predictor,
         x_interest = private$x_interest,
         pred_column = pred_column,
@@ -156,12 +156,21 @@ RandomSearchRegr = R6::R6Class("RandomSearchRegr",
         param_set = private$param_set,
         lower = private$lower,
         upper = private$upper,
+        sdevs_num_feats = NULL,
+        epsilon = NULL,
         fixed_features = private$fixed_features,
         max_changed = private$max_changed,
-        n_samples = private$n_generations * private$mu,
+        mu = private$mu * private$n_generations,
+        n_generations = 0,
+        p_rec = NULL,
+        p_rec_gen = NULL,
+        p_rec_use_orig = NULL,
+        p_mut = NULL,
+        p_mut_gen = NULL,
+        p_mut_use_orig = NULL,
         k = private$k,
         weights = private$weights,
-        p_use_orig = private$p_use_orig
+        init_strategy = "random"
       )
 
       unique(private$.optimizer$result[, names(private$x_interest), with = FALSE])

@@ -1,12 +1,11 @@
 #' @description 
 #' 
 #' RandomSearch randomly samples a population of candidates and returns non-dominated candidates w.r.t to the objectives
-#' of MOC (Dandl et. al 2020) as counterfactuals. RandomSearch is equal to MOC with zero generations and the `random`
+#' of MOC (Dandl et. al 2020) as counterfactuals. RandomSearch equals MOC with zero generations and the `random`
 #' initialization strategy.
 #' 
 #' 
-#' MOC (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
-#' to minimize are:
+#' The four objectives of MOC (Dandl et. al 2020) to are: 
 #' \enumerate{
 #'    \item {Distance to `desired_prob` (classification tasks) or `desired_prob` (regression tasks).}
 #'    \item {Dissimilarity to `x_interest` measured by Gower's dissimilarity measure (Gower 1971).}
@@ -18,6 +17,9 @@
 #' strategies (Li et al. 2013). 
 #' 
 #' @details 
+#' 
+#' Paramters `mu` and `n_generations` only to be compatible to MOC (to be able to emulate cthe evolution
+#' of the hypervolume over the generations). The total number of samples drawn is `mu` * `n_generations`.
 #' 
 #' Several population initialization strategies are available:
 #' \enumerate{
