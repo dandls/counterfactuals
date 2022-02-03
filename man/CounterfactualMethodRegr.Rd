@@ -12,7 +12,7 @@ by the child classes and return the counterfactuals as a \code{data.table} (pref
 }
 \section{Inheritance}{
 
-Child classes: \link{MOCRegr}, \link{WhatIfRegr}
+Child classes: \link{MOCRegr}, \link{WhatIfRegr}, \link{NICERegr}
 }
 
 \section{Super class}{

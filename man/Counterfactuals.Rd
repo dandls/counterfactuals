@@ -107,7 +107,7 @@ dissimilarity measure (Gower 1971).
 (regression tasks) or \code{desired_prob} (classification tasks).
 \item \code{nr_changed}: The number of feature changes w.r.t. \code{x_interest}.
 \item \code{dist_train}: The (weighted) distance to the \code{k} nearest training data points measured by Gower's
-dissimilarity measure (Gower 1971)
+dissimilarity measure (Gower 1971).
 }}
 
 \item{\code{show_diff}}{(\code{logical(1)})\cr
@@ -141,7 +141,7 @@ Returns the predictions for the counterfactuals.
 \if{html}{\out{<a id="method-plot_parallel"></a>}}
 \if{latex}{\out{\hypertarget{method-plot_parallel}{}}}
 \subsection{Method \code{plot_parallel()}}{
-Plots a parallel plot that connects the (scaled) feature values of each counterfactual and highlights
+Plots a parallel plot that connects the (scaled) numeric feature values of each counterfactual and highlights
 \code{x_interest} in blue.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$plot_parallel(
@@ -208,14 +208,14 @@ A (named) \code{numeric} vector with the frequency of feature changes.
 \if{html}{\out{<a id="method-plot_surface"></a>}}
 \if{latex}{\out{\hypertarget{method-plot_surface}{}}}
 \subsection{Method \code{plot_surface()}}{
-Creates a surface plot for two features. \code{x_interest} is represented as white dot and
+Creates a surface plot for two features. \code{x_interest} is represented as a white dot and
 all counterfactuals that differ from \code{x_interest} \strong{only} in the two selected features are represented as black dots.
-The tick marks next to the axes show the marginal distribution of the counterfactuals. \cr
-The exact plot type depends on the selected feature types:
+The tick marks next to the axes show the marginal distribution of the observed data (\code{predictor$data$X}). \cr
+The exact plot type depends on the selected feature types and number of features:
 \itemize{
-\item 2 \* \code{numeric}: surface plot
-\item 2 \* \code{non-numeric}: heatmap
-\item 1 \* \code{numeric}, 1 \* \code{non-numeric}: line graph
+\item 2 numeric features: surface plot
+\item 2 non-numeric features: heatmap
+\item 1 numeric or non-numeric feature: line graph
 }
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$plot_surface(feature_names, grid_size = 250L)}\if{html}{\out{</div>}}

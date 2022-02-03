@@ -5,9 +5,10 @@
 \title{WhatIf for Classification Tasks}
 \description{
 WhatIf returns the \code{n_counterfactual} most similar observations to \code{x_interest} from observations in \code{predictor$data$X}
-whose prediction for the \code{desired_class} is in the \code{desired_probs} interval.
+whose prediction for the \code{desired_class} is in the \code{desired_prob} interval.
 }
 \details{
+By default, the dissimilarities are computed using Gower's dissimilarity measure (Gower 1971). \cr
 Only observations whose features values lie between the corresponding values in \code{lower} and \code{upper} are considered
 counterfactual candidates.
 }

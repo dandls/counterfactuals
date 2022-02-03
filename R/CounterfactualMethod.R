@@ -1,4 +1,4 @@
-#' Base class for Explanation Counterfactual Methods 
+#' Base class for Counterfactual Explanation Methods
 #' 
 #' @description 
 #' Abstract base class for counterfactual explanation methods.

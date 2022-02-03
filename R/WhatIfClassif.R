@@ -3,9 +3,10 @@
 #' @description 
 #' 
 #' WhatIf returns the `n_counterfactual` most similar observations to `x_interest` from observations in `predictor$data$X` 
-#' whose prediction for the `desired_class` is in the `desired_probs` interval.
+#' whose prediction for the `desired_class` is in the `desired_prob` interval.
 #' 
 #' @details
+#' By default, the dissimilarities are computed using Gower's dissimilarity measure (Gower 1971). \cr
 #' Only observations whose features values lie between the corresponding values in `lower` and `upper` are considered 
 #' counterfactual candidates.
 #' 

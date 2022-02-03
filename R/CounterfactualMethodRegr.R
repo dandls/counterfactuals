@@ -8,7 +8,7 @@
 #' by the child classes and return the counterfactuals as a `data.table` (preferably) or a `data.frame`.
 #' 
 #' @section Inheritance:
-#' Child classes: \link{MOCRegr}, \link{WhatIfRegr}
+#' Child classes: \link{MOCRegr}, \link{WhatIfRegr}, \link{NICERegr}
 #' 
 #' @export
 CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = CounterfactualMethod,
