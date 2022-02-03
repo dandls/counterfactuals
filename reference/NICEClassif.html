@@ -38,6 +38,9 @@ of x_interest with the corresponding value of its most similar (optionally corre
     <li>
       <a href="../articles/how-to-add-new-cf-methods.html">How to extend the package</a>
     </li>
+    <li>
+      <a href="../articles/customized-distance-functions.html">Customized distance functions</a>
+    </li>
   </ul></li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -80,7 +83,6 @@ are returned as counterfactuals: if <code>return_multiple = FALSE</code>, then o
 last iteration is returned as counterfactual; if <code>return_multiple = TRUE</code>, then all instances (of all iterations)
 whose predicted <code>desired_class</code> probability is in the interval <code>desired_prob</code> are returned as counterfactuals.</p>
 <p>If <code>finish_early = FALSE</code> and <code>return_multiple = FALSE</code>, then <code>x_nn</code> is returned as single counterfactual.</p>
-<p>The function computes the dissimilarities using Gower's dissimilarity measure (Gower 1971).</p>
 <p>This NICE implementation corresponds to the original version of Brughmans and Martens (2021) when
 <code>return_multiple = FALSE</code>, <code>finish_early = TRUE</code>, and <code>x_nn_correct_classif = TRUE</code>.</p>
     </div>
@@ -129,7 +131,8 @@ reward values and their predictions.</p></dd>
   optimization <span class="op">=</span> <span class="st">"sparsity"</span>,
   x_nn_correct_classif <span class="op">=</span> <span class="cn">TRUE</span>,
   return_multiple <span class="op">=</span> <span class="cn">TRUE</span>,
-  finish_early <span class="op">=</span> <span class="cn">TRUE</span>
+  finish_early <span class="op">=</span> <span class="cn">TRUE</span>,
+  distance_function <span class="op">=</span> <span class="cn">NULL</span>
 <span class="op">)</span></code></pre></div><p></p></div>
 </div>
 
@@ -161,6 +164,13 @@ prediction is in the interval <code>desired_prob</code>. For more information, s
 <dd><p>(<code>logical(1)</code>)<br>
 Should the algorithm terminate after an iteration in which the <code>desired_class</code> prediction for the highest reward instance
 is in the interval <code>desired_prob</code>. If <code>FALSE</code>, the algorithm continues until <code>x_nn</code> is recreated.</p></dd>
+
+
+<dt><code>distance_function</code></dt>
+<dd><p>(<code>function()</code> | <code>NULL</code>)<br>
+The distance function used to compute the distances between <code>x_interest</code> and the training data points for finding <code>x_nn</code>.
+The function must have three arguments: <code>x</code>, <code>y</code>, and <code>data</code> and return a <code>double</code> matrix with <code>nrow(x)</code> rows
+and <code>nrow(y)</code> columns. If set to <code>NULL</code> (default), then Gower distance (Gower 1971) is used.</p></dd>
 
 
 </dl><p></p></div>

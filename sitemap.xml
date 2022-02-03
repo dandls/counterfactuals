@@ -7,6 +7,9 @@
     <loc>/LICENSE.html</loc>
   </url>
   <url>
+    <loc>/articles/customized-distance-functions.html</loc>
+  </url>
+  <url>
     <loc>/articles/how-to-add-new-cf-methods.html</loc>
   </url>
   <url>
@@ -58,9 +61,15 @@
     <loc>/reference/dist_to_interval.html</loc>
   </url>
   <url>
+    <loc>/reference/eval_distance.html</loc>
+  </url>
+  <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
     <loc>/reference/make_param_set.html</loc>
+  </url>
+  <url>
+    <loc>/reference/smallest_n_indices.html</loc>
   </url>
 </urlset>

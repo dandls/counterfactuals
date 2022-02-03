@@ -55,6 +55,9 @@
     <li>
       <a href="../articles/how-to-add-new-cf-methods.html">How to extend the package</a>
     </li>
+    <li>
+      <a href="../articles/customized-distance-functions.html">Customized distance functions</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -87,7 +90,6 @@
 <p>In the following, we explain the <code>counterfactuals</code> workflow for both a classification and a regression task using concrete use cases.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/TODO" class="external-link">counterfactuals</a></span><span class="op">)</span>
-<span class="co">#&gt; Warning in register(): Can't find generic `scale_type` in package ggplot2 to register S3 method.</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://christophm.github.io/iml/" class="external-link">iml</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/" class="external-link">randomForest</a></span><span class="op">)</span></code></pre></div>
 <div class="section level3">
@@ -236,35 +238,35 @@ Since we want to apply MOC to a classification model, we initialize a <code>MOCC
 <p>Printing a <code>Counterfactuals</code> object, gives an overview of the results.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cfactuals</span><span class="op">)</span>
-<span class="co">#&gt; 289 Counterfactual(s) </span>
+<span class="co">#&gt; 346 Counterfactual(s) </span>
 <span class="co">#&gt;  </span>
 <span class="co">#&gt; Desired class: pos </span>
 <span class="co">#&gt; Desired predicted probability range: [0, 0.4] </span>
 <span class="co">#&gt;  </span>
 <span class="co">#&gt; Head: </span>
-<span class="co">#&gt;    pregnant glucose pressure triceps insulin mass  pedigree age</span>
-<span class="co">#&gt; 1:        7     148       70      33     145 25.1 0.1630000  55</span>
-<span class="co">#&gt; 2:        7     142       70      33     145 25.1 0.1630000  55</span>
-<span class="co">#&gt; 3:        7     130       70      33     145 25.1 0.6711319  55</span></code></pre></div>
+<span class="co">#&gt;    pregnant glucose pressure triceps insulin mass pedigree age</span>
+<span class="co">#&gt; 1:        7     141       70      33     145 25.1    0.163  55</span>
+<span class="co">#&gt; 2:        7     145       70      33     145 25.1    0.163  55</span>
+<span class="co">#&gt; 3:        7     147       70      33     145 25.1    0.163  55</span></code></pre></div>
 <p>The <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> method returns the predictions for the counterfactuals.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cfactuals</span><span class="op">$</span><span class="va">data</span>, <span class="va">cfactuals</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="fl">5L</span><span class="op">)</span>
-<span class="co">#&gt;    pregnant glucose pressure triceps insulin mass  pedigree age   neg   pos</span>
-<span class="co">#&gt; 1:        7     148       70      33     145 25.1 0.1630000  55 0.618 0.382</span>
-<span class="co">#&gt; 2:        7     142       70      33     145 25.1 0.1630000  55 0.700 0.300</span>
-<span class="co">#&gt; 3:        7     130       70      33     145 25.1 0.6711319  55 0.700 0.300</span>
-<span class="co">#&gt; 4:        7     137       70      33     145 25.1 0.1630000  55 0.726 0.274</span>
-<span class="co">#&gt; 5:        7     141       70      33     145 25.1 0.1630000  55 0.714 0.286</span></code></pre></div>
+<span class="co">#&gt;    pregnant glucose pressure triceps insulin mass pedigree age   neg   pos</span>
+<span class="co">#&gt; 1:        7     141       70      33     145 25.1    0.163  55 0.714 0.286</span>
+<span class="co">#&gt; 2:        7     145       70      33     145 25.1    0.163  55 0.660 0.340</span>
+<span class="co">#&gt; 3:        7     147       70      33     145 25.1    0.163  55 0.628 0.372</span>
+<span class="co">#&gt; 4:        7     143       70      33     145 25.1    0.163  55 0.684 0.316</span>
+<span class="co">#&gt; 5:        7     137       70      33     145 25.1    0.163  55 0.726 0.274</span></code></pre></div>
 <p>The <code>evaluate()</code> method returns the counterfactuals along with the evaluation measures <code>dist_x_interest</code>, <code>dist_target</code>, <code>nr_changed</code>, and <code>dist_train</code>.<br>
 Setting the <code>show_diff</code> argument to <code>TRUE</code> displays the counterfactuals as their difference to <code>x_interest</code>: for a numeric feature, positive values indicate an increase compared to the feature value in <code>x_interest</code> and negative values indicate a decrease; for factors, the counterfactual feature value is displayed if it differs from <code>x_interest.</code>; <code>NA</code> means “no difference” in both cases.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span>show_diff <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="fl">5L</span><span class="op">)</span>
-<span class="co">#&gt;    pregnant glucose pressure triceps insulin mass  pedigree age dist_x_interest nr_changed dist_train dist_target</span>
-<span class="co">#&gt; 1:       NA     -47       NA      NA      NA   NA        NA  NA      0.02952261          1 0.05779453           0</span>
-<span class="co">#&gt; 2:       NA     -53       NA      NA      NA   NA        NA  NA      0.03329146          1 0.05402569           0</span>
-<span class="co">#&gt; 3:       NA     -65       NA      NA      NA   NA 0.5081319  NA      0.06794976          2 0.02948106           0</span>
-<span class="co">#&gt; 4:       NA     -58       NA      NA      NA   NA        NA  NA      0.03643216          1 0.05088498           0</span>
-<span class="co">#&gt; 5:       NA     -54       NA      NA      NA   NA        NA  NA      0.03391960          1 0.05339755           0</span></code></pre></div>
+<span class="co">#&gt;    pregnant glucose pressure triceps insulin mass pedigree age dist_x_interest nr_changed dist_train dist_target</span>
+<span class="co">#&gt; 1:       NA     -54       NA      NA      NA   NA       NA  NA      0.03391960          1 0.05339755           0</span>
+<span class="co">#&gt; 2:       NA     -50       NA      NA      NA   NA       NA  NA      0.03140704          1 0.05591011           0</span>
+<span class="co">#&gt; 3:       NA     -48       NA      NA      NA   NA       NA  NA      0.03015075          1 0.05716639           0</span>
+<span class="co">#&gt; 4:       NA     -52       NA      NA      NA   NA       NA  NA      0.03266332          1 0.05465383           0</span>
+<span class="co">#&gt; 5:       NA     -58       NA      NA      NA   NA       NA  NA      0.03643216          1 0.05088498           0</span></code></pre></div>
 <p>The <code>plot_freq_of_feature_changes()</code> method plots the frequency of feature changes across all counterfactuals.<br>
 Setting <code>subset_zero = TRUE</code> removes all unchanged features from the plot.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
@@ -348,9 +350,9 @@ Setting <code>subset_zero = TRUE</code> removes all unchanged features from the 
 <span class="co">#&gt;  </span>
 <span class="co">#&gt; Head: </span>
 <span class="co">#&gt;       crim zn indus chas   nox    rm  age    dis rad tax ptratio      b lstat</span>
-<span class="co">#&gt; 1: 0.10008  0  2.46    0 0.488 6.563 95.6 2.8470   3 193    17.8 396.90  5.68</span>
-<span class="co">#&gt; 2: 0.02187 60  2.93    0 0.401 6.800  9.9 6.2196   1 265    15.6 393.37  5.03</span>
-<span class="co">#&gt; 3: 0.06888  0  2.46    0 0.488 6.144 62.2 2.5979   3 193    17.8 396.90  9.45</span></code></pre></div>
+<span class="co">#&gt; 1: 0.06888  0  2.46    0 0.488 6.144 62.2 2.5979   3 193    17.8 396.90  9.45</span>
+<span class="co">#&gt; 2: 0.07875 45  3.44    0 0.437 6.782 41.1 3.7886   5 398    15.2 393.87  6.68</span>
+<span class="co">#&gt; 3: 0.10008  0  2.46    0 0.488 6.563 95.6 2.8470   3 193    17.8 396.90  5.68</span></code></pre></div>
 </div>
 </div>
 <div class="section level2">

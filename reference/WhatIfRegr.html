@@ -38,6 +38,9 @@ whose prediction is in the desired_outcome interval."><!-- mathjax --><script sr
     <li>
       <a href="../articles/how-to-add-new-cf-methods.html">How to extend the package</a>
     </li>
+    <li>
+      <a href="../articles/customized-distance-functions.html">Customized distance functions</a>
+    </li>
   </ul></li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -64,8 +67,7 @@ whose prediction is in the <code>desired_outcome</code> interval.</p>
 
     <div id="details">
     <h2>Details</h2>
-    <p>The dissimilarities are computed using Gower's dissimilarity measure (Gower 1971). <br>
-Only observations whose features values lie between the corresponding values in <code>lower</code> and <code>upper</code> are considered
+    <p>Only observations whose features values lie between the corresponding values in <code>lower</code> and <code>upper</code> are considered
 counterfactual candidates.</p>
     </div>
     <div id="references">
@@ -92,7 +94,13 @@ Interactive probing of machine learning models. IEEE transactions on visualizati
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create a new WhatIfRegr object.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va"><a href="../reference/WhatIfRegr.html">WhatIfRegr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predictor</span>, n_counterfactuals <span class="op">=</span> <span class="fl">1L</span>, lower <span class="op">=</span> <span class="cn">NULL</span>, upper <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va"><a href="../reference/WhatIfRegr.html">WhatIfRegr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>
+  <span class="va">predictor</span>,
+  n_counterfactuals <span class="op">=</span> <span class="fl">1L</span>,
+  lower <span class="op">=</span> <span class="cn">NULL</span>,
+  upper <span class="op">=</span> <span class="cn">NULL</span>,
+  distance_function <span class="op">=</span> <span class="cn">NULL</span>
+<span class="op">)</span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -119,6 +127,13 @@ If not <code>NULL</code>, it should be named with the corresponding feature name
 Vector of maximum values for numeric features.
 If <code>NULL</code> (default), the element for each numeric feature in <code>upper</code> is taken as its maximum value in <code>predictor$data$X</code>.
 If not <code>NULL</code>, it should be named with the corresponding feature names.</p></dd>
+
+
+<dt><code>distance_function</code></dt>
+<dd><p>(<code>function()</code> | <code>NULL</code>)<br>
+The distance function used to compute the distances between <code>x_interest</code> and the training data points.
+The function must have three arguments: <code>x</code>, <code>y</code>, and <code>data</code> and return a <code>double</code> matrix with <code>nrow(x)</code> rows
+and <code>nrow(y)</code> columns. If set to <code>NULL</code> (default), then Gower distance (Gower 1971) is used.</p></dd>
 
 
 </dl><p></p></div>

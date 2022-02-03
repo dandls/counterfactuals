@@ -47,6 +47,9 @@ Default values for the hyperparameters are based on Dandl et al. 2020."><!-- mat
     <li>
       <a href="../articles/how-to-add-new-cf-methods.html">How to extend the package</a>
     </li>
+    <li>
+      <a href="../articles/customized-distance-functions.html">Customized distance functions</a>
+    </li>
   </ul></li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -98,15 +101,15 @@ For details see Dandl et al. 2020.</p>
     </div>
     <div id="references">
     <h2>References</h2>
-    <p>Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “Multi-Objective Counterfactual Explanations.”
-In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr,
-Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Publishing.</p>
+    <p>Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. â€œMulti-Objective Counterfactual Explanations.â€
+In Parallel Problem Solving from Nature â€“ PPSN XVI, edited by Thomas BÃ¤ck, Mike Preuss, AndrÃ© Deutz, Hao Wang, Carola Doerr,
+Michael Emmerich, and Heike Trautmann, 448â€“69. Cham: Springer International Publishing.</p>
 <p>Deb, K., Pratap, A., Agarwal, S., &amp; Meyarivan, T. A. M. T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
 IEEE transactions on evolutionary computation, 6(2), 182-197.</p>
 <p>Goldstein, Alex, Adam Kapelner, Justin Bleich, and Emil Pitkin. 2015. "Peeking Inside the Black Box: Visualizing
 Statistical Learning with Plots of Individual Conditional Expectation." Journal of Computational and Graphical
-Statistics 24 (1): 44–65. https: //doi.org/10.1080/10618600.2014.907095.</p>
-<p>Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.</p>
+Statistics 24 (1): 44â€“65. https: //doi.org/10.1080/10618600.2014.907095.</p>
+<p>Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623â€“637.</p>
 <p>Hothorn, T., Zeileis, A. (2017), "Transformation Forests". Technical Report, arXiv 1701.02110, https://arxiv.org/abs/1701.02110.</p>
 <p>Li, Rui, Michael T. M. Emmerich, Jeroen Eggermont, Thomas Bäck, M. Schütz, J. Dijkstra, and J. H. C. Reiber. 2013.
 "Mixed Integer Evolution Strategies for Parameter Optimization." Evolutionary Computation 21 (1): 29–64. https:
@@ -161,7 +164,8 @@ The object used for optimization.</p></dd>
   upper <span class="op">=</span> <span class="cn">NULL</span>,
   init_strategy <span class="op">=</span> <span class="st">"random"</span>,
   use_conditional_mutator <span class="op">=</span> <span class="cn">FALSE</span>,
-  quiet <span class="op">=</span> <span class="cn">FALSE</span>
+  quiet <span class="op">=</span> <span class="cn">FALSE</span>,
+  distance_function <span class="op">=</span> <span class="cn">NULL</span>
 <span class="op">)</span></code></pre></div><p></p></div>
 </div>
 
@@ -269,6 +273,13 @@ on the values of the other feature. Default is <code>FALSE</code>.</p></dd>
 <dt><code>quiet</code></dt>
 <dd><p>(<code>logical(1)</code>)<br>
 Should information about the optimization status be hidden? Default is <code>FALSE</code>.</p></dd>
+
+
+<dt><code>distance_function</code></dt>
+<dd><p>(<code>function()</code> | <code>NULL</code>)<br>
+The distance function to be used in the second and fourth objective. The function must have three arguments:
+<code>x</code>, <code>y</code>, and <code>data</code> and return a <code>double</code> matrix with <code>nrow(x)</code> rows and <code>nrow(y)</code> columns.
+If set to <code>NULL</code> (default), then Gower distance (Gower 1971) is used.</p></dd>
 
 
 </dl><p></p></div>
