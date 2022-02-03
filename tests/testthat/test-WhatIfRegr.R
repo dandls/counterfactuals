@@ -58,6 +58,26 @@ test_that("Correct handling of lower and upper", {
   
 })
 
+test_that("distance_function can be exchanged", {
+  set.seed(54542142)
+  mydf = mtcars
+  rf = randomForest(mpg ~ ., data = mydf, ntree = 5L)
+  pred = iml::Predictor$new(rf, data = mydf, y = "mpg")
+  n = 3L
+  x_interest = mydf[1, ]
+  
+  correct_dist_function = function(x, y, data) {
+    res = matrix(NA, nrow = nrow(x), ncol = nrow(y))
+    for (i in 1:nrow(x)) for (j in 1:nrow(y)) res[i, j] = sqrt(sum(((x[i, ] - y[j, ])^2)))
+    res
+  }
+  wi = WhatIfRegr$new(
+    pred, n_counterfactuals = n, 
+    distance_function = correct_dist_function  
+  )
+  cfactuals = wi$find_counterfactuals(x_interest, desired_outcome = c(22, 25))
+  expect_data_table(cfactuals$data, nrows = n)
+})
 
 
 

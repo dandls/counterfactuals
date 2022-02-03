@@ -60,18 +60,19 @@ if (require("randomForest")) {
 
 }
 \references{
-Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “Multi-Objective Counterfactual Explanations.”
-In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr,
-Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Publishing.
+Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. â€œMulti-Objective Counterfactual Explanations.â€
+In Parallel Problem Solving from Nature â€“ PPSN XVI, edited by Thomas BÃ¤ck, Mike Preuss, AndrÃ© Deutz, Hao Wang, Carola Doerr,
+Michael Emmerich, and Heike Trautmann, 448â€“69. Cham: Springer International Publishing.
 
 Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. A. M. T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
 IEEE transactions on evolutionary computation, 6(2), 182-197.
 
 Goldstein, Alex, Adam Kapelner, Justin Bleich, and Emil Pitkin. 2015. "Peeking Inside the Black Box: Visualizing
 Statistical Learning with Plots of Individual Conditional Expectation." Journal of Computational and Graphical
-Statistics 24 (1): 44–65. https: //doi.org/10.1080/10618600.2014.907095.
+Statistics 24 (1): 44â€“65. https: //doi.org/10.1080/10618600.2014.907095.
 
-Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
+Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623â€“637.
+
 
 Hothorn, T., Zeileis, A. (2017), "Transformation Forests". Technical Report, arXiv 1701.02110, https://arxiv.org/abs/1701.02110.
 
@@ -133,7 +134,8 @@ Create a new \code{MOCClassif} object.
   upper = NULL,
   init_strategy = "random",
   use_conditional_mutator = FALSE,
-  quiet = FALSE
+  quiet = FALSE,
+  distance_function = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -205,6 +207,11 @@ on the values of the other feature. Default is \code{FALSE}.}
 
 \item{\code{quiet}}{(\code{logical(1)})\cr
 Should information about the optimization status be hidden? Default is \code{FALSE}.}
+
+\item{\code{distance_function}}{(\verb{function()} | \code{NULL})\cr
+The distance function to be used in the second and fourth objective. The function must have three arguments:
+\code{x}, \code{y}, and \code{data} and return a \code{double} matrix with \code{nrow(x)} rows and \code{nrow(y)} columns.
+If set to \code{NULL} (default), then Gower distance (Gower 1971) is used.}
 }
 \if{html}{\out{</div>}}
 }

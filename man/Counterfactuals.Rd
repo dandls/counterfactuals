@@ -24,6 +24,11 @@ The counterfactuals for \code{x_interest}.}
 
 \item{\code{x_interest}}{(\code{data.table(1)}) \cr
 A single row with the observation of interest.}
+
+\item{\code{distance_function}}{(\verb{function()}) \cr
+The distance function used in the second and fourth evaluation measure.
+The function must have three arguments:
+\code{x}, \code{y}, and \code{data} and return a \code{double} matrix. If set to \code{NULL} (default), then Gower distance (Gower 1971) is used.}
 }
 \if{html}{\out{</div>}}
 }

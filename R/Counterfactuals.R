@@ -56,6 +56,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       private$.data = cfactuals
       private$.x_interest = x_interest
       private$.desired = desired
+      private$.distance_function = gower_dist
     },
     
     #' @description 
@@ -100,8 +101,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
       
       if ("dist_x_interest" %in% measures) {
-        ranges = private$param_set$upper - private$param_set$lower
-        evals$dist_x_interest = as.vector(StatMatch::gower.dist(private$.x_interest, private$.data, rngs = ranges, KR.corr = FALSE))
+        evals$dist_x_interest = as.vector(eval_distance(private$.distance_function, private$.data, private$.x_interest, private$predictor$data$X))
       }
       
       if ("nr_changed" %in% measures) {
@@ -109,7 +109,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
       
       if ("dist_train" %in% measures) {
-        evals$dist_train = gower_topn(private$.data, private$predictor$data$X, n = 1L)$distance[1L, ]
+        dist_matrix = eval_distance(private$.distance_function, private$.data, private$predictor$data$X, private$predictor$data$X)
+        evals$dist_train = t(apply(dist_matrix, 1L, function(x) sort(x)))[, 1L]
       }
       
       if ("dist_target" %in% measures) {
@@ -293,7 +294,6 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       cat("Head: \n")
       print(head(private$.data, 3L))
     }
-
   ),
   active = list(
     #' @field desired (`list(1)` | `list(2)`)\cr
@@ -324,6 +324,18 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       } else {
         stop("`$x_interest` is read only", call. = FALSE)
       }
+    },
+    #' @field distance_function (`function()`) \cr
+    #'  The distance function used in the second and fourth evaluation measure.
+    #'  The function must have three arguments:
+    #'  `x`, `y`, and `data` and return a `double` matrix. If set to `NULL` (default), then Gower distance (Gower 1971) is used.
+    distance_function = function(value) {
+      if (missing(value)) {
+        private$.distance_function
+      } else {
+        assert_function(value, args = c("x", "y", "data"), ordered = TRUE)
+        private$.distance_function = value
+      }
     }
   ),
   private = list(
@@ -334,6 +346,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     .desired = NULL,
     .data = NULL,
     .x_interest = NULL,
+    .distance_function = NULL,
     
     get_pred_column = function() {
       if (private$predictor$task == "classification") {

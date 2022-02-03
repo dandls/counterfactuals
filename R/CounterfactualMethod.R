@@ -12,12 +12,17 @@ CounterfactualMethod = R6::R6Class("CounterfactualMethod",
     #' @description Creates a new `CounterfactualMethod` object.
     #' @template predictor
     #' @template lower_upper
-    initialize = function(predictor, lower = NULL, upper = NULL) {
+    #' @param distance_function (`function()` | `NULL`)\cr 
+    #'  A distance function that may be used by the leaf classes. 
+    #'  If specified, the function must have three arguments: `x`, `y`, and `data` and return a `double` matrix with `nrow(x)`  
+    #'  rows and `nrow(y)` columns.
+    initialize = function(predictor, lower = NULL, upper = NULL, distance_function = NULL) {
       assert_class(predictor, "Predictor")
       assert_numeric(lower, null.ok = TRUE)
       assert_numeric(upper, null.ok = TRUE)
       assert_true(all(names(lower) %in% names(predictor$data$X)))
       assert_true(all(names(upper) %in% names(predictor$data$X)))
+      assert_function(distance_function, args = c("x", "y", "data"), ordered = TRUE, null.ok = TRUE)
       
       # If the task could not be derived from the model, then we infer it from the prediction of some training data
       if (predictor$task == "unknown") {
@@ -32,6 +37,7 @@ CounterfactualMethod = R6::R6Class("CounterfactualMethod",
       private$param_set = make_param_set(predictor$data$X, lower, upper)
       private$lower = lower
       private$upper = upper
+      private$distance_function = distance_function
     },
     
     #' @description 
@@ -50,6 +56,7 @@ CounterfactualMethod = R6::R6Class("CounterfactualMethod",
     param_set = NULL,
     lower = NULL,
     upper = NULL,
+    distance_function = NULL,
     
     run = function() stop("abstract"),
     

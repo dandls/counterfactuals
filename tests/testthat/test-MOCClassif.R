@@ -61,6 +61,37 @@ test_that("Can handle ordered factor input columns", {
 })
 
 
+test_that("Can handle ordered factor input columns", {
+  set.seed(5748554)
+  data("german", package = "rchallenge")
+  rf =  randomForest(credit_risk ~ ., data = german)
+  x_interest = german[991L, -ncol(german)]
+  pred_credit = iml::Predictor$new(rf, data = german, y = "credit_risk", type = "prob")
+  moc_classif = MOCClassif$new(
+    pred_credit, n_generations = 3L, fixed_features = c("personal_status_sex", "age"), max_changed = 4L
+  )
+  expect_snapshot({
+    cfactuals = quiet(moc_classif$find_counterfactuals(x_interest, desired_class = "good", desired_prob = c(0.8 , 1)))
+  })
+  expect_data_table(cfactuals$data, col.names = "named")
+  expect_factor(cfactuals$data$installment_rate, levels = levels(german$installment_rate), ordered = TRUE)
+  expect_names(names(cfactuals$data), identical.to = names(x_interest))
+})
 
 
-
+test_that("distance_function can be exchanged", {
+  set.seed(54542142)
+  rf = get_rf_classif_iris()
+  iris_pred = iml::Predictor$new(rf, type = "prob")
+  x_interest = iris[1L, ]
+  correct_dist_function = function(x, y, data) {
+    res = matrix(NA, nrow = nrow(x), ncol = nrow(y))
+    for (i in 1:nrow(x)) for (j in 1:nrow(y)) res[i, j] = sqrt(sum(((x[i, ] - y[j, ])^2)))
+    res
+  }
+  moc_classif = MOCClassif$new(
+    iris_pred, n_generations = 3L, distance_function = correct_dist_function, quiet = TRUE
+  )
+  cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = c(0.5, 1))
+  expect_data_table(cfactuals$data)
+})
