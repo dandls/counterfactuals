@@ -10,7 +10,7 @@ smallest_n_indices(x, n = 1L)
 \item{x}{(\code{numeric()})\cr
 A numeric vector.}
 
-\item{interval}{(\code{numeric(2)})\cr
+\item{n}{(\code{numeric(1)})\cr
 A integer indicating how many elements should be returned}
 }
 \description{

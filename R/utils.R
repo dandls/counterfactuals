@@ -2,7 +2,7 @@
 #' 
 #' @param x (`numeric()`)\cr
 #'   A numeric vector.
-#' @param interval (`numeric(2)`)\cr
+#' @param n (`numeric(1)`)\cr
 #'   A integer indicating how many elements should be returned
 smallest_n_indices = function(x, n = 1L) {
   assert_numeric(x)
