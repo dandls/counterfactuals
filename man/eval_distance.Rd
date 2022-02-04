@@ -11,10 +11,10 @@ eval_distance(distance_function, x, y, data = NULL)
 A distance function to evaluate.}
 
 \item{x}{(\code{data.frame() | numeric()})\cr
-A vector, a matrix or a data frame containing variables that should be used in the computation of the distance.}
+A matrix or a data frame containing variables that should be used in the computation of the distance.}
 
 \item{y}{(\code{data.frame() | numeric()})\cr
-A vector, a matrix or a data.frame containing variables that should be used in the computation of the distance.}
+A matrix or a data.frame containing variables that should be used in the computation of the distance.}
 
 \item{data}{(\code{data.frame()} | \code{NULL})\cr
 A data.frame or data.table containing the entire data set. This can be used to compute statistics used in the
@@ -22,5 +22,5 @@ computation of the distance, e.g., standard deviation or range.}
 }
 \description{
 This function serves as an evaluation wrapper for some distance function. It checks that the output
-of \code{distance_function} is a \code{double} matrix with \code{nrow(x)} rows and \code{nrow(y)} columns as expected.
+of \code{distance_function} is a \code{numeric} matrix with \code{nrow(x)} rows and \code{nrow(y)} columns as expected.
 }

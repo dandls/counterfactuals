@@ -2,15 +2,18 @@ Package: counterfactuals
 Type: Package
 Title: Counterfactual Explanations
 Version: 0.9.0
-Date: 2019-02-01
 Authors@R: c(
         person("Susanne", "Dandl", email = "dandl.susanne@googlemail.com", role = c("aut", "cre")),
-        person("Andreas", "Hofheinz", email = "andreas.hofheinz@outlook.com", role = c("aut"))
+        person("Andreas", "Hofheinz", email = "andreas.hofheinz@outlook.com", role = c("aut")),
+	person("Martin", "Binder", email = "developer.mb706@mb706.com", role = c("aut")),
+	person("Giuseppe","Casalicchio", email = "giuseppe.casalicchio@stat.uni-muenchen.de", role = c("aut"))
     )
 Maintainer: Susanne Dandl <dandl.susanne@googlemail.com>
-Description: Counterfactuals as described in <doi:DOI>.
-URL: https://github.com/TODO
-BugReports: https://github.com/TODO/issues
+Description:  Provides a modular and unified R6-based interface for counterfactual explanation methods.
+URL: https://github.com/dandls/counterfactuals
+BugReports: https://github.com/dandls/counterfactuals/issues
+Depends:
+    R (>= 3.1.0)
 Imports: 
     R6,
     checkmate,
@@ -22,7 +25,7 @@ Imports:
     bbotk,
     gower,
     ecr
-Suggests: 
+Suggests:
     randomForest,
     GGally,
     trtf,
@@ -39,7 +42,7 @@ Suggests:
     basefun,
     featureTweakR,
     mlbench
-License: GPL (>= 3)
+License: LGPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.2
 VignetteBuilder: knitr

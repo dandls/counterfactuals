@@ -58,18 +58,18 @@ if (require("randomForest")) {
 
 }
 \references{
-Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. â€œMulti-Objective Counterfactual Explanations.â€
-In Parallel Problem Solving from Nature â€“ PPSN XVI, edited by Thomas BÃ¤ck, Mike Preuss, AndrÃ© Deutz, Hao Wang, Carola Doerr,
-Michael Emmerich, and Heike Trautmann, 448â€“69. Cham: Springer International Publishing.
+Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “Multi-Objective Counterfactual Explanations.”
+In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr,
+Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Publishing.
 
 Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. A. M. T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
 IEEE transactions on evolutionary computation, 6(2), 182-197.
 
 Goldstein, Alex, Adam Kapelner, Justin Bleich, and Emil Pitkin. 2015. "Peeking Inside the Black Box: Visualizing
 Statistical Learning with Plots of Individual Conditional Expectation." Journal of Computational and Graphical
-Statistics 24 (1): 44â€“65. https: //doi.org/10.1080/10618600.2014.907095.
+Statistics 24 (1): 44–65. https: //doi.org/10.1080/10618600.2014.907095.
 
-Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623â€“637.
+Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
 
 Hothorn, T., Zeileis, A. (2017), "Transformation Forests". Technical Report, arXiv 1701.02110, https://arxiv.org/abs/1701.02110.
 
