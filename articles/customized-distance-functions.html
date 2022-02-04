@@ -64,7 +64,14 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/dandls/counterfactuals/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -80,7 +87,7 @@
       <h1 data-toc-skip>Customized distance functions</h1>
             
       
-      <small class="dont-index">Source: <a href="NA/NA/NA/blob/HEAD/vignettes/customized-distance-functions.Rmd"><code>vignettes/customized-distance-functions.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/dandls/counterfactuals/blob/HEAD/vignettes/customized-distance-functions.Rmd" class="external-link"><code>vignettes/customized-distance-functions.Rmd</code></a></small>
       <div class="hidden name"><code>customized-distance-functions.Rmd</code></div>
 
     </div>
@@ -92,7 +99,7 @@
 <h3 id="set-up">Set up<a class="anchor" aria-label="anchor" href="#set-up"></a>
 </h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/TODO" class="external-link">counterfactuals</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dandls/counterfactuals" class="external-link">counterfactuals</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/" class="external-link">randomForest</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://christophm.github.io/iml/" class="external-link">iml</a></span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -152,13 +159,13 @@
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="op">)</span>, <span class="fl">3L</span><span class="op">)</span>
 <span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width dist_x_interest nr_changed</span>
-<span class="co">#&gt; 1:     5.900000           3     5.100000    1.623169       0.2316966          1</span>
-<span class="co">#&gt; 2:     6.006049           3     4.475393    1.695080       0.4000380          3</span>
-<span class="co">#&gt; 3:     5.900000           3     4.062636    1.572000       0.6584805          2</span>
+<span class="co">#&gt; 1:          5.9     3.00000     4.535733     1.80000      0.31919340          1</span>
+<span class="co">#&gt; 2:          5.9     3.00000     5.100000     1.74635      0.07029572          1</span>
+<span class="co">#&gt; 3:          5.9     3.20028     5.100000     1.80000      0.45798116          1</span>
 <span class="co">#&gt;    dist_train dist_target</span>
-<span class="co">#&gt; 1:  0.3113983           0</span>
-<span class="co">#&gt; 2:  0.2294979           0</span>
-<span class="co">#&gt; 3:  0.1222202           0</span></code></pre></div>
+<span class="co">#&gt; 1:  0.1919209        0.00</span>
+<span class="co">#&gt; 2:  0.2196066        0.09</span>
+<span class="co">#&gt; 3:  0.1697046        0.29</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -180,7 +187,7 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Susanne Dandl, Andreas Hofheinz.</p>
+<p>Developed by Susanne Dandl, Andreas Hofheinz, Martin Binder, Giuseppe Casalicchio.</p>
 </div>
 
 <div class="pkgdown">

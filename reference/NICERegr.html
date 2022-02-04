@@ -46,7 +46,13 @@ While the original method is only applicable to classification tasks (see NICECl
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/dandls/counterfactuals/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -56,7 +62,7 @@ While the original method is only applicable to classification tasks (see NICECl
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>NICE (Nearest Instance Counterfactual Explanations) for Regression Tasks</h1>
-    <small class="dont-index">Source: <a href="NA/NA/NA/blob/HEAD/R/NICERegr.R"><code>R/NICERegr.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/dandls/counterfactuals/blob/HEAD/R/NICERegr.R" class="external-link"><code>R/NICERegr.R</code></a></small>
     <div class="hidden name"><code>NICERegr.Rd</code></div>
     </div>
 
@@ -71,8 +77,8 @@ While the original method is only applicable to classification tasks (see <a hre
     <h2>Details</h2>
     <p>NICE starts the counterfactual search for <code>x_interest</code> by finding its most similar (optionally) correctly predicted
 neighbor <code>x_nn</code> with(in) the desired prediction (range). Correctly predicted means that the prediction of <code>x_nn</code> is less
-than a user-specified <code>margin_correct_classif</code> away from the true outcome of <code>x_nn</code>.</p>
-<p><br>
+than a user-specified <code>margin_correct_classif</code> away from the true outcome of <code>x_nn</code>.
+<br>
 In the first iteration, NICE creates new instances by replacing a different feature value of <code>x_interest</code> with the corresponding
 value of <code>x_nn</code> in each new instance. Thus, if <code>x_nn</code> differs from <code>x_interest</code> in <code>d</code> features, <code>d</code> new instances are created. <br>
 Then, the reward values for the created instances are computed with the chosen reward function.
@@ -173,9 +179,9 @@ prediction is in the interval <code>desired_outcome</code>. For more information
 
 
 <dt><code>finish_early</code></dt>
-<dd><p>(<code>logical(1)</code>)<br></p>
-<p>Should the algorithm terminate after an iteration in which the <code>desired_class</code> prediction for the highest reward instance
-is in the interval <code>desired_prob</code>. If <code>FALSE</code>, the algorithm continues until <code>x_nn</code> is recreated.</p></dd>
+<dd><p>(<code>logical(1)</code>)<br>
+Should the algorithm terminate after an iteration in which the prediction for the highest reward instance
+is in the interval <code>desired_outcome</code>. If <code>FALSE</code>, the algorithm continues until <code>x_nn</code> is recreated.</p></dd>
 
 
 <dt><code>distance_function</code></dt>
@@ -183,7 +189,6 @@ is in the interval <code>desired_prob</code>. If <code>FALSE</code>, the algorit
 The distance function used to compute the distances between <code>x_interest</code> and the training data points for finding <code>x_nn</code>.
 The function must have three arguments: <code>x</code>, <code>y</code>, and <code>data</code> and return a <code>double</code> matrix with <code>nrow(x)</code> rows
 and <code>nrow(y)</code> columns. If set to <code>NULL</code> (default), then Gower distance (Gower 1971) is used.</p></dd>
-
 
 
 </dl><p></p></div>
@@ -240,7 +245,7 @@ and <code>nrow(y)</code> columns. If set to <code>NULL</code> (default), then Go
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Susanne Dandl, Andreas Hofheinz.</p>
+  <p></p><p>Developed by Susanne Dandl, Andreas Hofheinz, Martin Binder, Giuseppe Casalicchio.</p>
 </div>
 
 <div class="pkgdown">
