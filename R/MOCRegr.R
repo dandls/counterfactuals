@@ -244,8 +244,8 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
         weights = private$weights,
         init_strategy = private$init_strategy,
         cond_sampler = private$conditional_sampler,
-        quiet = private$quiet,
-        distance_function = private$distance_function
+        distance_function = private$distance_function,
+        quiet = private$quiet
       )
 
       unique(private$.optimizer$result[, names(private$x_interest), with = FALSE])

@@ -103,8 +103,6 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
     mu = mu
   )
   
-  
-  
   if (quiet) {
     quiet(mies_init_population(inst = oi, mu = mu, initializer = pop_initializer))
   } else {

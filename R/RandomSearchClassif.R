@@ -46,10 +46,18 @@ RandomSearchClassif = R6::R6Class("RandomSearchClassif",
     #'   or a vector of length `k`. If it has length `k`, the i-th element specifies the weight of the i-th closest data point.
     #'   The values should sum up to `1`. `NULL` (default) means all data points are weighted equally.
     #' @template lower_upper
+    #' @param distance_function (`function()` | `NULL`)\cr 
+    #'  The distance function to be used in the second and fourth objective. The function must have three arguments:
+    #'  `x`, `y`, and `data` and return a `double` matrix with `nrow(x)` rows and `nrow(y)` columns. 
+    #'  If set to `NULL` (default), then Gower distance (Gower 1971) is used.
     initialize = function(predictor, fixed_features = NULL, max_changed = NULL, mu = 20L, n_generations = 175L,
-                          p_use_orig = 0.5, k = 1L, weights = NULL, lower = NULL, upper = NULL) {
+                          p_use_orig = 0.5, k = 1L, weights = NULL, lower = NULL, upper = NULL, distance_function = NULL) {
       
-      super$initialize(predictor, lower, upper)
+      if (is.null(distance_function)) {
+        distance_function = gower_dist
+      }
+      
+      super$initialize(predictor, lower, upper, distance_function)
 
       if (!is.null(fixed_features)) {
         assert_names(fixed_features, subset.of = private$predictor$data$feature.names)
@@ -175,7 +183,8 @@ RandomSearchClassif = R6::R6Class("RandomSearchClassif",
         p_mut_use_orig = NULL,
         k = private$k,
         weights = private$weights,
-        init_strategy = "random"
+        init_strategy = "random",
+        distance_function = private$distance_function
       )
 
       unique(private$.optimizer$result[, names(private$x_interest), with = FALSE])
