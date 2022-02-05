@@ -2,7 +2,7 @@
 % Please edit documentation in R/CounterfactualMethod.R
 \name{CounterfactualMethod}
 \alias{CounterfactualMethod}
-\title{Base class for Explanation Counterfactual Methods}
+\title{Base class for Counterfactual Explanation Methods}
 \description{
 Abstract base class for counterfactual explanation methods.
 }
@@ -25,7 +25,12 @@ Child classes: \link{CounterfactualMethodClassif}, \link{CounterfactualMethodReg
 \subsection{Method \code{new()}}{
 Creates a new \code{CounterfactualMethod} object.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CounterfactualMethod$new(predictor, lower = NULL, upper = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{CounterfactualMethod$new(
+  predictor,
+  lower = NULL,
+  upper = NULL,
+  distance_function = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -43,6 +48,11 @@ If not \code{NULL}, it should be named with the corresponding feature names.}
 Vector of maximum values for numeric features.
 If \code{NULL} (default), the element for each numeric feature in \code{upper} is taken as its maximum value in \code{predictor$data$X}.
 If not \code{NULL}, it should be named with the corresponding feature names.}
+
+\item{\code{distance_function}}{(\verb{function()} | \code{NULL})\cr
+A distance function that may be used by the leaf classes.
+If specified, the function must have three arguments: \code{x}, \code{y}, and \code{data} and return a \code{double} matrix with \code{nrow(x)}
+rows and \code{nrow(y)} columns.}
 }
 \if{html}{\out{</div>}}
 }

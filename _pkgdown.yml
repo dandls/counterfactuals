@@ -10,3 +10,6 @@ navbar:
       href: articles/introduction.html
     - text: How to extend the package
       href: articles/how-to-add-new-cf-methods.html
+    - text: Customized distance functions
+      href: articles/customized-distance-functions.html
+

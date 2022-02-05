@@ -4,8 +4,11 @@
 \alias{RandomSearchRegr}
 \title{Random Search for Regression Tasks}
 \description{
-MOC (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
-to minimize are:
+RandomSearch randomly samples a population of candidates and returns non-dominated candidates w.r.t to the objectives
+of MOC (Dandl et. al 2020) as counterfactuals. RandomSearch equals MOC with zero generations and the \code{random}
+initialization strategy.
+
+The four objectives of MOC (Dandl et. al 2020) to are:
 \enumerate{
 \item {Distance to \code{desired_prob} (classification tasks) or \code{desired_prob} (regression tasks).}
 \item {Dissimilarity to \code{x_interest} measured by Gower's dissimilarity measure (Gower 1971).}
@@ -17,6 +20,9 @@ For optimization, it uses the NSGA II algorithm (Deb et. al 2002) with mixed int
 strategies (Li et al. 2013).
 }
 \details{
+Paramters \code{mu} and \code{n_generations} only to be compatible to MOC (to be able to emulate cthe evolution
+of the hypervolume over the generations). The total number of samples drawn is \code{mu} * \code{n_generations}.
+
 Several population initialization strategies are available:
 \enumerate{
 \item {\code{random}: Feature values of new individuals are sampled from the feature value ranges in \code{predictor$data$X}.
@@ -130,6 +136,14 @@ Names of features that are not allowed to be changed. \code{NULL} (default) allo
 \item{\code{max_changed}}{(\code{integerish(1)} | \code{NULL})\cr
 Maximum number of feature changes. \code{NULL} (default) allows any number of changes.}
 
+\item{\code{mu}}{(\code{integerish(1)})\cr
+The population size. Default is \code{20L}. The total number of random samples is set to \code{mu * n_generations}.
+See @description for further details.}
+
+\item{\code{n_generations}}{(\code{integerish(1)})\cr
+The number of generations. Default is \code{175L}. The total number of random samples is set to \code{mu * n_generations}.
+See @description for further details.}
+
 \item{\code{p_use_orig}}{(\code{numeric(1)})\cr
 Probability with which a feature/gene is reset to its original value in \code{x_interest} after random sampling. Default is \code{0.5}.}
 
@@ -150,9 +164,6 @@ If not \code{NULL}, it should be named with the corresponding feature names.}
 Vector of maximum values for numeric features.
 If \code{NULL} (default), the element for each numeric feature in \code{upper} is taken as its maximum value in \code{predictor$data$X}.
 If not \code{NULL}, it should be named with the corresponding feature names.}
-
-\item{\code{n_samples}}{(\code{integerish(1)})\cr
-The number of random samples drawn. Default is \code{3500L}.}
 }
 \if{html}{\out{</div>}}
 }

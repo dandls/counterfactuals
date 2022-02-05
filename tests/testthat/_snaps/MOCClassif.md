@@ -28,3 +28,11 @@
     Message <simpleMessage>
       `x_interest` was removed from results.
 
+---
+
+    Code
+      cfactuals = quiet(moc_classif$find_counterfactuals(x_interest, desired_class = "good",
+        desired_prob = c(0.8, 1)))
+    Message <simpleMessage>
+      `x_interest` was removed from results.
+

@@ -58,3 +58,24 @@ test_that("Returns correct output format for mixed columns for 'icecurve' initia
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
 })
+
+
+test_that("distance_function can be exchanged", {
+  set.seed(54542142)
+  mydf = mtcars
+  rf = randomForest(mpg ~ ., data = mydf, ntree = 5L)
+  pred = iml::Predictor$new(rf, data = mydf, y = "mpg")
+  x_interest = mydf[1, ]
+  
+  correct_dist_function = function(x, y, data) {
+    res = matrix(NA, nrow = nrow(x), ncol = nrow(y))
+    for (i in 1:nrow(x)) for (j in 1:nrow(y)) res[i, j] = sqrt(sum(((x[i, ] - y[j, ])^2)))
+    res
+  }
+  moc_regr = MOCRegr$new(
+    pred, n_generations = 3L, distance_function = correct_dist_function, quiet = TRUE
+  )
+  cfactuals = moc_regr$find_counterfactuals(x_interest, desired_outcome = c(22, 25))
+  expect_data_table(cfactuals$data)
+})
+

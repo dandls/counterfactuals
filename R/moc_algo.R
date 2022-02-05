@@ -1,6 +1,7 @@
 moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower, upper, sdevs_num_feats, 
                     epsilon,  fixed_features, max_changed, mu, n_generations, p_rec, p_rec_gen, p_rec_use_orig,
-                    p_mut, p_mut_gen, p_mut_use_orig, k, weights, init_strategy, cond_sampler = NULL, quiet = TRUE) {
+                    p_mut, p_mut_gen, p_mut_use_orig, k, weights, init_strategy, distance_function, cond_sampler = NULL, 
+                    quiet = TRUE) {
   
   codomain = ParamSet$new(list(
     ParamDbl$new("dist_target", tags = "minimize"),
@@ -10,7 +11,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
   ))
 
   fitness_function = make_fitness_function(
-    predictor, x_interest, pred_column, target, weights, k, fixed_features, param_set
+    predictor, x_interest, pred_column, target, weights, k, fixed_features, param_set, distance_function
   )
   
   flex_cols = setdiff(names(x_interest), fixed_features)

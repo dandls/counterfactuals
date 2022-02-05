@@ -56,6 +56,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       private$.data = cfactuals
       private$.x_interest = x_interest
       private$.desired = desired
+      private$.distance_function = gower_dist
     },
     
     #' @description 
@@ -69,7 +70,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #'                    (regression tasks) or `desired_prob` (classification tasks).      
     #'   * `nr_changed`: The number of feature changes w.r.t. `x_interest`.   
     #'   * `dist_train`: The (weighted) distance to the `k` nearest training data points measured by Gower's 
-    #'   dissimilarity measure (Gower 1971)
+    #'   dissimilarity measure (Gower 1971).
     #' 
     #' @param show_diff (`logical(1)`)\cr
     #'  Should the counterfactuals be displayed as their differences to `x_interest`? Default is `FALSE`.
@@ -100,8 +101,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
       
       if ("dist_x_interest" %in% measures) {
-        ranges = private$param_set$upper - private$param_set$lower
-        evals$dist_x_interest = as.vector(StatMatch::gower.dist(private$.x_interest, private$.data, rngs = ranges, KR.corr = FALSE))
+        evals$dist_x_interest = as.vector(eval_distance(private$.distance_function, private$.data, private$.x_interest, private$predictor$data$X))
       }
       
       if ("nr_changed" %in% measures) {
@@ -109,7 +109,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
       
       if ("dist_train" %in% measures) {
-        evals$dist_train = gower_topn(private$.data, private$predictor$data$X, n = 1L)$distance[1L, ]
+        dist_matrix = eval_distance(private$.distance_function, private$.data, private$predictor$data$X, private$predictor$data$X)
+        evals$dist_train = t(apply(dist_matrix, 1L, function(x) sort(x)))[, 1L]
       }
       
       if ("dist_target" %in% measures) {
@@ -135,7 +136,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       private$predictor$predict(private$.data) 
     },
     
-    #' @description Plots a parallel plot that connects the (scaled) feature values of each counterfactual and highlights
+    #' @description Plots a parallel plot that connects the (scaled) numeric feature values of each counterfactual and highlights
     #' `x_interest` in blue.
     #' 
     #' @param feature_names (`character` | `NULL`)\cr
@@ -235,13 +236,13 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       sort(freq, decreasing = TRUE)
     },
     
-    #' @description Creates a surface plot for two features. `x_interest` is represented as white dot and 
+    #' @description Creates a surface plot for two features. `x_interest` is represented as a white dot and 
     #' all counterfactuals that differ from `x_interest` **only** in the two selected features are represented as black dots.
-    #' The tick marks next to the axes show the marginal distribution of the counterfactuals. \cr
-    #' The exact plot type depends on the selected feature types:
-    #'  * 2 \* `numeric`: surface plot
-    #'  * 2 \* `non-numeric`: heatmap
-    #'  * 1 \* `numeric`, 1 \* `non-numeric`: line graph
+    #' The tick marks next to the axes show the marginal distribution of the observed data (`predictor$data$X`). \cr
+    #' The exact plot type depends on the selected feature types and number of features:
+    #'  * 2 numeric features: surface plot
+    #'  * 2 non-numeric features: heatmap
+    #'  * 1 numeric or non-numeric feature: line graph
     #' @param feature_names (`character(2)`)\cr
     #'  The names of the features to plot.
     #' @param grid_size (`integerish(1)`)\cr
@@ -293,7 +294,6 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       cat("Head: \n")
       print(head(private$.data, 3L))
     }
-
   ),
   active = list(
     #' @field desired (`list(1)` | `list(2)`)\cr
@@ -324,6 +324,18 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       } else {
         stop("`$x_interest` is read only", call. = FALSE)
       }
+    },
+    #' @field distance_function (`function()`) \cr
+    #'  The distance function used in the second and fourth evaluation measure.
+    #'  The function must have three arguments:
+    #'  `x`, `y`, and `data` and return a `double` matrix. If set to `NULL` (default), then Gower distance (Gower 1971) is used.
+    distance_function = function(value) {
+      if (missing(value)) {
+        private$.distance_function
+      } else {
+        assert_function(value, args = c("x", "y", "data"), ordered = TRUE)
+        private$.distance_function = value
+      }
     }
   ),
   private = list(
@@ -334,6 +346,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     .desired = NULL,
     .data = NULL,
     .x_interest = NULL,
+    .distance_function = NULL,
     
     get_pred_column = function() {
       if (private$predictor$task == "classification") {

@@ -22,7 +22,6 @@
 #' 
 #' If `finish_early = FALSE` and `return_multiple = FALSE`, then `x_nn` is returned as single counterfactual.
 #' 
-#' The function computes the dissimilarities using Gower's dissimilarity measure (Gower 1971). 
 #' 
 #' This NICE implementation corresponds to the original version of Brughmans and Martens (2021) when
 #' `return_multiple = FALSE`, `finish_early = TRUE`, and `x_nn_correct_classif = TRUE`.
@@ -73,10 +72,17 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
     #' @param finish_early (`logical(1)`)\cr 
     #' Should the algorithm terminate after an iteration in which the `desired_class` prediction for the highest reward instance 
     #' is in the interval `desired_prob`. If `FALSE`, the algorithm continues until `x_nn` is recreated.
+    #' @param distance_function (`function()` | `NULL`)\cr 
+    #'  The distance function used to compute the distances between `x_interest` and the training data points for finding `x_nn`. 
+    #'  The function must have three arguments: `x`, `y`, and `data` and return a `double` matrix with `nrow(x)` rows 
+    #'  and `nrow(y)` columns. If set to `NULL` (default), then Gower distance (Gower 1971) is used.
     initialize = function(predictor, optimization = "sparsity", x_nn_correct_classif = TRUE, return_multiple = TRUE,
-                          finish_early = TRUE) {
+                          finish_early = TRUE, distance_function = NULL) {
       
-      super$initialize(predictor)
+      if (is.null(distance_function)) {
+        distance_function = gower_dist
+      }
+      super$initialize(predictor, distance_function = distance_function)
       assert_choice(optimization, choices = c("sparsity", "proximity", "plausibility"))
       assert_flag(x_nn_correct_classif)
       assert_flag(return_multiple)
@@ -161,7 +167,8 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
         candidates_x_nn = private$candidates_x_nn,
         ae_model = private$ae_model,
         ae_preprocessor = private$ae_preprocessor,
-        archive = private$.archive
+        archive = private$.archive,
+        distance_function = private$distance_function
       )
       
       private$.x_nn = res$x_nn

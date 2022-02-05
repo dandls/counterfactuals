@@ -131,7 +131,7 @@ test_that("evaluate returns correct results", {
   ps = cf$.__enclos_env__$private$param_set
   expect_identical(
     sort(cf_eval$dist_x_interest), 
-    sort(as.vector(StatMatch::gower.dist(cf$data, cf$x_interest, rngs = ps$upper - ps$lower)))
+    sort(as.vector(gower_dist(cf$data, cf$x_interest, cf$.__enclos_env__$private$predictor$data$X)))
   )
 })
 
@@ -144,6 +144,46 @@ test_that("methods that require at least one counterfactuals are blocked when no
   expect_snapshot_error(cf$plot_freq_of_feature_changes())
   expect_snapshot_error(cf$plot_parallel())
 })
+
+
+# $distance_function ----------------------------------------------------------------------------------------------------------
+
+test_that("distance_function can be exchanged", {
+  set.seed(45748)
+  dt = data.table(
+    var_num_1 = rep(c(0.5, 5.3)), 
+    var_num_2 = rep(c(1.5, 2.7)),
+    var_target = rnorm(10L, mean = 50, sd = 10)
+  )
+  X = dt[, 1:(ncol(dt) - 1L)]
+  x_interest = X[1L, ]
+  rf = randomForest(var_target ~ ., data = dt)
+  mod = Predictor$new(rf, data = X)
+  ps = ParamSet$new(list(
+    var_num_1 = ParamDbl$new(id = "var_num_1", lower = -5, upper = 5),
+    var_num_2 = ParamDbl$new(id = "var_num_2", lower = 0, upper = 10)
+  ))
+  
+  cf = Counterfactuals$new(as.data.table(X), mod, x_interest, ps, desired = list(desired_outcome = c(42, 44)))
+  expect_function(cf$distance_function, args = c("x", "y", "data"))
+
+  correct_dist_function = function(x, y, data) {
+    res = matrix(NA, nrow = nrow(x), ncol = nrow(y))
+    for (i in 1:nrow(x)) for (j in 1:nrow(y)) res[i, j] = sqrt(sum(((x[i, ] - y[j, ])^2)))
+    res
+  }
+  cf$distance_function = correct_dist_function
+  expect_data_table(cf$evaluate())
+  
+  expect_snapshot_error({cf$distance_function = iris})
+  wrong_distance_function = function(x, y, data) {
+    matrix(1.5, nrow = 2L, ncol = 5L)
+  }
+  cf$distance_function = wrong_distance_function
+  expect_snapshot_error({cf$evaluate()})
+})
+
+
 
 
 

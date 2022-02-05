@@ -7,14 +7,15 @@
 MOC (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
 to minimize are:
 \enumerate{
-\item {Distance to \code{desired_prob} (classification tasks) or \code{desired_prob} (regression tasks).}
-\item {Dissimilarity to \code{x_interest} measured by Gower's dissimilarity measure (Gower 1971).}
-\item {Number of feature changes.}
-\item {(Weighted) sum of dissimilarities to the \code{k} nearest data points in \code{predictor$data$X}.}
+\item {\code{dist_target}: Distance to \code{desired_prob} (classification tasks) or \code{desired_prob} (regression tasks).}
+\item {\code{dist_x_interest}: Dissimilarity to \code{x_interest} measured by Gower's dissimilarity measure (Gower 1971).}
+\item {\code{nr_changed}: Number of feature changes.}
+\item {\code{dist_train}: (Weighted) sum of dissimilarities to the \code{k} nearest data points in \code{predictor$data$X}.}
 }
 
 For optimization, it uses the NSGA II algorithm (Deb et. al 2002) with mixed integer evolutionary
-strategies (Li et al. 2013).
+strategies (Li et al. 2013) and some tailored adjustments for the counterfactual search (Dandl et al. 2020).
+Default values for the hyperparameters are based on Dandl et al. 2020.
 }
 \details{
 Several population initialization strategies are available:
@@ -32,6 +33,11 @@ in \code{predictor$data$X}; if not enough non-dominated data points are availabl
 are initialized by random sampling. Subsequently, some features values are randomly reset to their initial value
 in \code{x_interest} (as for \code{random}).}
 }
+
+If \code{use_conditional_mutator} is set to TRUE, a conditional mutator samples
+feature values from the conditional distribution given the other feature values
+with the help of transformation trees (Hothorn and Zeileis 2017).
+For details see Dandl et al. 2020.
 }
 \examples{
 \dontrun{
@@ -66,6 +72,8 @@ Statistical Learning with Plots of Individual Conditional Expectation." Journal 
 Statistics 24 (1): 44â€“65. https: //doi.org/10.1080/10618600.2014.907095.
 
 Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623â€“637.
+
+Hothorn, T., Zeileis, A. (2017), "Transformation Forests". Technical Report, arXiv 1701.02110, https://arxiv.org/abs/1701.02110.
 
 Li, Rui, Michael T. M. Emmerich, Jeroen Eggermont, Thomas BÃ¤ck, M. SchÃ¼tz, J. Dijkstra, and J. H. C. Reiber. 2013.
 "Mixed Integer Evolution Strategies for Parameter Optimization." Evolutionary Computation 21 (1): 29â€“64. https:
@@ -132,6 +140,14 @@ Names of features that are not allowed to be changed. \code{NULL} (default) allo
 \item{\code{max_changed}}{(\code{integerish(1)} | \code{NULL})\cr
 Maximum number of feature changes. \code{NULL} (default) allows any number of changes.}
 
+\item{\code{mu}}{(\code{integerish(1)})\cr
+The population size. Default is \code{20L}. The total number of random samples is set to \code{mu * n_generations}.
+See @description for further details.}
+
+\item{\code{n_generations}}{(\code{integerish(1)})\cr
+The number of generations. Default is \code{175L}. The total number of random samples is set to \code{mu * n_generations}.
+See @description for further details.}
+
 \item{\code{p_use_orig}}{(\code{numeric(1)})\cr
 Probability with which a feature/gene is reset to its original value in \code{x_interest} after random sampling. Default is \code{0.5}.}
 
@@ -152,9 +168,6 @@ If not \code{NULL}, it should be named with the corresponding feature names.}
 Vector of maximum values for numeric features.
 If \code{NULL} (default), the element for each numeric feature in \code{upper} is taken as its maximum value in \code{predictor$data$X}.
 If not \code{NULL}, it should be named with the corresponding feature names.}
-
-\item{\code{n_samples}}{(\code{integerish(1)})\cr
-The number of random samples drawn. Default is \code{3500L}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -166,6 +179,7 @@ The number of random samples drawn. Default is \code{3500L}.}
 Plots the evolution of the mean and minimum objective values together with the dominated hypervolume over
 the generations. All values for a generation are computed based on all non-dominated individuals that emerged until
 that generation.
+TODO: Describe folds
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RandomSearchClassif$plot_statistics(centered_obj = TRUE)}\if{html}{\out{</div>}}
 }
@@ -185,6 +199,7 @@ since they (usually) have different scales. If set to \code{TRUE} (default), the
 \if{latex}{\out{\hypertarget{method-get_dominated_hv}{}}}
 \subsection{Method \code{get_dominated_hv()}}{
 Calculates the dominated hypervolume of each generation.
+TODO: Describe folds
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RandomSearchClassif$get_dominated_hv()}\if{html}{\out{</div>}}
 }
@@ -198,6 +213,7 @@ A \code{data.table} with the dominated hypervolume of each generation.
 \if{latex}{\out{\hypertarget{method-plot_search}{}}}
 \subsection{Method \code{plot_search()}}{
 Visualizes two selected objective values of all emerged individuals in a scatter plot.
+TODO: Describe folds
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RandomSearchClassif$plot_search(
   objectives = c("dist_target", "dist_x_interest")
