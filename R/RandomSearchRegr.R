@@ -79,7 +79,8 @@ RandomSearchRegr = R6::R6Class("RandomSearchRegr",
 
     #' @description Plots the evolution of the mean and minimum objective values together with the dominated hypervolume over
     #' the generations. All values for a generation are computed based on all non-dominated individuals that emerged until
-    #' that generation.
+    #' that generation. The randomly drawn samples are therefore split into `n_generations` folds of size `mu.`
+    #' This function emulates MOCs `plot_statistics()` method. See @details for further information.
     #' @param centered_obj (`logical(1)`)\cr
     #'   Should the objective values be centered? If set to `FALSE`, each objective value is visualized in a separate plot,
     #'   since they (usually) have different scales. If set to `TRUE` (default), they are visualized in a single plot.
@@ -95,8 +96,9 @@ RandomSearchRegr = R6::R6Class("RandomSearchRegr",
       make_moc_statistics_plots(archive_folds, private$ref_point, centered_obj)
     },
 
-    #' @description Calculates the dominated hypervolume of each generation.
-    #'
+    #' @description Calculates the dominated hypervolume of each generation. The randomly drawn samples are therefore split 
+    #' into `n_generations` folds of size `mu.`
+    #' This function emulates MOCs `get_dominated_hv()` method. See @details for further information.
     #' @return A `data.table` with the dominated hypervolume of each generation.
     get_dominated_hv = function() {
       if (is.null(self$optimizer)) {
@@ -107,6 +109,8 @@ RandomSearchRegr = R6::R6Class("RandomSearchRegr",
     },
 
     #' @description Visualizes two selected objective values of all emerged individuals in a scatter plot.
+    #' The randomly drawn samples are therefore split into `n_generations` folds of size `mu.`
+    #' This function emulates MOCs `plot_search()` method. See @details for further information.
     #' @param objectives (`character(2)`)\cr
     #'   The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "nr_changed",
     #'   and "dist_train".
@@ -179,7 +183,8 @@ RandomSearchRegr = R6::R6Class("RandomSearchRegr",
         p_mut_use_orig = NULL,
         k = private$k,
         weights = private$weights,
-        init_strategy = "random"
+        init_strategy = "random",
+        distance_function = private$distance_function
       )
 
       unique(private$.optimizer$result[, names(private$x_interest), with = FALSE])

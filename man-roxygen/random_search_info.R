@@ -1,7 +1,7 @@
 #' @description 
 #' 
 #' RandomSearch randomly samples a population of candidates and returns non-dominated candidates w.r.t to the objectives
-#' of MOC (Dandl et. al 2020) as counterfactuals. RandomSearch equals MOC with zero generations and the `random`
+#' of MOC (Dandl et. al 2020) as counterfactuals. RandomSearch is equivalent to MOC with zero generations and the `random`
 #' initialization strategy.
 #' 
 #' 
@@ -13,29 +13,12 @@
 #'    \item {(Weighted) sum of dissimilarities to the `k` nearest data points in `predictor$data$X`.}
 #' }  
 #' 
-#' For optimization, it uses the NSGA II algorithm (Deb et. al 2002) with mixed integer evolutionary 
-#' strategies (Li et al. 2013). 
 #' 
 #' @details 
 #' 
-#' Paramters `mu` and `n_generations` only to be compatible to MOC (to be able to emulate cthe evolution
-#' of the hypervolume over the generations). The total number of samples drawn is `mu` * `n_generations`.
-#' 
-#' Several population initialization strategies are available:
-#' \enumerate{
-#'    \item {`random`: Feature values of new individuals are sampled from the feature value ranges in `predictor$data$X`.
-#'    Some features values are randomly reset to their initial value in `x_interest`.}
-#'    \item {`sd`: Like `random`, except that the sample ranges of numerical features are limited to one standard 
-#'    deviation from their initial value in `x_interest`.}
-#'    \item {`icecurve`: As in `random`, feature values are sampled from the feature value ranges in `predictor$data$X`. 
-#'    Then, however, features are reset with probabilities relative to their importance: the higher the importance 
-#'    of a feature, the higher the probability that its values differ from its value in `x_interest`. 
-#'    The feature importance is measured using ICE curves (Goldstein et al. 2015).} 
-#'    \item {`traindata`: Contrary to the other strategies, feature values are drawn from (non-dominated) data points
-#'    in `predictor$data$X`; if not enough non-dominated data points are available, remaining individuals
-#'    are initialized by random sampling. Subsequently, some features values are randomly reset to their initial value 
-#'    in `x_interest` (as for `random`).}  
-#' }  
+#' RandomSearch is typically used as a baseline in benchmark comparisons with MOC. 
+#' The total number of samples drawn is `mu` * `n_generations`. Using separate parameters `mu` and `n_generations`
+#' is only required to make certain statistics comparable with MOC (e.g. the evolution of the dominated hypervolume).
 #' 
 #' 
 #' @references 

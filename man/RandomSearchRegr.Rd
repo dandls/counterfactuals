@@ -5,7 +5,7 @@
 \title{Random Search for Regression Tasks}
 \description{
 RandomSearch randomly samples a population of candidates and returns non-dominated candidates w.r.t to the objectives
-of MOC (Dandl et. al 2020) as counterfactuals. RandomSearch equals MOC with zero generations and the \code{random}
+of MOC (Dandl et. al 2020) as counterfactuals. RandomSearch is equivalent to MOC with zero generations and the \code{random}
 initialization strategy.
 
 The four objectives of MOC (Dandl et. al 2020) to are:
@@ -15,29 +15,11 @@ The four objectives of MOC (Dandl et. al 2020) to are:
 \item {Number of feature changes.}
 \item {(Weighted) sum of dissimilarities to the \code{k} nearest data points in \code{predictor$data$X}.}
 }
-
-For optimization, it uses the NSGA II algorithm (Deb et. al 2002) with mixed integer evolutionary
-strategies (Li et al. 2013).
 }
 \details{
-Paramters \code{mu} and \code{n_generations} only to be compatible to MOC (to be able to emulate cthe evolution
-of the hypervolume over the generations). The total number of samples drawn is \code{mu} * \code{n_generations}.
-
-Several population initialization strategies are available:
-\enumerate{
-\item {\code{random}: Feature values of new individuals are sampled from the feature value ranges in \code{predictor$data$X}.
-Some features values are randomly reset to their initial value in \code{x_interest}.}
-\item {\code{sd}: Like \code{random}, except that the sample ranges of numerical features are limited to one standard
-deviation from their initial value in \code{x_interest}.}
-\item {\code{icecurve}: As in \code{random}, feature values are sampled from the feature value ranges in \code{predictor$data$X}.
-Then, however, features are reset with probabilities relative to their importance: the higher the importance
-of a feature, the higher the probability that its values differ from its value in \code{x_interest}.
-The feature importance is measured using ICE curves (Goldstein et al. 2015).}
-\item {\code{traindata}: Contrary to the other strategies, feature values are drawn from (non-dominated) data points
-in \code{predictor$data$X}; if not enough non-dominated data points are available, remaining individuals
-are initialized by random sampling. Subsequently, some features values are randomly reset to their initial value
-in \code{x_interest} (as for \code{random}).}
-}
+RandomSearch is typically used as a baseline in benchmark comparisons with MOC.
+The total number of samples drawn is \code{mu} * \code{n_generations}. Using separate parameters \code{mu} and \code{n_generations}
+is only required to make certain statistics comparable with MOC (e.g. the evolution of the dominated hypervolume).
 }
 \examples{
 \dontrun{
@@ -120,7 +102,8 @@ Create a new \code{RandomSearchRegr} object.
   k = 1L,
   weights = NULL,
   lower = NULL,
-  upper = NULL
+  upper = NULL,
+  distance_function = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -164,6 +147,11 @@ If not \code{NULL}, it should be named with the corresponding feature names.}
 Vector of maximum values for numeric features.
 If \code{NULL} (default), the element for each numeric feature in \code{upper} is taken as its maximum value in \code{predictor$data$X}.
 If not \code{NULL}, it should be named with the corresponding feature names.}
+
+\item{\code{distance_function}}{(\verb{function()} | \code{NULL})\cr
+The distance function to be used in the second and fourth objective. The function must have three arguments:
+\code{x}, \code{y}, and \code{data} and return a \code{double} matrix with \code{nrow(x)} rows and \code{nrow(y)} columns.
+If set to \code{NULL} (default), then Gower distance (Gower 1971) is used.}
 }
 \if{html}{\out{</div>}}
 }
@@ -174,7 +162,8 @@ If not \code{NULL}, it should be named with the corresponding feature names.}
 \subsection{Method \code{plot_statistics()}}{
 Plots the evolution of the mean and minimum objective values together with the dominated hypervolume over
 the generations. All values for a generation are computed based on all non-dominated individuals that emerged until
-that generation.
+that generation. The randomly drawn samples are therefore split into \code{n_generations} folds of size \code{mu.}
+This function emulates MOCs \code{plot_statistics()} method. See @details for further information.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RandomSearchRegr$plot_statistics(centered_obj = TRUE)}\if{html}{\out{</div>}}
 }
@@ -193,7 +182,9 @@ since they (usually) have different scales. If set to \code{TRUE} (default), the
 \if{html}{\out{<a id="method-get_dominated_hv"></a>}}
 \if{latex}{\out{\hypertarget{method-get_dominated_hv}{}}}
 \subsection{Method \code{get_dominated_hv()}}{
-Calculates the dominated hypervolume of each generation.
+Calculates the dominated hypervolume of each generation. The randomly drawn samples are therefore split
+into \code{n_generations} folds of size \code{mu.}
+This function emulates MOCs \code{get_dominated_hv()} method. See @details for further information.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RandomSearchRegr$get_dominated_hv()}\if{html}{\out{</div>}}
 }
@@ -207,6 +198,8 @@ A \code{data.table} with the dominated hypervolume of each generation.
 \if{latex}{\out{\hypertarget{method-plot_search}{}}}
 \subsection{Method \code{plot_search()}}{
 Visualizes two selected objective values of all emerged individuals in a scatter plot.
+The randomly drawn samples are therefore split into \code{n_generations} folds of size \code{mu.}
+This function emulates MOCs \code{plot_search()} method. See @details for further information.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RandomSearchRegr$plot_search(objectives = c("dist_target", "dist_x_interest"))}\if{html}{\out{</div>}}
 }
