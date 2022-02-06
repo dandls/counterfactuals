@@ -32,7 +32,7 @@ Denied loan applications serve as a common example; here a counterfactual explan
 "The loan was denied because the amount of €30k is too high 
 given the income. If the amount had been €20k, the loan would have been granted."
 
-For an introduction to counterfactual explanation methods, we recommend Chapter 6 of the [Interpretable Machine Learning book](https://christophm.github.io/interpretable-ml-book/) by Christoph Molnar.
+For an introduction to counterfactual explanation methods, we recommend Chapter 9.3 of the [Interpretable Machine Learning book](https://christophm.github.io/interpretable-ml-book/) by Christoph Molnar.
 
 ## Available methods
 
