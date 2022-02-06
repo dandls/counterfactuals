@@ -247,7 +247,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
         init_strategy = private$init_strategy,
         distance_function = private$distance_function,
         cond_sampler = private$conditional_sampler,
-        quiet = private$quietx
+        quiet = private$quiet
       )
 
       unique(private$.optimizer$result[, names(private$x_interest), with = FALSE])
