@@ -17,3 +17,9 @@ test_that("$initialize() returns error if lower is greater than upper", {
   pred = Predictor$new(rf, data = mtcars, y = "mpg")
   expect_snapshot_error(CounterfactualMethod$new(predictor = pred, lower = c("hp" = 200), upper = c("hp" = 100)))
 })
+
+test_that("$initialize() returns error if distance_function is not a function or NULL", {
+  rf = get_rf_regr_mtcars()
+  pred = Predictor$new(rf, data = mtcars, y = "mpg")
+  expect_snapshot_error(CounterfactualMethod$new(predictor = pred, distance_function = "a"))
+})

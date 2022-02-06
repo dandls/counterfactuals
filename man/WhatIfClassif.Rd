@@ -5,10 +5,10 @@
 \title{WhatIf for Classification Tasks}
 \description{
 WhatIf returns the \code{n_counterfactual} most similar observations to \code{x_interest} from observations in \code{predictor$data$X}
-whose prediction for the \code{desired_class} is in the \code{desired_probs} interval.
+whose prediction for the \code{desired_class} is in the \code{desired_prob} interval.
 }
 \details{
-The dissimilarities are computed using Gower's dissimilarity measure (Gower 1971) implemented. \cr
+By default, the dissimilarities are computed using Gower's dissimilarity measure (Gower 1971). \cr
 Only observations whose features values lie between the corresponding values in \code{lower} and \code{upper} are considered
 counterfactual candidates.
 }
@@ -64,7 +64,8 @@ Create a new WhatIfClassif object.
   predictor,
   n_counterfactuals = 1L,
   lower = NULL,
-  upper = NULL
+  upper = NULL,
+  distance_function = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -86,6 +87,11 @@ If not \code{NULL}, it should be named with the corresponding feature names.}
 Vector of maximum values for numeric features.
 If \code{NULL} (default), the element for each numeric feature in \code{upper} is taken as its maximum value in \code{predictor$data$X}.
 If not \code{NULL}, it should be named with the corresponding feature names.}
+
+\item{\code{distance_function}}{(\verb{function()} | \code{NULL})\cr
+The distance function used to compute the distances between \code{x_interest} and the training data points.
+The function must have three arguments: \code{x}, \code{y}, and \code{data} and return a \code{double} matrix with \code{nrow(x)} rows
+and \code{nrow(y)} columns. If set to \code{NULL} (default), then Gower distance (Gower 1971) is used.}
 }
 \if{html}{\out{</div>}}
 }

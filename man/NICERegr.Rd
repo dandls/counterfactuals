@@ -2,34 +2,34 @@
 % Please edit documentation in R/NICERegr.R
 \name{NICERegr}
 \alias{NICERegr}
-\title{NICE (Nearest Instance Counterfactual Explanations) for Classification Tasks}
+\title{NICE (Nearest Instance Counterfactual Explanations) for Regression Tasks}
 \description{
 NICE (Brughmans and Martens 2021) searches for counterfactuals by iteratively replacing feature values
-of \code{x_interest} with the corresponding value of its most similar (optionally) correctly classified instance \code{x_nn}.
+of \code{x_interest} with the corresponding value of its most similar (optionally correctly predicted) instance \code{x_nn}.
+While the original method is only applicable to classification tasks (see \link{NICEClassif}), this implementation extend it to regression tasks.
 }
 \details{
-NICE starts the counterfactual search for \code{x_interest} by finding its most similar (optionally) correctly classified
-neighbor \code{x_nn}. \cr
+NICE starts the counterfactual search for \code{x_interest} by finding its most similar (optionally) correctly predicted
+neighbor \code{x_nn} with(in) the desired prediction (range). Correctly predicted means that the prediction of \code{x_nn} is less
+than a user-specified \code{margin_correct_classif} away from the true outcome of \code{x_nn}.
+\cr
 In the first iteration, NICE creates new instances by replacing a different feature value of \code{x_interest} with the corresponding
 value of \code{x_nn} in each new instance. Thus, if \code{x_nn} differs from \code{x_interest} in \code{d} features, \code{d} new instances are created. \cr
 Then, the reward values for the created instances are computed with the chosen reward function.
 Available reward functions are \code{sparsity}, \code{proximity}, and \code{plausibility}. \cr
 In the second iteration, NICE creates \code{d-1} new instances by replacing a different feature value of the highest
 reward instance of the previous iteration with the corresponding value of \code{x_interest}, and so on. \cr
-If \code{finish_early = TRUE}, the algorithm terminates when the predicted \code{desired_class} probability for
-the highest reward instance is in the interval \code{desired_prob}; if \code{finish_early = FALSE}, the
+If \code{finish_early = TRUE}, the algorithm terminates when the predicted outcome for
+the highest reward instance is in the interval \code{desired_outcome}; if \code{finish_early = FALSE}, the
 algorithm continues until \code{x_nn} is recreated. \cr
 Once the algorithm terminated, it depends on \code{return_multiple} which instances
 are returned as counterfactuals: if \code{return_multiple = FALSE}, then only the highest reward instance in the
 last iteration is returned as counterfactual; if \code{return_multiple = TRUE}, then all instances (of all iterations)
-whose predicted \code{desired_class} probability is in the interval \code{desired_prob} are returned as counterfactuals.
+whose predicted outcome is in the interval \code{desired_outcome} are returned as counterfactuals.
 
 If \code{finish_early = FALSE} and \code{return_multiple = FALSE}, then \code{x_nn} is returned as single counterfactual.
 
 The function computes the dissimilarities using Gower's dissimilarity measure (Gower 1971).
-
-This NICE implementation corresponds to the original version of Brughmans and Martens (2021) when
-\code{return_multiple = FALSE}, \code{finish_early = TRUE}, and \code{x_nn_correct_classif = TRUE}.
 }
 \examples{
 \dontrun{
@@ -101,7 +101,8 @@ Create a new NICERegr object.
   x_nn_correct_classif = TRUE,
   margin_correct_classif = NULL,
   return_multiple = TRUE,
-  finish_early = TRUE
+  finish_early = TRUE,
+  distance_function = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -118,13 +119,24 @@ The reward function to optimize. Can be \code{sparsity} (default), \code{proximi
 Should only \emph{correctly} classified data points in \code{predictor$data$X} be considered for the most similar instance search?
 Default is \code{TRUE}.}
 
+\item{\code{margin_correct_classif}}{(\code{numeric(1)} | \code{NULL})\cr
+The accepted margin for considering a prediction as "correct". As the initial version of NICE was designed for
+classification tasks only, this is a design to mimic the search for \code{x_nn} for regression tasks.
+Ignored if \code{x_nn_correct_classif = FALSE}.
+TODO: default}
+
 \item{\code{return_multiple}}{(\code{logical(1)})\cr
-Should multiple counterfactuals be returned? If TRUE, the algorithm returns all created instances whose \code{desired_class}
-prediction is in the interval \code{desired_prob}. For more information, see the \code{Details} section.}
+Should multiple counterfactuals be returned? If TRUE, the algorithm returns all created instances whose
+prediction is in the interval \code{desired_outcome}. For more information, see the \code{Details} section.}
 
 \item{\code{finish_early}}{(\code{logical(1)})\cr
-Should the algorithm terminate after an iteration in which the \code{desired_class} prediction for the highest reward instance
-is in the interval \code{desired_prob}. If \code{FALSE}, the algorithm continues until \code{x_nn} is recreated.}
+Should the algorithm terminate after an iteration in which the prediction for the highest reward instance
+is in the interval \code{desired_outcome}. If \code{FALSE}, the algorithm continues until \code{x_nn} is recreated.}
+
+\item{\code{distance_function}}{(\verb{function()} | \code{NULL})\cr
+The distance function used to compute the distances between \code{x_interest} and the training data points for finding \code{x_nn}.
+The function must have three arguments: \code{x}, \code{y}, and \code{data} and return a \code{double} matrix with \code{nrow(x)} rows
+and \code{nrow(y)} columns. If set to \code{NULL} (default), then Gower distance (Gower 1971) is used.}
 }
 \if{html}{\out{</div>}}
 }

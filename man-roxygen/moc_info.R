@@ -2,14 +2,15 @@
 #' MOC (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
 #' to minimize are:
 #' \enumerate{
-#'    \item {Distance to `desired_prob` (classification tasks) or `desired_prob` (regression tasks).}
-#'    \item {Dissimilarity to `x_interest` measured by Gower's dissimilarity measure (Gower 1971).}
-#'    \item {Number of feature changes.}
-#'    \item {(Weighted) sum of dissimilarities to the `k` nearest data points in `predictor$data$X`.}
+#'    \item {`dist_target`: Distance to `desired_prob` (classification tasks) or `desired_prob` (regression tasks).}
+#'    \item {`dist_x_interest`: Dissimilarity to `x_interest` measured by Gower's dissimilarity measure (Gower 1971).}
+#'    \item {`nr_changed`: Number of feature changes.}
+#'    \item {`dist_train`: (Weighted) sum of dissimilarities to the `k` nearest data points in `predictor$data$X`.}
 #' }  
 #' 
 #' For optimization, it uses the NSGA II algorithm (Deb et. al 2002) with mixed integer evolutionary 
-#' strategies (Li et al. 2013). 
+#' strategies (Li et al. 2013) and some tailored adjustments for the counterfactual search (Dandl et al. 2020). 
+#' Default values for the hyperparameters are based on Dandl et al. 2020. 
 #' 
 #' @details 
 #' 
@@ -29,6 +30,10 @@
 #'    in `x_interest` (as for `random`).}  
 #' }  
 #' 
+#' If `use_conditional_mutator` is set to TRUE, a conditional mutator samples 
+#' feature values from the conditional distribution given the other feature values 
+#' with the help of transformation trees (Hothorn and Zeileis 2017). 
+#' For details see Dandl et al. 2020.
 #' 
 #' @references 
 #'
@@ -44,6 +49,8 @@
 #' Statistics 24 (1): 44–65. https: //doi.org/10.1080/10618600.2014.907095.
 #' 
 #' Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
+#' 
+#' Hothorn, T., Zeileis, A. (2017), "Transformation Forests". Technical Report, arXiv 1701.02110, https://arxiv.org/abs/1701.02110.  
 #' 
 #' Li, Rui, Michael T. M. Emmerich, Jeroen Eggermont, Thomas Bäck, M. Schütz, J. Dijkstra, and J. H. C. Reiber. 2013. 
 #' "Mixed Integer Evolution Strategies for Parameter Optimization." Evolutionary Computation 21 (1): 29–64. https:

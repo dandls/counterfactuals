@@ -65,12 +65,19 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     #'   on the values of the other feature. Default is `FALSE`.
     #' @param quiet (`logical(1)`)\cr 
     #'  Should information about the optimization status be hidden? Default is `FALSE`.
+    #' @param distance_function (`function()` | `NULL`)\cr 
+    #'  The distance function to be used in the second and fourth objective. The function must have three arguments:
+    #'  `x`, `y`, and `data` and return a `double` matrix with `nrow(x)` rows and `nrow(y)` columns. 
+    #'  If set to `NULL` (default), then Gower distance (Gower 1971) is used.
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, mu = 20L, 
                           n_generations = 175L, p_rec = 0.57, p_rec_gen = 0.85, p_rec_use_orig = 0.88, p_mut = 0.79, 
                           p_mut_gen = 0.56, p_mut_use_orig = 0.32, k = 1L, weights = NULL, lower = NULL, upper = NULL, 
-                          init_strategy = "random", use_conditional_mutator = FALSE, quiet = FALSE) {
-
-      super$initialize(predictor, lower, upper)
+                          init_strategy = "random", use_conditional_mutator = FALSE, quiet = FALSE, distance_function = NULL) {
+      
+      if (is.null(distance_function)) {
+        distance_function = gower_dist
+      }
+      super$initialize(predictor, lower, upper, distance_function)
 
       assert_number(epsilon, lower = 0, null.ok = TRUE)
       if (!is.null(fixed_features)) {
@@ -239,7 +246,8 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
         weights = private$weights,
         init_strategy = private$init_strategy,
         cond_sampler = private$conditional_sampler,
-        quiet = private$quiet
+        quiet = private$quiet,
+        distance_function = private$distance_function
       )
 
       unique(private$.optimizer$result[, names(private$x_interest), with = FALSE])

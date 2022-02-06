@@ -18,8 +18,12 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit
     #' @description Creates a new `CounterfactualMethodClassif` object.
     #' @template predictor
     #' @template lower_upper
-    initialize = function(predictor, lower = NULL, upper = NULL) {
-      super$initialize(predictor, lower, upper)
+    #' @param distance_function (`function()` | `NULL`)\cr 
+    #'  A distance function that may be used by the leaf classes. 
+    #'  If specified, the function must have three arguments: `x`, `y`, and `data` and return a `double` matrix with `nrow(x)`  
+    #'  rows and `nrow(y)` columns.
+    initialize = function(predictor, lower = NULL, upper = NULL, distance_function = NULL) {
+      super$initialize(predictor, lower, upper, distance_function)
       if (private$predictor$task != "classification") {
         stop(sprintf("%s only works for classification tasks.", class(self)[1]))
       }
