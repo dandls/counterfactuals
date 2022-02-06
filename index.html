@@ -91,7 +91,7 @@
 <p>The <code>counterfactuals</code> package provides various (model-agnostic) counterfactual explanation methods via a unified R6-based interface.</p>
 <p>Counterfactual explanation methods address questions of the form: “For input <strong>x</strong><sup><strong>⋆</strong></sup>, the model predicted <em>y</em>. What needs to be changed in <strong>x</strong><sup><strong>⋆</strong></sup> for the model to predict a desired outcome <em>ỹ</em> instead?”.<br>
 Denied loan applications serve as a common example; here a counterfactual explanation (or counterfactual for short) could be: “The loan was denied because the amount of €30k is too high given the income. If the amount had been €20k, the loan would have been granted.”</p>
-<p>For an introduction to counterfactual explanation methods, we recommend Chapter 6 of the <a href="https://christophm.github.io/interpretable-ml-book/" class="external-link">Interpretable Machine Learning book</a> by Christoph Molnar. The package is based on the R code underyling the paper <a href="https://link.springer.com/chapter/10.1007%2F978-3-030-58112-1_31" class="external-link">Multi-Objective Counterfactual Explanations (MOC)</a>.</p>
+<p>For an introduction to counterfactual explanation methods, we recommend Chapter 9.3 of the <a href="https://christophm.github.io/interpretable-ml-book/" class="external-link">Interpretable Machine Learning book</a> by Christoph Molnar.</p>
 <div class="section level2">
 <h2 id="available-methods">Available methods<a class="anchor" aria-label="anchor" href="#available-methods"></a>
 </h2>
@@ -110,7 +110,7 @@ Denied loan applications serve as a common example; here a counterfactual explan
 <p>You can install the development version from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"susanne-207/counterfactuals"</span><span class="op">)</span></code></pre></div>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"dandls/counterfactuals"</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="get-started">Get started<a class="anchor" aria-label="anchor" href="#get-started"></a>
@@ -137,7 +137,7 @@ Denied loan applications serve as a common example; here a counterfactual explan
 <div class="section level3">
 <h3 id="find-counterfactuals">Find counterfactuals<a class="anchor" aria-label="anchor" href="#find-counterfactuals"></a>
 </h3>
-<p>For <code>x_interest</code> the model predicts a probability of 8% for class <code>versicolor</code>.</p>
+<p>For <code>x_interest</code>, the model predicts a probability of 8% for class <code>versicolor</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x_interest</span> <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">150L</span>, <span class="op">]</span>
 <span class="va">predictor</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="va">x_interest</span><span class="op">)</span>
@@ -168,25 +168,25 @@ Denied loan applications serve as a common example; here a counterfactual explan
 <span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width</span>
 <span class="co">#&gt; 1:          5.9         3.2          4.8         1.8</span>
 <span class="co">#&gt; 2:          6.0         2.7          5.1         1.6</span>
-<span class="co">#&gt; 3:          6.7         3.0          5.0         1.7</span></code></pre></div>
+<span class="co">#&gt; 3:          5.9         3.0          4.2         1.5</span></code></pre></div>
 <p>The counterfactuals are stored in the <code>data</code> field.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="va">data</span>
 <span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width</span>
 <span class="co">#&gt; 1:          5.9         3.2          4.8         1.8</span>
 <span class="co">#&gt; 2:          6.0         2.7          5.1         1.6</span>
-<span class="co">#&gt; 3:          6.7         3.0          5.0         1.7</span>
-<span class="co">#&gt; 4:          6.0         2.9          4.5         1.5</span>
-<span class="co">#&gt; 5:          5.9         3.0          4.2         1.5</span></code></pre></div>
+<span class="co">#&gt; 3:          5.9         3.0          4.2         1.5</span>
+<span class="co">#&gt; 4:          6.7         3.0          5.0         1.7</span>
+<span class="co">#&gt; 5:          6.0         2.9          4.5         1.5</span></code></pre></div>
 <p>With the <code>evaluate()</code> method, we can evaluate the counterfactuals using various quality measures.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width dist_x_interest nr_changed dist_train dist_target</span>
 <span class="co">#&gt; 1:          5.9         3.2          4.8         1.8      0.03354520          2          0           0</span>
 <span class="co">#&gt; 2:          6.0         2.7          5.1         1.6      0.05902778          3          0           0</span>
-<span class="co">#&gt; 3:          6.7         3.0          5.0         1.7      0.07020951          3          0           0</span>
-<span class="co">#&gt; 4:          6.0         2.9          4.5         1.5      0.07403484          4          0           0</span>
-<span class="co">#&gt; 5:          5.9         3.0          4.2         1.5      0.06938559          2          0           0</span></code></pre></div>
+<span class="co">#&gt; 3:          5.9         3.0          4.2         1.5      0.06938559          2          0           0</span>
+<span class="co">#&gt; 4:          6.7         3.0          5.0         1.7      0.07020951          3          0           0</span>
+<span class="co">#&gt; 5:          6.0         2.9          4.5         1.5      0.07403484          4          0           0</span></code></pre></div>
 <p>One visualization option is to plot the frequency of feature changes across all counterfactuals using the <code>plot_freq_of_feature_changes()</code> method.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_freq_of_feature_changes</span><span class="op">(</span><span class="op">)</span></code></pre></div>
