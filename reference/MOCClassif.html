@@ -3,7 +3,7 @@
 to minimize are:
 dist_target: Distance to desired_prob (classification tasks) or desired_prob (regression tasks).
 dist_x_interest: Dissimilarity to x_interest measured by Gower's dissimilarity measure (Gower 1971).
-nr_changed: Number of feature changes.
+no_changed: Number of feature changes.
 dist_train: (Weighted) sum of dissimilarities to the k nearest data points in predictor$data$X.
 
 
@@ -78,7 +78,7 @@ Default values for the hyperparameters are based on Dandl et al. 2020."><!-- mat
     <p>MOC (Dandl et. al 2020) solves a multi-objective optimization problem to find counterfactuals. The four objectives
 to minimize are:</p><ol><li><p><code>dist_target</code>: Distance to <code>desired_prob</code> (classification tasks) or <code>desired_prob</code> (regression tasks).</p></li>
 <li><p><code>dist_x_interest</code>: Dissimilarity to <code>x_interest</code> measured by Gower's dissimilarity measure (Gower 1971).</p></li>
-<li><p><code>nr_changed</code>: Number of feature changes.</p></li>
+<li><p><code>no_changed</code>: Number of feature changes.</p></li>
 <li><p><code>dist_train</code>: (Weighted) sum of dissimilarities to the <code>k</code> nearest data points in <code>predictor$data$X</code>.</p></li>
 </ol><p>For optimization, it uses the NSGA II algorithm (Deb et. al 2002) with mixed integer evolutionary
 strategies (Li et al. 2013) and some tailored adjustments for the counterfactual search (Dandl et al. 2020).
@@ -334,7 +334,7 @@ since they (usually) have different scales. If set to <code>TRUE</code> (default
 <h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>objectives</code></dt>
 <dd><p>(<code>character(2)</code>)<br>
-The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "nr_changed",
+The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "no_changed",
 and "dist_train".</p></dd>
 
 

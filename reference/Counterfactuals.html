@@ -166,7 +166,7 @@ for classification tasks (<a href="CounterfactualMethodClassif.html">Counterfact
 <p>Evaluates the counterfactuals. It returns the counterfactuals together with the evaluation <code>measures</code>.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span>
-  measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dist_x_interest"</span>, <span class="st">"dist_target"</span>, <span class="st">"nr_changed"</span>, <span class="st">"dist_train"</span><span class="op">)</span>,
+  measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dist_x_interest"</span>, <span class="st">"dist_target"</span>, <span class="st">"no_changed"</span>, <span class="st">"dist_train"</span><span class="op">)</span>,
   show_diff <span class="op">=</span> <span class="cn">FALSE</span>,
   k <span class="op">=</span> <span class="fl">1L</span>,
   weights <span class="op">=</span> <span class="cn">NULL</span>
@@ -182,7 +182,7 @@ The following measures are available:</p><ul><li><p><code>dist_x_interest</code>
 dissimilarity measure (Gower 1971).</p></li>
 <li><p><code>dist_target</code>: The absolute distance of the prediction for a counterfactual to the interval <code>desired_outcome</code>
 (regression tasks) or <code>desired_prob</code> (classification tasks).</p></li>
-<li><p><code>nr_changed</code>: The number of feature changes w.r.t. <code>x_interest</code>.</p></li>
+<li><p><code>no_changed</code>: The number of feature changes w.r.t. <code>x_interest</code>.</p></li>
 <li><p><code>dist_train</code>: The (weighted) distance to the <code>k</code> nearest training data points measured by Gower's
 dissimilarity measure (Gower 1971).</p></li>
 </ul></dd>
