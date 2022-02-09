@@ -12,6 +12,8 @@ While the original method is only applicable to classification tasks (see \link{
 NICE starts the counterfactual search for \code{x_interest} by finding its most similar (optionally) correctly predicted
 neighbor \code{x_nn} with(in) the desired prediction (range). Correctly predicted means that the prediction of \code{x_nn} is less
 than a user-specified \code{margin_correct} away from the true outcome of \code{x_nn}.
+This is designed to mimic the search for \code{x_nn} for regression tasks.
+If no \code{x_nn} satisfies this constraint, a warning is returned that no counterfactual could be found.
 \cr
 In the first iteration, NICE creates new instances by replacing a different feature value of \code{x_interest} with the corresponding
 value of \code{x_nn} in each new instance. Thus, if \code{x_nn} differs from \code{x_interest} in \code{d} features, \code{d} new instances are created. \cr
@@ -120,10 +122,9 @@ Should only \emph{correctly} classified data points in \code{predictor$data$X} b
 Default is \code{TRUE}.}
 
 \item{\code{margin_correct}}{(\code{numeric(1)} | \code{NULL})\cr
-The accepted margin for considering a prediction as "correct". As the initial version of NICE was designed for
-classification tasks only, this is a design to mimic the search for \code{x_nn} for regression tasks.
+The accepted margin for considering a prediction as "correct".
 Ignored if \code{x_nn_correct = FALSE}.
-TODO: default}
+If NULL, the accepted margin is set to half the median absolute distance between the true and predicted results in the data (\code{predictor$data}).}
 
 \item{\code{return_multiple}}{(\code{logical(1)})\cr
 Should multiple counterfactuals be returned? If TRUE, the algorithm returns all created instances whose

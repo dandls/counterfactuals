@@ -8,6 +8,8 @@
 #' NICE starts the counterfactual search for `x_interest` by finding its most similar (optionally) correctly predicted
 #' neighbor `x_nn` with(in) the desired prediction (range). Correctly predicted means that the prediction of `x_nn` is less 
 #' than a user-specified `margin_correct` away from the true outcome of `x_nn`.
+#' This is designed to mimic the search for `x_nn` for regression tasks.
+#' If no `x_nn` satisfies this constraint, a warning is returned that no counterfactual could be found. 
 #' \cr
 #' In the first iteration, NICE creates new instances by replacing a different feature value of `x_interest` with the corresponding
 #' value of `x_nn` in each new instance. Thus, if `x_nn` differs from `x_interest` in `d` features, `d` new instances are created. \cr
@@ -75,10 +77,9 @@ NICERegr = R6::R6Class("NICEClassif",
     #' Should the algorithm terminate after an iteration in which the prediction for the highest reward instance
     #' is in the interval `desired_outcome`. If `FALSE`, the algorithm continues until `x_nn` is recreated.
     #' @param margin_correct (`numeric(1)` | `NULL`)\cr
-    #' The accepted margin for considering a prediction as "correct". As the initial version of NICE was designed for
-    #' classification tasks only, this is a design to mimic the search for `x_nn` for regression tasks.
+    #' The accepted margin for considering a prediction as "correct". 
     #' Ignored if `x_nn_correct = FALSE`.
-    #' TODO: default
+    #' If NULL, the accepted margin is set to half the median absolute distance between the true and predicted results in the data (`predictor$data`).
     #' @param distance_function (`function()` | `NULL`)\cr 
     #'  The distance function used to compute the distances between `x_interest` and the training data points for finding `x_nn`. 
     #'  The function must have three arguments: `x`, `y`, and `data` and return a `double` matrix with `nrow(x)` rows 
@@ -113,8 +114,9 @@ NICERegr = R6::R6Class("NICEClassif",
       private$is_correctly_classified = seq_len(nrow(private$predictor$data$X))
       if (x_nn_correct) {
         if (is.null(margin_correct)) {
+          browser()
           all_residuals = abs(private$y_hat[[1L]] - private$predictor$data$y[[1L]])
-          margin_correct = median(all_residuals) / 2 # TODO
+          margin_correct = median(all_residuals) / 2
         }
         private$is_correctly_classified = abs(private$y_hat[[1L]] - private$predictor$data$y[[1L]]) < margin_correct
       }
