@@ -78,6 +78,8 @@ While the original method is only applicable to classification tasks (see <a hre
     <p>NICE starts the counterfactual search for <code>x_interest</code> by finding its most similar (optionally) correctly predicted
 neighbor <code>x_nn</code> with(in) the desired prediction (range). Correctly predicted means that the prediction of <code>x_nn</code> is less
 than a user-specified <code>margin_correct</code> away from the true outcome of <code>x_nn</code>.
+This is designed to mimic the search for <code>x_nn</code> for regression tasks.
+If no <code>x_nn</code> satisfies this constraint, a warning is returned that no counterfactual could be found.
 <br>
 In the first iteration, NICE creates new instances by replacing a different feature value of <code>x_interest</code> with the corresponding
 value of <code>x_nn</code> in each new instance. Thus, if <code>x_nn</code> differs from <code>x_interest</code> in <code>d</code> features, <code>d</code> new instances are created. <br>
@@ -166,10 +168,9 @@ Default is <code>TRUE</code>.</p></dd>
 
 <dt><code>margin_correct</code></dt>
 <dd><p>(<code>numeric(1)</code> | <code>NULL</code>)<br>
-The accepted margin for considering a prediction as "correct". As the initial version of NICE was designed for
-classification tasks only, this is a design to mimic the search for <code>x_nn</code> for regression tasks.
+The accepted margin for considering a prediction as "correct".
 Ignored if <code>x_nn_correct = FALSE</code>.
-TODO: default</p></dd>
+If NULL, the accepted margin is set to half the median absolute distance between the true and predicted results in the data (<code>predictor$data</code>).</p></dd>
 
 
 <dt><code>return_multiple</code></dt>
