@@ -90,7 +90,7 @@ last iteration is returned as counterfactual; if <code>return_multiple = TRUE</c
 whose predicted <code>desired_class</code> probability is in the interval <code>desired_prob</code> are returned as counterfactuals.</p>
 <p>If <code>finish_early = FALSE</code> and <code>return_multiple = FALSE</code>, then <code>x_nn</code> is returned as single counterfactual.</p>
 <p>This NICE implementation corresponds to the original version of Brughmans and Martens (2021) when
-<code>return_multiple = FALSE</code>, <code>finish_early = TRUE</code>, and <code>x_nn_correct_classif = TRUE</code>.</p>
+<code>return_multiple = FALSE</code>, <code>finish_early = TRUE</code>, and <code>x_nn_correct = TRUE</code>.</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -135,7 +135,7 @@ reward values and their predictions.</p></dd>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span class="va"><a href="../reference/NICEClassif.html">NICEClassif</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>
   <span class="va">predictor</span>,
   optimization <span class="op">=</span> <span class="st">"sparsity"</span>,
-  x_nn_correct_classif <span class="op">=</span> <span class="cn">TRUE</span>,
+  x_nn_correct <span class="op">=</span> <span class="cn">TRUE</span>,
   return_multiple <span class="op">=</span> <span class="cn">TRUE</span>,
   finish_early <span class="op">=</span> <span class="cn">TRUE</span>,
   distance_function <span class="op">=</span> <span class="cn">NULL</span>
@@ -154,7 +154,7 @@ The object (created with <code>iml::Predictor$new()</code>) holding the machine 
 The reward function to optimize. Can be <code>sparsity</code> (default), <code>proximity</code> or <code>plausibility</code>.</p></dd>
 
 
-<dt><code>x_nn_correct_classif</code></dt>
+<dt><code>x_nn_correct</code></dt>
 <dd><p>(<code>logical(1)</code>)<br>
 Should only <em>correctly</em> classified data points in <code>predictor$data$X</code> be considered for the most similar instance search?
 Default is <code>TRUE</code>.</p></dd>
