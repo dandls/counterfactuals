@@ -68,7 +68,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #'   dissimilarity measure (Gower 1971).  
     #'   * `dist_target`: The absolute distance of the prediction for a counterfactual to the interval `desired_outcome`
     #'                    (regression tasks) or `desired_prob` (classification tasks).      
-    #'   * `nr_changed`: The number of feature changes w.r.t. `x_interest`.   
+    #'   * `no_changed`: The number of feature changes w.r.t. `x_interest`.   
     #'   * `dist_train`: The (weighted) distance to the `k` nearest training data points measured by Gower's 
     #'   dissimilarity measure (Gower 1971).
     #' 
@@ -85,10 +85,10 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #'  specifies the weight of the i-th closest data point.
     #'                                              
     #' @md
-    evaluate = function(measures = c("dist_x_interest", "dist_target", "nr_changed", "dist_train"), show_diff = FALSE, 
+    evaluate = function(measures = c("dist_x_interest", "dist_target", "no_changed", "dist_train"), show_diff = FALSE, 
                         k = 1L, weights = NULL) {
       
-      assert_names(measures, subset.of = c("dist_x_interest", "dist_target", "nr_changed", "dist_train"))
+      assert_names(measures, subset.of = c("dist_x_interest", "dist_target", "no_changed", "dist_train"))
       assert_flag(show_diff)
       assert_number(k, lower = 1, upper = nrow(private$predictor$data$X))
       assert_numeric(weights, any.missing = FALSE, len = k, null.ok = TRUE)
@@ -104,8 +104,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         evals$dist_x_interest = as.vector(eval_distance(private$.distance_function, private$.data, private$.x_interest, private$predictor$data$X))
       }
       
-      if ("nr_changed" %in% measures) {
-        evals$nr_changed = count_changes(private$.data, private$.x_interest)
+      if ("no_changed" %in% measures) {
+        evals$no_changed = count_changes(private$.data, private$.x_interest)
       }
       
       if ("dist_train" %in% measures) {

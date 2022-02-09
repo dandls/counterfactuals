@@ -8,7 +8,7 @@
 
 # evaluate returns error if measures are not known
 
-    Assertion on 'measures' failed: Must be a subset of set {dist_x_interest,dist_target,nr_changed,dist_train}.
+    Assertion on 'measures' failed: Must be a subset of set {dist_x_interest,dist_target,no_changed,dist_train}.
 
 # methods that require at least one counterfactuals are blocked when no counterfactuals found
 

@@ -6,7 +6,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
   codomain = ParamSet$new(list(
     ParamDbl$new("dist_target", tags = "minimize"),
     ParamDbl$new("dist_x_interest", tags = "minimize"),
-    ParamInt$new("nr_changed", tags = "minimize"),
+    ParamInt$new("no_changed", tags = "minimize"),
     ParamDbl$new("dist_train", tags = "minimize")
   ))
   

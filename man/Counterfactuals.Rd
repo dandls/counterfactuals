@@ -87,7 +87,7 @@ for classification tasks (\link{CounterfactualMethodClassif}).}
 Evaluates the counterfactuals. It returns the counterfactuals together with the evaluation \code{measures}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$evaluate(
-  measures = c("dist_x_interest", "dist_target", "nr_changed", "dist_train"),
+  measures = c("dist_x_interest", "dist_target", "no_changed", "dist_train"),
   show_diff = FALSE,
   k = 1L,
   weights = NULL
@@ -105,7 +105,7 @@ The following measures are available:
 dissimilarity measure (Gower 1971).
 \item \code{dist_target}: The absolute distance of the prediction for a counterfactual to the interval \code{desired_outcome}
 (regression tasks) or \code{desired_prob} (classification tasks).
-\item \code{nr_changed}: The number of feature changes w.r.t. \code{x_interest}.
+\item \code{no_changed}: The number of feature changes w.r.t. \code{x_interest}.
 \item \code{dist_train}: The (weighted) distance to the \code{k} nearest training data points measured by Gower's
 dissimilarity measure (Gower 1971).
 }}

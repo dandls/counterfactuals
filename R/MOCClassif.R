@@ -168,7 +168,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     
     #' @description Visualizes two selected objective values of all emerged individuals in a scatter plot.
     #' @param objectives (`character(2)`)\cr  
-    #'   The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "nr_changed", 
+    #'   The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "no_changed", 
     #'   and "dist_train".
     plot_search = function(objectives = c("dist_target", "dist_x_interest")) {
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
@@ -177,7 +177,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       if (is.null(self$optimizer)) {
         stop("There are no results yet. Please run `$find_counterfactuals` first.")
       }
-      assert_names(objectives, subset.of = c("dist_target", "dist_x_interest", "nr_changed", "dist_train"))
+      assert_names(objectives, subset.of = c("dist_target", "dist_x_interest", "no_changed", "dist_train"))
       make_moc_search_plot(self$optimizer$archive$data, objectives)
     }
   ),

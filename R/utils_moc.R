@@ -21,7 +21,7 @@ make_fitness_function = function(predictor, x_interest, pred_column, target, wei
     
     dist_target = sapply(pred, function(x) ifelse(between(x, target[1L], target[2L]), 0, min(abs(x - target))))
     dist_x_interest = as.vector(eval_distance(distance_function, xdt, x_interest, predictor$data$X))
-    nr_changed = rowSums(xdt != x_interest[rep(seq_len(nrow(x_interest)), nrow(xdt)), ])
+    no_changed = rowSums(xdt != x_interest[rep(seq_len(nrow(x_interest)), nrow(xdt)), ])
     dist_train = eval_distance(distance_function, xdt, predictor$data$X, predictor$data$X)
     # Subset the distance matrix w.r.t the k-nearest neighbors of each candidate
     dist_train = t(apply(dist_train, 1L, function(x) sort(x)))
@@ -32,7 +32,7 @@ make_fitness_function = function(predictor, x_interest, pred_column, target, wei
     } else {
       dist_train = apply(dist_train, 1L, mean)
     }
-    data.table(cbind(dist_target, dist_x_interest, nr_changed, dist_train))
+    data.table(cbind(dist_target, dist_x_interest, no_changed, dist_train))
   }
 }
 
@@ -435,7 +435,7 @@ get_ICE_sd = function(x_interest, predictor, param_set) {
 
 
 make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
-  obj_names = c("dist_target", "dist_x_interest", "nr_changed", "dist_train")
+  obj_names = c("dist_target", "dist_x_interest", "no_changed", "dist_train")
 
   ls_stats = lapply(seq_len(max(archive$data$batch_nr)), function(i){
     best = archive$best(seq_len(i))
@@ -518,7 +518,7 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
 }
 
 comp_domhv_all_gen = function(archive, ref_point) {
-  obj_names = c("dist_target", "dist_x_interest", "nr_changed", "dist_train")
+  obj_names = c("dist_target", "dist_x_interest", "no_changed", "dist_train")
   data.table(
     generations = unique(archive$data$batch_nr), 
     hv = vapply(

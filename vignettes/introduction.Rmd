@@ -154,7 +154,7 @@ head(cbind(cfactuals$data, cfactuals$predict()), 5L)
 ```
 
 The `evaluate()` method returns the counterfactuals along with the evaluation measures `dist_x_interest`, `dist_target`,
-`nr_changed`, and `dist_train`. \
+`no_changed`, and `dist_train`. \
 Setting the `show_diff` argument to `TRUE` displays the counterfactuals as their difference
 to `x_interest`: for a numeric feature, positive values indicate an increase compared to the feature value in `x_interest`
 and negative values indicate a decrease; for factors, the counterfactual feature value is displayed if it 

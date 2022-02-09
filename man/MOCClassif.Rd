@@ -9,7 +9,7 @@ to minimize are:
 \enumerate{
 \item {\code{dist_target}: Distance to \code{desired_prob} (classification tasks) or \code{desired_prob} (regression tasks).}
 \item {\code{dist_x_interest}: Dissimilarity to \code{x_interest} measured by Gower's dissimilarity measure (Gower 1971).}
-\item {\code{nr_changed}: Number of feature changes.}
+\item {\code{no_changed}: Number of feature changes.}
 \item {\code{dist_train}: (Weighted) sum of dissimilarities to the \code{k} nearest data points in \code{predictor$data$X}.}
 }
 
@@ -262,7 +262,7 @@ Visualizes two selected objective values of all emerged individuals in a scatter
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{objectives}}{(\code{character(2)})\cr
-The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "nr_changed",
+The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "no_changed",
 and "dist_train".}
 }
 \if{html}{\out{</div>}}
