@@ -209,7 +209,7 @@ Should information about the optimization status be hidden? Default is \code{FAL
 
 \item{\code{distance_function}}{(\verb{function()} | \code{NULL})\cr
 The distance function to be used in the second and fourth objective. The function must have three arguments:
-\code{x}, \code{y}, and \code{data} and return a \code{double} matrix with \code{nrow(x)} rows and \code{nrow(y)} columns.
+\code{x}, \code{y}, and \code{data} and return a \code{numeric} matrix with \code{nrow(x)} rows and \code{nrow(y)} columns.
 If set to \code{NULL} (default), then Gower distance (Gower 1971) is used.}
 }
 \if{html}{\out{</div>}}

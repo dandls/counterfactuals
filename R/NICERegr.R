@@ -79,10 +79,10 @@ NICERegr = R6::R6Class("NICEClassif",
     #' @param margin_correct (`numeric(1)` | `NULL`)\cr
     #' The accepted margin for considering a prediction as "correct". 
     #' Ignored if `x_nn_correct = FALSE`.
-    #' If NULL, the accepted margin is set to half the median absolute distance between the true and predicted results in the data (`predictor$data`).
+    #' If NULL, the accepted margin is set to half the median absolute distance between the true and predicted outcomes in the data (`predictor$data`).
     #' @param distance_function (`function()` | `NULL`)\cr 
     #'  The distance function used to compute the distances between `x_interest` and the training data points for finding `x_nn`. 
-    #'  The function must have three arguments: `x`, `y`, and `data` and return a `double` matrix with `nrow(x)` rows 
+    #'  The function must have three arguments: `x`, `y`, and `data` and return a `numeric` matrix with `nrow(x)` rows 
     #'  and `nrow(y)` columns. If set to `NULL` (default), then Gower distance (Gower 1971) is used.
     initialize = function(predictor, optimization = "sparsity", x_nn_correct = TRUE, margin_correct = NULL, 
                           return_multiple = TRUE, finish_early = TRUE, distance_function = NULL) {

@@ -74,7 +74,7 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
     #' is in the interval `desired_prob`. If `FALSE`, the algorithm continues until `x_nn` is recreated.
     #' @param distance_function (`function()` | `NULL`)\cr 
     #'  The distance function used to compute the distances between `x_interest` and the training data points for finding `x_nn`. 
-    #'  The function must have three arguments: `x`, `y`, and `data` and return a `double` matrix with `nrow(x)` rows 
+    #'  The function must have three arguments: `x`, `y`, and `data` and return a `numeric` matrix with `nrow(x)` rows 
     #'  and `nrow(y)` columns. If set to `NULL` (default), then Gower distance (Gower 1971) is used.
     initialize = function(predictor, optimization = "sparsity", x_nn_correct = TRUE, return_multiple = TRUE,
                           finish_early = TRUE, distance_function = NULL) {

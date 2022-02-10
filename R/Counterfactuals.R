@@ -328,7 +328,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #' @field distance_function (`function()`) \cr
     #'  The distance function used in the second and fourth evaluation measure.
     #'  The function must have three arguments:
-    #'  `x`, `y`, and `data` and return a `double` matrix. If set to `NULL` (default), then Gower distance (Gower 1971) is used.
+    #'  `x`, `y`, and `data` and return a `numeric` matrix. If set to `NULL` (default), then Gower distance (Gower 1971) is used.
     distance_function = function(value) {
       if (missing(value)) {
         private$.distance_function
