@@ -121,11 +121,11 @@ Maximum number of feature changes. \code{NULL} (default) allows any number of ch
 
 \item{\code{mu}}{(\code{integerish(1)})\cr
 The population size. Default is \code{20L}. The total number of random samples is set to \code{mu * n_generations}.
-See @description for further details.}
+See the \code{Details} section for further details.}
 
 \item{\code{n_generations}}{(\code{integerish(1)})\cr
 The number of generations. Default is \code{175L}. The total number of random samples is set to \code{mu * n_generations}.
-See @description for further details.}
+See the \code{Details} section for further details.}
 
 \item{\code{p_use_orig}}{(\code{numeric(1)})\cr
 Probability with which a feature/gene is reset to its original value in \code{x_interest} after random sampling. Default is \code{0.5}.}
@@ -163,7 +163,7 @@ If set to \code{NULL} (default), then Gower distance (Gower 1971) is used.}
 Plots the evolution of the mean and minimum objective values together with the dominated hypervolume over
 the generations. All values for a generation are computed based on all non-dominated individuals that emerged until
 that generation. The randomly drawn samples are therefore split into \code{n_generations} folds of size \code{mu.}
-This function emulates MOCs \code{plot_statistics()} method. See @details for further information.
+This function mimics MOCs \code{plot_statistics()} method. See the \code{Details} section for further information.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RandomSearchRegr$plot_statistics(centered_obj = TRUE)}\if{html}{\out{</div>}}
 }
@@ -184,7 +184,7 @@ since they (usually) have different scales. If set to \code{TRUE} (default), the
 \subsection{Method \code{get_dominated_hv()}}{
 Calculates the dominated hypervolume of each generation. The randomly drawn samples are therefore split
 into \code{n_generations} folds of size \code{mu.}
-This function emulates MOCs \code{get_dominated_hv()} method. See @details for further information.
+This function mimics MOCs \code{get_dominated_hv()} method. See the \code{Details} section for further information.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RandomSearchRegr$get_dominated_hv()}\if{html}{\out{</div>}}
 }
@@ -199,7 +199,7 @@ A \code{data.table} with the dominated hypervolume of each generation.
 \subsection{Method \code{plot_search()}}{
 Visualizes two selected objective values of all emerged individuals in a scatter plot.
 The randomly drawn samples are therefore split into \code{n_generations} folds of size \code{mu.}
-This function emulates MOCs \code{plot_search()} method. See @details for further information.
+This function mimics MOCs \code{plot_search()} method. See the \code{Details} section for further information.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{RandomSearchRegr$plot_search(objectives = c("dist_target", "dist_x_interest"))}\if{html}{\out{</div>}}
 }

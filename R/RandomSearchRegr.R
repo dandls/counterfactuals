@@ -31,10 +31,10 @@ RandomSearchRegr = R6::R6Class("RandomSearchRegr",
     #'   Maximum number of feature changes. `NULL` (default) allows any number of changes.
     #' @param mu (`integerish(1)`)\cr  
     #'   The population size. Default is `20L`. The total number of random samples is set to `mu * n_generations`.
-    #'   See @description for further details.
+    #'   See the `Details` section for further details.
     #' @param n_generations (`integerish(1)`)\cr  
     #'   The number of generations. Default is `175L`. The total number of random samples is set to `mu * n_generations`.
-    #'   See @description for further details.
+    #'   See the `Details` section for further details.
     #' @param p_use_orig (`numeric(1)`)\cr
     #'   Probability with which a feature/gene is reset to its original value in `x_interest` after random sampling. Default is `0.5`.
     #' @param k (`integerish(1)`)\cr
@@ -80,7 +80,7 @@ RandomSearchRegr = R6::R6Class("RandomSearchRegr",
     #' @description Plots the evolution of the mean and minimum objective values together with the dominated hypervolume over
     #' the generations. All values for a generation are computed based on all non-dominated individuals that emerged until
     #' that generation. The randomly drawn samples are therefore split into `n_generations` folds of size `mu.`
-    #' This function emulates MOCs `plot_statistics()` method. See @details for further information.
+    #' This function mimics MOCs `plot_statistics()` method. See the `Details` section for further information.
     #' @param centered_obj (`logical(1)`)\cr
     #'   Should the objective values be centered? If set to `FALSE`, each objective value is visualized in a separate plot,
     #'   since they (usually) have different scales. If set to `TRUE` (default), they are visualized in a single plot.
@@ -98,7 +98,7 @@ RandomSearchRegr = R6::R6Class("RandomSearchRegr",
 
     #' @description Calculates the dominated hypervolume of each generation. The randomly drawn samples are therefore split 
     #' into `n_generations` folds of size `mu.`
-    #' This function emulates MOCs `get_dominated_hv()` method. See @details for further information.
+    #' This function mimics MOCs `get_dominated_hv()` method. See the `Details` section for further information.
     #' @return A `data.table` with the dominated hypervolume of each generation.
     get_dominated_hv = function() {
       if (is.null(self$optimizer)) {
@@ -110,7 +110,7 @@ RandomSearchRegr = R6::R6Class("RandomSearchRegr",
 
     #' @description Visualizes two selected objective values of all emerged individuals in a scatter plot.
     #' The randomly drawn samples are therefore split into `n_generations` folds of size `mu.`
-    #' This function emulates MOCs `plot_search()` method. See @details for further information.
+    #' This function mimics MOCs `plot_search()` method. See the `Details` section for further information.
     #' @param objectives (`character(2)`)\cr
     #'   The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "nr_changed",
     #'   and "dist_train".
