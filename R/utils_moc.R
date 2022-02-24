@@ -72,40 +72,6 @@ MutatorReset = R6::R6Class("MutatorReset", inherit = Mutator,
   )
 )
 
-
-
-# Reset recombinated values to feature value of x_interest with prop `p_use_orig` and controls that maximum
-# `max_changed` features are changed
-RecombinatorReset = R6::R6Class("RecombinatorReset", inherit = Recombinator,
-  
-  public = list(
-    initialize = function(x_interest, p_use_orig, max_changed) {
-      assert_data_table(x_interest)
-      assert_numeric(p_use_orig, lower = 0, upper = 1, len = 1L, any.missing = FALSE)
-      assert_integerish(max_changed, lower = 0, len = 1L, any.missing = FALSE, null.ok = TRUE)
-      params = ps(
-        max_changed = p_int(special_vals = list(NULL)),
-        p_use_orig = p_dbl()
-      )
-      params$values = list(
-        "max_changed" = max_changed,
-        "p_use_orig" = p_use_orig
-      )
-      super$initialize(param_set = params)
-      private$.x_interest = x_interest
-    }
-  ),
-  
-  private = list(
-    .x_interest = NULL,
-
-    .recombine = function(values) {
-      params = self$param_set$get_values()
-      reset_columns(values, params$p_use_orig, params$max_changed, private$.x_interest)
-    }
-  )
-)
-
 # Resets columns of `values` to feature value of `x_interest` with prop `p_use_orig` and controls that maximum
 # `max_changed` features are changed
 reset_columns = function(values, p_use_orig, max_changed, x_interest) {
@@ -271,8 +237,7 @@ make_moc_recombinator = function(ps, x_interest, max_changed, p_rec, p_rec_gen, 
   op_seq1_rec = rec("combine", operators = ops_list)
   op_seq1_no_rec = rec("null", n_indivs_in = 2L, n_indivs_out = 2L)
   op_r_seq_1 = rec("maybe", op_seq1_rec, op_seq1_no_rec, p = p_rec_gen)
-  op_r_seq_2 = RecombinatorReset$new(x_interest, p_rec_use_orig, max_changed)
-  rec("sequential", list(op_r_seq_1, op_r_seq_2))
+  rec("sequential", list(op_r_seq_1))
 }
 
 
