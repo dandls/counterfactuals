@@ -42,8 +42,6 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     #'   Probability with which an individual is selected for recombination. Default is `0.57`.
     #' @param p_rec_gen (`numeric(1)`)\cr  
     #'   Probability with which a feature/gene is selected for recombination. Default is `0.85`.  
-    #' @param p_rec_use_orig (`numeric(1)`)\cr  
-    #'   Probability with which a feature/gene is reset to its original value in `x_interest` after recombination. Default is `0.88`.    
     #' @param p_mut (`numeric(1)`)\cr  
     #'   Probability with which an individual is selected for mutation. Default is `0.79`.    
     #' @param p_mut_gen (`numeric(1)`)\cr  
@@ -70,7 +68,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     #'  `x`, `y`, and `data` and return a `numeric` matrix with `nrow(x)` rows and `nrow(y)` columns. 
     #'  If set to `NULL` (default), then Gower distance (Gower 1971) is used.
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, mu = 20L, 
-                          n_generations = 175L, p_rec = 0.57, p_rec_gen = 0.85, p_rec_use_orig = 0.88, p_mut = 0.79, 
+                          n_generations = 175L, p_rec = 0.57, p_rec_gen = 0.85, p_mut = 0.79, 
                           p_mut_gen = 0.56, p_mut_use_orig = 0.32, k = 1L, weights = NULL, lower = NULL, upper = NULL, 
                           init_strategy = "random", use_conditional_mutator = FALSE, quiet = FALSE, distance_function = NULL) {
       
@@ -88,7 +86,6 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       assert_integerish(n_generations, lower = 0, len = 1L)
       assert_number(p_rec, lower = 0, upper = 1)
       assert_number(p_rec_gen, lower = 0, upper = 1)
-      assert_number(p_rec_use_orig, lower = 0, upper = 1)
       assert_number(p_mut, lower = 0, upper = 1)
       assert_number(p_mut_gen, lower = 0, upper = 1)
       assert_number(p_mut_use_orig, lower = 0, upper = 1)
@@ -123,7 +120,6 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       private$n_generations = n_generations
       private$p_rec = p_rec
       private$p_rec_gen = p_rec_gen
-      private$p_rec_use_orig = p_rec_use_orig
       private$p_mut = p_mut
       private$p_mut_gen = p_mut_gen
       private$p_mut_use_orig = p_mut_use_orig
@@ -202,7 +198,6 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     n_generations = NULL,
     p_rec = NULL,
     p_rec_gen = NULL,
-    p_rec_use_orig = NULL,
     p_mut = NULL,
     p_mut_gen = NULL,
     p_mut_use_orig = NULL,
@@ -238,7 +233,6 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
         n_generations = private$n_generations,
         p_rec = private$p_rec,
         p_rec_gen = private$p_rec_gen,
-        p_rec_use_orig = private$p_rec_use_orig,
         p_mut = private$p_mut,
         p_mut_gen = private$p_mut_gen,
         p_mut_use_orig = private$p_mut_use_orig,
@@ -267,7 +261,6 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       cat(" - p_mut_use_orig: ", private$p_mut_use_orig, "\n")
       cat(" - p_rec: ", private$p_rec, "\n")
       cat(" - p_rec_gen: ", private$p_rec_gen, "\n")
-      cat(" - p_rec_use_orig: ", private$p_rec_use_orig, "\n")
       cat(" - upper: ", private$upper)
       cat(" - weights: ", private$weights, "\n")
     }

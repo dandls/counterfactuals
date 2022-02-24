@@ -219,7 +219,7 @@ make_moc_mutator = function(ps, x_interest, max_changed, sdevs, p_mut, p_mut_gen
 }
 
 
-make_moc_recombinator = function(ps, x_interest, max_changed, p_rec, p_rec_gen, p_rec_use_orig) {
+make_moc_recombinator = function(ps, x_interest, max_changed, p_rec, p_rec_gen) {
 
   ops_list = list()
   # If clauses are necessary to avoid warning that no corresponding dimensions
