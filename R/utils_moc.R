@@ -258,8 +258,7 @@ make_moc_recombinator = function(ps, x_interest, max_changed, p_rec, p_rec_gen, 
   ops_list = list()
   # If clauses are necessary to avoid warning that no corresponding dimensions
   if ("ParamDbl" %in% ps$class) {
-    # TODO: Replace this with "simulated binary crossover recombinator" once it is available
-    ops_list[["ParamDbl"]] = rec("maybe", rec("xounif"), rec("null", n_indivs_in = 2L, n_indivs_out = 2L), p = p_rec)
+    ops_list[["ParamDbl"]] = rec("maybe", rec("sbx"), rec("null", n_indivs_in = 2L, n_indivs_out = 2L), p = p_rec)
   }
   rec_fact_int = rec("maybe", rec("xounif"), rec("null", n_indivs_in = 2L, n_indivs_out = 2L), p = p_rec)
   if ("ParamInt" %in% ps$class) {
