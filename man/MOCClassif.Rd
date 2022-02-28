@@ -123,7 +123,6 @@ Create a new \code{MOCClassif} object.
   n_generations = 175L,
   p_rec = 0.57,
   p_rec_gen = 0.85,
-  p_rec_use_orig = 0.88,
   p_mut = 0.79,
   p_mut_gen = 0.56,
   p_mut_use_orig = 0.32,
@@ -165,9 +164,6 @@ Probability with which an individual is selected for recombination. Default is \
 
 \item{\code{p_rec_gen}}{(\code{numeric(1)})\cr
 Probability with which a feature/gene is selected for recombination. Default is \code{0.85}.}
-
-\item{\code{p_rec_use_orig}}{(\code{numeric(1)})\cr
-Probability with which a feature/gene is reset to its original value in \code{x_interest} after recombination. Default is \code{0.88}.}
 
 \item{\code{p_mut}}{(\code{numeric(1)})\cr
 Probability with which an individual is selected for mutation. Default is \code{0.79}.}
