@@ -4,7 +4,7 @@
 #' \enumerate{
 #'    \item {`dist_target`: Distance to `desired_prob` (classification tasks) or `desired_prob` (regression tasks).}
 #'    \item {`dist_x_interest`: Dissimilarity to `x_interest` measured by Gower's dissimilarity measure (Gower 1971).}
-#'    \item {`nr_changed`: Number of feature changes.}
+#'    \item {`no_changed`: Number of feature changes.}
 #'    \item {`dist_train`: (Weighted) sum of dissimilarities to the `k` nearest data points in `predictor$data$X`.}
 #' }  
 #' 

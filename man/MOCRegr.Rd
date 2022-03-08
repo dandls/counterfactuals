@@ -9,7 +9,7 @@ to minimize are:
 \enumerate{
 \item {\code{dist_target}: Distance to \code{desired_prob} (classification tasks) or \code{desired_prob} (regression tasks).}
 \item {\code{dist_x_interest}: Dissimilarity to \code{x_interest} measured by Gower's dissimilarity measure (Gower 1971).}
-\item {\code{nr_changed}: Number of feature changes.}
+\item {\code{no_changed}: Number of feature changes.}
 \item {\code{dist_train}: (Weighted) sum of dissimilarities to the \code{k} nearest data points in \code{predictor$data$X}.}
 }
 
@@ -121,7 +121,6 @@ Create a new \code{MOCRegr} object.
   n_generations = 175L,
   p_rec = 0.57,
   p_rec_gen = 0.85,
-  p_rec_use_orig = 0.88,
   p_mut = 0.79,
   p_mut_gen = 0.56,
   p_mut_use_orig = 0.32,
@@ -164,9 +163,6 @@ Probability with which an individual is selected for recombination. Default is \
 \item{\code{p_rec_gen}}{(\code{numeric(1)})\cr
 Probability with which a feature/gene is selected for recombination. Default is \code{0.85}.}
 
-\item{\code{p_rec_use_orig}}{(\code{numeric(1)})\cr
-Probability with which a feature/gene is reset to its original value in \code{x_interest} after recombination. Default is \code{0.88}.}
-
 \item{\code{p_mut}}{(\code{numeric(1)})\cr
 Probability with which an individual is selected for mutation. Default is \code{0.79}.}
 
@@ -207,7 +203,7 @@ Should information about the optimization status be hidden? Default is \code{FAL
 
 \item{\code{distance_function}}{(\verb{function()} | \code{NULL})\cr
 The distance function to be used in the second and fourth objective. The function must have three arguments:
-\code{x}, \code{y}, and \code{data} and return a \code{double} matrix with \code{nrow(x)} rows and \code{nrow(y)} columns.
+\code{x}, \code{y}, and \code{data} and return a \code{numeric} matrix with \code{nrow(x)} rows and \code{nrow(y)} columns.
 If set to \code{NULL} (default), then Gower distance (Gower 1971) is used.}
 }
 \if{html}{\out{</div>}}
@@ -260,7 +256,7 @@ Visualizes two selected objective values of all emerged individuals in a scatter
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{objectives}}{(\code{character(2)})\cr
-The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "nr_changed",
+The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "no_changed",
 and "dist_train".}
 }
 \if{html}{\out{</div>}}

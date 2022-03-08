@@ -7,7 +7,9 @@
 #' @details
 #' NICE starts the counterfactual search for `x_interest` by finding its most similar (optionally) correctly predicted
 #' neighbor `x_nn` with(in) the desired prediction (range). Correctly predicted means that the prediction of `x_nn` is less 
-#' than a user-specified `margin_correct_classif` away from the true outcome of `x_nn`.
+#' than a user-specified `margin_correct` away from the true outcome of `x_nn`.
+#' This is designed to mimic the search for `x_nn` for regression tasks.
+#' If no `x_nn` satisfies this constraint, a warning is returned that no counterfactual could be found. 
 #' \cr
 #' In the first iteration, NICE creates new instances by replacing a different feature value of `x_interest` with the corresponding
 #' value of `x_nn` in each new instance. Thus, if `x_nn` differs from `x_interest` in `d` features, `d` new instances are created. \cr
@@ -65,7 +67,7 @@ NICERegr = R6::R6Class("NICEClassif",
     #' @template predictor
     #' @param optimization (`character(1)`)\cr
     #' The reward function to optimize. Can be `sparsity` (default), `proximity` or `plausibility`.
-    #' @param x_nn_correct_classif (`logical(1)`)\cr
+    #' @param x_nn_correct (`logical(1)`)\cr
     #' Should only *correctly* classified data points in `predictor$data$X` be considered for the most similar instance search?
     #' Default is `TRUE`.
     #' @param return_multiple (`logical(1)`)\cr
@@ -74,16 +76,15 @@ NICERegr = R6::R6Class("NICEClassif",
     #' @param finish_early (`logical(1)`)\cr
     #' Should the algorithm terminate after an iteration in which the prediction for the highest reward instance
     #' is in the interval `desired_outcome`. If `FALSE`, the algorithm continues until `x_nn` is recreated.
-    #' @param margin_correct_classif (`numeric(1)` | `NULL`)\cr
-    #' The accepted margin for considering a prediction as "correct". As the initial version of NICE was designed for
-    #' classification tasks only, this is a design to mimic the search for `x_nn` for regression tasks.
-    #' Ignored if `x_nn_correct_classif = FALSE`.
-    #' TODO: default
+    #' @param margin_correct (`numeric(1)` | `NULL`)\cr
+    #' The accepted margin for considering a prediction as "correct". 
+    #' Ignored if `x_nn_correct = FALSE`.
+    #' If NULL, the accepted margin is set to half the median absolute distance between the true and predicted outcomes in the data (`predictor$data`).
     #' @param distance_function (`function()` | `NULL`)\cr 
     #'  The distance function used to compute the distances between `x_interest` and the training data points for finding `x_nn`. 
-    #'  The function must have three arguments: `x`, `y`, and `data` and return a `double` matrix with `nrow(x)` rows 
+    #'  The function must have three arguments: `x`, `y`, and `data` and return a `numeric` matrix with `nrow(x)` rows 
     #'  and `nrow(y)` columns. If set to `NULL` (default), then Gower distance (Gower 1971) is used.
-    initialize = function(predictor, optimization = "sparsity", x_nn_correct_classif = TRUE, margin_correct_classif = NULL, 
+    initialize = function(predictor, optimization = "sparsity", x_nn_correct = TRUE, margin_correct = NULL, 
                           return_multiple = TRUE, finish_early = TRUE, distance_function = NULL) {
       
       if (is.null(distance_function)) {
@@ -91,13 +92,13 @@ NICERegr = R6::R6Class("NICEClassif",
       }
       super$initialize(predictor, distance_function = distance_function)
       assert_choice(optimization, choices = c("sparsity", "proximity", "plausibility"))
-      assert_flag(x_nn_correct_classif)
+      assert_flag(x_nn_correct)
       assert_flag(return_multiple)
       assert_flag(finish_early)
-      assert_numeric(margin_correct_classif, len = 1L, any.missing = FALSE, null.ok = TRUE)
+      assert_numeric(margin_correct, len = 1L, any.missing = FALSE, null.ok = TRUE)
 
       private$optimization = optimization
-      private$x_nn_correct_classif = x_nn_correct_classif
+      private$x_nn_correct = x_nn_correct
       private$return_multiple = return_multiple
       private$finish_early = finish_early
       private$y_hat = private$predictor$predict(predictor$data$X)
@@ -111,12 +112,13 @@ NICERegr = R6::R6Class("NICEClassif",
       }
 
       private$is_correctly_classified = seq_len(nrow(private$predictor$data$X))
-      if (x_nn_correct_classif) {
-        if (is.null(margin_correct_classif)) {
+      if (x_nn_correct) {
+        if (is.null(margin_correct)) {
+          browser()
           all_residuals = abs(private$y_hat[[1L]] - private$predictor$data$y[[1L]])
-          margin_correct_classif = median(all_residuals) / 2 # TODO
+          margin_correct = median(all_residuals) / 2
         }
-        private$is_correctly_classified = abs(private$y_hat[[1L]] - private$predictor$data$y[[1L]]) < margin_correct_classif
+        private$is_correctly_classified = abs(private$y_hat[[1L]] - private$predictor$data$y[[1L]]) < margin_correct
       }
       private$candidates_x_nn = private$predictor$data$X[private$is_correctly_classified]
     }
@@ -150,7 +152,7 @@ NICERegr = R6::R6Class("NICEClassif",
     ae_model = NULL,
     ae_preprocessor = NULL,
     y_hat = NULL,
-    x_nn_correct_classif = NULL,
+    x_nn_correct = NULL,
     return_multiple = NULL,
     finish_early = NULL,
     is_correctly_classified = NULL,
@@ -186,7 +188,7 @@ NICERegr = R6::R6Class("NICEClassif",
       cat(" - finish_early: ", private$finish_early, "\n")
       cat(" - optimization: ", private$optimization, "\n")
       cat(" - return_multiple: ", private$return_multiple, "\n")
-      cat(" - x_nn_correct_classif: ", private$x_nn_correct_classif, "\n")
+      cat(" - x_nn_correct: ", private$x_nn_correct, "\n")
     }
   )
 )

@@ -23,10 +23,11 @@ loan was denied because the amount of €30k is too high given the income.
 If the amount had been €20k, the loan would have been granted.”
 
 For an introduction to counterfactual explanation methods, we recommend
-Chapter 6 of the [Interpretable Machine Learning
+Chapter 9.3 of the [Interpretable Machine Learning
 book](https://christophm.github.io/interpretable-ml-book/) by Christoph
-Molnar. The package is based on the R code underyling the paper [Multi-Objective Counterfactual Explanations
-    (MOC)](https://link.springer.com/chapter/10.1007%2F978-3-030-58112-1_31).
+Molnar. The package is based on the R code underlying the paper
+[Multi-Objective Counterfactual Explanations
+(MOC)](https://link.springer.com/chapter/10.1007%2F978-3-030-58112-1_31).
 
 ## Available methods
 
@@ -46,7 +47,7 @@ You can install the development version from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("susanne-207/counterfactuals")
+devtools::install_github("dandls/counterfactuals")
 ```
 
 ## Get started
@@ -85,7 +86,7 @@ predictor = Predictor$new(rf, type = "prob")
 
 ### Find counterfactuals
 
-For `x_interest` the model predicts a probability of 8% for class
+For `x_interest`, the model predicts a probability of 8% for class
 `versicolor`.
 
 ``` r
@@ -131,7 +132,7 @@ cfactuals
 #>    Sepal.Length Sepal.Width Petal.Length Petal.Width
 #> 1:          5.9         3.2          4.8         1.8
 #> 2:          6.0         2.7          5.1         1.6
-#> 3:          6.7         3.0          5.0         1.7
+#> 3:          5.9         3.0          4.2         1.5
 ```
 
 The counterfactuals are stored in the `data` field.
@@ -141,9 +142,9 @@ cfactuals$data
 #>    Sepal.Length Sepal.Width Petal.Length Petal.Width
 #> 1:          5.9         3.2          4.8         1.8
 #> 2:          6.0         2.7          5.1         1.6
-#> 3:          6.7         3.0          5.0         1.7
-#> 4:          6.0         2.9          4.5         1.5
-#> 5:          5.9         3.0          4.2         1.5
+#> 3:          5.9         3.0          4.2         1.5
+#> 4:          6.7         3.0          5.0         1.7
+#> 5:          6.0         2.9          4.5         1.5
 ```
 
 With the `evaluate()` method, we can evaluate the counterfactuals using
@@ -154,9 +155,9 @@ cfactuals$evaluate()
 #>    Sepal.Length Sepal.Width Petal.Length Petal.Width dist_x_interest nr_changed dist_train dist_target
 #> 1:          5.9         3.2          4.8         1.8      0.03354520          2          0           0
 #> 2:          6.0         2.7          5.1         1.6      0.05902778          3          0           0
-#> 3:          6.7         3.0          5.0         1.7      0.07020951          3          0           0
-#> 4:          6.0         2.9          4.5         1.5      0.07403484          4          0           0
-#> 5:          5.9         3.0          4.2         1.5      0.06938559          2          0           0
+#> 3:          5.9         3.0          4.2         1.5      0.06938559          2          0           0
+#> 4:          6.7         3.0          5.0         1.7      0.07020951          3          0           0
+#> 5:          6.0         2.9          4.5         1.5      0.07403484          4          0           0
 ```
 
 One visualization option is to plot the frequency of feature changes

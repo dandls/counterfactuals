@@ -21,7 +21,7 @@ make_fitness_function = function(predictor, x_interest, pred_column, target, wei
     
     dist_target = sapply(pred, function(x) ifelse(between(x, target[1L], target[2L]), 0, min(abs(x - target))))
     dist_x_interest = as.vector(eval_distance(distance_function, xdt, x_interest, predictor$data$X))
-    nr_changed = rowSums(xdt != x_interest[rep(seq_len(nrow(x_interest)), nrow(xdt)), ])
+    no_changed = rowSums(xdt != x_interest[rep(seq_len(nrow(x_interest)), nrow(xdt)), ])
     dist_train = eval_distance(distance_function, xdt, predictor$data$X, predictor$data$X)
     # Subset the distance matrix w.r.t the k-nearest neighbors of each candidate
     dist_train = t(apply(dist_train, 1L, function(x) sort(x)))
@@ -32,7 +32,7 @@ make_fitness_function = function(predictor, x_interest, pred_column, target, wei
     } else {
       dist_train = apply(dist_train, 1L, mean)
     }
-    data.table(cbind(dist_target, dist_x_interest, nr_changed, dist_train))
+    data.table(cbind(dist_target, dist_x_interest, no_changed, dist_train))
   }
 }
 
@@ -65,42 +65,8 @@ MutatorReset = R6::R6Class("MutatorReset", inherit = Mutator,
   private = list(
     .x_interest = NULL,
     
-    .mutate = function(values, context) {
-      params = self$param_set$get_values(context = context)
-      reset_columns(values, params$p_use_orig, params$max_changed, private$.x_interest)
-    }
-  )
-)
-
-
-
-# Reset recombinated values to feature value of x_interest with prop `p_use_orig` and controls that maximum
-# `max_changed` features are changed
-RecombinatorReset = R6::R6Class("RecombinatorReset", inherit = Recombinator,
-  
-  public = list(
-    initialize = function(x_interest, p_use_orig, max_changed) {
-      assert_data_table(x_interest)
-      assert_numeric(p_use_orig, lower = 0, upper = 1, len = 1L, any.missing = FALSE)
-      assert_integerish(max_changed, lower = 0, len = 1L, any.missing = FALSE, null.ok = TRUE)
-      params = ps(
-        max_changed = p_int(special_vals = list(NULL)),
-        p_use_orig = p_dbl()
-      )
-      params$values = list(
-        "max_changed" = max_changed,
-        "p_use_orig" = p_use_orig
-      )
-      super$initialize(param_set = params)
-      private$.x_interest = x_interest
-    }
-  ),
-  
-  private = list(
-    .x_interest = NULL,
-
-    .recombine = function(values, context) {
-      params = self$param_set$get_values(context = context)
+    .mutate = function(values) {
+      params = self$param_set$get_values()
       reset_columns(values, params$p_use_orig, params$max_changed, private$.x_interest)
     }
   )
@@ -160,13 +126,13 @@ ScalorNondomPenalized = R6::R6Class("ScalorNondomPenalized", inherit = Scalor,
     }
   ),
   private = list(
-    .scale = function(values, fitnesses, context) {
+    .scale = function(values, fitnesses) {
 
-      params = self$param_set$get_values(context = context)
+      params = self$param_set$get_values()
       if (params$jitter) {
         fitnesses = fitnesses * (1 + runif(length(fitnesses)) * sqrt(.Machine$double.eps))
       }
-      sorted = order_nondominated(fitnesses)$fronts
+      sorted = rank_nondominated(fitnesses)$fronts
       
       # Add penalization for individuals with -dist_target lower than -epsilon
       epsilon = params$epsilon
@@ -253,13 +219,12 @@ make_moc_mutator = function(ps, x_interest, max_changed, sdevs, p_mut, p_mut_gen
 }
 
 
-make_moc_recombinator = function(ps, x_interest, max_changed, p_rec, p_rec_gen, p_rec_use_orig) {
+make_moc_recombinator = function(ps, x_interest, max_changed, p_rec, p_rec_gen) {
 
   ops_list = list()
   # If clauses are necessary to avoid warning that no corresponding dimensions
   if ("ParamDbl" %in% ps$class) {
-    # TODO: Replace this with "simulated binary crossover recombinator" once it is available
-    ops_list[["ParamDbl"]] = rec("maybe", rec("xounif"), rec("null", n_indivs_in = 2L, n_indivs_out = 2L), p = p_rec)
+    ops_list[["ParamDbl"]] = rec("maybe", rec("sbx"), rec("null", n_indivs_in = 2L, n_indivs_out = 2L), p = p_rec)
   }
   rec_fact_int = rec("maybe", rec("xounif"), rec("null", n_indivs_in = 2L, n_indivs_out = 2L), p = p_rec)
   if ("ParamInt" %in% ps$class) {
@@ -272,8 +237,7 @@ make_moc_recombinator = function(ps, x_interest, max_changed, p_rec, p_rec_gen, 
   op_seq1_rec = rec("combine", operators = ops_list)
   op_seq1_no_rec = rec("null", n_indivs_in = 2L, n_indivs_out = 2L)
   op_r_seq_1 = rec("maybe", op_seq1_rec, op_seq1_no_rec, p = p_rec_gen)
-  op_r_seq_2 = RecombinatorReset$new(x_interest, p_rec_use_orig, max_changed)
-  rec("sequential", list(op_r_seq_1, op_r_seq_2))
+  rec("sequential", list(op_r_seq_1))
 }
 
 
@@ -435,7 +399,7 @@ get_ICE_sd = function(x_interest, predictor, param_set) {
 
 
 make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
-  obj_names = c("dist_target", "dist_x_interest", "nr_changed", "dist_train")
+  obj_names = c("dist_target", "dist_x_interest", "no_changed", "dist_train")
 
   ls_stats = lapply(seq_len(max(archive$data$batch_nr)), function(i){
     best = archive$best(seq_len(i))
@@ -518,7 +482,7 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
 }
 
 comp_domhv_all_gen = function(archive, ref_point) {
-  obj_names = c("dist_target", "dist_x_interest", "nr_changed", "dist_train")
+  obj_names = c("dist_target", "dist_x_interest", "no_changed", "dist_train")
   data.table(
     generations = unique(archive$data$batch_nr), 
     hv = vapply(
@@ -568,7 +532,7 @@ MutatorConditional = R6::R6Class("MutatorConditional", inherit = Mutator,
     p_mut = NULL,
     p_mut_gen = NULL,
     
-    .mutate = function(values, context) {
+    .mutate = function(values) {
       values_mutated = copy(values)
       for (i in seq_len(nrow(values))) {
         if (runif(1L) < private$p_mut) {

@@ -24,7 +24,7 @@
 #' 
 #' 
 #' This NICE implementation corresponds to the original version of Brughmans and Martens (2021) when
-#' `return_multiple = FALSE`, `finish_early = TRUE`, and `x_nn_correct_classif = TRUE`.
+#' `return_multiple = FALSE`, `finish_early = TRUE`, and `x_nn_correct = TRUE`.
 #' 
 #' 
 #' @references 
@@ -63,7 +63,7 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
     #' @template predictor
     #' @param optimization (`character(1)`)\cr 
     #' The reward function to optimize. Can be `sparsity` (default), `proximity` or `plausibility`.
-    #' @param x_nn_correct_classif (`logical(1)`)\cr 
+    #' @param x_nn_correct (`logical(1)`)\cr 
     #' Should only *correctly* classified data points in `predictor$data$X` be considered for the most similar instance search?
     #' Default is `TRUE`.
     #' @param return_multiple (`logical(1)`)\cr 
@@ -74,9 +74,9 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
     #' is in the interval `desired_prob`. If `FALSE`, the algorithm continues until `x_nn` is recreated.
     #' @param distance_function (`function()` | `NULL`)\cr 
     #'  The distance function used to compute the distances between `x_interest` and the training data points for finding `x_nn`. 
-    #'  The function must have three arguments: `x`, `y`, and `data` and return a `double` matrix with `nrow(x)` rows 
+    #'  The function must have three arguments: `x`, `y`, and `data` and return a `numeric` matrix with `nrow(x)` rows 
     #'  and `nrow(y)` columns. If set to `NULL` (default), then Gower distance (Gower 1971) is used.
-    initialize = function(predictor, optimization = "sparsity", x_nn_correct_classif = TRUE, return_multiple = TRUE,
+    initialize = function(predictor, optimization = "sparsity", x_nn_correct = TRUE, return_multiple = TRUE,
                           finish_early = TRUE, distance_function = NULL) {
       
       if (is.null(distance_function)) {
@@ -84,12 +84,12 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
       }
       super$initialize(predictor, distance_function = distance_function)
       assert_choice(optimization, choices = c("sparsity", "proximity", "plausibility"))
-      assert_flag(x_nn_correct_classif)
+      assert_flag(x_nn_correct)
       assert_flag(return_multiple)
       assert_flag(finish_early)
       
       private$optimization = optimization
-      private$x_nn_correct_classif = x_nn_correct_classif
+      private$x_nn_correct = x_nn_correct
       private$return_multiple = return_multiple
       private$finish_early = finish_early
       private$y_hat = private$predictor$predict(predictor$data$X)
@@ -103,7 +103,7 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
       }
       
       private$is_correctly_classified = seq_len(nrow(private$predictor$data$X))
-      if (x_nn_correct_classif) {
+      if (x_nn_correct) {
         pred_classes = names(private$y_hat)[max.col(private$y_hat, ties.method = "random")] 
         private$is_correctly_classified = (private$predictor$data$y[[1L]] == pred_classes)
       }
@@ -143,7 +143,7 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
     ae_model = NULL,
     ae_preprocessor = NULL,
     y_hat = NULL,
-    x_nn_correct_classif = NULL,
+    x_nn_correct = NULL,
     return_multiple = NULL,
     finish_early = NULL,
     is_correctly_classified = NULL,
@@ -180,7 +180,7 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
       cat(" - finish_early: ", private$finish_early, "\n")
       cat(" - optimization: ", private$optimization, "\n")
       cat(" - return_multiple: ", private$return_multiple, "\n")
-      cat(" - x_nn_correct_classif: ", private$x_nn_correct_classif, "\n")
+      cat(" - x_nn_correct: ", private$x_nn_correct, "\n")
     }
   )
 )

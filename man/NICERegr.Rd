@@ -11,7 +11,9 @@ While the original method is only applicable to classification tasks (see \link{
 \details{
 NICE starts the counterfactual search for \code{x_interest} by finding its most similar (optionally) correctly predicted
 neighbor \code{x_nn} with(in) the desired prediction (range). Correctly predicted means that the prediction of \code{x_nn} is less
-than a user-specified \code{margin_correct_classif} away from the true outcome of \code{x_nn}.
+than a user-specified \code{margin_correct} away from the true outcome of \code{x_nn}.
+This is designed to mimic the search for \code{x_nn} for regression tasks.
+If no \code{x_nn} satisfies this constraint, a warning is returned that no counterfactual could be found.
 \cr
 In the first iteration, NICE creates new instances by replacing a different feature value of \code{x_interest} with the corresponding
 value of \code{x_nn} in each new instance. Thus, if \code{x_nn} differs from \code{x_interest} in \code{d} features, \code{d} new instances are created. \cr
@@ -98,8 +100,8 @@ Create a new NICERegr object.
 \if{html}{\out{<div class="r">}}\preformatted{NICERegr$new(
   predictor,
   optimization = "sparsity",
-  x_nn_correct_classif = TRUE,
-  margin_correct_classif = NULL,
+  x_nn_correct = TRUE,
+  margin_correct = NULL,
   return_multiple = TRUE,
   finish_early = TRUE,
   distance_function = NULL
@@ -115,15 +117,14 @@ The object (created with \code{iml::Predictor$new()}) holding the machine learni
 \item{\code{optimization}}{(\code{character(1)})\cr
 The reward function to optimize. Can be \code{sparsity} (default), \code{proximity} or \code{plausibility}.}
 
-\item{\code{x_nn_correct_classif}}{(\code{logical(1)})\cr
+\item{\code{x_nn_correct}}{(\code{logical(1)})\cr
 Should only \emph{correctly} classified data points in \code{predictor$data$X} be considered for the most similar instance search?
 Default is \code{TRUE}.}
 
-\item{\code{margin_correct_classif}}{(\code{numeric(1)} | \code{NULL})\cr
-The accepted margin for considering a prediction as "correct". As the initial version of NICE was designed for
-classification tasks only, this is a design to mimic the search for \code{x_nn} for regression tasks.
-Ignored if \code{x_nn_correct_classif = FALSE}.
-TODO: default}
+\item{\code{margin_correct}}{(\code{numeric(1)} | \code{NULL})\cr
+The accepted margin for considering a prediction as "correct".
+Ignored if \code{x_nn_correct = FALSE}.
+If NULL, the accepted margin is set to half the median absolute distance between the true and predicted outcomes in the data (\code{predictor$data}).}
 
 \item{\code{return_multiple}}{(\code{logical(1)})\cr
 Should multiple counterfactuals be returned? If TRUE, the algorithm returns all created instances whose
@@ -135,7 +136,7 @@ is in the interval \code{desired_outcome}. If \code{FALSE}, the algorithm contin
 
 \item{\code{distance_function}}{(\verb{function()} | \code{NULL})\cr
 The distance function used to compute the distances between \code{x_interest} and the training data points for finding \code{x_nn}.
-The function must have three arguments: \code{x}, \code{y}, and \code{data} and return a \code{double} matrix with \code{nrow(x)} rows
+The function must have three arguments: \code{x}, \code{y}, and \code{data} and return a \code{numeric} matrix with \code{nrow(x)} rows
 and \code{nrow(y)} columns. If set to \code{NULL} (default), then Gower distance (Gower 1971) is used.}
 }
 \if{html}{\out{</div>}}
