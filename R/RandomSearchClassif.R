@@ -114,7 +114,7 @@ RandomSearchClassif = R6::R6Class("RandomSearchClassif",
     #' The randomly drawn samples are therefore split into `n_generations` folds of size `mu.`
     #' This function mimics MOCs `plot_search()` method. See the `Details` section for further information.
     #' @param objectives (`character(2)`)\cr
-    #'   The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "nr_changed",
+    #'   The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "no_changed",
     #'   and "dist_train".
     plot_search = function(objectives = c("dist_target", "dist_x_interest")) {
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
@@ -123,7 +123,7 @@ RandomSearchClassif = R6::R6Class("RandomSearchClassif",
       if (is.null(self$optimizer)) {
         stop("There are no results yet. Please run `$find_counterfactuals` first.")
       }
-      assert_names(objectives, subset.of = c("dist_target", "dist_x_interest", "nr_changed", "dist_train"))
+      assert_names(objectives, subset.of = c("dist_target", "dist_x_interest", "no_changed", "dist_train"))
       archive_folds = private$make_archive_folds()
       make_moc_search_plot(archive_folds$data, objectives)
     }
@@ -178,7 +178,6 @@ RandomSearchClassif = R6::R6Class("RandomSearchClassif",
         n_generations = 0,
         p_rec = NULL,
         p_rec_gen = NULL,
-        p_rec_use_orig = NULL,
         p_mut = NULL,
         p_mut_gen = NULL,
         p_mut_use_orig = NULL,

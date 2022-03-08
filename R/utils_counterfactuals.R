@@ -46,7 +46,8 @@ make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest
     p = ggplot2::ggplot(data = dt_grid, ggplot2::aes_string(x = x_feat_name, y = y_feat_name)) + 
       ggplot2::geom_tile(ggplot2::aes_string(fill = "pred")) +
       ggplot2::geom_contour(ggplot2::aes_string(z = "pred"), colour = "white") +
-      ggplot2::geom_rug(ggplot2::aes_string(x = x_feat_name, y = y_feat_name), predictor$data$X) +
+      ggplot2::geom_rug(ggplot2::aes_string(x = x_feat_name, y = y_feat_name), predictor$data$X, alpha = 0.2,
+       position = ggplot2::position_jitter(), sides = "bl") +
       ggplot2::guides(z = ggplot2::guide_legend(title = "pred")) +
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position = "right")
