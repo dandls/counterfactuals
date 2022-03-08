@@ -49,3 +49,9 @@ dist_to_interval = function(x, interval) {
   })
 }
 
+quiet = function(x) { 
+  sink(tempfile()) 
+  on.exit(sink()) 
+  invisible(force(x)) 
+} 
+

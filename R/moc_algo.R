@@ -1,7 +1,7 @@
 moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower, upper, sdevs_num_feats, 
                     epsilon,  fixed_features, max_changed, mu, n_generations, p_rec, p_rec_gen,
-                    p_mut, p_mut_gen, p_mut_use_orig, k, weights, init_strategy, cond_sampler = NULL, quiet, 
-                    distance_function) {
+                    p_mut, p_mut_gen, p_mut_use_orig, k, weights, init_strategy, distance_function, cond_sampler = NULL, 
+                    quiet = TRUE) {
   
   codomain = ParamSet$new(list(
     ParamDbl$new("dist_target", tags = "minimize"),
@@ -9,13 +9,16 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
     ParamInt$new("no_changed", tags = "minimize"),
     ParamDbl$new("dist_train", tags = "minimize")
   ))
-  
+
   fitness_function = make_fitness_function(
     predictor, x_interest, pred_column, target, weights, k, fixed_features, param_set, distance_function
   )
   
   flex_cols = setdiff(names(x_interest), fixed_features)
-  sdevs_flex_num_feats = sdevs_num_feats[names(sdevs_num_feats) %in% flex_cols]
+  if (!is.null(sdevs_num_feats)) {
+    sdevs_flex_num_feats = sdevs_num_feats[names(sdevs_num_feats) %in% flex_cols]
+  }
+  
   param_set_flex = param_set$clone()
   param_set_flex$subset(flex_cols)
   
@@ -25,50 +28,64 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
     codomain = codomain
   )
   
+  if (n_generations > 0L) {
+    terminator = bbotk::trm("gens", generations = n_generations)
+  } else {
+    terminator = bbotk::trm("none")
+  }
+  
   oi = bbotk::OptimInstanceMultiCrit$new(
     objective, 
-    terminator = bbotk::trm("gens", generations = n_generations)
+    terminator = terminator
   )
   
-  # Mutator
-  if (is.null(cond_sampler)) {
-    op_m = make_moc_mutator(
+  if (n_generations > 0L) {
+    # Mutator
+    if (is.null(cond_sampler)) {
+      op_m = make_moc_mutator(
+        ps = param_set_flex, 
+        x_interest = x_interest, 
+        max_changed = max_changed, 
+        sdevs = sdevs_flex_num_feats, 
+        p_mut = p_mut,
+        p_mut_gen = p_mut_gen, 
+        p_mut_use_orig = p_mut_use_orig
+      )
+    } else {
+      op_m = make_moc_conditional_mutator(
+        ps = param_set_flex, 
+        x_interest = x_interest,
+        max_changed = max_changed, 
+        p_mut = p_mut,
+        p_mut_gen = p_mut_gen, 
+        p_mut_use_orig = p_mut_use_orig,
+        cond_sampler = cond_sampler
+      )
+    }
+    
+    # Recombinator
+    op_r = make_moc_recombinator(
       ps = param_set_flex, 
       x_interest = x_interest, 
       max_changed = max_changed, 
-      sdevs = sdevs_flex_num_feats, 
-      p_mut = p_mut,
-      p_mut_gen = p_mut_gen, 
-      p_mut_use_orig = p_mut_use_orig
+      p_rec = p_rec,
+      p_rec_gen = p_rec_gen
     )
-  } else {
-    op_m = make_moc_conditional_mutator(
-      ps = param_set_flex, 
-      x_interest = x_interest,
-      max_changed = max_changed, 
-      p_mut = p_mut,
-      p_mut_gen = p_mut_gen, 
-      p_mut_use_orig = p_mut_use_orig,
-      cond_sampler = cond_sampler
-    )
+    
+    # Selectors
+    # TODO: Replace this by tournament selection
+    op_parent = sel("best")
+    
+    sel_nondom_penalized = ScalorNondomPenalized$new(epsilon)
+    op_survival = sel("best", sel_nondom_penalized)   
+    
+    mies_prime_operators(
+      search_space = oi$search_space, 
+      mutators = list(op_m), 
+      recombinators = list(op_r),
+      selectors = list(op_parent, op_survival)
+    )  
   }
-  
-  # Recombinator
-  op_r = make_moc_recombinator(
-    ps = param_set_flex, 
-    x_interest = x_interest, 
-    max_changed = max_changed, 
-    p_rec = p_rec,
-    p_rec_gen = p_rec_gen
-  )
-  
-  # Selectors
-  # TODO: Replace this by tournament selection
-  op_parent = sel("best")
-  
-  sel_nondom_penalized = ScalorNondomPenalized$new(epsilon)
-  op_survival = sel("best", sel_nondom_penalized)   
-  
   
   pop_initializer = make_moc_pop_initializer(
     ps = param_set_flex, 
@@ -84,31 +101,26 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
     mu = mu
   )
   
-  mies_prime_operators(
-    search_space = oi$search_space, 
-    mutators = list(op_m), 
-    recombinators = list(op_r),
-    selectors = list(op_parent, op_survival)
-  )
-  
   if (quiet) {
     quiet(mies_init_population(inst = oi, mu = mu, initializer = pop_initializer))
   } else {
     mies_init_population(inst = oi, mu = mu, initializer = pop_initializer)
   }
-
-  tryCatch({
-    repeat {
-      offspring = mies_generate_offspring(oi, lambda = mu, op_parent, op_m, op_r)
-      if (quiet) {
-        quiet(mies_evaluate_offspring(oi, offspring))
-      } else {
-        mies_evaluate_offspring(oi, offspring)
+  
+  if (n_generations > 0L) {
+    tryCatch({
+      repeat {
+        offspring = mies_generate_offspring(oi, lambda = mu, op_parent, op_m, op_r)
+        if (quiet) {
+          quiet(mies_evaluate_offspring(oi, offspring))
+        } else {
+          mies_evaluate_offspring(oi, offspring)
+        }
+        mies_survival_plus(oi, mu, op_survival)
       }
-      mies_survival_plus(oi, mu, op_survival)
-    }
-  }, terminated_error = function(cond) {
-  })
+    }, terminated_error = function(cond) {
+    })
+  }
   bbotk::assign_result_default(oi)
   
   # Re-attach fixed features
