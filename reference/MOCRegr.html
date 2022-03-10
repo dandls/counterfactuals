@@ -107,18 +107,18 @@ For details see Dandl et al. 2020.</p>
     </div>
     <div id="references">
     <h2>References</h2>
-    <p>Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. â€œMulti-Objective Counterfactual Explanations.â€
-In Parallel Problem Solving from Nature â€“ PPSN XVI, edited by Thomas BÃ¤ck, Mike Preuss, AndrÃ© Deutz, Hao Wang, Carola Doerr,
-Michael Emmerich, and Heike Trautmann, 448â€“69. Cham: Springer International Publishing.</p>
+    <p>Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “Multi-Objective Counterfactual Explanations.”
+In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr,
+Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Publishing.</p>
 <p>Deb, K., Pratap, A., Agarwal, S., &amp; Meyarivan, T. A. M. T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
 IEEE transactions on evolutionary computation, 6(2), 182-197.</p>
 <p>Goldstein, Alex, Adam Kapelner, Justin Bleich, and Emil Pitkin. 2015. "Peeking Inside the Black Box: Visualizing
 Statistical Learning with Plots of Individual Conditional Expectation." Journal of Computational and Graphical
-Statistics 24 (1): 44â€“65. https: //doi.org/10.1080/10618600.2014.907095.</p>
-<p>Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623â€“637.</p>
+Statistics 24 (1): 44–65. https: //doi.org/10.1080/10618600.2014.907095.</p>
+<p>Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.</p>
 <p>Hothorn, T., Zeileis, A. (2017), "Transformation Forests". Technical Report, arXiv 1701.02110, https://arxiv.org/abs/1701.02110.</p>
-<p>Li, Rui, Michael T. M. Emmerich, Jeroen Eggermont, Thomas BÃ¤ck, M. SchÃ¼tz, J. Dijkstra, and J. H. C. Reiber. 2013.
-"Mixed Integer Evolution Strategies for Parameter Optimization." Evolutionary Computation 21 (1): 29â€“64. https:
+<p>Li, Rui, Michael T. M. Emmerich, Jeroen Eggermont, Thomas Bäck, M. Schütz, J. Dijkstra, and J. H. C. Reiber. 2013.
+"Mixed Integer Evolution Strategies for Parameter Optimization." Evolutionary Computation 21 (1): 29–64. https:
 //doi.org/10.1162/EVCO_a_00059.</p>
     </div>
     <div id="super-classes">
@@ -158,11 +158,11 @@ The object used for optimization.</p></dd>
   max_changed <span class="op">=</span> <span class="cn">NULL</span>,
   mu <span class="op">=</span> <span class="fl">20L</span>,
   n_generations <span class="op">=</span> <span class="fl">175L</span>,
-  p_rec <span class="op">=</span> <span class="fl">0.57</span>,
-  p_rec_gen <span class="op">=</span> <span class="fl">0.85</span>,
-  p_mut <span class="op">=</span> <span class="fl">0.79</span>,
-  p_mut_gen <span class="op">=</span> <span class="fl">0.56</span>,
-  p_mut_use_orig <span class="op">=</span> <span class="fl">0.32</span>,
+  p_rec <span class="op">=</span> <span class="fl">0.66</span>,
+  p_rec_gen <span class="op">=</span> <span class="fl">0.73</span>,
+  p_mut <span class="op">=</span> <span class="fl">0.8</span>,
+  p_mut_gen <span class="op">=</span> <span class="fl">0.71</span>,
+  p_mut_use_orig <span class="op">=</span> <span class="fl">0.26</span>,
   k <span class="op">=</span> <span class="fl">1L</span>,
   weights <span class="op">=</span> <span class="cn">NULL</span>,
   lower <span class="op">=</span> <span class="cn">NULL</span>,
@@ -209,27 +209,27 @@ The number of generations. Default is <code>175L</code>.</p></dd>
 
 <dt><code>p_rec</code></dt>
 <dd><p>(<code>numeric(1)</code>)<br>
-Probability with which an individual is selected for recombination. Default is <code>0.57</code>.</p></dd>
+Probability with which an individual is selected for recombination. Default is <code>0.66</code>.</p></dd>
 
 
 <dt><code>p_rec_gen</code></dt>
 <dd><p>(<code>numeric(1)</code>)<br>
-Probability with which a feature/gene is selected for recombination. Default is <code>0.85</code>.</p></dd>
+Probability with which a feature/gene is selected for recombination. Default is <code>0.73</code>.</p></dd>
 
 
 <dt><code>p_mut</code></dt>
 <dd><p>(<code>numeric(1)</code>)<br>
-Probability with which an individual is selected for mutation. Default is <code>0.79</code>.</p></dd>
+Probability with which an individual is selected for mutation. Default is <code>0.8</code>.</p></dd>
 
 
 <dt><code>p_mut_gen</code></dt>
 <dd><p>(<code>numeric(1)</code>)<br>
-Probability with which a feature/gene is selected for mutation. Default is <code>0.56</code>.</p></dd>
+Probability with which a feature/gene is selected for mutation. Default is <code>0.71</code>.</p></dd>
 
 
 <dt><code>p_mut_use_orig</code></dt>
 <dd><p>(<code>numeric(1)</code>)<br>
-Probability with which a feature/gene is reset to its original value in <code>x_interest</code> after mutation. Default is <code>0.32</code>.</p></dd>
+Probability with which a feature/gene is reset to its original value in <code>x_interest</code> after mutation. Default is <code>0.26</code>.</p></dd>
 
 
 <dt><code>k</code></dt>
