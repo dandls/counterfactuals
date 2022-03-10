@@ -516,10 +516,11 @@ make_moc_search_plot = function(data, objectives) {
 # Conditional mutator as described in the MOC paper
 MutatorConditional = R6::R6Class("MutatorConditional", inherit = Mutator,
   public = list(
-    initialize = function(cond_sampler, param_set, p_mut, p_mut_gen) {
+    initialize = function(cond_sampler, x_interest, param_set, p_mut, p_mut_gen) {
       super$initialize()
       assert_class(param_set, "ParamSet")
       assert_list(cond_sampler, len = length(param_set$ids()))
+      private$x_interest = x_interest
       private$param_set = param_set
       private$cond_sampler = cond_sampler
       private$p_mut = p_mut
@@ -528,15 +529,21 @@ MutatorConditional = R6::R6Class("MutatorConditional", inherit = Mutator,
   ),
   private = list(
     cond_sampler = NULL,
+    x_interest = NULL,
     param_set = NULL,
     p_mut = NULL,
     p_mut_gen = NULL,
     
     .mutate = function(values) {
+      flex_features = copy(names(values))
+      fixed_features = setdiff(names(private$x_interest), names(values))
+      if (length(fixed_features) > 0) {
+        values[, (fixed_features) := x_interest[, fixed_features, with = FALSE]]
+      }
       values_mutated = copy(values)
       for (i in seq_len(nrow(values))) {
         if (runif(1L) < private$p_mut) {
-          for (j in sample(names(values))) {
+          for (j in sample(flex_features)) {
             if (runif(1L) < private$p_mut_gen) {
               set(values_mutated, i, j, value = private$cond_sampler[[j]]$sample(values[i, ]))
             }
@@ -544,14 +551,14 @@ MutatorConditional = R6::R6Class("MutatorConditional", inherit = Mutator,
         }
         
       }
-      values_mutated
+      values_mutated[, (fixed_features) := NULL]
     }
  )
 )
 
 
 make_moc_conditional_mutator = function(ps, x_interest, max_changed, p_mut, p_mut_gen, p_mut_use_orig, cond_sampler) {
-  op_seq1 = MutatorConditional$new(cond_sampler, ps, p_mut, p_mut_gen)
+  op_seq1 = MutatorConditional$new(cond_sampler, x_interest, ps, p_mut, p_mut_gen)
   op_seq2 = MutatorReset$new(x_interest, p_mut_use_orig, max_changed)
   mut("sequential", list(op_seq1, op_seq2))
 }
