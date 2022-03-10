@@ -60,23 +60,23 @@ if (require("randomForest")) {
 
 }
 \references{
-Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. â€œMulti-Objective Counterfactual Explanations.â€
-In Parallel Problem Solving from Nature â€“ PPSN XVI, edited by Thomas BÃ¤ck, Mike Preuss, AndrÃ© Deutz, Hao Wang, Carola Doerr,
-Michael Emmerich, and Heike Trautmann, 448â€“69. Cham: Springer International Publishing.
+Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “Multi-Objective Counterfactual Explanations.”
+In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr,
+Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Publishing.
 
 Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. A. M. T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
 IEEE transactions on evolutionary computation, 6(2), 182-197.
 
 Goldstein, Alex, Adam Kapelner, Justin Bleich, and Emil Pitkin. 2015. "Peeking Inside the Black Box: Visualizing
 Statistical Learning with Plots of Individual Conditional Expectation." Journal of Computational and Graphical
-Statistics 24 (1): 44â€“65. https: //doi.org/10.1080/10618600.2014.907095.
+Statistics 24 (1): 44–65. https: //doi.org/10.1080/10618600.2014.907095.
 
-Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623â€“637.
+Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
 
 Hothorn, T., Zeileis, A. (2017), "Transformation Forests". Technical Report, arXiv 1701.02110, https://arxiv.org/abs/1701.02110.
 
-Li, Rui, Michael T. M. Emmerich, Jeroen Eggermont, Thomas BÃ¤ck, M. SchÃ¼tz, J. Dijkstra, and J. H. C. Reiber. 2013.
-"Mixed Integer Evolution Strategies for Parameter Optimization." Evolutionary Computation 21 (1): 29â€“64. https:
+Li, Rui, Michael T. M. Emmerich, Jeroen Eggermont, Thomas Bäck, M. Schütz, J. Dijkstra, and J. H. C. Reiber. 2013.
+"Mixed Integer Evolution Strategies for Parameter Optimization." Evolutionary Computation 21 (1): 29–64. https:
 //doi.org/10.1162/EVCO_a_00059.
 }
 \section{Super classes}{
@@ -121,11 +121,11 @@ Create a new \code{MOCClassif} object.
   max_changed = NULL,
   mu = 20L,
   n_generations = 175L,
-  p_rec = 0.57,
-  p_rec_gen = 0.85,
-  p_mut = 0.79,
-  p_mut_gen = 0.56,
-  p_mut_use_orig = 0.32,
+  p_rec = 0.66,
+  p_rec_gen = 0.73,
+  p_mut = 0.8,
+  p_mut_gen = 0.71,
+  p_mut_use_orig = 0.26,
   k = 1L,
   weights = NULL,
   lower = NULL,
@@ -160,19 +160,19 @@ The population size. Default is \code{20L}.}
 The number of generations. Default is \code{175L}.}
 
 \item{\code{p_rec}}{(\code{numeric(1)})\cr
-Probability with which an individual is selected for recombination. Default is \code{0.57}.}
+Probability with which an individual is selected for recombination. Default is \code{0.66}.}
 
 \item{\code{p_rec_gen}}{(\code{numeric(1)})\cr
-Probability with which a feature/gene is selected for recombination. Default is \code{0.85}.}
+Probability with which a feature/gene is selected for recombination. Default is \code{0.73}.}
 
 \item{\code{p_mut}}{(\code{numeric(1)})\cr
-Probability with which an individual is selected for mutation. Default is \code{0.79}.}
+Probability with which an individual is selected for mutation. Default is \code{0.8}.}
 
 \item{\code{p_mut_gen}}{(\code{numeric(1)})\cr
-Probability with which a feature/gene is selected for mutation. Default is \code{0.56}.}
+Probability with which a feature/gene is selected for mutation. Default is \code{0.71}.}
 
 \item{\code{p_mut_use_orig}}{(\code{numeric(1)})\cr
-Probability with which a feature/gene is reset to its original value in \code{x_interest} after mutation. Default is \code{0.32}.}
+Probability with which a feature/gene is reset to its original value in \code{x_interest} after mutation. Default is \code{0.26}.}
 
 \item{\code{k}}{(\code{integerish(1)})\cr
 The number of data points to use for the forth objective. Default is \code{1L}.}
