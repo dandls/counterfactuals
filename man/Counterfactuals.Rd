@@ -29,6 +29,14 @@ A single row with the observation of interest.}
 The distance function used in the second and fourth evaluation measure.
 The function must have three arguments:
 \code{x}, \code{y}, and \code{data} and return a \code{numeric} matrix. If set to \code{NULL} (default), then Gower distance (Gower 1971) is used.}
+
+\item{\code{subsetted}}{(\code{logical(1)})\cr
+Returns if data was subsetted to those meeting the
+desired prediction.}
+
+\item{\code{fulldata}}{(\code{data.table})\cr
+Returns the fulldata if data was subsetted to those meeting the
+desired outcome.}
 }
 \if{html}{\out{</div>}}
 }
@@ -38,6 +46,7 @@ The function must have three arguments:
 \item \href{#method-new}{\code{Counterfactuals$new()}}
 \item \href{#method-evaluate}{\code{Counterfactuals$evaluate()}}
 \item \href{#method-predict}{\code{Counterfactuals$predict()}}
+\item \href{#method-subset_to_valid}{\code{Counterfactuals$subset_to_valid()}}
 \item \href{#method-plot_parallel}{\code{Counterfactuals$plot_parallel()}}
 \item \href{#method-plot_freq_of_feature_changes}{\code{Counterfactuals$plot_freq_of_feature_changes()}}
 \item \href{#method-get_freq_of_feature_changes}{\code{Counterfactuals$get_freq_of_feature_changes()}}
@@ -134,6 +143,17 @@ specifies the weight of the i-th closest data point.}
 Returns the predictions for the counterfactuals.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$predict()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-subset_to_valid"></a>}}
+\if{latex}{\out{\hypertarget{method-subset_to_valid}{}}}
+\subsection{Method \code{subset_to_valid()}}{
+Subset data to those meeting the desired prediction,
+full data is still accessible in the fulldata field
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$subset_to_valid()}\if{html}{\out{</div>}}
 }
 
 }

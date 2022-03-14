@@ -136,6 +136,18 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       private$predictor$predict(private$.data) 
     },
     
+    #' @description Subset data to those meeting the desired prediction, 
+    #' full data is still accessible in the fulldata field
+    subset_to_valid = function() {
+      if (!private$.subsetted) {
+        private$.fulldata = data.table::copy(private$.data)
+        private$.data =  self$evaluate(measures = "dist_target")[dist_target == 0][, dist_target := NULL] 
+        private$.subsetted = TRUE
+      } else {
+        message("Counterfactuals were already subsetted to the ones meeting the first ")
+      }
+    },
+
     #' @description Plots a parallel plot that connects the (scaled) numeric feature values of each counterfactual and highlights
     #' `x_interest` in blue.
     #' 
@@ -336,6 +348,32 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         assert_function(value, args = c("x", "y", "data"), ordered = TRUE)
         private$.distance_function = value
       }
+    },
+
+    #' @field subsetted (`logical(1)`)\cr
+    #' Returns if data was subsetted to those meeting the
+    #' desired prediction.
+    subsetted = function(value) {
+      if (missing(value)) {
+        private$.subsetted
+      } else {
+        stop("`$subsetted` is read only", call. = FALSE)
+      }
+    },
+
+    #' @field fulldata (`data.table`)\cr
+    #' Returns the fulldata if data was subsetted to those meeting the
+    #' desired outcome.
+    fulldata = function(value) {
+      if (missing(value)) {
+        if (private$.subsetted) {
+          private$.fulldata
+        } else {
+          message("`$data` was not subsetted yet")
+        }
+      } else {
+        stop("`$data` is read only", call. = FALSE)
+      }
     }
   ),
   private = list(
@@ -345,6 +383,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     task = NULL, 
     .desired = NULL,
     .data = NULL,
+    .fulldata = NULL,
+    .subsetted = FALSE,
     .x_interest = NULL,
     .distance_function = NULL,
     
