@@ -141,7 +141,9 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     subset_to_valid = function() {
       if (!private$.subsetted) {
         private$.fulldata = data.table::copy(private$.data)
-        private$.data =  self$evaluate(measures = "dist_target")[dist_target == 0][, dist_target := NULL] 
+        # [] necessary to ensure that $data prints the data on the first call
+        # https://stackoverflow.com/questions/34270165/when-and-why-does-print-need-two-attempts-to-print-a-data-table
+        private$.data =  self$evaluate(measures = "dist_target")[dist_target == 0][, dist_target := NULL][]
         private$.subsetted = TRUE
       } else {
         message("Counterfactuals were already subsetted to the ones meeting the first ")
