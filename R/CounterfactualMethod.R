@@ -12,17 +12,23 @@ CounterfactualMethod = R6::R6Class("CounterfactualMethod",
     #' @description Creates a new `CounterfactualMethod` object.
     #' @template predictor
     #' @template lower_upper
-    #' @param distance_function (`function()` | `NULL`)\cr 
-    #'  A distance function that may be used by the leaf classes. 
-    #'  If specified, the function must have three arguments: `x`, `y`, and `data` and return a `double` matrix with `nrow(x)`  
-    #'  rows and `nrow(y)` columns.
+    #' @param distance_function (`character(1)` | `function()`)\cr
+    #'  Either the name of an already implemented distance function
+    #'  (currently 'gower' or 'gower_c') or a function having three arguments:
+    #'  `x`, `y`, and `data`. The function should return a `double` matrix with
+    #'  `nrow(x)` rows and maximum `nrow(y)` columns.
+    #'
     initialize = function(predictor, lower = NULL, upper = NULL, distance_function = NULL) {
       assert_class(predictor, "Predictor")
       assert_numeric(lower, null.ok = TRUE)
       assert_numeric(upper, null.ok = TRUE)
       assert_true(all(names(lower) %in% names(predictor$data$X)))
       assert_true(all(names(upper) %in% names(predictor$data$X)))
-      assert_function(distance_function, args = c("x", "y", "data"), ordered = TRUE, null.ok = TRUE)
+      if (is.character(distance_function)) {
+        assert_choice(distance_function, choices = c("gower", "gower_c"), null.ok = FALSE)
+      } else if (is.function(distance_function)) {
+        assert_function(distance_function, args = c("x", "y", "data"), ordered = TRUE, null.ok = FALSE)
+      }
       
       # If the task could not be derived from the model, then we infer it from the prediction of some training data
       if (predictor$task == "unknown") {
