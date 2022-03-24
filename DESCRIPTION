@@ -23,9 +23,9 @@ Imports:
     paradox,
     miesmuschel,
     bbotk,
-    gower,
     ecr
 Suggests:
+    gower,
     randomForest,
     GGally,
     trtf,
