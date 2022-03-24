@@ -12,7 +12,15 @@ gower_dist = function(x, y, data) {
 # Wrapper for gower::gower_dist and gower::gower_topn
 # The original functions have the (for us undesired) behavior to skip constant variables and show a warning. 
 # We correct for this behavior with custom wrappers
-gower_dist_c = function(x, y, data) {
+gower_dist_c = function(x, y, data, k) {
+  if (nrow(y) == 1L) {
+    gower_dist(x, y, data)
+  } else {
+    gower_topn(x, y, k)
+  }
+}
+
+gower_topn = function(x, y, n = 5L) {
   myWarnings = NULL
   wHandler = function(w) {
     if (grepl("skipping variable with zero", w$message)) {
@@ -22,31 +30,10 @@ gower_dist_c = function(x, y, data) {
       warning(w$message)
     }
   }
-  dists <- withCallingHandlers(gower::gower_dist(x, y, nthread = 1L), warning = wHandler)
+  dist = withCallingHandlers(gower::gower_topn(x, y, n = n, nthread = 1L)$dist, warning = wHandler)
   if (length(myWarnings) > 0L) {
-    dists = dists * (1 - length(myWarnings) / ncol(x))
+   dist = dist * (1 - length(myWarnings) / ncol(x))
   }
-  dists[is.na(dists)] = 0
-  if (!is.matrix(dists)) {
-    dists = t(dists)
-  }
-  dists
+  dist[is.na(dist)] = 0
+  t(dist)
 }
-
-# gower_topn = function(x, y, n = 5L) {
-#   myWarnings = NULL
-#   wHandler = function(w) {
-#     if (grepl("skipping variable with zero", w$message)) {
-#       myWarnings <<- c(myWarnings, list(w))
-#       invokeRestart("muffleWarning")
-#     } else {
-#       warning(w$message)
-#     }
-#   }
-#   tops = withCallingHandlers(gower::gower_topn(x, y, n = n, nthread = 1L), warning = wHandler)
-#   if (length(myWarnings) > 0L) {
-#     tops$distance = tops$distance * (1 - length(myWarnings) / ncol(x))
-#   }
-#   tops$distance[is.na(tops$distance)] = 0
-#   tops
-# }

@@ -18,15 +18,16 @@ make_fitness_function = function(predictor, x_interest, pred_column, target, wei
       xdt[,(int_cols) := lapply(.SD, as.integer), .SDcols = int_cols]
     }
     pred = predictor$predict(xdt)[[pred_column]]
-    
+    browser()
     dist_target = sapply(pred, function(x) ifelse(between(x, target[1L], target[2L]), 0, min(abs(x - target))))
     dist_x_interest = as.vector(eval_distance(distance_function, xdt, x_interest, predictor$data$X))
     no_changed = rowSums(xdt != x_interest[rep(seq_len(nrow(x_interest)), nrow(xdt)), ])
     dist_train = eval_distance(distance_function, xdt, predictor$data$X, predictor$data$X)
     # Subset the distance matrix w.r.t the k-nearest neighbors of each candidate
-    dist_train = t(apply(dist_train, 1L, function(x) sort(x)))
-    dist_train = dist_train[, seq_len(k), drop = FALSE]
-
+    if (ncol(dist_train) > k) {
+      dist_train = t(apply(dist_train, 1L, function(x) sort(x)))
+      dist_train = dist_train[, seq_len(k), drop = FALSE]
+    }
     if (!is.null(weights)) {
       dist_train = apply(dist_train, 1L, weighted.mean, w = weights)
     } else {
