@@ -15,9 +15,12 @@ nice_algo = function(predictor, return_multiple, finish_early, optimization, x_i
     res_list$counterfactuals = predictor$data$X[0L]
     return(res_list)
   }
-  
   dist_matrix = eval_distance(distance_function, x_interest, candidates_x_nn, predictor$data$X)
-  idx = smallest_n_indices(as.vector(dist_matrix), n = 1L)
+  if ("topn" %in% class(distance_function)) {
+    idx = c(dist_matrix)
+  } else {
+    idx = smallest_n_indices(as.vector(dist_matrix), n = 1L) 
+  }
   x_nn = candidates_x_nn[idx]
   x_current = copy(x_interest)
   

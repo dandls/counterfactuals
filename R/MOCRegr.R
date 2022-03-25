@@ -55,13 +55,13 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     #' @template lower_upper
     #' @param init_strategy (`character(1)`)\cr  
     #'   The population initialization strategy. Can be `random` (default), `sd`, `icecurve` or `traindata`. For more information,
-    #'   see the `details` section.
+    #'   see the `Details` section.
     #' @param use_conditional_mutator (`logical(1)`)\cr 
     #'   Should a conditional mutator be used? The conditional mutator generates plausible feature values based 
     #'   on the values of the other feature. Default is `FALSE`.
     #' @param quiet (`logical(1)`)\cr 
     #'  Should information about the optimization status be hidden? Default is `FALSE`.
-    #' @param distance_function (`function()` | `NULL`)\cr 
+    #' @param distance_function (`function()` | `'gower'` | `'gower_c'`)\cr 
     #'  The distance function to be used in the second and fourth objective.
     #'  Either the name of an already implemented distance function
     #'  ('gower' or 'gower_c') or a function.
@@ -69,11 +69,11 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     #'  if set to 'gower_c', a C-based more efficient version of Gower's distance is used.
     #'  A function must have three arguments  `x`, `y`, and `data` and should
     #'  return a `double` matrix with `nrow(x)` rows and maximum `nrow(y)` columns.
- 
-    initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, mu = 20L,
+
+    initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, mu = 20L, 
                           n_generations = 175L, p_rec = 0.66, p_rec_gen = 0.73, p_mut = 0.80, 
                           p_mut_gen = 0.71, p_mut_use_orig = 0.26, k = 1L, weights = NULL, lower = NULL, upper = NULL, 
-                          init_strategy = "random", use_conditional_mutator = FALSE, quiet = FALSE, distance_function = NULL) {
+                          init_strategy = "random", use_conditional_mutator = FALSE, quiet = FALSE, distance_function = "gower") {
       
       if (is.character(distance_function)) {
         if (distance_function == "gower") {
@@ -87,13 +87,13 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
           }
         }
       }
- 
+
       super$initialize(predictor, lower, upper, distance_function)
-      
+
       assert_number(epsilon, lower = 0, null.ok = TRUE)
       if (!is.null(fixed_features)) {
         assert_names(fixed_features, subset.of = private$predictor$data$feature.names)
-      } 
+      }
       assert_integerish(max_changed, lower = 0, len = 1L, null.ok = TRUE)
       assert_integerish(mu, lower = 0, len = 1L)
       assert_integerish(n_generations, lower = 0, len = 1L)
@@ -127,7 +127,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
         )
         names(private$conditional_sampler) = nams_cs
       }
-      
+
       private$epsilon = epsilon
       private$fixed_features = fixed_features
       private$max_changed = max_changed
@@ -227,7 +227,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     .optimizer = NULL,
     conditional_sampler = NULL,
     quiet = NULL,
-    
+
     run = function() {
       pred_column = private$get_pred_column()
       y_hat_interest = private$predictor$predict(private$x_interest)[[pred_column]]
@@ -262,7 +262,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
       unique(private$.optimizer$result[, names(private$x_interest), with = FALSE])
       
     },
-    
+
     print_parameters = function() {
       cat(" - epsilon: ", private$epsilon, "\n")
       cat(" - fixed_features: ", private$fixed_features, "\n")
