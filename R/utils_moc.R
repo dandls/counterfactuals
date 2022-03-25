@@ -23,7 +23,7 @@ make_fitness_function = function(predictor, x_interest, pred_column, target, wei
     no_changed = rowSums(xdt != x_interest[rep(seq_len(nrow(x_interest)), nrow(xdt)), ])
     dist_train = eval_distance(distance_function, xdt, predictor$data$X, predictor$data$X)
     # Subset the distance matrix w.r.t the k-nearest neighbors of each candidate
-    if (ncol(dist_train) > k) {
+    if (!"topn" %in% class(distance_function)) {
       dist_train = t(apply(dist_train, 1L, function(x) sort(x)))
       dist_train = dist_train[, seq_len(k), drop = FALSE]
     }

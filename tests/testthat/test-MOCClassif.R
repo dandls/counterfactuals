@@ -77,3 +77,27 @@ test_that("distance_function can be exchanged", {
   cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = c(0.5, 1))
   expect_data_table(cfactuals$data)
 })
+
+
+test_that("distance_function gower and gower_c return equal results", {
+  set.seed(1007)
+  rf = randomForest(Species ~ ., data = iris)
+  # Create a predictor object
+  predictor = iml::Predictor$new(rf, type = "prob")
+  # Find counterfactuals for x_interest
+  set.seed(1007)
+  moc_g = MOCClassif$new(predictor, n_generations = 0L, distance_function = "gower")
+  cfactuals_g = moc_g$find_counterfactuals(
+    x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
+  )
+  # Find counterfactuals for x_interest with gower distance C function
+  set.seed(1007)
+  moc_gc = MOCClassif$new(predictor, n_generations = 0L, distance_function = "gower_c")
+  cfactuals_gc = moc_gc$find_counterfactuals(
+    x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
+  )
+  # Print the results
+  expect_equal(cfactuals_g$data, cfactuals_gc$data)
+})
+
+

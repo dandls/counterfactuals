@@ -166,6 +166,23 @@ test_that("distance_function can be exchanged", {
   expect_data_table(cfactuals$data)
 })
 
-
+test_that("distance_function gower and gower_c return equal results", {
+  set.seed(1007)
+  rf = randomForest(Species ~ ., data = iris)
+  # Create a predictor object
+  predictor = iml::Predictor$new(rf, type = "prob")
+  # Find counterfactuals for x_interest with gower distance
+  nice_g = NICEClassif$new(predictor, return_multiple = TRUE, optimization = "proximity", distance_function = "gower")
+  cfactuals_g = nice_g$find_counterfactuals(
+    x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
+  )
+  # Find counterfactuals for x_interest with gower distance C function
+  nice_gc = NICEClassif$new(predictor, return_multiple = TRUE, optimization = "proximity", distance_function = "gower_c")
+  cfactuals_gc = nice_gc$find_counterfactuals(
+    x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
+  )
+  # Print the results
+  expect_equal(cfactuals_g$data, cfactuals_gc$data)
+})
 
 

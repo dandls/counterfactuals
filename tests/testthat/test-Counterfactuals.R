@@ -175,12 +175,13 @@ test_that("distance_function can be exchanged", {
   cf$distance_function = correct_dist_function
   expect_data_table(cf$evaluate())
   
-  expect_snapshot_error({cf$distance_function = iris})
+  expect_error({cf$distance_function = iris}, 
+    "Must be a function, not 'data.frame'")
   wrong_distance_function = function(x, y, data) {
     matrix(1.5, nrow = 2L, ncol = 5L)
   }
   cf$distance_function = wrong_distance_function
-  expect_snapshot_error({cf$evaluate()})
+  expect_error({cf$evaluate()}, "must return a `numeric` matrix")
 })
 
 
