@@ -87,6 +87,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
           distance_function = function(x, y, data) {
             gower_dist_c(x, y, data, k = k)
           }
+          class(distance_function) = class(gower_dist_c)
         }
       }
 

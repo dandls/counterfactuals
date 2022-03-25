@@ -29,6 +29,11 @@ smallest_n_indices = function(x, n = 1L) {
 #'   computation of the distance, e.g., standard deviation or range. 
 eval_distance = function(distance_function, x, y, data = NULL) {
   dist_matrix = distance_function(x, y, data)
+  if (!"topn" %in% class(distance_function)) {
+    if (!test_matrix(dist_matrix, mode = "numeric", nrows = nrow(x), ncols = nrow(y))) {
+      stop("`distance_function` must return a `numeric` matrix with `nrow(x)` rows and `nrow(y)` columns.")
+    } 
+  }
   dist_matrix
 }
 

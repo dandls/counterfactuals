@@ -26,11 +26,3 @@
 
     Assertion on 'self$data' failed: Must have at least 1 rows, but has 0 rows.
 
-# distance_function can be exchanged
-
-    Assertion on 'value' failed: Must be a function, not 'data.frame'.
-
----
-
-    `distance_function` must return a `numeric` matrix with `nrow(x)` rows and `nrow(y)` columns.
-

@@ -67,7 +67,9 @@ WhatIfClassif = R6::R6Class("WhatIfClassif", inherit = CounterfactualMethodClass
           class(distance_function) = class(gower_dist_c)
         }
       }
+      
       super$initialize(predictor, lower, upper, distance_function)
+     
       assert_integerish(n_counterfactuals, lower = 1L, any.missing = FALSE, len = 1L)
       private$n_counterfactuals = n_counterfactuals
       X_search = private$predictor$data$X
