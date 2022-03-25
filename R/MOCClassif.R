@@ -47,7 +47,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     #' @param p_mut_gen (`numeric(1)`)\cr  
     #'   Probability with which a feature/gene is selected for mutation. Default is `0.71`.   
     #' @param p_mut_use_orig (`numeric(1)`)\cr  
-    #'   Probability with which a feature/gene is reset to its original value in `x_interest` after mutation. Default is `0.26`.      
+    #'   Probability with which a feature/gene is reset to its original value in `x_interest` after mutation. Default is `0.26`.    
     #' @param k (`integerish(1)`)\cr  
     #'   The number of data points to use for the forth objective. Default is `1L`.
     #' @param weights (`numeric(1) | numeric(k)` | `NULL`)\cr  
@@ -63,7 +63,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     #'   on the values of the other feature. Default is `FALSE`.
     #' @param quiet (`logical(1)`)\cr 
     #'  Should information about the optimization status be hidden? Default is `FALSE`.
-    #' @param distance_function (`function()` | `NULL`)\cr 
+    #' @param distance_function (`function()` | `'gower'` | `'gower_c'`)\cr 
     #'  The distance function to be used in the second and fourth objective.
     #'  Either the name of an already implemented distance function
     #'  ('gower' or 'gower_c') or a function.
@@ -182,7 +182,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     
     #' @description Visualizes two selected objective values of all emerged individuals in a scatter plot.
     #' @param objectives (`character(2)`)\cr  
-    #'   The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "no_changed", 
+    #'   The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "no_changed",
     #'   and "dist_train".
     plot_search = function(objectives = c("dist_target", "dist_x_interest")) {
       if (!requireNamespace("ggplot2", quietly = TRUE)) {

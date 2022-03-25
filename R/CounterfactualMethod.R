@@ -25,9 +25,9 @@ CounterfactualMethod = R6::R6Class("CounterfactualMethod",
       assert_true(all(names(lower) %in% names(predictor$data$X)))
       assert_true(all(names(upper) %in% names(predictor$data$X)))
       if (is.character(distance_function)) {
-        assert_choice(distance_function, choices = c("gower", "gower_c"), null.ok = FALSE)
+        assert_choice(distance_function, choices = c("gower", "gower_c"))
       } else if (is.function(distance_function)) {
-        assert_function(distance_function, args = c("x", "y", "data"), ordered = TRUE, null.ok = FALSE)
+        assert_function(distance_function, args = c("x", "y", "data"), ordered = TRUE)
       }
       
       # If the task could not be derived from the model, then we infer it from the prediction of some training data

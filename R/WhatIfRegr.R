@@ -44,14 +44,29 @@ WhatIfRegr = R6::R6Class("WhatIfRegr", inherit = CounterfactualMethodRegr,
     #' @param n_counterfactuals (`integerish(1)`)\cr
     #'   The number of counterfactuals to return Default is `1L`.
     #' @template lower_upper
-    #' @param distance_function (`function()` | `NULL`)\cr 
-    #'  The distance function used to compute the distances between `x_interest` and the training data points. 
-    #'  The function must have three arguments: `x`, `y`, and `data` and return a `numeric` matrix with `nrow(x)` rows 
-    #'  and `nrow(y)` columns. If set to `NULL` (default), then Gower distance (Gower 1971) is used.
-    initialize = function(predictor, n_counterfactuals = 1L, lower = NULL, upper = NULL, distance_function = NULL) {
+    #' @param distance_function (`function()` | `'gower'` | `'gower_c'`)\cr 
+    #'  The distance function used to compute the distances between `x_interest`
+    #'  and the training data points for finding `x_nn`.
+    #'  Either the name of an already implemented distance function
+    #'  ('gower' or 'gower_c') or a function.
+    #'  If set to 'gower' (default), then Gower's distance (Gower 1971) is used;
+    #'  if set to 'gower_c', a C-based more efficient version of Gower's distance is used.
+    #'  A function must have three arguments  `x`, `y`, and `data` and should
+    #'  return a `double` matrix with `nrow(x)` rows and maximum `nrow(y)` columns.
+    initialize = function(predictor, n_counterfactuals = 1L, lower = NULL, upper = NULL, distance_function = "gower") {
       
-      if (is.null(distance_function)) {
-        distance_function = gower_dist
+      if (is.character(distance_function)) {
+        if (distance_function == "gower") {
+          distance_function = gower_dist
+        } else if (distance_function == "gower_c") {
+          if (!requireNamespace("gower", quietly = TRUE)) {
+            stop("Package 'gower' needed for distance_function = 'gower_c'. Please install it.", call. = FALSE)
+          }
+          distance_function = function(x, y, data) {
+            gower_dist_c(x, y, data, k = n_counterfactuals, idx = TRUE)
+          }
+          class(distance_function) = class(gower_dist_c)
+        }
       }
       super$initialize(predictor, lower, upper, distance_function)
       assert_integerish(n_counterfactuals, lower = 1L, any.missing = FALSE, len = 1L)

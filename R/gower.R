@@ -12,13 +12,21 @@ gower_dist = function(x, y, data) {
 # Wrapper for gower::gower_dist and gower::gower_topn
 # The original functions have the (for us undesired) behavior to skip constant variables and show a warning. 
 # We correct for this behavior with custom wrappers
-gower_dist_c = function(x, y, data, k) {
+
+
+gower_dist_c = function(x, y, data, k, idx = FALSE) {
   if (nrow(y) == 1L) {
-    gower_dist(x, y, data)
+    return(gower_dist(x, y, data))
   } else {
-    gower_topn(x, y, k)
+    gt = gower_topn(x, y, k)
+    if (idx) {
+      return(gt$index)
+    } else {
+      return(t(gt$dist))
+    }
   }
 }
+class(gower_dist_c) = c(class(gower_dist_c), "topn")
 
 gower_topn = function(x, y, n = 5L) {
   myWarnings = NULL
@@ -30,10 +38,10 @@ gower_topn = function(x, y, n = 5L) {
       warning(w$message)
     }
   }
-  dist = withCallingHandlers(gower::gower_topn(x, y, n = n, nthread = 1L)$dist, warning = wHandler)
+  dist = withCallingHandlers(gower::gower_topn(x, y, n = n, nthread = 1L), warning = wHandler)
   if (length(myWarnings) > 0L) {
    dist = dist * (1 - length(myWarnings) / ncol(x))
   }
-  dist[is.na(dist)] = 0
-  t(dist)
+  dist$dist[is.na(dist$dist)] = 0
+  dist
 }
