@@ -46,17 +46,31 @@ RandomSearchClassif = R6::R6Class("RandomSearchClassif",
     #'   or a vector of length `k`. If it has length `k`, the i-th element specifies the weight of the i-th closest data point.
     #'   The values should sum up to `1`. `NULL` (default) means all data points are weighted equally.
     #' @template lower_upper
-    #' @param distance_function (`function()` | `NULL`)\cr 
-    #'  The distance function to be used in the second and fourth objective. The function must have three arguments:
-    #'  `x`, `y`, and `data` and return a `double` matrix with `nrow(x)` rows and `nrow(y)` columns. 
-    #'  If set to `NULL` (default), then Gower distance (Gower 1971) is used.
+      #' @param distance_function (`function()` | `'gower'` | `'gower_c'`)\cr 
+    #'  The distance function to be used in the second and fourth objective.
+    #'  Either the name of an already implemented distance function
+    #'  ('gower' or 'gower_c') or a function.
+    #'  If set to 'gower' (default), then Gower's distance (Gower 1971) is used;
+    #'  if set to 'gower_c', a C-based more efficient version of Gower's distance is used.
+    #'  A function must have three arguments  `x`, `y`, and `data` and should
+    #'  return a `double` matrix with `nrow(x)` rows and maximum `nrow(y)` columns.
     initialize = function(predictor, fixed_features = NULL, max_changed = NULL, mu = 20L, n_generations = 175L,
-                          p_use_orig = 0.5, k = 1L, weights = NULL, lower = NULL, upper = NULL, distance_function = NULL) {
+                          p_use_orig = 0.5, k = 1L, weights = NULL, lower = NULL, upper = NULL, distance_function = "gower") {
       
-      if (is.null(distance_function)) {
-        distance_function = gower_dist
+      if (is.character(distance_function)) {
+        if (distance_function == "gower") {
+          distance_function = gower_dist
+        } else if (distance_function == "gower_c") {
+          if (!requireNamespace("gower", quietly = TRUE)) {
+            stop("Package 'gower' needed for distance_function = 'gower_c'. Please install it.", call. = FALSE)
+          }
+          distance_function = function(x, y, data) {
+            gower_dist_c(x, y, data, k = k)
+          }
+          class(distance_function) = class(gower_dist_c)
+        }
       }
-      
+
       super$initialize(predictor, lower, upper, distance_function)
 
       if (!is.null(fixed_features)) {

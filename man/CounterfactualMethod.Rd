@@ -49,10 +49,11 @@ Vector of maximum values for numeric features.
 If \code{NULL} (default), the element for each numeric feature in \code{upper} is taken as its maximum value in \code{predictor$data$X}.
 If not \code{NULL}, it should be named with the corresponding feature names.}
 
-\item{\code{distance_function}}{(\verb{function()} | \code{NULL})\cr
-A distance function that may be used by the leaf classes.
-If specified, the function must have three arguments: \code{x}, \code{y}, and \code{data} and return a \code{double} matrix with \code{nrow(x)}
-rows and \code{nrow(y)} columns.}
+\item{\code{distance_function}}{(\code{character(1)} | \verb{function()})\cr
+Either the name of an already implemented distance function
+(currently 'gower' or 'gower_c') or a function having three arguments:
+\code{x}, \code{y}, and \code{data}. The function should return a \code{double} matrix with
+\code{nrow(x)} rows and maximum \code{nrow(y)} columns.}
 }
 \if{html}{\out{</div>}}
 }

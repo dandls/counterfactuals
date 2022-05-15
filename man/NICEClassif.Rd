@@ -98,7 +98,7 @@ Create a new NICEClassif object.
   x_nn_correct = TRUE,
   return_multiple = TRUE,
   finish_early = TRUE,
-  distance_function = NULL
+  distance_function = "gower"
 )}\if{html}{\out{</div>}}
 }
 
@@ -123,10 +123,17 @@ prediction is in the interval \code{desired_prob}. For more information, see the
 Should the algorithm terminate after an iteration in which the \code{desired_class} prediction for the highest reward instance
 is in the interval \code{desired_prob}. If \code{FALSE}, the algorithm continues until \code{x_nn} is recreated.}
 
-\item{\code{distance_function}}{(\verb{function()} | \code{NULL})\cr
-The distance function used to compute the distances between \code{x_interest} and the training data points for finding \code{x_nn}.
-The function must have three arguments: \code{x}, \code{y}, and \code{data} and return a \code{numeric} matrix with \code{nrow(x)} rows
-and \code{nrow(y)} columns. If set to \code{NULL} (default), then Gower distance (Gower 1971) is used.}
+\item{\code{distance_function}}{(\verb{function()} | \code{'gower'} | \code{'gower_c'})\cr
+The distance function used to compute the distances between \code{x_interest}
+and the training data points for finding \code{x_nn}. If \code{optimization} is set
+to \code{proximity}, the distance function is also used for calculating the
+distance between candidates and \code{x_interest}.
+Either the name of an already implemented distance function
+('gower' or 'gower_c') or a function is allowed as input.
+If set to 'gower' (default), then Gower's distance (Gower 1971) is used;
+if set to 'gower_c', a C-based more efficient version of Gower's distance is used.
+A function must have three arguments  \code{x}, \code{y}, and \code{data} and should
+return a \code{double} matrix with \code{nrow(x)} rows and maximum \code{nrow(y)} columns.}
 }
 \if{html}{\out{</div>}}
 }

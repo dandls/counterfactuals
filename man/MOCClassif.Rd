@@ -133,7 +133,7 @@ Create a new \code{MOCClassif} object.
   init_strategy = "random",
   use_conditional_mutator = FALSE,
   quiet = FALSE,
-  distance_function = NULL
+  distance_function = "gower"
 )}\if{html}{\out{</div>}}
 }
 
@@ -203,10 +203,14 @@ on the values of the other feature. Default is \code{FALSE}.}
 \item{\code{quiet}}{(\code{logical(1)})\cr
 Should information about the optimization status be hidden? Default is \code{FALSE}.}
 
-\item{\code{distance_function}}{(\verb{function()} | \code{NULL})\cr
-The distance function to be used in the second and fourth objective. The function must have three arguments:
-\code{x}, \code{y}, and \code{data} and return a \code{numeric} matrix with \code{nrow(x)} rows and \code{nrow(y)} columns.
-If set to \code{NULL} (default), then Gower distance (Gower 1971) is used.}
+\item{\code{distance_function}}{(\verb{function()} | \code{'gower'} | \code{'gower_c'})\cr
+The distance function to be used in the second and fourth objective.
+Either the name of an already implemented distance function
+('gower' or 'gower_c') or a function.
+If set to 'gower' (default), then Gower's distance (Gower 1971) is used;
+if set to 'gower_c', a C-based more efficient version of Gower's distance is used.
+A function must have three arguments  \code{x}, \code{y}, and \code{data} and should
+return a \code{double} matrix with \code{nrow(x)} rows and maximum \code{nrow(y)} columns.}
 }
 \if{html}{\out{</div>}}
 }

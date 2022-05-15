@@ -103,7 +103,7 @@ Create a new \code{RandomSearchRegr} object.
   weights = NULL,
   lower = NULL,
   upper = NULL,
-  distance_function = NULL
+  distance_function = "gower"
 )}\if{html}{\out{</div>}}
 }
 
@@ -148,10 +148,14 @@ Vector of maximum values for numeric features.
 If \code{NULL} (default), the element for each numeric feature in \code{upper} is taken as its maximum value in \code{predictor$data$X}.
 If not \code{NULL}, it should be named with the corresponding feature names.}
 
-\item{\code{distance_function}}{(\verb{function()} | \code{NULL})\cr
-The distance function to be used in the second and fourth objective. The function must have three arguments:
-\code{x}, \code{y}, and \code{data} and return a \code{double} matrix with \code{nrow(x)} rows and \code{nrow(y)} columns.
-If set to \code{NULL} (default), then Gower distance (Gower 1971) is used.}
+\item{\code{distance_function}}{(\verb{function()} | \code{'gower'} | \code{'gower_c'})\cr
+The distance function to be used in the second and fourth objective.
+Either the name of an already implemented distance function
+('gower' or 'gower_c') or a function.
+If set to 'gower' (default), then Gower's distance (Gower 1971) is used;
+if set to 'gower_c', a C-based more efficient version of Gower's distance is used.
+A function must have three arguments  \code{x}, \code{y}, and \code{data} and should
+return a \code{double} matrix with \code{nrow(x)} rows and maximum \code{nrow(y)} columns.}
 }
 \if{html}{\out{</div>}}
 }

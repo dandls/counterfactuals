@@ -14,7 +14,3 @@
 
     Assertion on 'lower <= upper' failed: Must be TRUE.
 
-# $initialize() returns error if distance_function is not a function or NULL
-
-    Assertion on 'distance_function' failed: Must be a function (or 'NULL'), not 'character'.
-

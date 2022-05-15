@@ -72,15 +72,32 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
     #' @param finish_early (`logical(1)`)\cr 
     #' Should the algorithm terminate after an iteration in which the `desired_class` prediction for the highest reward instance 
     #' is in the interval `desired_prob`. If `FALSE`, the algorithm continues until `x_nn` is recreated.
-    #' @param distance_function (`function()` | `NULL`)\cr 
-    #'  The distance function used to compute the distances between `x_interest` and the training data points for finding `x_nn`. 
-    #'  The function must have three arguments: `x`, `y`, and `data` and return a `numeric` matrix with `nrow(x)` rows 
-    #'  and `nrow(y)` columns. If set to `NULL` (default), then Gower distance (Gower 1971) is used.
+    #' @param distance_function (`function()` | `'gower'` | `'gower_c'`)\cr 
+    #'  The distance function used to compute the distances between `x_interest`
+    #'  and the training data points for finding `x_nn`. If `optimization` is set
+    #'  to `proximity`, the distance function is also used for calculating the
+    #'  distance between candidates and `x_interest`.
+    #'  Either the name of an already implemented distance function
+    #'  ('gower' or 'gower_c') or a function is allowed as input.
+    #'  If set to 'gower' (default), then Gower's distance (Gower 1971) is used;
+    #'  if set to 'gower_c', a C-based more efficient version of Gower's distance is used.
+    #'  A function must have three arguments  `x`, `y`, and `data` and should
+    #'  return a `double` matrix with `nrow(x)` rows and maximum `nrow(y)` columns.
     initialize = function(predictor, optimization = "sparsity", x_nn_correct = TRUE, return_multiple = TRUE,
-                          finish_early = TRUE, distance_function = NULL) {
+                          finish_early = TRUE, distance_function = "gower") {
       
-      if (is.null(distance_function)) {
-        distance_function = gower_dist
+      if (is.character(distance_function)) {
+        if (distance_function == "gower") {
+          distance_function = gower_dist
+        } else if (distance_function == "gower_c") {
+          if (!requireNamespace("gower", quietly = TRUE)) {
+            stop("Package 'gower' needed for distance_function = 'gower_c'. Please install it.", call. = FALSE)
+          }
+          distance_function = function(x, y, data) {
+            gower_dist_c(x, y, data, k = 1L, idx = TRUE)
+          }
+          class(distance_function) = class(gower_dist_c)
+        }
       }
       super$initialize(predictor, distance_function = distance_function)
       assert_choice(optimization, choices = c("sparsity", "proximity", "plausibility"))
