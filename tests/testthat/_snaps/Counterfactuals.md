@@ -4,11 +4,11 @@
 
 # plot_parallel returns error for unknown feature names
 
-    Assertion on 'feature_names' failed: Must be a subset of set {var_num_1,var_num_2,var_fact_1,var_fact_2}.
+    Assertion on 'feature_names' failed: Names must be a subset of {'var_num_1','var_num_2','var_fact_1','var_fact_2'}, but has additional elements {'non_in_data1','non_in_data2'}.
 
 # evaluate returns error if measures are not known
 
-    Assertion on 'measures' failed: Must be a subset of set {dist_x_interest,dist_target,no_changed,dist_train}.
+    Assertion on 'measures' failed: Names must be a subset of {'dist_x_interest','dist_target','no_changed','dist_train'}, but has additional elements {'wrong_measure'}.
 
 # methods that require at least one counterfactuals are blocked when no counterfactuals found
 
