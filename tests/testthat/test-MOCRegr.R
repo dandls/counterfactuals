@@ -50,15 +50,33 @@ test_that("Returns correct output format for mixed columns for 'icecurve' initia
   rf = randomForest(mpg ~ ., data = mydf, ntree = 5L)
   pred = iml::Predictor$new(rf, data = mydf, y = "mpg")
   
-  mocr = MOCRegr$new(pred, init_strategy = "icecurve",  n_generations = 5L)
+  mocr = MOCRegr$new(pred, init_strategy = "icecurve", use_conditional_mutator = TRUE, n_generations = 3L)
   x_interest = head(subset(mydf, select = -mpg), 1)
   desired_outcome = c(15, 18)
   
   expect_snapshot({cfactuals = quiet(mocr$find_counterfactuals(x_interest, desired_outcome))})
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
+  mocr$print()
 })
 
+test_that("conditional mutator and plotting functions work", {
+  
+  set.seed(54542142)
+  rf = get_rf_regr_mtcars()
+  mtcars_pred = iml::Predictor$new(rf, data = mtcars)
+  x_interest = mtcars[1L, ]
+  moc_regr = MOCRegr$new(
+    mtcars_pred, n_generations = 3L, init_strategy = "traindata", use_conditional_mutator = FALSE, quiet = TRUE
+  )
+  cfactuals = moc_regr$find_counterfactuals(x_interest, desired_outcome = c(1, 10))
+  expect_data_table(cfactuals$data)
+  p1 = moc_regr$plot_search()
+  p2 = moc_regr$plot_statistics()
+  expect_data_table(moc_regr$get_dominated_hv(), nrows = 3, ncols = 2)
+  expect_data_table(moc_regr$optimizer$archive$data, nrows = 20*3)
+  expect_error(moc_regr$optimizer <- 35L, "read only")
+})
 
 test_that("distance_function can be exchanged", {
   set.seed(54542142)

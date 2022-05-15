@@ -551,7 +551,11 @@ MutatorConditional = R6::R6Class("MutatorConditional", inherit = Mutator,
         }
         
       }
-      values_mutated[, (fixed_features) := NULL]
+      if (length(fixed_features) > 0) {
+        values_mutated[, (fixed_features) := NULL] 
+      } else {
+        values_mutated
+      }
     }
  )
 )

@@ -28,6 +28,18 @@ test_that("$predict method returns correct prediction", {
   expect_identical(cf$predict(), cf$.__enclos_env__$private$predictor$predict(cf$data))
 })
 
+# $subset_to_valid() ---------------------------------------------------------------------------------------------------
+test_that("$subset_to_valid subsets results", {
+  cf = make_counterfactual_test_obj()
+  expect_false(cf$subsetted)
+  n = nrow(cf$data)
+  cf$subset_to_valid()
+  n2 = nrow(cf$data)
+  expect_true(all(cf$evaluate()[["dist_target"]] == 0))
+  expect_true(cf$subsetted)
+  expect_message(cf$subset_to_valid(), "already subsetted")
+})
+
 # $get_freq_of_feature_changes() ---------------------------------------------------------------------------------------
 test_that("$get_freq_of_feature_changes returns correct frequencies", {
   cf = make_counterfactual_test_obj()

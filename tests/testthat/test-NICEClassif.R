@@ -135,7 +135,12 @@ test_that("Returns warning if no counterfactuals could be found", {
   pred = Predictor$new(rf, data = mydf, type = "class")
   x_interest = head(subset(mydf, select = -am), n = 1L)
   nice_classif = NICEClassif$new(pred, optimization = "sparsity", x_nn_correct = TRUE)
+  print(nice_classif)
   expect_snapshot({cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "0", desired_prob = 0.454851)})
+  expect_error(nice_classif$archive <- 1234L, "read only")
+  expect_error(nice_classif$x_nn <- c(), "read only")
+  expect_null(nice_classif$archive)
+  expect_null(nice_classif$x_nn)
 })
 
 

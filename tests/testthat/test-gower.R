@@ -18,3 +18,13 @@ test_that("same results of gower distances for factor and character", {
   st = t(apply(StatMatch::gower.dist(cfs, traindata), MARGIN = 1L, FUN = sort))
   expect_equal(matrix(gtc), matrix(st))
 }) 
+
+test_that("gower_topn throws warning for constant variables", {
+  n = 5
+  set.seed(1220)
+  # with factor column
+  traindata = data.table(X1 = rep(1, n), 
+    X2 = as.factor(sample(c("a"), size = n, replace = TRUE)))
+  cfs = traindata[1:2,]
+  expect_list(gower_topn(cfs, traindata), len = 2)
+})

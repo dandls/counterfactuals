@@ -77,6 +77,12 @@ test_that("distance_function can be exchanged", {
   )
   cfactuals = wi$find_counterfactuals(x_interest, desired_outcome = c(22, 25))
   expect_data_table(cfactuals$data, nrows = n)
+  
+  wi2 = WhatIfRegr$new(
+    pred, distance_function = "gower_c", n_counterfactuals = 1L
+  )
+  cfactuals = wi2$find_counterfactuals(x_interest, desired_outcome = c(22, 25))
+  expect_data_table(cfactuals$data, nrows = 1L)
 })
 
 

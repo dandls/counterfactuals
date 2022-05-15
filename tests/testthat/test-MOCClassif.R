@@ -12,6 +12,7 @@ test_that("Returns correct output format for soft binary classification", {
   
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
+  
 })
 
 test_that("Returns correct output format for hard binary classification", {
@@ -58,6 +59,23 @@ test_that("Can handle ordered factor input columns", {
   expect_data_table(cfactuals$data, col.names = "named")
   expect_factor(cfactuals$data$installment_rate, levels = levels(german$installment_rate), ordered = TRUE)
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
+})
+
+test_that("conditional mutator and plotting functions work", {
+  set.seed(54542142)
+  rf = get_rf_classif_iris()
+  iris_pred = iml::Predictor$new(rf, type = "prob")
+  x_interest = iris[1L, ]
+  moc_classif = MOCClassif$new(
+    iris_pred, n_generations = 3L, init_strategy = "traindata", use_conditional_mutator = TRUE, quiet = TRUE
+  )
+  cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = c(0.5, 1))
+  expect_data_table(cfactuals$data)
+  p1 = moc_classif$plot_search()
+  p2 = moc_classif$plot_statistics()
+  expect_data_table(moc_classif$get_dominated_hv(), nrows = 3, ncols = 2)
+  expect_data_table(moc_classif$optimizer$archive$data, nrows = 20*3)
+  expect_error(moc_classif$optimizer <- 35L, "read only")
 })
 
 
