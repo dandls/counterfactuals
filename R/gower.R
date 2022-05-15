@@ -2,9 +2,6 @@ gower_dist = function(x, y, data) {
   assert_data_table(data)
   ranges = data[, sapply(.SD, function(x) ifelse(is.numeric(x), max(x, na.rm = TRUE) - min(x, na.rm = TRUE), NA))]
   dists = StatMatch::gower.dist(x, y, rngs = ranges, KR.corr = FALSE)
-  if (!is.matrix(dists)) {
-    dists = matrix(dists, nrow = nrow(x), ncol = ncol(x))
-  }
   dists
 }
 
@@ -55,8 +52,8 @@ gower_topn = function(x, y, n = 5L) {
   }
   
   if (length(myWarnings) > 0L) {
-    dist = dist * (1 - length(myWarnings) / ncol(x))
+    dist$distance = dist$distance * (1 - length(myWarnings) / ncol(x))
   }
-  dist$dist[is.na(dist$dist)] = 0
+  dist$distance[is.na(dist$distance)] = 0
   dist
 }
