@@ -21,9 +21,9 @@ options(width = 200)
 ```
 
 ```{r setup, message=FALSE}
-library(counterfactuals)
-library(iml)
-library(randomForest)
+library("counterfactuals")
+library("iml")
+library("randomForest")
 ```
 
 
@@ -106,7 +106,7 @@ With the `fixed_features` argument, we can fix non-actionable features to their 
 
 ```{r, eval=FALSE}
 moc_classif = MOCClassif$new(
-  predictor, epsilon = 0, fixed_features = c("pregnant", "age")
+  predictor, epsilon = 0, fixed_features = c("pregnant", "age"), init_strategy = "icecurve"
 )
 ```
 
@@ -183,7 +183,7 @@ counterfactuals.
 
 
 ```{r, fig.height=3}
-cfactuals$plot_surface(feature_names = c("mass", "glucose"))
+cfactuals$plot_surface(feature_names = c("glucose", "insulin"))
 ```
 
 

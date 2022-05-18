@@ -73,9 +73,7 @@ devtools::install_github("hoxo-m/pforeach")
 library(counterfactuals)
 library(randomForest)
 library(featureTweakR)
-library(data.table)
 library(R6)
-library(iml)
 ```
 
 ### Class structure
@@ -84,11 +82,11 @@ A new leaf class needs at least two methods: `initialize()` and `run()`. The met
 mandatory, but strongly recommended as it gives objects of that class an informative `print()` output.
 
 As elaborated above, the new class inherits from either `CounterfactualMethodClassif` or `CounterfactualMethodRegr`, depending 
-on which task it supports. Because Feature Tweaking supports classification tasks, the new `FeatureTweaker` class inherits from
+on which task it supports. Because Feature Tweaking supports classification tasks, the new `FeatureTweakerClassif` class inherits from
 the former.
 
 ```{r,eval=FALSE}
-FeatureTweaker = R6::R6Class("FeatureTweaker", inherit = CounterfactualMethodClassif,
+FeatureTweakerClassif = R6::R6Class("FeatureTweakerClassif", inherit = CounterfactualMethodClassif,
   
   public = list(
     initialize = function() {}
@@ -106,40 +104,34 @@ FeatureTweaker = R6::R6Class("FeatureTweaker", inherit = CounterfactualMethodCla
 
 The `initialize()` method must have a predictor argument that takes an
 [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object.  In addition, it may
-have further arguments that are specific to the counterfactual method such as `ktree`, `epsilon`, and `nrep` in this case. 
+have further arguments that are specific to the counterfactual method such as `ktree`, `epsiron`, and `resample` in this case. 
 For argument checks, we recommend the [`checkmate`](https://mllg.github.io/checkmate/) package. 
 We also fill the `print_parameters()` method with the parameters of Feature Tweaking.
 
 ```{r,eval=FALSE}
-FeatureTweaker = R6Class("FeatureTweaker", inherit = CounterfactualMethodClassif,
+FeatureTweakerClassif = R6Class("FeatureTweakerClassif", inherit = CounterfactualMethodClassif,
   
   public = list(
-    initialize = function(predictor, ktree = 30L, epsilon = 0.1, nrep = 10L) {
-      checkmate::assert_multi_class(predictor$model, "randomForest")
-      checkmate::assert_integerish(
-        ktree, lower = 0L, upper = rf$ntree, any.missing = FALSE, len = 1L
-      )
-      checkmate::assert_number(epsilon, lower = 1e-8)
-      checkmate::assert_integerish(nrep, lower = 0L, any.missing = FALSE, len = 1L)
+    initialize = function(predictor, ktree = NULL, epsiron = 0.1, resample = FALSE) {
       # adds predictor to private$predictor field
       super$initialize(predictor)
       private$ktree = ktree
-      private$epsilon = epsilon
-      private$n_rep = n_rep
+      private$epsiron = epsiron
+      private$resample = resample
     }
   ),
   
   private = list(
     ktree = NULL,
-    epsilon = NULL,
+    epsiron = NULL,
     n_rep = NULL,
     
     run = function() {},
     
     print_parameters = function() {
-      cat(" - epsilon: ", private$epsilon, "\n")
+      cat(" - epsiron: ", private$epsiron, "\n")
       cat(" - ktree: ", private$ktree, "\n")
-      cat(" - n_rep: ", private$n_rep)
+      cat(" - resample: ", private$resample)
     }
   )
 )
@@ -167,64 +159,49 @@ tweaked$suggest
 
 As long as `ktree`---the number of trees to parse---is smaller than the total number of trees
 in the `randomForest`, the rule extraction is a random process. Hence, these steps can be
-repeated `nrep` times to obtain multiple counterfactuals.
+repeated `resample` times to obtain multiple counterfactuals.
 
 ```{r}
-FeatureTweaker = R6Class("FeatureTweaker", inherit = CounterfactualMethodClassif,
+FeatureTweakerClassif = R6Class("FeatureTweakerClassif", 
+  inherit = CounterfactualMethodClassif,
   
   public = list(
-    initialize = function(predictor, ktree = 10L, epsilon = 0.1, nrep = 10L) {
-      checkmate::assert_multi_class(predictor$model, "randomForest")
-      checkmate::assert_integerish(
-        ktree, lower = 0L, upper = rf$ntree, any.missing = FALSE, len = 1L
-      )
-      checkmate::assert_number(epsilon, lower = 1e-8)
-      checkmate::assert_integerish(nrep, lower = 0L, any.missing = FALSE, len = 1L)
+    initialize = function(predictor, ktree = NULL, epsiron = 0.1, 
+      resample = FALSE) {
       # adds predictor to private$predictor field
       super$initialize(predictor) 
       private$ktree = ktree
-      private$epsilon = epsilon
-      private$nrep = nrep
+      private$epsiron = epsiron
+      private$resample = resample
     }
   ),
   
   private = list(
     ktree = NULL,
-    epsilon = NULL,
-    nrep = NULL,
+    epsiron = NULL,
+    resample = NULL,
     
     run = function() {
+      # Extract info from private fields
       predictor = private$predictor
       y_hat_interest = predictor$predict(private$x_interest)
       class_x_interest = names(y_hat_interest)[which.max(y_hat_interest)]
       rf = predictor$model
       
-      # Repeat the counterfactual search `nrep` times
-      cfs_list = sapply(seq_len(private$nrep), function(i) {
-        rules = getRules(rf, ktree = private$ktree, resample = TRUE)
-        e_satisfactory = set.eSatisfactory(rules, epsiron = private$epsilon)
-        tweaks = tweak(
-          e_satisfactory, rf, private$x_interest, label.from = class_x_interest, 
-          label.to = private$desired_class, .dopar = FALSE
-        )
-        tweaks$suggest
-      }, simplify = FALSE, USE.NAMES = TRUE)
-      
-      cfs = rbindlist(cfs_list)
-      # Return only counterfactuals whose prediction is in `desired_prob`
-      in_desired_prob = between(
-        predictor$predict(cfs)[[private$desired_class]], private$desired_prob[1L], private$desired_prob[2L]
+      # Search counterfactuals by calling functions in featureTweakR 
+      rules = getRules(rf, ktree = private$ktree, resample = private$resample)
+      es = set.eSatisfactory(rules, epsiron = private$epsiron)
+      tweaks = featureTweakR::tweak(
+        es, rf, private$x_interest, label.from = class_x_interest, 
+        label.to = private$desired_class, .dopar = FALSE
       )
-      
-      cfs[in_desired_prob]
-      # Return only unique counterfactuals
-      unique(cfs)
+      res <- tweaks$suggest
     },
     
     print_parameters = function() {
-      cat(" - epsilon: ", private$epsilon, "\n")
+      cat(" - epsiron: ", private$epsiron, "\n")
       cat(" - ktree: ", private$ktree, "\n")
-      cat(" - n_rep: ", private$n_rep)
+      cat(" - resample: ", private$resample)
     }
   )
 )
@@ -232,7 +209,7 @@ FeatureTweaker = R6Class("FeatureTweaker", inherit = CounterfactualMethodClassif
 
 ## Use Case
 
-Now, that we have implemented `FeatureTweaker`, let's look at a short application to the `iris` dataset.
+Now, that we have implemented `FeatureTweakerClassif`, let's look at a short application to the `iris` dataset.
 
 First, we train a `randomForest` model on the `iris` data set and set up the
 [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object, omitting `x_interest` from the
@@ -240,24 +217,28 @@ training data.
 
 ```{r}
 set.seed(78546)
-X = subset(iris, select = -Species)
-y = iris$Species
+X = subset(iris, select = -Species)[- 130L,]
+y = iris$Species[-130L]
 rf = randomForest(X, y, ntree = 20L)
-predictor = iml::Predictor$new(rf, data = iris[-120L, ], y = "Species", type = "prob")
+predictor = iml::Predictor$new(rf, data = iris[-130L, ], y = "Species", type = "prob")
 ```
 
 For `x_interest`, the model predicts a probability of 25% for `versicolor`. 
 ```{r}
-x_interest = iris[120L, ]
+x_interest = iris[130L, ]
 predictor$predict(x_interest)
 ```
 
-```{r, echo=FALSE}
-# ft_classif = FeatureTweaker$new(predictor, ktree = 10L, nrep = 5L)
-# saveRDS(ft_classif, "how-to-add-new-cf-methods-res/ft_classif.RDS")
-# cfactuals = ft_classif$find_counterfactuals(
-#   x_interest = iris[120L, ], desired_class = "versicolor", desired_prob = c(0.6, 1)
-# )
+```{r, echo=FALSE, message=FALSE}
+if (!file.exists("how-to-add-new-cf-methods-res/ft_classif.RDS")) {
+    ft_classif = FeatureTweakerClassif$new(predictor, ktree = 10L, resample = TRUE)
+    saveRDS(ft_classif, "how-to-add-new-cf-methods-res/ft_classif.RDS")
+    cfactuals = ft_classif$find_counterfactuals(
+      x_interest = x_interest, desired_class = "versicolor", desired_prob = c(0.6, 1)
+    )
+    saveRDS(cfactuals, "how-to-add-new-cf-methods-res/cfactuals.RDS")
+}
+
 # saveRDS(cfactuals, "how-to-add-new-cf-methods-res/cfactuals.RDS")
 ft_classif = readRDS("how-to-add-new-cf-methods-res/ft_classif.RDS")
 cfactuals = readRDS("how-to-add-new-cf-methods-res/cfactuals.RDS")
@@ -268,12 +249,12 @@ predict a probability of at least 60% for`versicolor`.
 
 
 ```{r, eval=FALSE}
-# Set up FeatureTweaker
-ft_classif = FeatureTweaker$new(predictor, ktree = 10L, nrep = 5L)
+# Set up FeatureTweakerClassif
+ft_classif = FeatureTweakerClassif$new(predictor, ktree = 10L, resample = TRUE)
 
 # Find counterfactuals and create Counterfactuals Object
 cfactuals = ft_classif$find_counterfactuals(
-  x_interest = iris[120L, ], desired_class = "versicolor", desired_prob = c(0.6, 1)
+  x_interest = x_interest, desired_class = "versicolor", desired_prob = c(0.6, 1)
 )
 ```
 

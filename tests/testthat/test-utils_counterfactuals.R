@@ -24,3 +24,12 @@ test_that("count_changes method computes changes correctly", {
   x_interest = data.table(a = 1.0000, b = "b")
   expect_identical(count_changes(cfactuals, x_interest), c(2L, 0L))
 })
+
+test_that("surface plot works", {
+  
+  cf = make_counterfactual_test_obj()
+  expect_class(cf$plot_surface(c("var_num_1", "var_num_2")), "ggplot")
+  expect_class(cf$plot_surface(c("var_num_1", "var_fact_1")), "ggplot")
+  expect_class(cf$plot_surface(c("var_fact_1", "var_fact_2")), "ggplot")
+  
+})
