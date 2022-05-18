@@ -259,7 +259,7 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
           mydesign
         }
       } else {
-        make_f_design = function(X, x_interest, sdevs, lower, upper) {
+        make_f_design_random = function(X, x_interest, sdevs, lower, upper) {
           x_interest_num = x_interest[, names(sdevs), with = FALSE]
           lower_bounds = pmax(ps$lower[names(sdevs)], x_interest_num - sdevs)
           upper_bounds = pmin(ps$upper[names(sdevs)], x_interest_num + sdevs)
@@ -277,14 +277,14 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
         sdevs_flex_cols = sdevs[names(sdevs) %in% flex_cols]
         lower_flex_cols = lower[names(lower) %in% flex_cols]
         upper_flex_cols = upper[names(upper) %in% flex_cols]
-        f_design = make_f_design(
+        f_design = make_f_design_random(
           predictor$data$X[, flex_cols, with = FALSE], x_interest[, flex_cols, with = FALSE], 
           sdevs_flex_cols, lower_flex_cols, upper_flex_cols
         )
       }
     } else if (init_strategy == "icecurve") {
 
-      make_f_design = function(X, flex_cols, x_interest) {
+      make_f_design_ice = function(X, flex_cols, x_interest) {
         function(ps, n) {
           param_set = make_param_set(X, lower = NULL, upper = NULL)
           mydesign = SamplerUnif$new(param_set)$sample(n)
@@ -318,10 +318,10 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
         }
       }
 
-      f_design = make_f_design(predictor$data$X, flex_cols, x_interest)
+      f_design = make_f_design_ice(predictor$data$X, flex_cols, x_interest)
     } else if (init_strategy == "traindata") {
       
-      make_f_design = function(X, flex_cols, x_interest) {
+      make_f_design_train = function(X, flex_cols, x_interest) {
         function(ps, n) {
       
           X_sub = predictor$data$X[sample.int(nrow(predictor$data$X), 200L, replace = TRUE)]
@@ -348,7 +348,7 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
           mydesign
         }
       }
-      f_design = make_f_design(predictor$data$X, flex_cols, x_interest)
+      f_design = make_f_design_train(predictor$data$X, flex_cols, x_interest)
     }
 
     my_design = f_design(param_set, n)
@@ -416,9 +416,8 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
       #hv = miesmuschel:::domhv(-as.matrix(best[, obj_names, with = FALSE]), nadir = -ref_point, on_worse_than_nadir = "quiet"),
       generations = i
     )
-    
-    best_mean[, generation := i]
-    best_min[, generation := i]
+    best_mean[, "generation" := i]
+    best_min[, "generation" := i]
     
     list(best_mean, best_min, hv)
   }) 
@@ -435,7 +434,7 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
     dt_agg_min = melt(dt_agg_min, id.vars = "generation", measure.vars = obj_names)
     
     gg_mean = ggplot2::ggplot(dt_agg_mean) + 
-      ggplot2::geom_line(ggplot2::aes(x = generation, y = value, color = variable)) +
+      ggplot2::geom_line(ggplot2::aes_string(x = "generation", y = "value", color = "variable")) +
       ggplot2::xlab("generations") +
       ggplot2::ggtitle("Mean objective values (scaled)") +
       ggplot2::theme_bw() +
@@ -443,7 +442,7 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
       ggplot2::theme(legend.title = ggplot2::element_blank(), axis.title.y = ggplot2::element_blank())
     
     gg_min = ggplot2::ggplot(dt_agg_min) + 
-      ggplot2::geom_line(ggplot2::aes(x = generation, y = value, color = variable)) +
+      ggplot2::geom_line(ggplot2::aes_string(x = "generation", y = "value", color = "variable")) +
       ggplot2::xlab("generations") +
       ggplot2::ggtitle("Minimum objective values (scaled)") +
       ggplot2::theme_bw() +
@@ -453,9 +452,10 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
   } else {
     dt_agg_mean = melt(dt_agg_mean, id.vars = "generation", measure.vars = obj_names)
     dt_agg_min = melt(dt_agg_min, id.vars = "generation", measure.vars = obj_names)
-    
+    browser()
+    variable = NULL
     gg_mean = ggplot2::ggplot(dt_agg_mean) + 
-      ggplot2::geom_line(ggplot2::aes(x = generation, y = value)) +
+      ggplot2::geom_line(ggplot2::aes_string(x = "generation", y = "value")) +
       ggplot2::facet_wrap(ggplot2::vars(variable), scales = "free_y", nrow = 4L) +
       ggplot2::xlab("generations") +
       ggplot2::ggtitle("Mean objective values") +
@@ -463,7 +463,7 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
       ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))
     
     gg_min = ggplot2::ggplot(dt_agg_min) + 
-      ggplot2::geom_line(ggplot2::aes(x = generation, y = value)) +
+      ggplot2::geom_line(ggplot2::aes_string(x = "generation", y = "value")) +
       ggplot2::facet_wrap(ggplot2::vars(variable), scales = "free_y", nrow = 4L) +
       ggplot2::xlab("generations") +
       ggplot2::ggtitle("Minimum objective values") +
@@ -472,7 +472,7 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
   }
   
   gg_hv = ggplot2::ggplot(dt_hv) + 
-    ggplot2::geom_line(ggplot2::aes(x = generations, y = hv)) +
+    ggplot2::geom_line(ggplot2::aes_string(x = "generations", y = "hv")) +
     ggplot2::xlab("generations") +
     ggplot2::ggtitle("Dominated hypervolume") +
     ggplot2::theme_bw() +

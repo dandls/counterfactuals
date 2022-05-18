@@ -10,16 +10,16 @@ make_cfactuals_diff = function(cfactuals, x_interest) {
   idx_non_numeric = which(!is_numeric_col)
   
   if (length(idx_numeric) > 0L) {
-    m_num = as.matrix(cfactuals[, ..idx_numeric])
-    x_interest_num = as.numeric(x_interest[1L , ..idx_numeric])
+    m_num = as.matrix(cfactuals[, idx_numeric, with = FALSE])
+    x_interest_num = as.numeric(x_interest[1L , idx_numeric, with = FALSE])
     diff_num = data.table::as.data.table(sweep(m_num, 2, x_interest_num))
     diff_num[diff_num == 0] = NA
     data.table::set(cfactuals_diff, j = idx_numeric, value = diff_num)
   }
   
   if (length(idx_non_numeric) > 0L) {
-    m_char = as.matrix(cfactuals[, ..idx_non_numeric])
-    x_interest_char = as.matrix(x_interest[1L , ..idx_non_numeric])
+    m_char = as.matrix(cfactuals[, idx_non_numeric, with = FALSE])
+    x_interest_char = as.matrix(x_interest[1L , idx_non_numeric, with = FALSE])
     no_diff = sweep(m_char, 2L, x_interest_char, FUN = "==")
     m_char[no_diff] = NA
     diff_char = data.table::as.data.table(m_char)
