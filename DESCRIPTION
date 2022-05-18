@@ -22,7 +22,7 @@ Imports:
     data.table,
     paradox,
     miesmuschel,
-    bbotk,
+    bbotk (== 0.5.1),
     ecr
 Suggests:
     gower,
