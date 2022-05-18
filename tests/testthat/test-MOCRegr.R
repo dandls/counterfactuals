@@ -54,7 +54,7 @@ test_that("Returns correct output format for mixed columns for 'icecurve' initia
   x_interest = head(subset(mydf, select = -mpg), 1)
   desired_outcome = c(15, 18)
   
-  expect_snapshot({cfactuals = quiet(mocr$find_counterfactuals(x_interest, desired_outcome))})
+  cfactuals = quiet(mocr$find_counterfactuals(x_interest, desired_outcome))
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
   mocr$print()

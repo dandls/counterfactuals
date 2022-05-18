@@ -131,7 +131,6 @@ NICERegr = R6::R6Class("NICEClassif",
       private$is_correctly_classified = seq_len(nrow(private$predictor$data$X))
       if (x_nn_correct) {
         if (is.null(margin_correct)) {
-          browser()
           all_residuals = abs(private$y_hat[[1L]] - private$predictor$data$y[[1L]])
           margin_correct = median(all_residuals) / 2
         }
