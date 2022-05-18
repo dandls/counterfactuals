@@ -29,7 +29,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
   )
   
   if (n_generations > 0L) {
-    terminator = bbotk::trm("gens", generations = n_generations)
+    terminator = bbotk::trm(id = "gens", generations = n_generations)
   } else {
     terminator = bbotk::trm("none")
   }
