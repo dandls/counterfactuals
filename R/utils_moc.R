@@ -92,7 +92,7 @@ reset_columns = function(values, p_use_orig, max_changed, x_interest) {
     ))
     
     if (length(idx_reset) > 0L) {
-      set(values_reset, i, j = idx_reset, value = x_interest_sub[, ..idx_reset])
+      set(values_reset, i, j = idx_reset, value = x_interest_sub[, idx_reset, with = FALSE])
     }
 
     # If more changes than allowed, randomly reset some features such that constraint holds
@@ -101,7 +101,7 @@ reset_columns = function(values, p_use_orig, max_changed, x_interest) {
       if (n_changes > max_changed) {
         idx_diff = which(values_reset[i, ] != x_interest_sub)
         idx_reset = sample(idx_diff, size = n_changes - max_changed)
-        set(values_reset, i, j = idx_reset, value = x_interest_sub[, ..idx_reset])
+        set(values_reset, i, j = idx_reset, value = x_interest_sub[, idx_reset, with = FALSE])
       }
     }
   }
@@ -278,12 +278,13 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
         lower_flex_cols = lower[names(lower) %in% flex_cols]
         upper_flex_cols = upper[names(upper) %in% flex_cols]
         f_design = make_f_design(
-          predictor$data$X[, ..flex_cols], x_interest[, ..flex_cols], sdevs_flex_cols, lower_flex_cols, upper_flex_cols
+          predictor$data$X[, flex_cols, with = FALSE], x_interest[, flex_cols, with = FALSE], 
+          sdevs_flex_cols, lower_flex_cols, upper_flex_cols
         )
       }
     } else if (init_strategy == "icecurve") {
 
-      make_f_design = function(X, flex_cols, x_interest, sdevs_num_feats) {
+      make_f_design = function(X, flex_cols, x_interest) {
         function(ps, n) {
           param_set = make_param_set(X, lower = NULL, upper = NULL)
           mydesign = SamplerUnif$new(param_set)$sample(n)
@@ -300,7 +301,7 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
           fixed_cols = which(!names(mydesign$data) %in% flex_cols)
           if (length(fixed_cols) > 0L) {
             mydesign$data[, (fixed_cols) := NULL]
-            x_interest_sub = x_interest_sub[, ..flex_cols]
+            x_interest_sub = x_interest_sub[, flex_cols, with = FALSE]
           }
 
           factor_cols = names(x_interest_sub)[sapply(x_interest_sub, is.factor)]
@@ -317,10 +318,10 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
         }
       }
 
-      f_design = make_f_design(predictor$data$X, flex_cols, x_interest, sdevs_num_feats)
+      f_design = make_f_design(predictor$data$X, flex_cols, x_interest)
     } else if (init_strategy == "traindata") {
       
-      make_f_design = function(X, flex_cols, x_interest, sdevs_num_feats) {
+      make_f_design = function(X, flex_cols, x_interest) {
         function(ps, n) {
       
           X_sub = predictor$data$X[sample.int(nrow(predictor$data$X), 200L, replace = TRUE)]
@@ -347,7 +348,7 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
           mydesign
         }
       }
-      f_design = make_f_design(predictor$data$X, flex_cols, x_interest, sdevs_num_feats)
+      f_design = make_f_design(predictor$data$X, flex_cols, x_interest)
     }
 
     my_design = f_design(param_set, n)
@@ -366,7 +367,7 @@ make_moc_pop_initializer = function(ps, x_interest, max_changed, init_strategy, 
         if (n_changes > max_changed) {
           idx_diff = which(my_design$data[i, ] != x_interest_reorderd)
           idx_reset = sample(idx_diff, size = n_changes - max_changed)
-          set(my_design$data, i, j = idx_reset, value = x_interest_reorderd[, ..idx_reset])
+          set(my_design$data, i, j = idx_reset, value = x_interest_reorderd[, idx_reset, with = FALSE])
         }
       }
     }
@@ -400,19 +401,19 @@ get_ICE_sd = function(x_interest, predictor, param_set) {
 
 make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
   obj_names = c("dist_target", "dist_x_interest", "no_changed", "dist_train")
-
   ls_stats = lapply(seq_len(max(archive$data$batch_nr)), function(i){
     best = archive$best(seq_len(i))
     best_mean = best[, lapply(.SD, mean, na.rm = TRUE), .SDcols = obj_names]
     best_min = best[, lapply(.SD, min, na.rm = TRUE), .SDcols = obj_names]
+    hv = NULL
     # TODO: ecr::computeHV gives slightly different results (monotonic increase of domhv)
     # hv = data.table(
-    #   hv = ecr::computeHV(t(best[, ..obj_names]), ref_point),
+    #   hv = ecr::computeHV(t(best[, obj_names, with = FALSE]), ref_point),
     #   generations = i
     # )
     hv = data.table(
       hv = ecr::computeHV(t(best[, obj_names, with = FALSE]), ref_point),
-      #hv = miesmuschel:::domhv(-as.matrix(best[, ..obj_names]), nadir = -ref_point, on_worse_than_nadir = "quiet"),
+      #hv = miesmuschel:::domhv(-as.matrix(best[, obj_names, with = FALSE]), nadir = -ref_point, on_worse_than_nadir = "quiet"),
       generations = i
     )
     
