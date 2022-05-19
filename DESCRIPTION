@@ -13,7 +13,8 @@ Description:  Provides a modular and unified R6-based interface for counterfactu
 URL: https://github.com/dandls/counterfactuals
 BugReports: https://github.com/dandls/counterfactuals/issues
 Depends:
-    R (>= 3.5.0)
+    R (>= 3.5.0),
+    bbotk (== 0.5.1)
 Imports: 
     R6,
     checkmate,
@@ -22,7 +23,6 @@ Imports:
     data.table,
     paradox,
     miesmuschel,
-    bbotk (== 0.5.1),
     ecr
 Suggests:
     gower,
