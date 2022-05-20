@@ -146,7 +146,7 @@ The object used for optimization.</p></dd>
   weights <span class="op">=</span> <span class="cn">NULL</span>,
   lower <span class="op">=</span> <span class="cn">NULL</span>,
   upper <span class="op">=</span> <span class="cn">NULL</span>,
-  distance_function <span class="op">=</span> <span class="cn">NULL</span>
+  distance_function <span class="op">=</span> <span class="st">"gower"</span>
 <span class="op">)</span></code></pre></div><p></p></div>
 </div>
 
@@ -211,10 +211,14 @@ If not <code>NULL</code>, it should be named with the corresponding feature name
 
 
 <dt><code>distance_function</code></dt>
-<dd><p>(<code>function()</code> | <code>NULL</code>)<br>
-The distance function to be used in the second and fourth objective. The function must have three arguments:
-<code>x</code>, <code>y</code>, and <code>data</code> and return a <code>double</code> matrix with <code>nrow(x)</code> rows and <code>nrow(y)</code> columns.
-If set to <code>NULL</code> (default), then Gower distance (Gower 1971) is used.</p></dd>
+<dd><p>(<code>function()</code> | <code>'gower'</code> | <code>'gower_c'</code>)<br>
+The distance function to be used in the second and fourth objective.
+Either the name of an already implemented distance function
+('gower' or 'gower_c') or a function.
+If set to 'gower' (default), then Gower's distance (Gower 1971) is used;
+if set to 'gower_c', a C-based more efficient version of Gower's distance is used.
+A function must have three arguments  <code>x</code>, <code>y</code>, and <code>data</code> and should
+return a <code>double</code> matrix with <code>nrow(x)</code> rows and maximum <code>nrow(y)</code> columns.</p></dd>
 
 
 </dl><p></p></div>
@@ -331,7 +335,7 @@ and "dist_train".</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer></div>

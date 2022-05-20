@@ -96,9 +96,9 @@
     
 <p>In the following, we explain the <code>counterfactuals</code> workflow for both a classification and a regression task using concrete use cases.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dandls/counterfactuals" class="external-link">counterfactuals</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://christophm.github.io/iml/" class="external-link">iml</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/" class="external-link">randomForest</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/dandls/counterfactuals" class="external-link">"counterfactuals"</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://christophm.github.io/iml/" class="external-link">"iml"</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/" class="external-link">"randomForest"</a></span><span class="op">)</span></code></pre></div>
 <div class="section level3">
 <h3 id="classification-tasks">Classification Tasks<a class="anchor" aria-label="anchor" href="#classification-tasks"></a>
 </h3>
@@ -227,7 +227,7 @@ Class variable (test for diabetes)
 Since we want to apply MOC to a classification model, we initialize a <code>MOCClassif</code> object. Individuals whose prediction is farther away from the desired prediction than <code>epsilon</code> can be penalized. Here, we set <code>epsilon = 0</code>, penalizing all individuals whose prediction is outside the desired interval. With the <code>fixed_features</code> argument, we can fix non-actionable features to their current value.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">moc_classif</span> <span class="op">=</span> <span class="va"><a href="../reference/MOCClassif.html">MOCClassif</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>
-  <span class="va">predictor</span>, epsilon <span class="op">=</span> <span class="fl">0</span>, fixed_features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pregnant"</span>, <span class="st">"age"</span><span class="op">)</span>
+  <span class="va">predictor</span>, epsilon <span class="op">=</span> <span class="fl">0</span>, fixed_features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pregnant"</span>, <span class="st">"age"</span><span class="op">)</span>, init_strategy <span class="op">=</span> <span class="st">"icecurve"</span>
 <span class="op">)</span></code></pre></div>
 <p>Then, we use the <code>find_counterfactuals()</code> method to find counterfactuals for <code>x_interest</code>. As we aim to find counterfactuals with a predicted diabetes probability of at most 40%, we set the <code>desired_class</code> to <code>"pos"</code> and the <code>desired_prob</code> to <code>c(0, 0.4)</code>; in the binary classification case, this is equivalent to setting <code>desired_class</code> to <code>"neg"</code> and <code>desired_prob</code> to <code>c(0.6, 1)</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -245,35 +245,35 @@ Since we want to apply MOC to a classification model, we initialize a <code>MOCC
 <p>Printing a <code>Counterfactuals</code> object, gives an overview of the results.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cfactuals</span><span class="op">)</span>
-<span class="co">#&gt; 346 Counterfactual(s) </span>
+<span class="co">#&gt; 292 Counterfactual(s) </span>
 <span class="co">#&gt;  </span>
 <span class="co">#&gt; Desired class: pos </span>
 <span class="co">#&gt; Desired predicted probability range: [0, 0.4] </span>
 <span class="co">#&gt;  </span>
 <span class="co">#&gt; Head: </span>
-<span class="co">#&gt;    pregnant glucose pressure triceps insulin mass pedigree age</span>
-<span class="co">#&gt; 1:        7     141       70      33     145 25.1    0.163  55</span>
-<span class="co">#&gt; 2:        7     145       70      33     145 25.1    0.163  55</span>
-<span class="co">#&gt; 3:        7     147       70      33     145 25.1    0.163  55</span></code></pre></div>
+<span class="co">#&gt;    pregnant glucose pressure  triceps insulin mass  pedigree age</span>
+<span class="co">#&gt; 1:        7     140       70 33.00000     145 25.1 0.1630000  55</span>
+<span class="co">#&gt; 2:        7     136       70 28.84745     145 25.1 0.3997672  55</span>
+<span class="co">#&gt; 3:        7     140       70 25.85814     145 25.1 0.5170803  55</span></code></pre></div>
 <p>The <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> method returns the predictions for the counterfactuals.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cfactuals</span><span class="op">$</span><span class="va">data</span>, <span class="va">cfactuals</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="fl">5L</span><span class="op">)</span>
-<span class="co">#&gt;    pregnant glucose pressure triceps insulin mass pedigree age   neg   pos</span>
-<span class="co">#&gt; 1:        7     141       70      33     145 25.1    0.163  55 0.714 0.286</span>
-<span class="co">#&gt; 2:        7     145       70      33     145 25.1    0.163  55 0.660 0.340</span>
-<span class="co">#&gt; 3:        7     147       70      33     145 25.1    0.163  55 0.628 0.372</span>
-<span class="co">#&gt; 4:        7     143       70      33     145 25.1    0.163  55 0.684 0.316</span>
-<span class="co">#&gt; 5:        7     137       70      33     145 25.1    0.163  55 0.726 0.274</span></code></pre></div>
+<span class="co">#&gt;    pregnant glucose pressure  triceps  insulin mass  pedigree age   neg   pos</span>
+<span class="co">#&gt; 1:        7     140       70 33.00000 145.0000 25.1 0.1630000  55 0.720 0.280</span>
+<span class="co">#&gt; 2:        7     136       70 28.84745 145.0000 25.1 0.3997672  55 0.668 0.332</span>
+<span class="co">#&gt; 3:        7     140       70 25.85814 145.0000 25.1 0.5170803  55 0.664 0.336</span>
+<span class="co">#&gt; 4:        7     139       70 33.00000 141.0935 25.1 0.4438260  55 0.704 0.296</span>
+<span class="co">#&gt; 5:        7     136       70 33.00000 145.0000 25.1 0.1662989  55 0.722 0.278</span></code></pre></div>
 <p>The <code>evaluate()</code> method returns the counterfactuals along with the evaluation measures <code>dist_x_interest</code>, <code>dist_target</code>, <code>no_changed</code>, and <code>dist_train</code>.<br>
 Setting the <code>show_diff</code> argument to <code>TRUE</code> displays the counterfactuals as their difference to <code>x_interest</code>: for a numeric feature, positive values indicate an increase compared to the feature value in <code>x_interest</code> and negative values indicate a decrease; for factors, the counterfactual feature value is displayed if it differs from <code>x_interest.</code>; <code>NA</code> means “no difference” in both cases.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span>show_diff <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="fl">5L</span><span class="op">)</span>
-<span class="co">#&gt;    pregnant glucose pressure triceps insulin mass pedigree age dist_x_interest nr_changed dist_train dist_target</span>
-<span class="co">#&gt; 1:       NA     -54       NA      NA      NA   NA       NA  NA      0.03391960          1 0.05339755           0</span>
-<span class="co">#&gt; 2:       NA     -50       NA      NA      NA   NA       NA  NA      0.03140704          1 0.05591011           0</span>
-<span class="co">#&gt; 3:       NA     -48       NA      NA      NA   NA       NA  NA      0.03015075          1 0.05716639           0</span>
-<span class="co">#&gt; 4:       NA     -52       NA      NA      NA   NA       NA  NA      0.03266332          1 0.05465383           0</span>
-<span class="co">#&gt; 5:       NA     -58       NA      NA      NA   NA       NA  NA      0.03643216          1 0.05088498           0</span></code></pre></div>
+<span class="co">#&gt;    pregnant glucose pressure   triceps   insulin mass    pedigree age dist_x_interest no_changed dist_train dist_target</span>
+<span class="co">#&gt; 1:       NA     -55       NA        NA        NA   NA          NA  NA      0.03454774          1 0.05276941           0</span>
+<span class="co">#&gt; 2:       NA     -59       NA -4.152549        NA   NA 0.236767199  NA      0.05494044          3 0.03237671           0</span>
+<span class="co">#&gt; 3:       NA     -55       NA -7.141855        NA   NA 0.354080332  NA      0.06246363          3 0.02521174           0</span>
+<span class="co">#&gt; 4:       NA     -56       NA        NA -3.906461   NA 0.280825966  NA      0.05074165          3 0.03657549           0</span>
+<span class="co">#&gt; 5:       NA     -59       NA        NA        NA   NA 0.003298894  NA      0.03723637          2 0.05008077           0</span></code></pre></div>
 <p>The <code>plot_freq_of_feature_changes()</code> method plots the frequency of feature changes across all counterfactuals.<br>
 Setting <code>subset_zero = TRUE</code> removes all unchanged features from the plot.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
@@ -285,7 +285,7 @@ Setting <code>subset_zero = TRUE</code> removes all unchanged features from the 
 <p><img src="introduction_files/figure-html/unnamed-chunk-16-1.png" width="672"></p>
 <p>The white dot in the prediction surface plot represents <code>x_interest</code>. All counterfactuals that differ from <code>x_interest</code> only in the selected features are displayed as black dots. The tick marks next to the axes indicate the marginal distribution of the counterfactuals.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_surface</span><span class="op">(</span>feature_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mass"</span>, <span class="st">"glucose"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_surface</span><span class="op">(</span>feature_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"glucose"</span>, <span class="st">"insulin"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="introduction_files/figure-html/unnamed-chunk-17-1.png" width="672"></p>
 </div>
 <div class="section level4">
@@ -388,7 +388,7 @@ Setting <code>subset_zero = TRUE</code> removes all unchanged features from the 
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>
