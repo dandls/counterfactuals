@@ -361,21 +361,24 @@ and "dist_train".</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/" class="external-link">"randomForest"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/" class="external-link">"randomForest"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span class="r-in">  <span class="co"># Train a model</span></span>
 <span class="r-in">  <span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html" class="external-link">randomForest</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
 <span class="r-in">  <span class="co"># Create a predictor object</span></span>
 <span class="r-in">  <span class="va">predictor</span> <span class="op">=</span> <span class="fu">iml</span><span class="fu">::</span><span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rf</span><span class="op">)</span></span>
 <span class="r-in">  <span class="co"># Find counterfactuals for x_interest</span></span>
-<span class="r-in">  <span class="va">moc_regr</span> <span class="op">=</span> <span class="va">MOCRegr</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predictor</span>, n_generations <span class="op">=</span> <span class="fl">30L</span><span class="op">)</span></span>
+<span class="r-in">  <span class="va">moc_regr</span> <span class="op">=</span> <span class="va">MOCRegr</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predictor</span>, n_generations <span class="op">=</span> <span class="fl">15L</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-in">  <span class="va">cfactuals</span> <span class="op">=</span> <span class="va">moc_regr</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span>x_interest <span class="op">=</span> <span class="va">mtcars</span><span class="op">[</span><span class="fl">1L</span>, <span class="op">]</span>, desired_outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">22</span>, <span class="fl">26</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in">  <span class="co"># Print the counterfactuals</span></span>
 <span class="r-in">  <span class="va">cfactuals</span><span class="op">$</span><span class="va">data</span></span>
 <span class="r-in">  <span class="co"># Plot evolution of hypervolume and mean and minimum objective values </span></span>
 <span class="r-in">  <span class="va">moc_regr</span><span class="op">$</span><span class="fu">plot_statistics</span><span class="op">(</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">}</span></span>
-<span class="r-in"><span class="op">}</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> `x_interest` was removed from results.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> tcltk DLL is linked to '/opt/X11/lib/libX11.6.dylib'</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> .onLoad failed in loadNamespace() for 'tcltk', details:</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>   call: fun(libname, pkgname)</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>   error: X11 library is missing: install XQuartz from www.xquartz.org</span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
