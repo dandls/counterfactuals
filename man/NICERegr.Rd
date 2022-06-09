@@ -34,7 +34,6 @@ If \code{finish_early = FALSE} and \code{return_multiple = FALSE}, then \code{x_
 The function computes the dissimilarities using Gower's dissimilarity measure (Gower 1971).
 }
 \examples{
-\dontrun{
 if (require("randomForest")) {
   set.seed(123456)
   # Train a model
@@ -50,7 +49,6 @@ if (require("randomForest")) {
   cfactuals$data
   # Print archive
   nice_regr$archive
-}
 }
 
 }

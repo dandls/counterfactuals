@@ -36,7 +36,6 @@
 #' 
 #' 
 #' @examples 
-#' \dontrun{
 #' if (require("randomForest")) {
 #'   # Train a model
 #'   rf = randomForest(Species ~ ., data = iris)
@@ -51,7 +50,6 @@
 #'   cfactuals$data
 #'   # Print archive
 #'   nice_classif$archive
-#' }
 #' }
 #' 
 #' @export

@@ -64,7 +64,7 @@ knitr::include_graphics("how-to-add-new-cf-methods-res/call-diagram.png")
 To integrate Feature Tweaking, we first we need to install `featureTweakR` and `pforeach` and load the required libraries.
 
 ```{r, eval=TRUE}
-if (!require(featureTweakR)) {
+if (!"featureTweakR" %in% installed.packages()) {
   devtools::install_github("katokohaku/featureTweakR")
   # required for FeatureTweakeR
   devtools::install_github("hoxo-m/pforeach")

@@ -39,7 +39,6 @@
 #'
 #'
 #' @examples
-#' \dontrun{
 #' if (require("randomForest")) {
 #'   set.seed(123456)
 #'   # Train a model
@@ -55,7 +54,6 @@
 #'   cfactuals$data
 #'   # Print archive
 #'   nice_regr$archive
-#' }
 #' }
 #'
 #' @export

@@ -3,20 +3,18 @@
 #' @template moc_info
 #'
 #' @examples 
-#' \dontrun{
 #' if (require("randomForest")) {
 #'   # Train a model
 #'   rf = randomForest(mpg ~ ., data = mtcars)
 #'   # Create a predictor object
 #'   predictor = iml::Predictor$new(rf)
 #'   # Find counterfactuals for x_interest
-#'   moc_regr = MOCRegr$new(predictor, n_generations = 30L)
+#'   moc_regr = MOCRegr$new(predictor, n_generations = 15L, quiet = TRUE)
 #'   cfactuals = moc_regr$find_counterfactuals(x_interest = mtcars[1L, ], desired_outcome = c(22, 26))
 #'   # Print the counterfactuals
 #'   cfactuals$data
 #'   # Plot evolution of hypervolume and mean and minimum objective values 
 #'   moc_regr$plot_statistics()
-#' }
 #' }
 #' 
 #' @export

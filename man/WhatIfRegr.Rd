@@ -12,7 +12,6 @@ Only observations whose features values lie between the corresponding values in 
 counterfactual candidates.
 }
 \examples{
-\dontrun{
 if (require("randomForest")) {
   set.seed(123456)
   # Train a model
@@ -26,7 +25,6 @@ if (require("randomForest")) {
   )
   # Print the results
   cfactuals
-}
 }
 
 }

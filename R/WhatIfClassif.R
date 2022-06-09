@@ -18,7 +18,6 @@
 #' Interactive probing of machine learning models. IEEE transactions on visualization and computer graphics, 26(1), 56–65.
 #' 
 #' @examples 
-#' \dontrun{
 #' if (require("randomForest")) {
 #'   # Train a model
 #'   rf = randomForest(Species ~ ., data = iris)
@@ -31,7 +30,6 @@
 #'   )
 #'   # Print the results
 #'   cfactuals$data
-#' }
 #' }
 #' 
 #' @export

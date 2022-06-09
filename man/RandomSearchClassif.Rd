@@ -22,7 +22,6 @@ The total number of samples drawn is \code{mu} * \code{n_generations}. Using sep
 is only required to make certain statistics comparable with MOC (e.g. the evolution of the dominated hypervolume).
 }
 \examples{
-\dontrun{
 if (require("randomForest")) {
   # Train a model
   rf = randomForest(Species ~ ., data = iris)
@@ -37,7 +36,6 @@ if (require("randomForest")) {
   cfactuals$data
   # Plot evolution of hypervolume and mean and minimum objective values
   rs_classif$plot_statistics()
-}
 }
 
 }

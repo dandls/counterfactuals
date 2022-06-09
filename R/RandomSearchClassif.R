@@ -3,7 +3,6 @@
 #' @template random_search_info
 #'
 #' @examples
-#' \dontrun{
 #' if (require("randomForest")) {
 #'   # Train a model
 #'   rf = randomForest(Species ~ ., data = iris)
@@ -18,7 +17,6 @@
 #'   cfactuals$data
 #'   # Plot evolution of hypervolume and mean and minimum objective values
 #'   rs_classif$plot_statistics()
-#' }
 #' }
 #'
 #' @export

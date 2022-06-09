@@ -30,7 +30,6 @@ This NICE implementation corresponds to the original version of Brughmans and Ma
 \code{return_multiple = FALSE}, \code{finish_early = TRUE}, and \code{x_nn_correct = TRUE}.
 }
 \examples{
-\dontrun{
 if (require("randomForest")) {
   # Train a model
   rf = randomForest(Species ~ ., data = iris)
@@ -45,7 +44,6 @@ if (require("randomForest")) {
   cfactuals$data
   # Print archive
   nice_classif$archive
-}
 }
 
 }

@@ -13,7 +13,6 @@ Only observations whose features values lie between the corresponding values in 
 counterfactual candidates.
 }
 \examples{
-\dontrun{
 if (require("randomForest")) {
   # Train a model
   rf = randomForest(Species ~ ., data = iris)
@@ -26,7 +25,6 @@ if (require("randomForest")) {
   )
   # Print the results
   cfactuals$data
-}
 }
 
 }
