@@ -49,5 +49,4 @@ VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
 Remotes:
-    dandls/miesmuschel@bbotk_update,
-    katokohaku/featureTweakR
+    mlr-org/miesmuschel@multiobjective_hb
