@@ -13,13 +13,13 @@ test_that("Returns correct output format for soft binary classification", {
   desired_outcome = c(15, 18)
   
   # Optim Sparsity
-  nice_regr = NICERegr$new(pred, optimization = "sparsity")
+  nice_regr = NICERegr$new(pred, optimization = "sparsity", return_multiple = TRUE)
   cfactuals = nice_regr$find_counterfactuals(x_interest, desired_outcome = desired_outcome)
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
   
   # Optim Proximity
-  nice_regr = NICERegr$new(pred, optimization = "proximity")
+  nice_regr = NICERegr$new(pred, optimization = "proximity", return_multiple = TRUE)
   cfactuals = nice_regr$find_counterfactuals(x_interest, desired_outcome = desired_outcome)
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
@@ -27,7 +27,7 @@ test_that("Returns correct output format for soft binary classification", {
   # Optim Plausibility
   skip_on_ci()
   set.seed(544564)
-  nice_regr = NICERegr$new(pred, optimization = "plausibility", x_nn_correct = FALSE)
+  nice_regr = NICERegr$new(pred, optimization = "plausibility", x_nn_correct = FALSE, return_multiple = TRUE)
   cfactuals = nice_regr$find_counterfactuals(x_interest, desired_outcome = desired_outcome)
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
@@ -41,7 +41,7 @@ test_that("Returns warning if no counterfactuals could be found", {
   pred = Predictor$new(rf, data = mydf)
   x_interest = head(subset(mydf, select = -mpg), n = 1L)
   
-  nice_regr = NICERegr$new(pred, optimization = "sparsity", x_nn_correct = TRUE)
+  nice_regr = NICERegr$new(pred, optimization = "sparsity", x_nn_correct = TRUE, return_multiple = TRUE)
   print(nice_regr)
   expect_warning(cfactuals <- nice_regr$find_counterfactuals(x_interest, desired_outcome = c(1, 5)), "No counterfactuals could be found")
   expect_error(nice_regr$archive <- 1234L, "read only")

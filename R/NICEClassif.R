@@ -81,7 +81,7 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
     #'  if set to 'gower_c', a C-based more efficient version of Gower's distance is used.
     #'  A function must have three arguments  `x`, `y`, and `data` and should
     #'  return a `double` matrix with `nrow(x)` rows and maximum `nrow(y)` columns.
-    initialize = function(predictor, optimization = "sparsity", x_nn_correct = TRUE, return_multiple = TRUE,
+    initialize = function(predictor, optimization = "sparsity", x_nn_correct = TRUE, return_multiple = FALSE,
                           finish_early = TRUE, distance_function = "gower") {
       
       if (is.character(distance_function)) {
