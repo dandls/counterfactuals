@@ -103,6 +103,11 @@ The function must have three arguments:
 <code>x</code>, <code>y</code>, and <code>data</code> and return a <code>numeric</code> matrix. If set to <code>NULL</code> (default), then Gower distance (Gower 1971) is used.</p></dd>
 
 
+<dt><code>method</code></dt>
+<dd><p>(<code>character</code>) <br>
+A single row with the observation of interest.</p></dd>
+
+
 <dt><code>subsetted</code></dt>
 <dd><p>(<code>logical(1)</code>)<br>
 Returns if data was subsetted to those meeting the
@@ -139,7 +144,14 @@ desired outcome.</p></dd>
 This method should only be called by the <code>$find_counterfactuals</code> methods of <a href="CounterfactualMethodRegr.html">CounterfactualMethodRegr</a>
 and <a href="CounterfactualMethodClassif.html">CounterfactualMethodClassif</a>.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va"><a href="../reference/Counterfactuals.html">Counterfactuals</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">cfactuals</span>, <span class="va">predictor</span>, <span class="va">x_interest</span>, <span class="va">param_set</span>, <span class="va">desired</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va"><a href="../reference/Counterfactuals.html">Counterfactuals</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>
+  <span class="va">cfactuals</span>,
+  <span class="va">predictor</span>,
+  <span class="va">x_interest</span>,
+  <span class="va">param_set</span>,
+  <span class="va">desired</span>,
+  method <span class="op">=</span> <span class="cn">NULL</span>
+<span class="op">)</span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -169,6 +181,12 @@ A <a href="https://paradox.mlr-org.com/reference/ParamSet.html" class="external-
 A <code>list</code> with the desired properties of the counterfactuals. It should have one element <code>desired_outcome</code> for
 regression tasks (<a href="CounterfactualMethodRegr.html">CounterfactualMethodRegr</a>) and two elements <code>desired_class</code> and <code>desired_prob</code>
 for classification tasks (<a href="CounterfactualMethodClassif.html">CounterfactualMethodClassif</a>).</p></dd>
+
+
+<dt><code>method</code></dt>
+<dd><p>(<code>character</code>) <br>
+Name of the method with which counterfactuals were generated. Default is
+NULL which means that no name is provided.</p></dd>
 
 
 </dl><p></p></div>
@@ -378,7 +396,7 @@ The grid size of the plot. It is ignored in case of two <code>non-numeric</code>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>
