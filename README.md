@@ -14,9 +14,9 @@ The `counterfactuals` package provides various (model-agnostic)
 counterfactual explanation methods via a unified R6-based interface.
 
 Counterfactual explanation methods address questions of the form: “For
-input **x**<sup>**⋆**</sup>, the model predicted *y*. What needs to be
-changed in **x**<sup>**⋆**</sup> for the model to predict a desired
-outcome *ỹ* instead?”.  
+input $\mathbf{x}$, the model predicted $\hat{y}$. What needs to be
+changed in $\mathbf{x}$ for the model to predict a desired
+outcome $y'$ instead?”.  
 Denied loan applications serve as a common example; here a
 counterfactual explanation (or counterfactual for short) could be: “The
 loan was denied because the amount of €30k is too high given the income.
