@@ -30,6 +30,9 @@ The distance function used in the second and fourth evaluation measure.
 The function must have three arguments:
 \code{x}, \code{y}, and \code{data} and return a \code{numeric} matrix. If set to \code{NULL} (default), then Gower distance (Gower 1971) is used.}
 
+\item{\code{method}}{(\code{character}) \cr
+A single row with the observation of interest.}
+
 \item{\code{subsetted}}{(\code{logical(1)})\cr
 Returns if data was subsetted to those meeting the
 desired prediction.}
@@ -63,7 +66,14 @@ Creates a new \code{Counterfactuals} object.
 This method should only be called by the \verb{$find_counterfactuals} methods of \link{CounterfactualMethodRegr}
 and \link{CounterfactualMethodClassif}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$new(cfactuals, predictor, x_interest, param_set, desired)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$new(
+  cfactuals,
+  predictor,
+  x_interest,
+  param_set,
+  desired,
+  method = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -85,6 +95,10 @@ A \link[paradox]{ParamSet} based on the features of \code{predictor$data$X}.}
 A \code{list} with the desired properties of the counterfactuals. It should have one element \code{desired_outcome} for
 regression tasks (\link{CounterfactualMethodRegr}) and two elements \code{desired_class} and \code{desired_prob}
 for classification tasks (\link{CounterfactualMethodClassif}).}
+
+\item{\code{method}}{(\code{character}) \cr
+Name of the method with which counterfactuals were generated. Default is
+NULL which means that no name is provided.}
 }
 \if{html}{\out{</div>}}
 }

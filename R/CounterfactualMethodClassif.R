@@ -93,7 +93,8 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit
         predictor = private$predictor,
         x_interest = private$x_interest, 
         param_set = private$param_set,   
-        desired = list("desired_class" = desired_class, "desired_prob" = desired_prob)
+        desired = list("desired_class" = desired_class, "desired_prob" = desired_prob), 
+        method = class(self)[1]
       )
     }
   ),

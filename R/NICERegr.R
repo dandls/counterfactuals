@@ -57,7 +57,7 @@
 #' }
 #'
 #' @export
-NICERegr = R6::R6Class("NICEClassif",
+NICERegr = R6::R6Class("NICERegr",
   inherit = CounterfactualMethodRegr,
   public = list(
 

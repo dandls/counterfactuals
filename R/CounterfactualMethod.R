@@ -59,6 +59,7 @@ CounterfactualMethod = R6::R6Class("CounterfactualMethod",
     lower = NULL,
     upper = NULL,
     distance_function = NULL,
+    method = NULL,
     
     run = function() stop("abstract"),
     

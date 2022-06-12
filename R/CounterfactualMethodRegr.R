@@ -73,7 +73,8 @@ CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = Cou
         predictor = private$predictor,
         x_interest = private$x_interest, 
         param_set = private$param_set,   
-        desired = list("desired_outcome" = desired_outcome)
+        desired = list("desired_outcome" = desired_outcome),
+        method = class(self)[1]
       )
     }
   ),

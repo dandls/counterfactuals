@@ -22,13 +22,16 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #' @template lower_upper
     #' @template x_interest
     #' @template predictor
+    #' @param method (`character`) \cr
+    #' Name of the method with which counterfactuals were generated. Default is 
+    #' NULL which means that no name is provided.
     #' @param param_set (\link[paradox]{ParamSet})\cr
     #'  A \link[paradox]{ParamSet} based on the features of `predictor$data$X`.
     #' @param desired (`list(1)` | `list(2)`)\cr
     #'  A `list` with the desired properties of the counterfactuals. It should have one element `desired_outcome` for 
     #'  regression tasks (\link{CounterfactualMethodRegr}) and two elements `desired_class` and `desired_prob` 
     #'  for classification tasks (\link{CounterfactualMethodClassif}).
-    initialize = function(cfactuals, predictor, x_interest, param_set, desired) {
+    initialize = function(cfactuals, predictor, x_interest, param_set, desired, method = NULL) {
       assert_data_table(cfactuals)
       assert_class(predictor, "Predictor")
       assert_data_frame(x_interest, nrows = 1L)
@@ -36,6 +39,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       assert_true(ncol(cfactuals) == ncol(x_interest))
       assert_class(param_set, "ParamSet")
       assert_list(desired, min.len = 1L, max.len = 2L)
+      assert_character(method, null.ok = TRUE)
       assert_names(names(cfactuals), permutation.of = names(predictor$data$X))
       setcolorder(cfactuals, names(predictor$data$X))
       if (any(sapply(cfactuals, typeof) != sapply(predictor$data$X, typeof))) {
@@ -50,6 +54,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         }
       }
       
+      private$.method = method
       private$predictor = predictor
       private$param_set = param_set
       private$diff = make_cfactuals_diff(cfactuals, x_interest)
@@ -57,6 +62,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       private$.x_interest = x_interest
       private$.desired = desired
       private$.distance_function = gower_dist
+      private$.method = method
     },
     
     #' @description 
@@ -144,6 +150,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         # [] necessary to ensure that $data prints the data on the first call
         # https://stackoverflow.com/questions/34270165/when-and-why-does-print-need-two-attempts-to-print-a-data-table
         private$.data =  self$evaluate(measures = "dist_target")[dist_target == 0][, dist_target := NULL][]
+        private$diff = make_cfactuals_diff(private$.data, self$x_interest)
         private$.subsetted = TRUE
       } else {
         message("Counterfactuals were already subsetted to the ones meeting the first ")
@@ -351,6 +358,15 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         private$.distance_function = value
       }
     },
+    #' @field method (`character`) \cr
+    #'   A single row with the observation of interest.
+    method = function(value) {
+      if (missing(value)) {
+        private$.method
+      } else {
+        stop("`$method` is read only", call. = FALSE)
+      }
+    },
 
     #' @field subsetted (`logical(1)`)\cr
     #' Returns if data was subsetted to those meeting the
@@ -389,6 +405,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     .subsetted = FALSE,
     .x_interest = NULL,
     .distance_function = NULL,
+    .method = NULL,
     
     get_pred_column = function() {
       if (private$predictor$task == "classification") {

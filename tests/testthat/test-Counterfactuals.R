@@ -26,6 +26,7 @@ test_that("$init method returns error if coltypes of cfactuals are different fro
 test_that("$predict method returns correct prediction", {
   cf = make_counterfactual_test_obj()
   expect_identical(cf$predict(), cf$.__enclos_env__$private$predictor$predict(cf$data))
+  
 })
 
 # $subset_to_valid() ---------------------------------------------------------------------------------------------------
@@ -35,7 +36,7 @@ test_that("$subset_to_valid subsets results", {
   n = nrow(cf$data)
   cf$subset_to_valid()
   n2 = nrow(cf$data)
-  expect_true(all(cf$evaluate()[["dist_target"]] == 0))
+  expect_true(all(cf$evaluate(show_diff = TRUE)[["dist_target"]] == 0))
   expect_true(cf$subsetted)
   expect_message(cf$subset_to_valid(), "already subsetted")
 })
@@ -176,7 +177,9 @@ test_that("distance_function can be exchanged", {
     var_num_2 = ParamDbl$new(id = "var_num_2", lower = 0, upper = 10)
   ))
   
-  cf = Counterfactuals$new(as.data.table(X), mod, x_interest, ps, desired = list(desired_outcome = c(42, 44)))
+  cf = Counterfactuals$new(as.data.table(X), mod, 
+    x_interest, ps, desired = list(desired_outcome = c(42, 44)), 
+    method = "customClassif")
   expect_function(cf$distance_function, args = c("x", "y", "data"))
 
   correct_dist_function = function(x, y, data) {
