@@ -6,7 +6,6 @@ bibentry(
         person(given = "Susanne", family = "Dandl"), 
         person(given = "Andreas", family = "Hofheinz"),
         person(given = "Martin", family = "Binder"),
-        person(given = "Bernd", family = "Bischl"),
         person(given = "Giuseppe", family = "Casalicchio")
     ),
     year = "2022",
