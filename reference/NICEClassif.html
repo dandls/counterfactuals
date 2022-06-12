@@ -136,7 +136,7 @@ reward values and their predictions.</p></dd>
   <span class="va">predictor</span>,
   optimization <span class="op">=</span> <span class="st">"sparsity"</span>,
   x_nn_correct <span class="op">=</span> <span class="cn">TRUE</span>,
-  return_multiple <span class="op">=</span> <span class="cn">TRUE</span>,
+  return_multiple <span class="op">=</span> <span class="cn">FALSE</span>,
   finish_early <span class="op">=</span> <span class="cn">TRUE</span>,
   distance_function <span class="op">=</span> <span class="st">"gower"</span>
 <span class="op">)</span></code></pre></div><p></p></div>
@@ -228,17 +228,17 @@ return a <code>double</code> matrix with <code>nrow(x)</code> rows and maximum <
 <span class="r-in"><span class="op">}</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Sepal.Length Sepal.Width Petal.Length Petal.Width reward setosa versicolor</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:          5.9         3.2          5.1         1.8  0.102      0      0.146</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:          5.9         3.0          4.8         1.8  0.282      0      0.326</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:          5.9         3.2          5.1         1.8  0.130      0      0.188</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:          5.9         3.0          4.8         1.8  0.266      0      0.324</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    virginica</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:     0.854</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:     0.674</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:     0.812</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:     0.676</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Sepal.Length Sepal.Width Petal.Length Petal.Width reward setosa versicolor</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:          5.9         3.2          4.8         1.8  0.174      0      0.628</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:          5.9         3.2          4.8         1.8  0.176      0       0.63</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    virginica</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:     0.372</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:      0.37</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 </code></pre></div>
