@@ -94,7 +94,7 @@ Create a new NICEClassif object.
   predictor,
   optimization = "sparsity",
   x_nn_correct = TRUE,
-  return_multiple = TRUE,
+  return_multiple = FALSE,
   finish_early = TRUE,
   distance_function = "gower"
 )}\if{html}{\out{</div>}}

@@ -90,7 +90,7 @@ NICERegr = R6::R6Class("NICERegr",
     #'  A function must have three arguments  `x`, `y`, and `data` and should
     #'  return a `double` matrix with `nrow(x)` rows and maximum `nrow(y)` columns.
     initialize = function(predictor, optimization = "sparsity", x_nn_correct = TRUE, margin_correct = NULL, 
-                          return_multiple = TRUE, finish_early = TRUE, distance_function = "gower") {
+                          return_multiple = FALSE, finish_early = TRUE, distance_function = "gower") {
 
       if (is.character(distance_function)) {
         if (distance_function == "gower") {

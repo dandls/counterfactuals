@@ -100,7 +100,7 @@ Create a new NICERegr object.
   optimization = "sparsity",
   x_nn_correct = TRUE,
   margin_correct = NULL,
-  return_multiple = TRUE,
+  return_multiple = FALSE,
   finish_early = TRUE,
   distance_function = "gower"
 )}\if{html}{\out{</div>}}
