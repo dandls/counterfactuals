@@ -71,7 +71,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     #'  return a `double` matrix with `nrow(x)` rows and maximum `nrow(y)` columns.
 
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, mu = 20L, 
-                          n_generations = 175L, p_rec = 0.66, p_rec_gen = 0.73, p_mut = 0.80, 
+                          n_generations = 175L, p_rec = 0.66, p_rec_gen = 0.73, p_rec_use_orig = 0.7, p_mut = 0.80, 
                           p_mut_gen = 0.71, p_mut_use_orig = 0.26, k = 1L, weights = NULL, lower = NULL, upper = NULL, 
                           init_strategy = "random", use_conditional_mutator = FALSE, quiet = FALSE, distance_function = "gower") {
       
@@ -100,6 +100,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       assert_integerish(n_generations, lower = 0, len = 1L)
       assert_number(p_rec, lower = 0, upper = 1)
       assert_number(p_rec_gen, lower = 0, upper = 1)
+      assert_number(p_rec_use_orig, lower = 0, upper = 1)
       assert_number(p_mut, lower = 0, upper = 1)
       assert_number(p_mut_gen, lower = 0, upper = 1)
       assert_number(p_mut_use_orig, lower = 0, upper = 1)
@@ -137,6 +138,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       private$n_generations = n_generations
       private$p_rec = p_rec
       private$p_rec_gen = p_rec_gen
+      private$p_rec_use_orig = p_rec_use_orig
       private$p_mut = p_mut
       private$p_mut_gen = p_mut_gen
       private$p_mut_use_orig = p_mut_use_orig
@@ -215,6 +217,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     n_generations = NULL,
     p_rec = NULL,
     p_rec_gen = NULL,
+    p_rec_use_orig = NULL,
     p_mut = NULL,
     p_mut_gen = NULL,
     p_mut_use_orig = NULL,
@@ -250,6 +253,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
         n_generations = private$n_generations,
         p_rec = private$p_rec,
         p_rec_gen = private$p_rec_gen,
+        p_rec_use_orig = private$p_rec_use_orig,
         p_mut = private$p_mut,
         p_mut_gen = private$p_mut_gen,
         p_mut_use_orig = private$p_mut_use_orig,
@@ -278,6 +282,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       cat(" - p_mut_use_orig: ", private$p_mut_use_orig, "\n")
       cat(" - p_rec: ", private$p_rec, "\n")
       cat(" - p_rec_gen: ", private$p_rec_gen, "\n")
+      cat(" - p_rec_use_orig:", private$p_reg_use_orig, "\n")
       cat(" - upper: ", private$upper)
       cat(" - weights: ", private$weights, "\n")
     }

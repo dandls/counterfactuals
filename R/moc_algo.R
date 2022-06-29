@@ -1,8 +1,8 @@
 moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower, upper, sdevs_num_feats, 
-                    epsilon,  fixed_features, max_changed, mu, n_generations, p_rec, p_rec_gen,
+                    epsilon,  fixed_features, max_changed, mu, n_generations, p_rec, p_rec_gen, p_rec_use_orig,
                     p_mut, p_mut_gen, p_mut_use_orig, k, weights, init_strategy, distance_function, cond_sampler = NULL, 
                     quiet = TRUE) {
-  
+  browser()
   codomain = ParamSet$new(list(
     ParamDbl$new("dist_target", tags = "minimize"),
     ParamDbl$new("dist_x_interest", tags = "minimize"),
@@ -21,6 +21,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
   
   param_set_flex = param_set$clone()
   param_set_flex$subset(flex_cols)
+  param_set_flex$add(p = paradox::ParamLgl$new(id = "use_orig"))
   
   objective = bbotk::ObjectiveRFunDt$new(
     fun = fitness_function, 
@@ -69,7 +70,8 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
       x_interest = x_interest, 
       max_changed = max_changed, 
       p_rec = p_rec,
-      p_rec_gen = p_rec_gen
+      p_rec_gen = p_rec_gen, 
+      p_rec_use_orig = p_rec_use_orig
     )
     
     # Selectors
