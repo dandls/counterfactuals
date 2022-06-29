@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">counterfactuals</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.1</span>
       </span>
     </div>
 
@@ -108,91 +108,91 @@ Denied loan applications serve as a common example; here a counterfactual explan
 </h2>
 <p>You can install the development version from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"dandls/counterfactuals"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"dandls/counterfactuals"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="get-started">Get started<a class="anchor" aria-label="anchor" href="#get-started"></a>
 </h2>
 <p>In this example, we train a <code>randomForest</code> on the <code>iris</code> dataset and examine how a given <code>virginica</code> observation would have to change in order to be classified as <code>versicolor</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dandls/counterfactuals" class="external-link">counterfactuals</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/" class="external-link">randomForest</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://christophm.github.io/iml/" class="external-link">iml</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dandls/counterfactuals" class="external-link">counterfactuals</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/" class="external-link">randomForest</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://christophm.github.io/iml/" class="external-link">iml</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="fitting-a-model">Fitting a model<a class="anchor" aria-label="anchor" href="#fitting-a-model"></a>
 </h3>
 <p>First, we train a <code>randomForest</code> model to predict the target variable <code>Species</code>, omitting one observation from the training data, which is <code>x_interest</code> (the observation <em>x</em><sup>⋆</sup> for which we want to find counterfactuals).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html" class="external-link">randomForest</a></span><span class="op">(</span><span class="va">Species</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="op">-</span><span class="fl">150L</span>, <span class="op">]</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html" class="external-link">randomForest</a></span><span class="op">(</span><span class="va">Species</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="op">-</span><span class="fl">150L</span>, <span class="op">]</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="setting-up-an-imlpredictor-object">Setting up an iml::Predictor() object<a class="anchor" aria-label="anchor" href="#setting-up-an-imlpredictor-object"></a>
 </h3>
 <p>We then create an <a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link"><code>iml::Predictor</code></a> object, which serves as a wrapper for different model types; it contains the model and the data for its analysis.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">predictor</span> <span class="op">=</span> <span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rf</span>, type <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">predictor</span> <span class="op">=</span> <span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rf</span>, type <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="find-counterfactuals">Find counterfactuals<a class="anchor" aria-label="anchor" href="#find-counterfactuals"></a>
 </h3>
 <p>For <code>x_interest</code>, the model predicts a probability of 8% for class <code>versicolor</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">x_interest</span> <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">150L</span>, <span class="op">]</span>
-<span class="va">predictor</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="va">x_interest</span><span class="op">)</span>
-<span class="co">#&gt;   setosa versicolor virginica</span>
-<span class="co">#&gt; 1      0       0.08      0.92</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">x_interest</span> <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">150L</span>, <span class="op">]</span></span>
+<span><span class="va">predictor</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="va">x_interest</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   setosa versicolor virginica</span></span>
+<span><span class="co">#&gt; 1      0       0.08      0.92</span></span></code></pre></div>
 <p>Now, we examine what needs to be changed in <code>x_interest</code> so that the model predicts a probability of at least 50% for class <code>versicolor</code>.</p>
 <p>Here, we want to apply WhatIf and since it is a classification task, we create a <code>WhatIfClassif</code> object.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">wi_classif</span> <span class="op">=</span> <span class="va"><a href="reference/WhatIfClassif.html">WhatIfClassif</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predictor</span>, n_counterfactuals <span class="op">=</span> <span class="fl">5L</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">wi_classif</span> <span class="op">=</span> <span class="va"><a href="reference/WhatIfClassif.html">WhatIfClassif</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predictor</span>, n_counterfactuals <span class="op">=</span> <span class="fl">5L</span><span class="op">)</span></span></code></pre></div>
 <p>Then, we use the <code>find_counterfactuals()</code> method to find counterfactuals for <code>x_interest</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cfactuals</span> <span class="op">=</span> <span class="va">wi_classif</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span>
-  <span class="va">x_interest</span>, desired_class <span class="op">=</span> <span class="st">"versicolor"</span>, desired_prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cfactuals</span> <span class="op">=</span> <span class="va">wi_classif</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span></span>
+<span>  <span class="va">x_interest</span>, desired_class <span class="op">=</span> <span class="st">"versicolor"</span>, desired_prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="the-counterfactuals-object">The counterfactuals object<a class="anchor" aria-label="anchor" href="#the-counterfactuals-object"></a>
 </h3>
 <p><code>cfactuals</code> is a <code>Counterfactuals</code> object that contains the counterfactuals and has several methods for their evaluation and visualization.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cfactuals</span>
-<span class="co">#&gt; 5 Counterfactual(s) </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; Desired class: versicolor </span>
-<span class="co">#&gt; Desired predicted probability range: [0.5, 1] </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; Head: </span>
-<span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width</span>
-<span class="co">#&gt; 1:          5.9         3.2          4.8         1.8</span>
-<span class="co">#&gt; 2:          6.0         2.7          5.1         1.6</span>
-<span class="co">#&gt; 3:          5.9         3.0          4.2         1.5</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cfactuals</span></span>
+<span><span class="co">#&gt; 5 Counterfactual(s) </span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; Desired class: versicolor </span></span>
+<span><span class="co">#&gt; Desired predicted probability range: [0.5, 1] </span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; Head: </span></span>
+<span><span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width</span></span>
+<span><span class="co">#&gt; 1:          5.9         3.2          4.8         1.8</span></span>
+<span><span class="co">#&gt; 2:          6.0         2.7          5.1         1.6</span></span>
+<span><span class="co">#&gt; 3:          5.9         3.0          4.2         1.5</span></span></code></pre></div>
 <p>The counterfactuals are stored in the <code>data</code> field.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="va">data</span>
-<span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width</span>
-<span class="co">#&gt; 1:          5.9         3.2          4.8         1.8</span>
-<span class="co">#&gt; 2:          6.0         2.7          5.1         1.6</span>
-<span class="co">#&gt; 3:          5.9         3.0          4.2         1.5</span>
-<span class="co">#&gt; 4:          6.7         3.0          5.0         1.7</span>
-<span class="co">#&gt; 5:          6.0         2.9          4.5         1.5</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cfactuals</span><span class="op">$</span><span class="va">data</span></span>
+<span><span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width</span></span>
+<span><span class="co">#&gt; 1:          5.9         3.2          4.8         1.8</span></span>
+<span><span class="co">#&gt; 2:          6.0         2.7          5.1         1.6</span></span>
+<span><span class="co">#&gt; 3:          5.9         3.0          4.2         1.5</span></span>
+<span><span class="co">#&gt; 4:          6.7         3.0          5.0         1.7</span></span>
+<span><span class="co">#&gt; 5:          6.0         2.9          4.5         1.5</span></span></code></pre></div>
 <p>With the <code>evaluate()</code> method, we can evaluate the counterfactuals using various quality measures.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width dist_x_interest nr_changed dist_train dist_target</span>
-<span class="co">#&gt; 1:          5.9         3.2          4.8         1.8      0.03354520          2          0           0</span>
-<span class="co">#&gt; 2:          6.0         2.7          5.1         1.6      0.05902778          3          0           0</span>
-<span class="co">#&gt; 3:          5.9         3.0          4.2         1.5      0.06938559          2          0           0</span>
-<span class="co">#&gt; 4:          6.7         3.0          5.0         1.7      0.07020951          3          0           0</span>
-<span class="co">#&gt; 5:          6.0         2.9          4.5         1.5      0.07403484          4          0           0</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width dist_x_interest nr_changed dist_train dist_target</span></span>
+<span><span class="co">#&gt; 1:          5.9         3.2          4.8         1.8      0.03354520          2          0           0</span></span>
+<span><span class="co">#&gt; 2:          6.0         2.7          5.1         1.6      0.05902778          3          0           0</span></span>
+<span><span class="co">#&gt; 3:          5.9         3.0          4.2         1.5      0.06938559          2          0           0</span></span>
+<span><span class="co">#&gt; 4:          6.7         3.0          5.0         1.7      0.07020951          3          0           0</span></span>
+<span><span class="co">#&gt; 5:          6.0         2.9          4.5         1.5      0.07403484          4          0           0</span></span></code></pre></div>
 <p>One visualization option is to plot the frequency of feature changes across all counterfactuals using the <code>plot_freq_of_feature_changes()</code> method.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_freq_of_feature_changes</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_freq_of_feature_changes</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-10-1.png"><!-- --></p>
 <p>Another visualization option is a parallel plot—created with the <code>plot_parallel()</code> method—that connects the (scaled) feature values of each counterfactual and highlights <code>x_interest</code> in blue.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_parallel</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_parallel</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-11-1.png"><!-- --></p>
 </div>
 </div>
@@ -252,7 +252,7 @@ Denied loan applications serve as a common example; here a counterfactual explan
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer>

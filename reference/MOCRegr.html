@@ -27,7 +27,7 @@ Default values for the hyperparameters are based on Dandl et al. 2020."><!-- mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">counterfactuals</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.1</span>
       </span>
     </div>
 
@@ -151,27 +151,27 @@ The object used for optimization.</p></dd>
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create a new <code>MOCRegr</code> object.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va"><a href="../reference/MOCRegr.html">MOCRegr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>
-  <span class="va">predictor</span>,
-  epsilon <span class="op">=</span> <span class="cn">NULL</span>,
-  fixed_features <span class="op">=</span> <span class="cn">NULL</span>,
-  max_changed <span class="op">=</span> <span class="cn">NULL</span>,
-  mu <span class="op">=</span> <span class="fl">20L</span>,
-  n_generations <span class="op">=</span> <span class="fl">175L</span>,
-  p_rec <span class="op">=</span> <span class="fl">0.66</span>,
-  p_rec_gen <span class="op">=</span> <span class="fl">0.73</span>,
-  p_mut <span class="op">=</span> <span class="fl">0.8</span>,
-  p_mut_gen <span class="op">=</span> <span class="fl">0.71</span>,
-  p_mut_use_orig <span class="op">=</span> <span class="fl">0.26</span>,
-  k <span class="op">=</span> <span class="fl">1L</span>,
-  weights <span class="op">=</span> <span class="cn">NULL</span>,
-  lower <span class="op">=</span> <span class="cn">NULL</span>,
-  upper <span class="op">=</span> <span class="cn">NULL</span>,
-  init_strategy <span class="op">=</span> <span class="st">"random"</span>,
-  use_conditional_mutator <span class="op">=</span> <span class="cn">FALSE</span>,
-  quiet <span class="op">=</span> <span class="cn">FALSE</span>,
-  distance_function <span class="op">=</span> <span class="st">"gower"</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/MOCRegr.html">MOCRegr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
+<span>  <span class="va">predictor</span>,</span>
+<span>  epsilon <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fixed_features <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_changed <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  mu <span class="op">=</span> <span class="fl">20L</span>,</span>
+<span>  n_generations <span class="op">=</span> <span class="fl">175L</span>,</span>
+<span>  p_rec <span class="op">=</span> <span class="fl">0.66</span>,</span>
+<span>  p_rec_gen <span class="op">=</span> <span class="fl">0.73</span>,</span>
+<span>  p_mut <span class="op">=</span> <span class="fl">0.8</span>,</span>
+<span>  p_mut_gen <span class="op">=</span> <span class="fl">0.71</span>,</span>
+<span>  p_mut_use_orig <span class="op">=</span> <span class="fl">0.26</span>,</span>
+<span>  k <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>  weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  lower <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  upper <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  init_strategy <span class="op">=</span> <span class="st">"random"</span>,</span>
+<span>  use_conditional_mutator <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  distance_function <span class="op">=</span> <span class="st">"gower"</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -295,7 +295,7 @@ return a <code>double</code> matrix with <code>nrow(x)</code> rows and maximum <
 the generations. All values for a generation are computed based on all non-dominated individuals that emerged until
 that generation.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">MOCRegr</span><span class="op">$</span><span class="fu">plot_statistics</span><span class="op">(</span>centered_obj <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">MOCRegr</span><span class="op">$</span><span class="fu">plot_statistics</span><span class="op">(</span>centered_obj <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -313,7 +313,7 @@ since they (usually) have different scales. If set to <code>TRUE</code> (default
 <h3 id="method-get-dominated-hv-">Method <code>get_dominated_hv()</code><a class="anchor" aria-label="anchor" href="#method-get-dominated-hv-"></a></h3>
 <p>Calculates the dominated hypervolume of each generation.</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">MOCRegr</span><span class="op">$</span><span class="fu">get_dominated_hv</span><span class="op">(</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">MOCRegr</span><span class="op">$</span><span class="fu">get_dominated_hv</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -325,7 +325,7 @@ since they (usually) have different scales. If set to <code>TRUE</code> (default
 <h3 id="method-plot-search-">Method <code>plot_search()</code><a class="anchor" aria-label="anchor" href="#method-plot-search-"></a></h3>
 <p>Visualizes two selected objective values of all emerged individuals in a scatter plot.</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">MOCRegr</span><span class="op">$</span><span class="fu">plot_search</span><span class="op">(</span>objectives <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dist_target"</span>, <span class="st">"dist_x_interest"</span><span class="op">)</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">MOCRegr</span><span class="op">$</span><span class="fu">plot_search</span><span class="op">(</span>objectives <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dist_target"</span>, <span class="st">"dist_x_interest"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -343,7 +343,7 @@ and "dist_train".</p></dd>
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">MOCRegr</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">MOCRegr</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -361,25 +361,25 @@ and "dist_train".</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/" class="external-link">"randomForest"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">  <span class="co"># Train a model</span></span>
-<span class="r-in">  <span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html" class="external-link">randomForest</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
-<span class="r-in">  <span class="co"># Create a predictor object</span></span>
-<span class="r-in">  <span class="va">predictor</span> <span class="op">=</span> <span class="fu">iml</span><span class="fu">::</span><span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rf</span><span class="op">)</span></span>
-<span class="r-in">  <span class="co"># Find counterfactuals for x_interest</span></span>
-<span class="r-in">  <span class="va">moc_regr</span> <span class="op">=</span> <span class="va">MOCRegr</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predictor</span>, n_generations <span class="op">=</span> <span class="fl">15L</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">cfactuals</span> <span class="op">=</span> <span class="va">moc_regr</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span>x_interest <span class="op">=</span> <span class="va">mtcars</span><span class="op">[</span><span class="fl">1L</span>, <span class="op">]</span>, desired_outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">22</span>, <span class="fl">26</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">  <span class="co"># Print the counterfactuals</span></span>
-<span class="r-in">  <span class="va">cfactuals</span><span class="op">$</span><span class="va">data</span></span>
-<span class="r-in">  <span class="co"># Plot evolution of hypervolume and mean and minimum objective values </span></span>
-<span class="r-in">  <span class="va">moc_regr</span><span class="op">$</span><span class="fu">plot_statistics</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/" class="external-link">"randomForest"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="co"># Train a model</span></span></span>
+<span class="r-in"><span>  <span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html" class="external-link">randomForest</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Create a predictor object</span></span></span>
+<span class="r-in"><span>  <span class="va">predictor</span> <span class="op">=</span> <span class="fu">iml</span><span class="fu">::</span><span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rf</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Find counterfactuals for x_interest</span></span></span>
+<span class="r-in"><span>  <span class="va">moc_regr</span> <span class="op">=</span> <span class="va">MOCRegr</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predictor</span>, n_generations <span class="op">=</span> <span class="fl">15L</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">cfactuals</span> <span class="op">=</span> <span class="va">moc_regr</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span>x_interest <span class="op">=</span> <span class="va">mtcars</span><span class="op">[</span><span class="fl">1L</span>, <span class="op">]</span>, desired_outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">22</span>, <span class="fl">26</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Print the counterfactuals</span></span></span>
+<span class="r-in"><span>  <span class="va">cfactuals</span><span class="op">$</span><span class="va">data</span></span></span>
+<span class="r-in"><span>  <span class="co"># Plot evolution of hypervolume and mean and minimum objective values </span></span></span>
+<span class="r-in"><span>  <span class="va">moc_regr</span><span class="op">$</span><span class="fu">plot_statistics</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> `x_interest` was removed from results.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> tcltk DLL is linked to '/opt/X11/lib/libX11.6.dylib'</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> .onLoad failed in loadNamespace() for 'tcltk', details:</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span>   call: fun(libname, pkgname)</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span>   error: X11 library is missing: install XQuartz from www.xquartz.org</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -394,7 +394,7 @@ and "dist_train".</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

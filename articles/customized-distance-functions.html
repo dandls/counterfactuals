@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">counterfactuals</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.1</span>
       </span>
     </div>
 
@@ -99,13 +99,13 @@
 <h3 id="set-up">Set up<a class="anchor" aria-label="anchor" href="#set-up"></a>
 </h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dandls/counterfactuals" class="external-link">counterfactuals</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/" class="external-link">randomForest</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://christophm.github.io/iml/" class="external-link">iml</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dandls/counterfactuals" class="external-link">counterfactuals</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/" class="external-link">randomForest</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://christophm.github.io/iml/" class="external-link">iml</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html" class="external-link">randomForest</a></span><span class="op">(</span><span class="va">Species</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="op">-</span><span class="fl">150L</span>, <span class="op">]</span><span class="op">)</span>
-<span class="va">predictor</span> <span class="op">=</span> <span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rf</span>, type <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span>
-<span class="va">x_interest</span> <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">150L</span>, <span class="op">]</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html" class="external-link">randomForest</a></span><span class="op">(</span><span class="va">Species</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="op">-</span><span class="fl">150L</span>, <span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">predictor</span> <span class="op">=</span> <span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rf</span>, type <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span></span>
+<span><span class="va">x_interest</span> <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">150L</span>, <span class="op">]</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="customize-the-distance-function-in-counterfactual-methods">Customize the distance function in counterfactual methods<a class="anchor" aria-label="anchor" href="#customize-the-distance-function-in-counterfactual-methods"></a>
@@ -121,51 +121,51 @@
 </ul>
 <p>All arguments are passed as <code>data.table</code>s.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">scaled_euclidean_distance</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">data</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">means</span> <span class="op">=</span> <span class="va">data</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">.SD</span>, <span class="va">mean</span><span class="op">)</span><span class="op">]</span>
-  <span class="va">sds</span> <span class="op">=</span> <span class="va">data</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">.SD</span>, <span class="va">sd</span><span class="op">)</span><span class="op">]</span>
-  <span class="va">x_scaled</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">x</span>, center <span class="op">=</span> <span class="va">means</span>, scale <span class="op">=</span> <span class="va">sds</span><span class="op">)</span>
-  <span class="va">y_scaled</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">y</span>, center <span class="op">=</span> <span class="va">means</span>, scale <span class="op">=</span> <span class="va">sds</span><span class="op">)</span>
-  
-  <span class="va">res</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="cn">NA</span>, nrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x_scaled</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">y_scaled</span><span class="op">)</span><span class="op">)</span>
-  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x_scaled</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-    <span class="kw">for</span> <span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">y_scaled</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-      <span class="va">res</span><span class="op">[</span><span class="va">i</span>, <span class="va">j</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="op">(</span><span class="va">x_scaled</span><span class="op">[</span><span class="va">i</span>, <span class="op">]</span> <span class="op">-</span> <span class="va">y_scaled</span><span class="op">[</span><span class="va">j</span>, <span class="op">]</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-    <span class="op">}</span>
-  <span class="op">}</span>
-  <span class="va">res</span>
-<span class="op">}</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">scaled_euclidean_distance</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">data</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">means</span> <span class="op">=</span> <span class="va">data</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">.SD</span>, <span class="va">mean</span><span class="op">)</span><span class="op">]</span></span>
+<span>  <span class="va">sds</span> <span class="op">=</span> <span class="va">data</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">.SD</span>, <span class="va">sd</span><span class="op">)</span><span class="op">]</span></span>
+<span>  <span class="va">x_scaled</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">x</span>, center <span class="op">=</span> <span class="va">means</span>, scale <span class="op">=</span> <span class="va">sds</span><span class="op">)</span></span>
+<span>  <span class="va">y_scaled</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">y</span>, center <span class="op">=</span> <span class="va">means</span>, scale <span class="op">=</span> <span class="va">sds</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">res</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="cn">NA</span>, nrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x_scaled</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">y_scaled</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x_scaled</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw">for</span> <span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">y_scaled</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">res</span><span class="op">[</span><span class="va">i</span>, <span class="va">j</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="op">(</span><span class="va">x_scaled</span><span class="op">[</span><span class="va">i</span>, <span class="op">]</span> <span class="op">-</span> <span class="va">y_scaled</span><span class="op">[</span><span class="va">j</span>, <span class="op">]</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="va">res</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 <p>Then we pass our distance function to <code>MOCClassif</code> with the <code>distance_function</code> argument.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">moc_classif</span> <span class="op">=</span> <span class="va"><a href="../reference/MOCClassif.html">MOCClassif</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>
-  <span class="va">predictor</span>, 
-  n_generations <span class="op">=</span> <span class="fl">10L</span>, 
-  distance_function <span class="op">=</span> <span class="va">scaled_euclidean_distance</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">moc_classif</span> <span class="op">=</span> <span class="va"><a href="../reference/MOCClassif.html">MOCClassif</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
+<span>  <span class="va">predictor</span>, </span>
+<span>  n_generations <span class="op">=</span> <span class="fl">10L</span>, </span>
+<span>  distance_function <span class="op">=</span> <span class="va">scaled_euclidean_distance</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p><code>MOCClassif</code> now uses the scaled euclidean distance for the second and forth MOC objective.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cfactuals</span> <span class="op">=</span> <span class="va">moc_classif</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span>
-  <span class="va">x_interest</span>, 
-  desired_class <span class="op">=</span> <span class="st">"versicolor"</span>,
-  desired_prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cfactuals</span> <span class="op">=</span> <span class="va">moc_classif</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span></span>
+<span>  <span class="va">x_interest</span>, </span>
+<span>  desired_class <span class="op">=</span> <span class="st">"versicolor"</span>,</span>
+<span>  desired_prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="customize-the-distance-function-in-the-counterfactuals-object">Customize the distance function in the Counterfactuals object<a class="anchor" aria-label="anchor" href="#customize-the-distance-function-in-the-counterfactuals-object"></a>
 </h3>
 <p>By default, the <code>Counterfactuals$evaluate</code> method uses the Gower distance to compute the second and forth evaluation measure. <br> This can be customized by setting the <code>distance_function</code> active binding.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cfactuals</span><span class="op">$</span><span class="va">distance_function</span> <span class="op">=</span> <span class="va">scaled_euclidean_distance</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cfactuals</span><span class="op">$</span><span class="va">distance_function</span> <span class="op">=</span> <span class="va">scaled_euclidean_distance</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="op">)</span>, <span class="fl">3L</span><span class="op">)</span>
-<span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width dist_x_interest no_changed</span>
-<span class="co">#&gt; 1:      5.91078           3     4.585523         1.8       0.2913176          2</span>
-<span class="co">#&gt; 2:      5.90000           3     4.585523         1.8       0.2910285          1</span>
-<span class="co">#&gt; 3:      5.90000           3     4.815938         1.8       0.1606878          1</span>
-<span class="co">#&gt;    dist_train dist_target</span>
-<span class="co">#&gt; 1:  0.1620219       0.000</span>
-<span class="co">#&gt; 2:  0.1708980       0.000</span>
-<span class="co">#&gt; 3:  0.1206965       0.122</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="op">)</span>, <span class="fl">3L</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width dist_x_interest no_changed</span></span>
+<span><span class="co">#&gt; 1:          5.9           3     3.931600    1.491508       0.7747406          2</span></span>
+<span><span class="co">#&gt; 2:          5.9           3     3.619932    1.800000       0.8372417          1</span></span>
+<span><span class="co">#&gt; 3:          5.9           3     4.509918    1.745614       0.3413179          2</span></span>
+<span><span class="co">#&gt;    dist_train dist_target</span></span>
+<span><span class="co">#&gt; 1:  0.1522353           0</span></span>
+<span><span class="co">#&gt; 2:  0.5120378           0</span></span>
+<span><span class="co">#&gt; 3:  0.2156173           0</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -192,7 +192,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer>

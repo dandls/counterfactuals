@@ -19,7 +19,7 @@ While the original method is only applicable to classification tasks (see NICECl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">counterfactuals</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.1</span>
       </span>
     </div>
 
@@ -137,15 +137,15 @@ reward values and their predictions.</p></dd>
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create a new NICERegr object.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va"><a href="../reference/NICERegr.html">NICERegr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>
-  <span class="va">predictor</span>,
-  optimization <span class="op">=</span> <span class="st">"sparsity"</span>,
-  x_nn_correct <span class="op">=</span> <span class="cn">TRUE</span>,
-  margin_correct <span class="op">=</span> <span class="cn">NULL</span>,
-  return_multiple <span class="op">=</span> <span class="cn">FALSE</span>,
-  finish_early <span class="op">=</span> <span class="cn">TRUE</span>,
-  distance_function <span class="op">=</span> <span class="st">"gower"</span>
-<span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/NICERegr.html">NICERegr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
+<span>  <span class="va">predictor</span>,</span>
+<span>  optimization <span class="op">=</span> <span class="st">"sparsity"</span>,</span>
+<span>  x_nn_correct <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  margin_correct <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  return_multiple <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  finish_early <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  distance_function <span class="op">=</span> <span class="st">"gower"</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -206,7 +206,7 @@ return a <code>double</code> matrix with <code>nrow(x)</code> rows and maximum <
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span class="va">NICERegr</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">NICERegr</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -224,22 +224,22 @@ return a <code>double</code> matrix with <code>nrow(x)</code> rows and maximum <
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/" class="external-link">"randomForest"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123456</span><span class="op">)</span></span>
-<span class="r-in">  <span class="co"># Train a model</span></span>
-<span class="r-in">  <span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html" class="external-link">randomForest</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span>
-<span class="r-in">  <span class="co"># Create a predictor object</span></span>
-<span class="r-in">  <span class="va">predictor</span> <span class="op">=</span> <span class="fu">iml</span><span class="fu">::</span><span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rf</span><span class="op">)</span></span>
-<span class="r-in">  <span class="co"># Find counterfactuals</span></span>
-<span class="r-in">  <span class="va">nice_regr</span> <span class="op">=</span> <span class="va">NICERegr</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predictor</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">cfactuals</span> <span class="op">=</span> <span class="va">nice_regr</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span></span>
-<span class="r-in">     x_interest <span class="op">=</span> <span class="va">mtcars</span><span class="op">[</span><span class="fl">1L</span>, <span class="op">]</span>, desired_outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">22</span>, <span class="fl">26</span><span class="op">)</span></span>
-<span class="r-in">  <span class="op">)</span></span>
-<span class="r-in">  <span class="co"># Print the results</span></span>
-<span class="r-in">  <span class="va">cfactuals</span><span class="op">$</span><span class="va">data</span></span>
-<span class="r-in">  <span class="co"># Print archive</span></span>
-<span class="r-in">  <span class="va">nice_regr</span><span class="op">$</span><span class="va">archive</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://www.stat.berkeley.edu/~breiman/RandomForests/" class="external-link">"randomForest"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123456</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Train a model</span></span></span>
+<span class="r-in"><span>  <span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html" class="external-link">randomForest</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Create a predictor object</span></span></span>
+<span class="r-in"><span>  <span class="va">predictor</span> <span class="op">=</span> <span class="fu">iml</span><span class="fu">::</span><span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rf</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Find counterfactuals</span></span></span>
+<span class="r-in"><span>  <span class="va">nice_regr</span> <span class="op">=</span> <span class="va">NICERegr</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predictor</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">cfactuals</span> <span class="op">=</span> <span class="va">nice_regr</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span></span></span>
+<span class="r-in"><span>     x_interest <span class="op">=</span> <span class="va">mtcars</span><span class="op">[</span><span class="fl">1L</span>, <span class="op">]</span>, desired_outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">22</span>, <span class="fl">26</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Print the results</span></span></span>
+<span class="r-in"><span>  <span class="va">cfactuals</span><span class="op">$</span><span class="va">data</span></span></span>
+<span class="r-in"><span>  <span class="co"># Print archive</span></span></span>
+<span class="r-in"><span>  <span class="va">nice_regr</span><span class="op">$</span><span class="va">archive</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    cyl  disp  hp drat   wt  qsec vs am gear carb      reward     pred</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1:   4 160.0 110 3.90 2.62 16.46  0  1    4    4  0.99778000 21.61431</span>
@@ -273,7 +273,7 @@ return a <code>double</code> matrix with <code>nrow(x)</code> rows and maximum <
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6:   4 160.0 95 3.90 2.62 16.46  0  0    4    4 -0.090591667 21.88513</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7:   4 160.0 95 3.90 2.62 16.46  0  1    4    2  0.024280000 22.31211</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -288,7 +288,7 @@ return a <code>double</code> matrix with <code>nrow(x)</code> rows and maximum <
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>
