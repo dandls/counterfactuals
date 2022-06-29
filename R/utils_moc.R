@@ -452,7 +452,6 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
   } else {
     dt_agg_mean = melt(dt_agg_mean, id.vars = "generation", measure.vars = obj_names)
     dt_agg_min = melt(dt_agg_min, id.vars = "generation", measure.vars = obj_names)
-    browser()
     variable = NULL
     gg_mean = ggplot2::ggplot(dt_agg_mean) + 
       ggplot2::geom_line(ggplot2::aes_string(x = "generation", y = "value")) +
