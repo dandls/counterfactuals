@@ -204,7 +204,7 @@ make_moc_mutator = function(ps, x_interest, max_changed, sdevs, p_mut, p_mut_gen
 
   if ("ParamFct" %in% ps$class) {
     idx_facts = which("ParamFct" == ps$class)
-    mut_maybe_unif = mut("maybe", mut("unif", can_mutate_to_same = FALSE), mut("null"), p = p_mut_gen)
+    mut_maybe_unif = mut("maybe", mut("unif", can_mutate_to_same = TRUE), mut("null"), p = p_mut_gen)
     ls_op_factor = rep(list(mut_maybe_unif), length(idx_facts))
     names(ls_op_factor) = ps$ids()[idx_facts]
     ops_list = c(ops_list, ls_op_factor)
@@ -224,9 +224,9 @@ make_moc_recombinator = function(ps, x_interest, max_changed, p_rec, p_rec_gen) 
   ops_list = list()
   # If clauses are necessary to avoid warning that no corresponding dimensions
   if ("ParamDbl" %in% ps$class) {
-    ops_list[["ParamDbl"]] = rec("maybe", rec("sbx"), rec("null", n_indivs_in = 2L, n_indivs_out = 2L), p = p_rec)
+    ops_list[["ParamDbl"]] = rec("sbx", p = p_rec_gen)
   }
-  rec_fact_int = rec("maybe", rec("xounif"), rec("null", n_indivs_in = 2L, n_indivs_out = 2L), p = p_rec)
+  rec_fact_int = rec("xounif", p = p_rec_gen)
   if ("ParamInt" %in% ps$class) {
     ops_list[["ParamInt"]] = rec_fact_int
   }
@@ -236,7 +236,7 @@ make_moc_recombinator = function(ps, x_interest, max_changed, p_rec, p_rec_gen) 
   
   op_seq1_rec = rec("combine", operators = ops_list)
   op_seq1_no_rec = rec("null", n_indivs_in = 2L, n_indivs_out = 2L)
-  op_r_seq_1 = rec("maybe", op_seq1_rec, op_seq1_no_rec, p = p_rec_gen)
+  op_r_seq_1 = rec("maybe", op_seq1_rec, op_seq1_no_rec, p = p_rec)
   rec("sequential", list(op_r_seq_1))
 }
 
