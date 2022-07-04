@@ -226,12 +226,12 @@ make_moc_recombinator = function(ps, x_interest, max_changed, p_rec, p_rec_gen) 
   if ("ParamDbl" %in% ps$class) {
     ops_list[["ParamDbl"]] = rec("sbx", p = p_rec_gen)
   }
-  rec_fact_int = rec("xounif", p = p_rec_gen)
+
   if ("ParamInt" %in% ps$class) {
-    ops_list[["ParamInt"]] = rec_fact_int
+    ops_list[["ParamInt"]] = rec("sbx", p = p_rec_gen)
   }
   if ("ParamFct" %in% ps$class) {
-    ops_list[["ParamFct"]] = rec_fact_int
+    ops_list[["ParamFct"]] = rec("xounif", p = p_rec_gen)
   }
   
   op_seq1_rec = rec("combine", operators = ops_list)
