@@ -158,16 +158,16 @@ The object used for optimization.</p></dd>
 <span>  max_changed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  mu <span class="op">=</span> <span class="fl">20L</span>,</span>
 <span>  n_generations <span class="op">=</span> <span class="fl">175L</span>,</span>
-<span>  p_rec <span class="op">=</span> <span class="fl">0.57</span>,</span>
-<span>  p_rec_gen <span class="op">=</span> <span class="fl">0.85</span>,</span>
-<span>  p_mut <span class="op">=</span> <span class="fl">0.79</span>,</span>
-<span>  p_mut_gen <span class="op">=</span> <span class="fl">0.56</span>,</span>
-<span>  p_mut_use_orig <span class="op">=</span> <span class="fl">0.32</span>,</span>
+<span>  p_rec <span class="op">=</span> <span class="fl">0.71</span>,</span>
+<span>  p_rec_gen <span class="op">=</span> <span class="fl">0.62</span>,</span>
+<span>  p_mut <span class="op">=</span> <span class="fl">0.73</span>,</span>
+<span>  p_mut_gen <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  p_mut_use_orig <span class="op">=</span> <span class="fl">0.4</span>,</span>
 <span>  k <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lower <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  upper <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  init_strategy <span class="op">=</span> <span class="st">"random"</span>,</span>
+<span>  init_strategy <span class="op">=</span> <span class="st">"icecurve"</span>,</span>
 <span>  use_conditional_mutator <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  distance_function <span class="op">=</span> <span class="st">"gower"</span></span>
@@ -209,27 +209,27 @@ The number of generations. Default is <code>175L</code>.</p></dd>
 
 <dt><code>p_rec</code></dt>
 <dd><p>(<code>numeric(1)</code>)<br>
-Probability with which an individual is selected for recombination. Default is <code>0.57</code>.</p></dd>
+Probability with which an individual is selected for recombination. Default is <code>0.71</code>.</p></dd>
 
 
 <dt><code>p_rec_gen</code></dt>
 <dd><p>(<code>numeric(1)</code>)<br>
-Probability with which a feature/gene is selected for recombination. Default is <code>0.85</code>.</p></dd>
+Probability with which a feature/gene is selected for recombination. Default is <code>0.62</code>.</p></dd>
 
 
 <dt><code>p_mut</code></dt>
 <dd><p>(<code>numeric(1)</code>)<br>
-Probability with which an individual is selected for mutation. Default is <code>0.79</code>.</p></dd>
+Probability with which an individual is selected for mutation. Default is <code>0.73</code>.</p></dd>
 
 
 <dt><code>p_mut_gen</code></dt>
 <dd><p>(<code>numeric(1)</code>)<br>
-Probability with which a feature/gene is selected for mutation. Default is <code>0.56</code>.</p></dd>
+Probability with which a feature/gene is selected for mutation. Default is <code>0.5</code>.</p></dd>
 
 
 <dt><code>p_mut_use_orig</code></dt>
 <dd><p>(<code>numeric(1)</code>)<br>
-Probability with which a feature/gene is reset to its original value in <code>x_interest</code> after mutation. Default is <code>0.32</code>.</p></dd>
+Probability with which a feature/gene is reset to its original value in <code>x_interest</code> after mutation. Default is <code>0.4</code>.</p></dd>
 
 
 <dt><code>k</code></dt>
