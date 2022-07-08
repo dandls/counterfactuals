@@ -73,7 +73,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, mu = 20L, 
                           n_generations = 175L, p_rec = 0.71, p_rec_gen = 0.62, p_mut = 0.73,
                           p_mut_gen = 0.5, p_mut_use_orig = 0.4, k = 1L, weights = NULL, lower = NULL, upper = NULL,
-                          init_strategy = "icecurve", use_conditional_mutator = FALSE, quiet = FALSE, distance_function = "gower") {
+                          init_strategy = "random", use_conditional_mutator = FALSE, quiet = FALSE, distance_function = "gower") {
       
       if (is.character(distance_function)) {
         if (distance_function == "gower") {

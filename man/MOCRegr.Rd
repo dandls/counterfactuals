@@ -126,7 +126,7 @@ Create a new \code{MOCRegr} object.
   weights = NULL,
   lower = NULL,
   upper = NULL,
-  init_strategy = "icecurve",
+  init_strategy = "random",
   use_conditional_mutator = FALSE,
   quiet = FALSE,
   distance_function = "gower"
