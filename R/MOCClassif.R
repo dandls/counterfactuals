@@ -37,15 +37,15 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     #' @param n_generations (`integerish(1)`)\cr  
     #'   The number of generations. Default is `175L`.   
     #' @param p_rec (`numeric(1)`)\cr  
-    #'   Probability with which an individual is selected for recombination. Default is `0.57`.
+    #'   Probability with which an individual is selected for recombination. Default is `0.71`.
     #' @param p_rec_gen (`numeric(1)`)\cr  
-    #'   Probability with which a feature/gene is selected for recombination. Default is `0.85`.  
+    #'   Probability with which a feature/gene is selected for recombination. Default is `0.62`.
     #' @param p_mut (`numeric(1)`)\cr  
-    #'   Probability with which an individual is selected for mutation. Default is `0.79`.    
+    #'   Probability with which an individual is selected for mutation. Default is `0.73`.    
     #' @param p_mut_gen (`numeric(1)`)\cr  
-    #'   Probability with which a feature/gene is selected for mutation. Default is `0.56`.   
+    #'   Probability with which a feature/gene is selected for mutation. Default is `0.5`.
     #' @param p_mut_use_orig (`numeric(1)`)\cr  
-    #'   Probability with which a feature/gene is reset to its original value in `x_interest` after mutation. Default is `0.32`.    
+    #'   Probability with which a feature/gene is reset to its original value in `x_interest` after mutation. Default is `0.4`.  
     #' @param k (`integerish(1)`)\cr  
     #'   The number of data points to use for the forth objective. Default is `1L`.
     #' @param weights (`numeric(1) | numeric(k)` | `NULL`)\cr  
@@ -71,9 +71,9 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     #'  return a `double` matrix with `nrow(x)` rows and maximum `nrow(y)` columns.
 
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, mu = 20L, 
-                          n_generations = 175L, p_rec = 0.57, p_rec_gen = 0.85, p_mut = 0.79,
-                          p_mut_gen = 0.56, p_mut_use_orig = 0.32, k = 1L, weights = NULL, lower = NULL, upper = NULL,
-                          init_strategy = "random", use_conditional_mutator = FALSE, quiet = FALSE, distance_function = "gower") {
+                          n_generations = 175L, p_rec = 0.71, p_rec_gen = 0.62, p_mut = 0.73,
+                          p_mut_gen = 0.5, p_mut_use_orig = 0.4, k = 1L, weights = NULL, lower = NULL, upper = NULL,
+                          init_strategy = "icecurve", use_conditional_mutator = FALSE, quiet = FALSE, distance_function = "gower") {
       
       if (is.character(distance_function)) {
         if (distance_function == "gower") {

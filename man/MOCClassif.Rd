@@ -119,16 +119,16 @@ Create a new \code{MOCClassif} object.
   max_changed = NULL,
   mu = 20L,
   n_generations = 175L,
-  p_rec = 0.57,
-  p_rec_gen = 0.85,
-  p_mut = 0.79,
-  p_mut_gen = 0.56,
-  p_mut_use_orig = 0.32,
+  p_rec = 0.71,
+  p_rec_gen = 0.62,
+  p_mut = 0.73,
+  p_mut_gen = 0.5,
+  p_mut_use_orig = 0.4,
   k = 1L,
   weights = NULL,
   lower = NULL,
   upper = NULL,
-  init_strategy = "random",
+  init_strategy = "icecurve",
   use_conditional_mutator = FALSE,
   quiet = FALSE,
   distance_function = "gower"
@@ -158,19 +158,19 @@ The population size. Default is \code{20L}.}
 The number of generations. Default is \code{175L}.}
 
 \item{\code{p_rec}}{(\code{numeric(1)})\cr
-Probability with which an individual is selected for recombination. Default is \code{0.57}.}
+Probability with which an individual is selected for recombination. Default is \code{0.71}.}
 
 \item{\code{p_rec_gen}}{(\code{numeric(1)})\cr
-Probability with which a feature/gene is selected for recombination. Default is \code{0.85}.}
+Probability with which a feature/gene is selected for recombination. Default is \code{0.62}.}
 
 \item{\code{p_mut}}{(\code{numeric(1)})\cr
-Probability with which an individual is selected for mutation. Default is \code{0.79}.}
+Probability with which an individual is selected for mutation. Default is \code{0.73}.}
 
 \item{\code{p_mut_gen}}{(\code{numeric(1)})\cr
-Probability with which a feature/gene is selected for mutation. Default is \code{0.56}.}
+Probability with which a feature/gene is selected for mutation. Default is \code{0.5}.}
 
 \item{\code{p_mut_use_orig}}{(\code{numeric(1)})\cr
-Probability with which a feature/gene is reset to its original value in \code{x_interest} after mutation. Default is \code{0.32}.}
+Probability with which a feature/gene is reset to its original value in \code{x_interest} after mutation. Default is \code{0.4}.}
 
 \item{\code{k}}{(\code{integerish(1)})\cr
 The number of data points to use for the forth objective. Default is \code{1L}.}
