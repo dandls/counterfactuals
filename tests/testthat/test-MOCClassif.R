@@ -6,7 +6,7 @@ test_that("Returns correct output format for soft binary classification", {
   mydf$vs = as.factor(mydf$vs)
   rf = randomForest::randomForest(am ~ ., data = mydf, ntree = 5L)
   pred = Predictor$new(rf, data = mydf, type = "class")
-  mocc = MOCClassif$new(pred, n_generations = 5L)
+  mocc = MOCClassif$new(pred, n_generations = 5L, init_strategy = "random")
   x_interest = head(subset(mydf, select = -am), n = 1L)
   expect_snapshot({cfactuals = quiet(mocc$find_counterfactuals(x_interest, desired_class = "0"))})
   
@@ -19,7 +19,7 @@ test_that("Returns correct output format for hard binary classification", {
   set.seed(54542142)
   rf = get_rf_classif_iris()
   iris_pred = iml::Predictor$new(rf, type = "class")
-  mocc = MOCClassif$new(iris_pred, n_generations = 5L)
+  mocc = MOCClassif$new(iris_pred, n_generations = 5L, init_strategy = "random")
   x_interest = iris[1L, -5L]
   expect_snapshot({
     cfactuals = quiet(mocc$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = 1))
@@ -36,7 +36,7 @@ test_that("Can handle non-numeric target classes", {
   pred = iml::Predictor$new(rf_pima, data = test_data, y = "cl")
   x_interest = head(subset(test_data, select = -cl), 1L)
   set.seed(544564)
-  mocc = MOCClassif$new(pred, n_generations = 5L)
+  mocc = MOCClassif$new(pred, n_generations = 5L, init_strategy = "random")
   expect_snapshot({
     cfactuals = quiet(mocc$find_counterfactuals(x_interest, desired_class = "pos"))
   })
@@ -51,7 +51,8 @@ test_that("Can handle ordered factor input columns", {
   x_interest = german[991L, -ncol(german)]
   pred_credit = iml::Predictor$new(rf, data = german, y = "credit_risk", type = "prob")
   moc_classif = MOCClassif$new(
-    pred_credit, n_generations = 3L, fixed_features = c("personal_status_sex", "age"), max_changed = 4L
+    pred_credit, n_generations = 3L, fixed_features = c("personal_status_sex", "age"), max_changed = 4L, 
+    init_strategy = "random"
   )
   expect_snapshot({
     cfactuals = quiet(moc_classif$find_counterfactuals(x_interest, desired_class = "good", desired_prob = c(0.8 , 1)))
@@ -90,7 +91,8 @@ test_that("distance_function can be exchanged", {
     res
   }
   moc_classif = MOCClassif$new(
-    iris_pred, n_generations = 3L, distance_function = correct_dist_function, quiet = TRUE
+    iris_pred, n_generations = 3L, distance_function = correct_dist_function, quiet = TRUE, 
+    init_strategy = "random"
   )
   cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = c(0.5, 1))
   expect_data_table(cfactuals$data)
@@ -104,13 +106,15 @@ test_that("distance_function gower and gower_c return equal results", {
   predictor = iml::Predictor$new(rf, type = "prob")
   # Find counterfactuals for x_interest
   set.seed(1007)
-  moc_g = MOCClassif$new(predictor, n_generations = 0L, distance_function = "gower")
+  moc_g = MOCClassif$new(predictor, n_generations = 0L, distance_function = "gower", 
+    init_strategy = "random")
   cfactuals_g = moc_g$find_counterfactuals(
     x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
   )
   # Find counterfactuals for x_interest with gower distance C function
   set.seed(1007)
-  moc_gc = MOCClassif$new(predictor, n_generations = 0L, distance_function = "gower_c")
+  moc_gc = MOCClassif$new(predictor, n_generations = 0L, distance_function = "gower_c", 
+    init_strategy = "random")
   cfactuals_gc = moc_gc$find_counterfactuals(
     x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
   )

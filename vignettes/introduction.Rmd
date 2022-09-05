@@ -174,7 +174,7 @@ cfactuals$plot_freq_of_feature_changes(subset_zero = TRUE)
 The parallel plot connects the (scaled) feature values of each counterfactual and highlights `x_interest` in blue.
 
 ```{r, message=FALSE, fig.height=2.5}
-cfactuals$plot_parallel()
+cfactuals$plot_parallel(digits_min_max = 2L)
 ```
 
 The white dot in the prediction surface plot represents `x_interest`. All counterfactuals that differ from `x_interest` only in the 
@@ -195,7 +195,7 @@ The evolution of the hypervolume indicator can be plotted together with the evol
 using the `plot_statistics()` method.
 
 ```{r, fig.height=2.5, results='asis', eval=FALSE}
-moc_classif$plot_statistics()
+moc_classif$plot_statistics(centered_obj = TRUE)
 ```
 
 ```{r, echo=FALSE, eval=FALSE}
@@ -224,93 +224,6 @@ moc_classif$plot_search(objectives = c("dist_train", "dist_target"))
 
 The exact interdependence between the objectives depends on the task at hand.
 
-## Regression Tasks
-
-Finding counterfactuals for regression models is analogous to classification models. In this example, we use 
-`WhatIf` (Wexler et al. 2019) to search for counterfactuals for housing prices.
-
-### Data: Boston Housing Data
-
-As training data, we use the Boston Housing dataset from the `mlbench` package. 
-The dataset contains 506 observations with 13 features and the (continuous) target variable `medv`.
-
-```{r, echo=FALSE}
-# data(BostonHousing, package = "mlbench")  
-# df = data.frame(
-#   Variable = colnames(BostonHousing),
-#   Description = c(
-#     "Per capita crime rate by town",
-#     "Proportion of residential land zoned for lots over 25,000 sq.ft.",
-#     "Proportion of non-retail business acres per town",
-#     "Charles River dummy variable (= 1 if tract bounds river; 0 otherwise)",
-#     "Nitrogen oxides concentration (parts per 10 million).",
-#     "Average number of rooms per dwelling.",
-#     "Proportion of owner-occupied units built prior to 1940",
-#     "Weighted mean of distances to five Boston employment centres.",
-#     "Index of accessibility to radial highways.",
-#     "Full-value property-tax rate per $10,000.",
-#     "Pupil-teacher ratio by town.",
-#     "1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town.",
-#     "Percentage of lower status of the population",
-#     "Median value of owner-occupied homes in USD 1000's"
-#   )
-# )
-# knitr::kable(df, format = "html", table.attr = "style='width:100%;'")
-```
-
-```{r}
-data(BostonHousing, package = "mlbench")  
-```
-
-
-### Fitting a model
-
-First, we train a model to predict `medv`, again omitting `x_interest` from the training data.
-
-```{r}
-set.seed(20210713)
-rf = randomForest(medv ~ ., data = BostonHousing[-1L, ])
-```
-
-### Setting up an iml::Predictor() object
-
-Then, we initialize an [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object.
-
-```{r}
-predictor = Predictor$new(rf)
-```
-
-
-### Find counterfactuals
-
-For `x_interest`, the model predicts a median housing value of 28.32.
-
-```{r}
-x_interest = BostonHousing[1L, ]
-predictor$predict(x_interest)
-```
-
-Since we want to apply `WhatIf` to a regression model, we initialize a `WhatIfRegr` object. The argument `n_counterfactuals` 
-specifies the number of counterfactuals to return.
-
-```{r}
-whatif_regr = WhatIfRegr$new(predictor, n_counterfactuals = 5L)
-```
-
-Then, we use the `find_counterfactuals()` method to find counterfactuals for `x_interest` with a predicted
-housing value in the interval [30, 32].
- 
-```{r}
-cfactuals = whatif_regr$find_counterfactuals(x_interest, desired_outcome = c(30, 32))
-```
-
-### The counterfactuals object
-
-As a result, we obtain a `Counterfactuals` object, just like for the classification task.
-
-```{r}
-cfactuals
-```
 
 
 # References

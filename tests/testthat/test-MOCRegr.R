@@ -91,7 +91,7 @@ test_that("distance_function can be exchanged", {
     res
   }
   moc_regr = MOCRegr$new(
-    pred, n_generations = 3L, distance_function = correct_dist_function, quiet = TRUE
+    pred, init_strategy = "random", n_generations = 3L, distance_function = correct_dist_function, quiet = TRUE
   )
   cfactuals = moc_regr$find_counterfactuals(x_interest, desired_outcome = c(22, 25))
   expect_data_table(cfactuals$data)

@@ -52,7 +52,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     #'   The values should sum up to `1`. `NULL` (default) means all data points are weighted equally. 
     #' @template lower_upper
     #' @param init_strategy (`character(1)`)\cr  
-    #'   The population initialization strategy. Can be `random` (default), `sd`, `icecurve` or `traindata`. For more information,
+    #'   The population initialization strategy. Can be `icecurve` (default), `random`, `sd` or `traindata`. For more information,
     #'   see the `Details` section.
     #' @param use_conditional_mutator (`logical(1)`)\cr 
     #'   Should a conditional mutator be used? The conditional mutator generates plausible feature values based 
@@ -71,7 +71,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, mu = 20L, 
                           n_generations = 175L,  p_rec = 0.71, p_rec_gen = 0.62, p_mut = 0.73,
                           p_mut_gen = 0.5, p_mut_use_orig = 0.4, k = 1L, weights = NULL, lower = NULL, upper = NULL,
-                          init_strategy = "random", use_conditional_mutator = FALSE, quiet = FALSE, distance_function = "gower") {
+                          init_strategy = "icecurve", use_conditional_mutator = FALSE, quiet = FALSE, distance_function = "gower") {
       
       if (is.character(distance_function)) {
         if (distance_function == "gower") {
@@ -103,7 +103,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
       assert_number(p_mut_use_orig, lower = 0, upper = 1)
       assert_number(k, lower = 1, upper = nrow(private$predictor$data$X))
       assert_numeric(weights, any.missing = FALSE, len = k, null.ok = TRUE)
-      assert_choice(init_strategy, choices = c("random", "sd", "icecurve", "traindata"))
+      assert_choice(init_strategy, choices = c("icecurve", "random", "sd", "traindata"))
       assert_flag(use_conditional_mutator)
       assert_flag(quiet)
       
