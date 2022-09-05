@@ -128,7 +128,7 @@ Create a new \code{MOCClassif} object.
   weights = NULL,
   lower = NULL,
   upper = NULL,
-  init_strategy = "random",
+  init_strategy = "icecurve",
   use_conditional_mutator = FALSE,
   quiet = FALSE,
   distance_function = "gower"
@@ -191,7 +191,7 @@ If \code{NULL} (default), the element for each numeric feature in \code{upper} i
 If not \code{NULL}, it should be named with the corresponding feature names.}
 
 \item{\code{init_strategy}}{(\code{character(1)})\cr
-The population initialization strategy. Can be \code{random} (default), \code{sd}, \code{icecurve} or \code{traindata}. For more information,
+The population initialization strategy. Can be \code{icecurve} (default), \code{random}, \code{sd} or \code{traindata}. For more information,
 see the \code{Details} section.}
 
 \item{\code{use_conditional_mutator}}{(\code{logical(1)})\cr
