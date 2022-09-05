@@ -281,7 +281,7 @@ Setting <code>subset_zero = TRUE</code> removes all unchanged features from the 
 <p><img src="introduction_files/figure-html/unnamed-chunk-15-1.png" width="672"></p>
 <p>The parallel plot connects the (scaled) feature values of each counterfactual and highlights <code>x_interest</code> in blue.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_parallel</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_parallel</span><span class="op">(</span>digits_min_max <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></code></pre></div>
 <p><img src="introduction_files/figure-html/unnamed-chunk-16-1.png" width="672"></p>
 <p>The white dot in the prediction surface plot represents <code>x_interest</code>. All counterfactuals that differ from <code>x_interest</code> only in the selected features are displayed as black dots. The tick marks next to the axes indicate the marginal distribution of the counterfactuals.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
@@ -293,7 +293,7 @@ Setting <code>subset_zero = TRUE</code> removes all unchanged features from the 
 </h4>
 <p>To evaluate the estimated Pareto front, Dandl et al. (2020) use a hypervolume indicator (Zitzler and Thiele 1998) with a reference point that represents the maximal values of the objectives. The evolution of the hypervolume indicator can be plotted together with the evolution of mean and minimum objective values using the <code>plot_statistics()</code> method.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">moc_classif</span><span class="op">$</span><span class="fu">plot_statistics</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">moc_classif</span><span class="op">$</span><span class="fu">plot_statistics</span><span class="op">(</span>centered_obj <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="introduction-res/moc_stats_plots.png" width="97%"></p>
 <p>Ideally, one would like the mean value of each objective to decrease over the generations, leading to an increase of the hypervolume. However, there is often a trade-off between the objectives. Here, the mean values of <code>dist_target</code> and <code>dist_train</code> remain relatively constant over the generations, indicating that it is difficult to minimize both objectives simultaneously.</p>
 <p>This trade-off can also be seen in the scatter plot—created by the <code>plot_search()</code> method—that visualizes two selected objective values of all individuals. Ideally, one would like to have a point shift to the lower left corner over the generations, which implies better objective values. Here, the points for the objectives <code>dist_train</code> and <code>dist_target</code> are shifted to a middle region, which underlines the difficulty of minimizing both objectives simultaneously.</p>
@@ -301,65 +301,6 @@ Setting <code>subset_zero = TRUE</code> removes all unchanged features from the 
 <code class="sourceCode R"><span><span class="va">moc_classif</span><span class="op">$</span><span class="fu">plot_search</span><span class="op">(</span>objectives <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dist_train"</span>, <span class="st">"dist_target"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="introduction_files/figure-html/unnamed-chunk-21-1.png" width="672"></p>
 <p>The exact interdependence between the objectives depends on the task at hand.</p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="regression-tasks">Regression Tasks<a class="anchor" aria-label="anchor" href="#regression-tasks"></a>
-</h3>
-<p>Finding counterfactuals for regression models is analogous to classification models. In this example, we use <code>WhatIf</code> (Wexler et al. 2019) to search for counterfactuals for housing prices.</p>
-<div class="section level4">
-<h4 id="data-boston-housing-data">Data: Boston Housing Data<a class="anchor" aria-label="anchor" href="#data-boston-housing-data"></a>
-</h4>
-<p>As training data, we use the Boston Housing dataset from the <code>mlbench</code> package. The dataset contains 506 observations with 13 features and the (continuous) target variable <code>medv</code>.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">BostonHousing</span>, package <span class="op">=</span> <span class="st">"mlbench"</span><span class="op">)</span>  </span></code></pre></div>
-</div>
-<div class="section level4">
-<h4 id="fitting-a-model-1">Fitting a model<a class="anchor" aria-label="anchor" href="#fitting-a-model-1"></a>
-</h4>
-<p>First, we train a model to predict <code>medv</code>, again omitting <code>x_interest</code> from the training data.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">20210713</span><span class="op">)</span></span>
-<span><span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html" class="external-link">randomForest</a></span><span class="op">(</span><span class="va">medv</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">BostonHousing</span><span class="op">[</span><span class="op">-</span><span class="fl">1L</span>, <span class="op">]</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level4">
-<h4 id="setting-up-an-imlpredictor-object-1">Setting up an iml::Predictor() object<a class="anchor" aria-label="anchor" href="#setting-up-an-imlpredictor-object-1"></a>
-</h4>
-<p>Then, we initialize an <a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link"><code>iml::Predictor</code></a> object.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">predictor</span> <span class="op">=</span> <span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rf</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level4">
-<h4 id="find-counterfactuals-1">Find counterfactuals<a class="anchor" aria-label="anchor" href="#find-counterfactuals-1"></a>
-</h4>
-<p>For <code>x_interest</code>, the model predicts a median housing value of 28.32.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">x_interest</span> <span class="op">=</span> <span class="va">BostonHousing</span><span class="op">[</span><span class="fl">1L</span>, <span class="op">]</span></span>
-<span><span class="va">predictor</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="va">x_interest</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       pred</span></span>
-<span><span class="co">#&gt; 1 28.32244</span></span></code></pre></div>
-<p>Since we want to apply <code>WhatIf</code> to a regression model, we initialize a <code>WhatIfRegr</code> object. The argument <code>n_counterfactuals</code> specifies the number of counterfactuals to return.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">whatif_regr</span> <span class="op">=</span> <span class="va"><a href="../reference/WhatIfRegr.html">WhatIfRegr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predictor</span>, n_counterfactuals <span class="op">=</span> <span class="fl">5L</span><span class="op">)</span></span></code></pre></div>
-<p>Then, we use the <code>find_counterfactuals()</code> method to find counterfactuals for <code>x_interest</code> with a predicted housing value in the interval [30, 32].</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cfactuals</span> <span class="op">=</span> <span class="va">whatif_regr</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span><span class="va">x_interest</span>, desired_outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">32</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level4">
-<h4 id="the-counterfactuals-object-1">The counterfactuals object<a class="anchor" aria-label="anchor" href="#the-counterfactuals-object-1"></a>
-</h4>
-<p>As a result, we obtain a <code>Counterfactuals</code> object, just like for the classification task.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cfactuals</span></span>
-<span><span class="co">#&gt; 5 Counterfactual(s) </span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Desired outcome range: [30, 32] </span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Head: </span></span>
-<span><span class="co">#&gt;       crim zn indus chas   nox    rm  age    dis rad tax ptratio      b lstat</span></span>
-<span><span class="co">#&gt; 1: 0.06888  0  2.46    0 0.488 6.144 62.2 2.5979   3 193    17.8 396.90  9.45</span></span>
-<span><span class="co">#&gt; 2: 0.07875 45  3.44    0 0.437 6.782 41.1 3.7886   5 398    15.2 393.87  6.68</span></span>
-<span><span class="co">#&gt; 3: 0.10008  0  2.46    0 0.488 6.563 95.6 2.8470   3 193    17.8 396.90  5.68</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -388,7 +329,7 @@ Setting <code>subset_zero = TRUE</code> removes all unchanged features from the 
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
