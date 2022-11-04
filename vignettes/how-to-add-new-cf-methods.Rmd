@@ -61,7 +61,7 @@ knitr::include_graphics("how-to-add-new-cf-methods-res/call-diagram.png")
 
 ## Integrating a new counterfactuals explanation method
 
-To integrate Feature Tweaking, we first we need to install `featureTweakR` and `pforeach` and load the required libraries.
+To integrate Feature Tweaking, we first need to install `featureTweakR` and `pforeach` and load the required libraries.
 
 ```{r, eval=FALSE}
 devtools::install_github("katokohaku/featureTweakR")
@@ -112,9 +112,10 @@ We also fill the `print_parameters()` method with the parameters of Feature Twea
 FeatureTweakerClassif = R6Class("FeatureTweakerClassif", inherit = CounterfactualMethodClassif,
   
   public = list(
-    initialize = function(predictor, ktree = NULL, epsiron = 0.1, resample = FALSE) {
+     initialize = function(predictor, ktree = NULL, epsiron = 0.1, 
+      resample = FALSE) {
       # adds predictor to private$predictor field
-      super$initialize(predictor)
+      super$initialize(predictor) 
       private$ktree = ktree
       private$epsiron = epsiron
       private$resample = resample
@@ -124,7 +125,7 @@ FeatureTweakerClassif = R6Class("FeatureTweakerClassif", inherit = Counterfactua
   private = list(
     ktree = NULL,
     epsiron = NULL,
-    n_rep = NULL,
+    resample = NULL,
     
     run = function() {},
     
