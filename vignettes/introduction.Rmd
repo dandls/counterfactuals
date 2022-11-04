@@ -1,5 +1,5 @@
 ---
-title: "Introduction to counterfactuals"
+title: "counterfactuals R package"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction to counterfactuals}
@@ -24,6 +24,10 @@ options(width = 200)
 library("counterfactuals")
 library("iml")
 library("randomForest")
+library("mlr3")
+library("mlr3learners")
+library("mlr3pipelines")
+library("data.table")
 ```
 
 
@@ -76,7 +80,7 @@ First, we train a model to predict `diabetes`, omitting one observation from the
 
 ```{r}
 set.seed(20210816)
-rf = randomForest(diabetes ~ ., data = PimaIndiansDiabetes[-499L, ])
+rf = randomForest::randomForest(diabetes ~ ., data = PimaIndiansDiabetes[-499L, ])
 ```
 
 ### Setting up an iml::Predictor() object
@@ -85,7 +89,7 @@ An [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html)
 model types. It contains the model and the data for its analysis.
 
 ```{r}
-predictor = Predictor$new(rf, type = "prob")
+predictor = iml::Predictor$new(rf, type = "prob")
 x_interest = PimaIndiansDiabetes[499L, ]
 predictor$predict(x_interest)
 ```
@@ -245,17 +249,20 @@ The dataset contains 506 observations with 13 features and the (continuous) targ
 ```
 
 ```{r}
-data(BostonHousing, package = "mlbench")  
+data(BostonHousing, package = "mlbench")
 ```
 
 
 ### Fitting a model
 
 First, we train a model to predict `medv`, again omitting `x_interest` from the training data.
+This time we use a support vector machine trained with the `mlr3` package. 
 
 ```{r}
+tsk = mlr3::TaskRegr$new(id = "boston", backend = BostonHousing[-1L,], target = "medv")
 set.seed(20210713)
-rf = randomForest(medv ~ ., data = BostonHousing[-1L, ])
+svm = mlr3pipelines::GraphLearner$new(po("encode") %>>% lrn("regr.svm"))
+model = svm$train(tsk)
 ```
 
 ### Setting up an iml::Predictor() object
@@ -263,7 +270,7 @@ rf = randomForest(medv ~ ., data = BostonHousing[-1L, ])
 Then, we initialize an [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object.
 
 ```{r}
-predictor = Predictor$new(rf)
+predictor = iml::Predictor$new(model, data = BostonHousing, y = "medv")
 x_interest = BostonHousing[1L, ]
 predictor$predict(x_interest)
 ```
@@ -320,9 +327,8 @@ l0_norm = function(x, y, data) {
 A short example illustrates the functionality of `l0_norm()`. 
 
 ```{r}
-library("data.table")
-xt = data.table(a = c(0.5), b = c("a"))
-yt = data.table(a = c(0.5, 3.2, 0.1), b = c("a", "b", "a"))
+xt = data.table::data.table(a = c(0.5), b = c("a"))
+yt = data.table::data.table(a = c(0.5, 3.2, 0.1), b = c("a", "b", "a"))
 l0_norm(xt, yt, data = NULL)
 ```
 
@@ -338,7 +344,7 @@ cfactuals
 
 # References
 
-Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “MultiObjective Counterfactual Explanations.” In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr, Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Publishing.
+Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “Multi-Objective Counterfactual Explanations.” In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr, Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Publishing.
 
 Brughmans D, Martens D (2022). “NICE: An Algorithm for Nearest Instance Counterfactual
 Explanations.” Technical report, arXiv 2104.07411 v2. URL https://arxiv.org/abs/
