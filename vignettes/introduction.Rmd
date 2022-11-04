@@ -27,7 +27,7 @@ library("randomForest")
 ```
 
 
-## Classification Tasks
+## Classification Task
 
 To illustrate the `counterfactuals` workflow for classification tasks, we search for counterfactuals for 
 diabetes-tested patients with `MOC` (Dandl et al. 2020). 
@@ -86,23 +86,19 @@ model types. It contains the model and the data for its analysis.
 
 ```{r}
 predictor = Predictor$new(rf, type = "prob")
-```
-
-
-### Find counterfactuals
-
-For `x_interest`, the model predicts a diabetes probability of 63.4%.
-
-```{r}
 x_interest = PimaIndiansDiabetes[499L, ]
 predictor$predict(x_interest)
 ```
 
-Now, I examine which risk factors need to be changed to reduce the predicted diabetes probability to a maximum of 40%.\
+For `x_interest`, the model predicts a diabetes probability of `r round(predictor$predict(x_interest), 2)[2]`.
+
+### Find counterfactuals
+
+Now, we examine which risk factors need to be changed to reduce the predicted diabetes probability to a maximum of 40%.\
 Since we want to apply MOC to a classification model, we initialize a `MOCClassif` object.
 Individuals whose prediction is farther away from the desired prediction than `epsilon` can be penalized.
 Here, we set `epsilon = 0`, penalizing all individuals whose prediction is outside the desired interval. 
-With the `fixed_features` argument, we can fix non-actionable features to their current value.
+With the `fixed_features` argument, we can fix non-actionable features, here `pregnant` and `age`.
 
 ```{r, eval=FALSE}
 moc_classif = MOCClassif$new(
@@ -174,7 +170,8 @@ cfactuals$plot_freq_of_feature_changes(subset_zero = TRUE)
 The parallel plot connects the (scaled) feature values of each counterfactual and highlights `x_interest` in blue.
 
 ```{r, message=FALSE, fig.height=2.5}
-cfactuals$plot_parallel(digits_min_max = 2L)
+cfactuals$plot_parallel(feature_names = NULL, row_ids = NULL, 
+ digits_min_max = 2L)
 ```
 
 The white dot in the prediction surface plot represents `x_interest`. All counterfactuals that differ from `x_interest` only in the 
@@ -189,8 +186,10 @@ cfactuals$plot_surface(feature_names = c("glucose", "insulin"))
 
 ### MOC diagnostics
 
-To evaluate the estimated Pareto front, Dandl et al. (2020) use a hypervolume indicator (Zitzler and Thiele 1998) with a 
-reference point that represents the maximal values of the objectives.
+Additional diagnostic tools for MOC are available as part of the MOCClassif
+and MOCRegr class. 
+For example, the hypervolume indicator (Zitzler and Thiele 1998) given a 
+reference point (that represents the maximal values of the objectives) could be computed.
 The evolution of the hypervolume indicator can be plotted together with the evolution of mean and minimum objective values 
 using the `plot_statistics()` method.
 
@@ -198,38 +197,151 @@ using the `plot_statistics()` method.
 moc_classif$plot_statistics(centered_obj = TRUE)
 ```
 
-```{r, echo=FALSE, eval=FALSE}
-sp = moc_classif$plot_statistics()
-p = cowplot::plot_grid(sp[[1]], sp[[2]], sp[[3]], nrow = 3)
-ggplot2::ggsave("introduction-res/moc_stats_plots.png", p, width = 9, height = 6)
-```
-
-```{r, echo=FALSE, out.width='97%'}
-knitr::include_graphics("introduction-res/moc_stats_plots.png")
-```
-
 Ideally, one would like the mean value of each objective to decrease over the generations, leading to an increase of the
 hypervolume.
-However, there is often a trade-off between the objectives. Here, the mean values of `dist_target` and `dist_train` remain 
-relatively constant over the generations, indicating that it is difficult to minimize both objectives simultaneously.
-
-This trade-off can also be seen in the scatter plot---created by the `plot_search()` method---that visualizes two selected 
-objective values of all individuals. Ideally, one would like to have a point shift to the lower left corner over the generations, 
-which implies better objective values. Here, the points for the objectives `dist_train` and `dist_target` are shifted to
-a middle region, which underlines the difficulty of minimizing both objectives simultaneously.
-
+We could visualize the objective values of the emerging candidates throughout the generations via 
+the  `plot_search` method for pairs of objectives. 
 ```{r, fig.height=2.5}
 moc_classif$plot_search(objectives = c("dist_train", "dist_target"))
+moc_classif$plot_search(objectives = c("dist_x_interest", "dist_train"))
 ```
 
-The exact interdependence between the objectives depends on the task at hand.
+
+## Regression Tasks
+
+Finding counterfactuals for regression models is analogous to classification models. In this example, we use 
+`NICE` (Brughmans et al. (2022)) to search for counterfactuals for housing prices. 
+Brughmans et al. introduced `NICE` only for the classification setting but for 
+this package the method was extended to also work for regression tasks by allowing 
+prediction functions to return real-valued outcomes instead of classification scores. 
+
+### Data: Boston Housing Data
+
+As training data, we use the Boston Housing dataset from the `mlbench` package. 
+The dataset contains 506 observations with 13 features and the (continuous) target variable `medv`.
+
+```{r, echo=FALSE}
+# data(BostonHousing, package = "mlbench")  
+# df = data.frame(
+#   Variable = colnames(BostonHousing),
+#   Description = c(
+#     "Per capita crime rate by town",
+#     "Proportion of residential land zoned for lots over 25,000 sq.ft.",
+#     "Proportion of non-retail business acres per town",
+#     "Charles River dummy variable (= 1 if tract bounds river; 0 otherwise)",
+#     "Nitrogen oxides concentration (parts per 10 million).",
+#     "Average number of rooms per dwelling.",
+#     "Proportion of owner-occupied units built prior to 1940",
+#     "Weighted mean of distances to five Boston employment centres.",
+#     "Index of accessibility to radial highways.",
+#     "Full-value property-tax rate per $10,000.",
+#     "Pupil-teacher ratio by town.",
+#     "1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town.",
+#     "Percentage of lower status of the population",
+#     "Median value of owner-occupied homes in USD 1000's"
+#   )
+# )
+# knitr::kable(df, format = "html", table.attr = "style='width:100%;'")
+```
+
+```{r}
+data(BostonHousing, package = "mlbench")  
+```
 
 
+### Fitting a model
+
+First, we train a model to predict `medv`, again omitting `x_interest` from the training data.
+
+```{r}
+set.seed(20210713)
+rf = randomForest(medv ~ ., data = BostonHousing[-1L, ])
+```
+
+### Setting up an iml::Predictor() object
+
+Then, we initialize an [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object.
+
+```{r}
+predictor = Predictor$new(rf)
+x_interest = BostonHousing[1L, ]
+predictor$predict(x_interest)
+```
+
+For `x_interest`, the model predicts a median housing value of `r round(predictor$predict(x_interest), 2)[1]`.
+
+
+### Find counterfactuals
+
+Since we want to apply `NICE` to a regression model, we initialize a `NICERegr` object. 
+For regression models, we define a correctly predicted datapoint when its prediction
+is less than a user-specified value away. Here we allow for a deviation of 
+`margin_correct = 0.5`. In this example, we aim for plausible counterfactuals 
+in additional to sparse ones, such that we set `optimization = "plausiblity"`. 
+
+```{r}
+nice_regr = NICERegr$new(predictor, optimization = "plausibility", 
+  margin_correct = 0.5, return_multiple = FALSE)
+```
+
+Then, we use the `find_counterfactuals()` method to find counterfactuals for `x_interest` with a predicted
+housing value in the interval [30, 32].
+ 
+```{r}
+cfactuals = nice_regr$find_counterfactuals(x_interest, desired_outcome = c(30, 32))
+```
+
+### The counterfactuals object
+
+As a result, we obtain a `Counterfactuals` object, just like for the classification task.
+
+```{r}
+cfactuals
+```
+
+### User-defined distance function
+At the beginning, `NICE` calculates the distance of `x_interest` to each of the 
+training samples. By default, Gower's distance measures this but users could 
+also specify their own distance functions in the `distance_function` argument. 
+For example, the Gower distance can be replaces by the L_0 norm. 
+
+```{r}
+l0_norm = function(x, y, data) {
+  res = matrix(NA, nrow = nrow(x), ncol = nrow(y))
+  for (i in seq_len(nrow(x))) {
+    for (j in seq_len(nrow(y))) {
+      res[i, j] = sum(x[i,] != y[j,])
+    }
+  }
+  res
+}
+```
+
+A short example illustrates the functionality of `l0_norm()`. 
+
+```{r}
+library("data.table")
+xt = data.table(a = c(0.5), b = c("a"))
+yt = data.table(a = c(0.5, 3.2, 0.1), b = c("a", "b", "a"))
+l0_norm(xt, yt, data = NULL)
+```
+
+Replacing the distance function is fairly easy: 
+
+```{r}
+nice_regr = NICERegr$new(predictor, optimization = "plausibility", 
+  margin_correct = 0.5, return_multiple = FALSE, 
+  distance_function = l0_norm)
+cfactuals = nice_regr$find_counterfactuals(x_interest, desired_outcome = c(30, 32))
+cfactuals
+```
 
 # References
 
 Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “MultiObjective Counterfactual Explanations.” In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr, Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Publishing.
 
-Wexler, James, Mahima Pushkarna, Tolga Bolukbasi, Martin Wattenberg, Fernanda Viégas, and Jimbo Wilson. 2019. “The What-If Tool: Interactive Probing of Machine Learning Models.” IEEE Transactions on Visualization and Computer Graphics 26 (1): 56–65.
+Brughmans D, Martens D (2022). “NICE: An Algorithm for Nearest Instance Counterfactual
+Explanations.” Technical report, arXiv 2104.07411 v2. URL https://arxiv.org/abs/
+2104.07411.
 
 Zitzler, Eckart, and Lothar Thiele. 1998. “Multiobjective Optimization Using Evolutionary Algorithms—a Comparative Case Study.” In International Conference on Parallel Problem Solving from Nature, 292–301. Springer.
