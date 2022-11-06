@@ -2,7 +2,7 @@
 title: "Other types of models"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction to counterfactuals}
+  %\VignetteIndexEntry{Other types of models}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -35,9 +35,8 @@ knitr::opts_chunk$set(echo = TRUE)
 The `Predictor` class of the `iml` package provides the necessary flexibility 
 to cover classification and regression models fitted with diverse R packages. 
 In the introduction vignette, we saw models fitted with the `mlr3` and `randomForest` packages.
-In the following, we show extensions to - an AdaBoost classification tree fitted with 
-the `caret` package, a classifcation tree fitted with `mlr` and linear regression model 
-by `tidymodels`. 
+In the following, we show extensions to - an classification tree fitted with 
+the `caret` package, the `mlr` (a predecesor of `mlr3`) and `tidymodels. 
 For each model we generate counterfactuals for the first row of the iris dataset 
 using the `WhatIf` method 
 
@@ -47,7 +46,7 @@ iris = iris[-1L,]
 ```
 
 
-## AdaBoost - caret package
+## rpart - caret package
 ```{r}
 library("caret")
 ada = train(Species ~ ., data = iris, method = "rpart")
@@ -57,20 +56,20 @@ whatifada = WhatIfClassif$new(predictor = predada, n_counterfactuals = 1L)
 whatifada$find_counterfactuals(x_interest = x_interest, desired_class = "versicolor", desired_prob = c(.5, 1))
 ```
 
-## Classification tree - mlr package 
-```{r}
-library("mlr")
-task = mlr::makeClassifTask(data = iris, target = "Species")
-mod = makeLearner("classif.rpart", predict.type = "prob")
-rpar = train(mod, task)
-predrpar = Predictor$new(model = rpar, data = iris, y = "Species", type = "prob")
-predrpar$predict(x_interest)
-whatifada = WhatIfClassif$new(predictor = predrpar, n_counterfactuals = 1L)
-whatifada$find_counterfactuals(x_interest = x_interest, desired_class = "versicolor", desired_prob = c(.5, 1))
-```
+<!-- ## rpart - mlr package  -->
+<!-- ```{r} -->
+<!-- library("mlr") -->
+<!-- task = mlr::makeClassifTask(data = iris, target = "Species") -->
+<!-- mod = makeLearner("classif.rpart", predict.type = "prob") -->
+<!-- rpar = train(mod, task) -->
+<!-- predrpar = Predictor$new(model = rpar, data = iris, y = "Species", type = "prob") -->
+<!-- predrpar$predict(x_interest) -->
+<!-- whatifada = WhatIfClassif$new(predictor = predrpar, n_counterfactuals = 1L) -->
+<!-- whatifada$find_counterfactuals(x_interest = x_interest, desired_class = "versicolor", desired_prob = c(.5, 1)) -->
+<!-- ``` -->
 
 
-## Linear regression model - tidymodels package
+## Decision tree - tidymodels package
 ```{r}
 library("tidymodels")
 dt_mod = decision_tree(mode = "classification")

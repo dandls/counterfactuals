@@ -26,6 +26,9 @@ CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = Cou
       super$initialize(predictor, lower, upper, distance_function)
       if (private$predictor$task != "regression") {
         stop(sprintf("%s only works for regression tasks.", class(self)[1]))
+      } 
+      if (is.null(private$predictor$data$y)) {
+        stop("y in predictor needs to be specified")
       }
     },
     
