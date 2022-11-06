@@ -59,6 +59,18 @@ nicecaret = NICERegr$new(predcaret, optimization = "plausibility",
 nicecaret$find_counterfactuals(x_interest, desired_outcome = c(30, 40))
 ```
 
+## rpart - tidymodels package
+```{r}
+library("tidymodels")
+treetm = decision_tree(mode = "regression", engine = "rpart") %>% 
+  fit(medv ~ ., data = BostonHousing[-1L,])
+predtm = Predictor$new(model = treetm, data = BostonHousing[-1L,], y = "medv")
+predtm$predict(x_interest)
+nicetm = NICERegr$new(predtm, optimization = "plausibility", 
+  margin_correct = 0.5, return_multiple = FALSE)
+nicetm$find_counterfactuals(x_interest, desired_outcome = c(30, 40))
+```
+
 ## rpart - mlr package
 ```{r}
 library("mlr")
@@ -72,6 +84,7 @@ nicemlr = NICERegr$new(predmlr, optimization = "plausibility",
   margin_correct = 0.5, return_multiple = FALSE)
 nicemlr$find_counterfactuals(x_interest, desired_outcome = c(30, 40))
 ```
+
 ## Decision tree - rpart package 
 ```{r}
 library("rpart")
@@ -81,18 +94,5 @@ predrpart$predict(x_interest)
 nicerpart = NICERegr$new(predrpart, optimization = "plausibility", 
   margin_correct = 0.5, return_multiple = FALSE)
 nicerpart$find_counterfactuals(x_interest, desired_outcome = c(30, 40))
-```
-
-
-## rpart - tidymodels package
-```{r}
-library("tidymodels")
-treetm = decision_tree(mode = "regression", engine = "rpart") %>% 
-  fit(medv ~ ., data = BostonHousing[-1L,])
-predtm = Predictor$new(model = treetm, data = BostonHousing[-1L,], y = "medv")
-predtm$predict(x_interest)
-nicetm = NICERegr$new(predtm, optimization = "plausibility", 
-  margin_correct = 0.5, return_multiple = FALSE)
-nicetm$find_counterfactuals(x_interest, desired_outcome = c(30, 40))
 ```
 

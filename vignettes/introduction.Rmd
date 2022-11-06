@@ -2,7 +2,7 @@
 title: "counterfactuals R package"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction to counterfactuals}
+  %\VignetteIndexEntry{counterfactuals R package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -123,10 +123,11 @@ cfactuals = moc_classif$find_counterfactuals(
 
 ```{r, echo=FALSE, results='hide', message=FALSE}
 if (!file.exists("introduction-res/cfactuals.RDS")) {
-  moc_classif = MOCClassif$new(predictor, epsilon = 0, fixed_features = c("pregnant", "age"))
+  moc_classif = MOCClassif$new(predictor, epsilon = 0, fixed_features = c("pregnant", "age"), quiet = TRUE)
   cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "pos", desired_prob = c(0, 0.4))
-  saveRDS(moc_classif, "introduction-res/moc_classif.RDS")
-  saveRDS(cfactuals, "introduction-res/cfactuals.RDS")
+  dir.create("introduction-res")
+  saveRDS(moc_classif, file = "introduction-res/moc_classif.RDS")
+  saveRDS(cfactuals, file = "introduction-res/cfactuals.RDS")
 }
 moc_classif = readRDS("introduction-res/moc_classif.RDS")
 cfactuals = readRDS("introduction-res/cfactuals.RDS")

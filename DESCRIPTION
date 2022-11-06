@@ -47,7 +47,8 @@ Suggests:
     mlr3learners,
     mlr3pipelines,
     tidymodels,
-    caret
+    caret,
+    mlr
 License: LGPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.2
