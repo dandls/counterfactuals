@@ -260,9 +260,8 @@ This time we use a support vector machine trained with the `mlr3` package.
 
 ```{r}
 tsk = mlr3::TaskRegr$new(id = "boston", backend = BostonHousing[-1L,], target = "medv")
-set.seed(20210713)
-svm = mlr3pipelines::GraphLearner$new(po("encode") %>>% lrn("regr.svm"))
-model = svm$train(tsk)
+tree = lrn("regr.rpart")
+model = tree$train(tsk)
 ```
 
 ### Setting up an iml::Predictor() object
@@ -295,7 +294,7 @@ Then, we use the `find_counterfactuals()` method to find counterfactuals for `x_
 housing value in the interval [30, 32].
  
 ```{r}
-cfactuals = nice_regr$find_counterfactuals(x_interest, desired_outcome = c(30, 32))
+cfactuals = nice_regr$find_counterfactuals(x_interest, desired_outcome = c(30, 40))
 ```
 
 ### The counterfactuals object
@@ -338,7 +337,7 @@ Replacing the distance function is fairly easy:
 nice_regr = NICERegr$new(predictor, optimization = "plausibility", 
   margin_correct = 0.5, return_multiple = FALSE, 
   distance_function = l0_norm)
-cfactuals = nice_regr$find_counterfactuals(x_interest, desired_outcome = c(30, 32))
+cfactuals = nice_regr$find_counterfactuals(x_interest, desired_outcome = c(30, 40))
 cfactuals
 ```
 

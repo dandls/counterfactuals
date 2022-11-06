@@ -36,52 +36,63 @@ The `Predictor` class of the `iml` package provides the necessary flexibility
 to cover classification and regression models fitted with diverse R packages. 
 In the introduction vignette, we saw models fitted with the `mlr3` and `randomForest` packages.
 In the following, we show extensions to - an classification tree fitted with 
-the `caret` package, the `mlr` (a predecesor of `mlr3`) and `tidymodels. 
-For each model we generate counterfactuals for the first row of the iris dataset 
+the `caret` package, the `mlr` (a predecesor of `mlr3`) and `tidymodels`. 
+For each model we generate counterfactuals for the first row of the BostonHousing dataset 
 using the `WhatIf` method 
 
 ```{r}
-x_interest = iris[1L,]
-iris = iris[-1L,]
+data(BostonHousing, package = "mlbench")
+x_interest = BostonHousing[1L,]
 ```
 
 
 ## rpart - caret package
 ```{r}
 library("caret")
-ada = train(Species ~ ., data = iris, method = "rpart")
-predada = Predictor$new(model = ada, data = iris, y = "Species", type = "prob")
-predada$predict(x_interest)
-whatifada = WhatIfClassif$new(predictor = predada, n_counterfactuals = 1L)
-whatifada$find_counterfactuals(x_interest = x_interest, desired_class = "versicolor", desired_prob = c(.5, 1))
+
+treecaret = caret::train(medv ~ ., data = BostonHousing[-1,], method = "rpart", 
+  tuneGrid = data.frame(cp = 0.01))
+predcaret = Predictor$new(model = treecaret, data = BostonHousing[-1L,], y = "medv")
+predcaret$predict(x_interest)
+nicecaret = NICERegr$new(predcaret, optimization = "plausibility", 
+  margin_correct = 0.5, return_multiple = FALSE)
+nicecaret$find_counterfactuals(x_interest, desired_outcome = c(30, 40))
 ```
 
-<!-- ## rpart - mlr package  -->
-<!-- ```{r} -->
-<!-- library("mlr") -->
-<!-- task = mlr::makeClassifTask(data = iris, target = "Species") -->
-<!-- mod = makeLearner("classif.rpart", predict.type = "prob") -->
-<!-- rpar = train(mod, task) -->
-<!-- predrpar = Predictor$new(model = rpar, data = iris, y = "Species", type = "prob") -->
-<!-- predrpar$predict(x_interest) -->
-<!-- whatifada = WhatIfClassif$new(predictor = predrpar, n_counterfactuals = 1L) -->
-<!-- whatifada$find_counterfactuals(x_interest = x_interest, desired_class = "versicolor", desired_prob = c(.5, 1)) -->
-<!-- ``` -->
+## rpart - mlr package
+```{r}
+library("mlr")
+task = mlr::makeRegrTask(data = BostonHousing[-1L,], target = "medv")
+mod = makeLearner("regr.rpart")
+
+treemlr = train(mod, task)
+predmlr = Predictor$new(model = treemlr, data = BostonHousing[-1L,], y = "medv")
+predmlr$predict(x_interest)
+nicemlr = NICERegr$new(predmlr, optimization = "plausibility", 
+  margin_correct = 0.5, return_multiple = FALSE)
+nicemlr$find_counterfactuals(x_interest, desired_outcome = c(30, 40))
+```
+## Decision tree - rpart package 
+```{r}
+library("rpart")
+treerpart = rpart(medv ~ ., data = BostonHousing[-1L,])
+predrpart = Predictor$new(model = treerpart, data = BostonHousing[-1L,], y = "medv")
+predrpart$predict(x_interest)
+nicerpart = NICERegr$new(predrpart, optimization = "plausibility", 
+  margin_correct = 0.5, return_multiple = FALSE)
+nicerpart$find_counterfactuals(x_interest, desired_outcome = c(30, 40))
+```
 
 
-## Decision tree - tidymodels package
+## rpart - tidymodels package
 ```{r}
 library("tidymodels")
-dt_mod = decision_tree(mode = "classification")
-dt_fit = dt_mod %>% fit(Species ~ ., data = iris)
-preddt = Predictor$new(model = dt_fit, data = iris, y = "Species", type = "prob", 
-  predict.function = function(model, newdata) {
-    p = predict(model, newdata, type = "prob")
-    names(p) = gsub(pattern = ".pred_", replacement = "", x = names(p))
-    p
-  })
-preddt$predict(x_interest)
-whatifdt = WhatIfClassif$new(predictor = preddt, n_counterfactuals = 1L)
-whatifdt$find_counterfactuals(x_interest = x_interest, desired_class = "versicolor", desired_prob = c(.5, 1))
+treetm = decision_tree(mode = "regression", engine = "rpart") %>% 
+  fit(medv ~ ., data = BostonHousing[-1L,])
+predtm = Predictor$new(model = treetm, data = BostonHousing[-1L,], y = "medv")
+predtm$predict(x_interest)
+nicetm = NICERegr$new(predtm, optimization = "plausibility", 
+  margin_correct = 0.5, return_multiple = FALSE)
+nicetm$find_counterfactuals(x_interest, desired_outcome = c(30, 40))
 ```
 
