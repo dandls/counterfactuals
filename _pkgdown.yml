@@ -6,7 +6,7 @@ navbar:
    articles:
     text: Articles
     menu:
-    - text: Introduction to counterfactuals
+    - text: counterfactuals R package
       href: articles/introduction.html
     - text: How to extend the package
       href: articles/how-to-add-new-cf-methods.html
