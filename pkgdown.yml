@@ -2,8 +2,8 @@ pandoc: 2.7.3
 pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
-  customized-distance-functions: customized-distance-functions.html
   how-to-add-new-cf-methods: how-to-add-new-cf-methods.html
   introduction: introduction.html
-last_built: 2022-09-05T15:40Z
+  other_models: other_models.html
+last_built: 2022-11-16T14:21Z
 

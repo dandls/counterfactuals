@@ -50,13 +50,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/introduction.html">Introduction to counterfactuals</a>
+      <a href="../articles/introduction.html">counterfactuals R package</a>
     </li>
     <li>
       <a href="../articles/how-to-add-new-cf-methods.html">How to extend the package</a>
     </li>
     <li>
-      <a href="../articles/customized-distance-functions.html">Customized distance functions</a>
+      <a href="../articles/other_models.html">Processing models of different packages</a>
     </li>
   </ul>
 </li>
@@ -117,7 +117,7 @@
 <div class="section level2">
 <h2 id="integrating-a-new-counterfactuals-explanation-method">Integrating a new counterfactuals explanation method<a class="anchor" aria-label="anchor" href="#integrating-a-new-counterfactuals-explanation-method"></a>
 </h2>
-<p>To integrate Feature Tweaking, we first we need to install <code>featureTweakR</code> and <code>pforeach</code> and load the required libraries.</p>
+<p>To integrate Feature Tweaking, we first need to install <code>featureTweakR</code> and <code>pforeach</code> and load the required libraries.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"katokohaku/featureTweakR"</span><span class="op">)</span></span>
 <span><span class="co"># required for FeatureTweakeR</span></span>
@@ -154,9 +154,10 @@
 <code class="sourceCode R"><span><span class="va">FeatureTweakerClassif</span> <span class="op">=</span> <span class="kw"><a href="https://r6.r-lib.org/reference/R6Class.html" class="external-link">R6Class</a></span><span class="op">(</span><span class="st">"FeatureTweakerClassif"</span>, inherit <span class="op">=</span> <span class="va">CounterfactualMethodClassif</span>,</span>
 <span>  </span>
 <span>  public <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    initialize <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">predictor</span>, <span class="va">ktree</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">epsiron</span> <span class="op">=</span> <span class="fl">0.1</span>, <span class="va">resample</span> <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
+<span>     initialize <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">predictor</span>, <span class="va">ktree</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">epsiron</span> <span class="op">=</span> <span class="fl">0.1</span>, </span>
+<span>      <span class="va">resample</span> <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
 <span>      <span class="co"># adds predictor to private$predictor field</span></span>
-<span>      <span class="va">super</span><span class="op">$</span><span class="fu">initialize</span><span class="op">(</span><span class="va">predictor</span><span class="op">)</span></span>
+<span>      <span class="va">super</span><span class="op">$</span><span class="fu">initialize</span><span class="op">(</span><span class="va">predictor</span><span class="op">)</span> </span>
 <span>      <span class="va">private</span><span class="op">$</span><span class="va">ktree</span> <span class="op">=</span> <span class="va">ktree</span></span>
 <span>      <span class="va">private</span><span class="op">$</span><span class="va">epsiron</span> <span class="op">=</span> <span class="va">epsiron</span></span>
 <span>      <span class="va">private</span><span class="op">$</span><span class="va">resample</span> <span class="op">=</span> <span class="va">resample</span></span>
@@ -166,7 +167,7 @@
 <span>  private <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    ktree <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>    epsiron <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>    n_rep <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    resample <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>    </span>
 <span>    run <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span><span class="op">}</span>,</span>
 <span>    </span>

@@ -34,13 +34,13 @@ It contains the counterfactuals and has several methods for their evaluation and
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/introduction.html">Introduction to counterfactuals</a>
+      <a href="../articles/introduction.html">counterfactuals R package</a>
     </li>
     <li>
       <a href="../articles/how-to-add-new-cf-methods.html">How to extend the package</a>
     </li>
     <li>
-      <a href="../articles/customized-distance-functions.html">Customized distance functions</a>
+      <a href="../articles/other_models.html">Processing models of different packages</a>
     </li>
   </ul></li>
 <li>
@@ -130,6 +130,7 @@ desired outcome.</p></dd>
 
 <ul><li><p><a href="#method-new"><code>Counterfactuals$new()</code></a></p></li>
 <li><p><a href="#method-evaluate"><code>Counterfactuals$evaluate()</code></a></p></li>
+<li><p><a href="#method-evaluate_set"><code>Counterfactuals$evaluate_set()</code></a></p></li>
 <li><p><a href="#method-predict"><code>Counterfactuals$predict()</code></a></p></li>
 <li><p><a href="#method-subset_to_valid"><code>Counterfactuals$subset_to_valid()</code></a></p></li>
 <li><p><a href="#method-plot_parallel"><code>Counterfactuals$plot_parallel()</code></a></p></li>
@@ -197,7 +198,8 @@ NULL which means that no name is provided.</p></dd>
 <p>Evaluates the counterfactuals. It returns the counterfactuals together with the evaluation <code>measures</code>.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span></span>
-<span>  measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dist_x_interest"</span>, <span class="st">"dist_target"</span>, <span class="st">"no_changed"</span>, <span class="st">"dist_train"</span><span class="op">)</span>,</span>
+<span>  measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dist_x_interest"</span>, <span class="st">"dist_target"</span>, <span class="st">"no_changed"</span>, <span class="st">"dist_train"</span>,</span>
+<span>    <span class="st">"minimality"</span><span class="op">)</span>,</span>
 <span>  show_diff <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  k <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  weights <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -216,6 +218,8 @@ dissimilarity measure (Gower 1971).</p></li>
 <li><p><code>no_changed</code>: The number of feature changes w.r.t. <code>x_interest</code>.</p></li>
 <li><p><code>dist_train</code>: The (weighted) distance to the <code>k</code> nearest training data points measured by Gower's
 dissimilarity measure (Gower 1971).</p></li>
+<li><p><code>minimality</code>: The number of changed features that each could be set to the
+value of <code>x_interest</code> while keeping the desired prediction value.</p></li>
 </ul></dd>
 
 
@@ -242,10 +246,36 @@ specifies the weight of the i-th closest data point.</p></dd>
 </dl><p></p></div>
 </div>
 
+</div><p></p><hr><a id="method-evaluate_set"></a><div class="section">
+<h3 id="method-evaluate-set-">Method <code>evaluate_set()</code><a class="anchor" aria-label="anchor" href="#method-evaluate-set-"></a></h3>
+<p>Evaluates a set of counterfactuals. It returns the evaluation <code>measures</code>.</p><div class="section">
+<h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">evaluate_set</span><span class="op">(</span></span>
+<span>  measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"diversity"</span>, <span class="st">"no_nondom"</span>, <span class="st">"frac_nondom"</span>, <span class="st">"hypervolume"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>measures</code></dt>
+<dd><p>(<code>character</code>) <br>
+The name of one or more evaluation measures.
+The following measures are available:</p><ul><li><p><code>diversity</code>: Diversity of returned counterfactuals in the feature space</p></li>
+<li><p><code>no_nondom</code>: Number of counterfactuals that are not dominated by other
+counterfactuals.</p></li>
+<li><p><code>frac_nondom</code>: Fraction of counterfactuals that are not dominated by
+other counterfactuals</p></li>
+<li><p><code>hypervolume</code>: Hypervolume of the induced Pareto front</p></li>
+</ul></dd>
+
+
+</dl><p></p></div>
+</div>
+
 </div><p></p><hr><a id="method-predict"></a><div class="section">
 <h3 id="method-predict-">Method <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code><a class="anchor" aria-label="anchor" href="#method-predict-"></a></h3>
 <p>Returns the predictions for the counterfactuals.</p><div class="section">
-<h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
+<h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -254,7 +284,7 @@ specifies the weight of the i-th closest data point.</p></dd>
 <h3 id="method-subset-to-valid-">Method <code>subset_to_valid()</code><a class="anchor" aria-label="anchor" href="#method-subset-to-valid-"></a></h3>
 <p>Subset data to those meeting the desired prediction,
 full data is still accessible in the fulldata field</p><div class="section">
-<h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
+<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">subset_to_valid</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -263,7 +293,7 @@ full data is still accessible in the fulldata field</p><div class="section">
 <h3 id="method-plot-parallel-">Method <code>plot_parallel()</code><a class="anchor" aria-label="anchor" href="#method-plot-parallel-"></a></h3>
 <p>Plots a parallel plot that connects the (scaled) numeric feature values of each counterfactual and highlights
 <code>x_interest</code> in blue.</p><div class="section">
-<h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
+<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">plot_parallel</span><span class="op">(</span></span>
 <span>  feature_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  row_ids <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -272,7 +302,7 @@ full data is still accessible in the fulldata field</p><div class="section">
 </div>
 
 <div class="section">
-<h4 id="arguments-2">Arguments<a class="anchor" aria-label="anchor" href="#arguments-2"></a></h4>
+<h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>feature_names</code></dt>
 <dd><p>(<code>character</code> | <code>NULL</code>)<br>
 The names of the (numeric) features to display. If <code>NULL</code> (default) all features are displayed.</p></dd>
@@ -293,12 +323,12 @@ The row ids of the counterfactuals to display. If <code>NULL</code> (default) al
 </div><p></p><hr><a id="method-plot_freq_of_feature_changes"></a><div class="section">
 <h3 id="method-plot-freq-of-feature-changes-">Method <code>plot_freq_of_feature_changes()</code><a class="anchor" aria-label="anchor" href="#method-plot-freq-of-feature-changes-"></a></h3>
 <p>Plots a bar chart with the frequency of feature changes across all counterfactuals.</p><div class="section">
-<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
+<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">plot_freq_of_feature_changes</span><span class="op">(</span>subset_zero <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-3">Arguments<a class="anchor" aria-label="anchor" href="#arguments-3"></a></h4>
+<h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>subset_zero</code></dt>
 <dd><p>(<code>logical(1)</code>)<br>
 Should unchanged features be excluded from the plot? Default is <code>FALSE</code>.</p></dd>
@@ -310,12 +340,12 @@ Should unchanged features be excluded from the plot? Default is <code>FALSE</cod
 </div><p></p><hr><a id="method-get_freq_of_feature_changes"></a><div class="section">
 <h3 id="method-get-freq-of-feature-changes-">Method <code>get_freq_of_feature_changes()</code><a class="anchor" aria-label="anchor" href="#method-get-freq-of-feature-changes-"></a></h3>
 <p>Returns the frequency of feature changes across all counterfactuals.</p><div class="section">
-<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
+<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">get_freq_of_feature_changes</span><span class="op">(</span>subset_zero <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-4">Arguments<a class="anchor" aria-label="anchor" href="#arguments-4"></a></h4>
+<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>subset_zero</code></dt>
 <dd><p>(<code>logical(1)</code>)<br>
 Should unchanged features be excluded? Default is <code>FALSE</code>.</p></dd>
@@ -337,12 +367,12 @@ The exact plot type depends on the selected feature types and number of features
 <li><p>2 non-numeric features: heatmap</p></li>
 <li><p>1 numeric or non-numeric feature: line graph</p></li>
 </ul><div class="section">
-<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
+<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">plot_surface</span><span class="op">(</span><span class="va">feature_names</span>, grid_size <span class="op">=</span> <span class="fl">250L</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-5">Arguments<a class="anchor" aria-label="anchor" href="#arguments-5"></a></h4>
+<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>feature_names</code></dt>
 <dd><p>(<code>character(2)</code>)<br>
 The names of the features to plot.</p></dd>
@@ -359,7 +389,7 @@ The grid size of the plot. It is ignored in case of two <code>non-numeric</code>
 </div><p></p><hr><a id="method-print"></a><div class="section">
 <h3 id="method-print-">Method <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code><a class="anchor" aria-label="anchor" href="#method-print-"></a></h3>
 <p>Prints the <code>Counterfactuals</code> object.</p><div class="section">
-<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">print</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -367,12 +397,12 @@ The grid size of the plot. It is ignored in case of two <code>non-numeric</code>
 </div><p></p><hr><a id="method-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
+<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
+<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
