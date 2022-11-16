@@ -28,6 +28,7 @@ Imports:
 Suggests:
     gower,
     randomForest,
+    tensorflow,
     GGally,
     trtf,
     testthat,
