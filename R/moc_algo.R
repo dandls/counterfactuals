@@ -74,7 +74,8 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
     
     # Selectors
     # TODO: Replace this by tournament selection
-    op_parent = sel("best")
+    selobj1 = scl("one", objective = 1L)
+    op_parent = sel("best", selobj1)
     
     sel_nondom_penalized = ScalorNondomPenalized$new(epsilon)
     op_survival = sel("best", sel_nondom_penalized)   
@@ -110,7 +111,14 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
   if (n_generations > 0L) {
     tryCatch({
       repeat {
-        offspring = mies_generate_offspring(oi, lambda = mu, op_parent, op_m, op_r)
+        # warning handling
+        withCallingHandlers(
+          offspring <- mies_generate_offspring(oi, lambda = mu, op_parent, op_m, op_r),
+          warning = function(w){
+            if(grepl("no columns to delete or assign RHS to", w$message)){
+              invokeRestart("muffleWarning")
+            } 
+          })
         if (quiet) {
           quiet(mies_evaluate_offspring(oi, offspring))
         } else {

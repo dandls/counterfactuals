@@ -48,6 +48,7 @@ desired outcome.}
 \itemize{
 \item \href{#method-new}{\code{Counterfactuals$new()}}
 \item \href{#method-evaluate}{\code{Counterfactuals$evaluate()}}
+\item \href{#method-evaluate_set}{\code{Counterfactuals$evaluate_set()}}
 \item \href{#method-predict}{\code{Counterfactuals$predict()}}
 \item \href{#method-subset_to_valid}{\code{Counterfactuals$subset_to_valid()}}
 \item \href{#method-plot_parallel}{\code{Counterfactuals$plot_parallel()}}
@@ -110,7 +111,8 @@ NULL which means that no name is provided.}
 Evaluates the counterfactuals. It returns the counterfactuals together with the evaluation \code{measures}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$evaluate(
-  measures = c("dist_x_interest", "dist_target", "no_changed", "dist_train"),
+  measures = c("dist_x_interest", "dist_target", "no_changed", "dist_train",
+    "minimality"),
   show_diff = FALSE,
   k = 1L,
   weights = NULL
@@ -131,6 +133,8 @@ dissimilarity measure (Gower 1971).
 \item \code{no_changed}: The number of feature changes w.r.t. \code{x_interest}.
 \item \code{dist_train}: The (weighted) distance to the \code{k} nearest training data points measured by Gower's
 dissimilarity measure (Gower 1971).
+\item \code{minimality}: The number of changed features that each could be set to the
+value of \code{x_interest} while keeping the desired prediction value.
 }}
 
 \item{\code{show_diff}}{(\code{logical(1)})\cr
@@ -146,6 +150,35 @@ How many nearest training points should be considered for computing the \code{di
 How should the \code{k} nearest training points be weighted when computing the \code{dist_train} measure? If \code{NULL}
 (default) then all \code{k} points are weighted equally. If a numeric vector of length \code{k} is given, the i-th element
 specifies the weight of the i-th closest data point.}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-evaluate_set"></a>}}
+\if{latex}{\out{\hypertarget{method-evaluate_set}{}}}
+\subsection{Method \code{evaluate_set()}}{
+Evaluates a set of counterfactuals. It returns the evaluation \code{measures}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$evaluate_set(
+  measures = c("diversity", "no_nondom", "frac_nondom", "hypervolume")
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{measures}}{(\code{character}) \cr
+The name of one or more evaluation measures.
+The following measures are available:
+\itemize{
+\item \code{diversity}: Diversity of returned counterfactuals in the feature space
+\item \code{no_nondom}: Number of counterfactuals that are not dominated by other
+counterfactuals.
+\item \code{frac_nondom}: Fraction of counterfactuals that are not dominated by
+other counterfactuals
+\item \code{hypervolume}: Hypervolume of the induced Pareto front
+}}
 }
 \if{html}{\out{</div>}}
 }

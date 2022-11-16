@@ -166,7 +166,17 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       
       evals
     },
-    
+    #' @description 
+    #' Evaluates a set of counterfactuals. It returns the evaluation `measures`.
+    #' @param measures (`character`) \cr
+    #'  The name of one or more evaluation measures.
+    #'  The following measures are available: 
+    #'   * `diversity`: Diversity of returned counterfactuals in the feature space
+    #'   * `no_nondom`: Number of counterfactuals that are not dominated by other 
+    #'   counterfactuals. 
+    #'   * `frac_nondom`: Fraction of counterfactuals that are not dominated by
+    #'   other counterfactuals  
+    #'   * `hypervolume`: Hypervolume of the induced Pareto front
     evaluate_set = function(measures = c("diversity", "no_nondom", "frac_nondom", "hypervolume")) {
       assert_names(measures, subset.of = c("diversity", "no_nondom", "frac_nondom", "hypervolume"))
       
