@@ -230,10 +230,10 @@ make_moc_recombinator = function(ps, x_interest, max_changed, p_rec, p_rec_gen) 
   }
 
   if ("ParamInt" %in% ps$class) {
-    # TODO: Change to sbx!!!
-    ops_list[["ParamInt"]] = rec("maybe", rec("xounif"), 
+    ops_list[["ParamInt"]] = rec("maybe", rec("sbx"),
       rec("null", n_indivs_in = 2L, n_indivs_out = 2L), p = p_rec_gen)
   }
+  
   if ("ParamFct" %in% ps$class) {
     ops_list[["ParamFct"]] = rec("maybe", rec("xounif"), 
       rec("null", n_indivs_in = 2L, n_indivs_out = 2L), p = p_rec_gen)

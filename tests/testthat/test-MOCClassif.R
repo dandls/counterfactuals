@@ -31,7 +31,8 @@ test_that("Returns correct output format for hard binary classification", {
 
 test_that("Can handle non-numeric target classes", {
   set.seed(544564)
-  test_data = data.frame(a = rnorm(10), b = rnorm(10), cl = as.factor(rep(c("pos", "neg"), each = 5)))
+  test_data = data.frame(a = rnorm(10), b = rnorm(10), cl = as.factor(rep(c("pos", "neg"), each = 5)), 
+    it = as.integer(c(2, 6, 1, 0, 2)))
   rf_pima = randomForest::randomForest(cl ~ . , test_data, ntree = 2L)
   pred = iml::Predictor$new(rf_pima, data = test_data, y = "cl")
   x_interest = head(subset(test_data, select = -cl), 1L)
