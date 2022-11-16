@@ -23,8 +23,7 @@ Imports:
     data.table,
     paradox,
     miesmuschel,
-    bbotk,
-    ecr
+    bbotk
 Suggests:
     gower,
     randomForest,

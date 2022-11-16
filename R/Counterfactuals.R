@@ -197,7 +197,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       if (any(c("no_nondom", "frac_nondom", "hypervolume") %in% measures)) {
         res = self$evaluate()[, c("dist_x_interest", "dist_target", "no_changed", "dist_train")]
         if (any(c("no_nondom", "frac_nondom") %in% measures)) {
-          idnondom = ecr::nondominated(t(res))#
+          idnondom = miesmuschel::rank_nondominated(as.matrix(res))$fronts == 1
           if ("no_nondom" %in% measures) evals$no_nondom = sum(idnondom)
           if ("frac_nondom" %in% measures) evals$frac_nondom = sum(idnondom)/nrow(res)
         }
@@ -210,7 +210,11 @@ Counterfactuals = R6::R6Class("Counterfactuals",
           pred_column = private$get_pred_column()
           y_hat_interest = private$predictor$predict(self$x_interest)[[pred_column]]
           ref_point = c(min(abs(y_hat_interest - target)), 1, ncol(self$x_interest), 1)
-          evals$hypervolume = ecr::computeHV(t(res), ref.point = ref_point)
+          evals$hypervolume = miesmuschel:::domhv(
+            -as.matrix(res),
+            nadir = -ref_point,
+            on_worse_than_nadir = "quiet"
+          )
         }
       }
       
