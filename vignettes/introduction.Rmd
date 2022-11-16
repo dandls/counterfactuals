@@ -162,7 +162,7 @@ and negative values indicate a decrease; for factors, the counterfactual feature
 differs from `x_interest.`; `NA` means "no difference" in both cases.
 
 ```{r}
-head(cfactuals$evaluate(show_diff = TRUE), 5L)
+head(cfactuals$evaluate(show_diff = TRUE, measures = c("dist_x_interest", "dist_target", "no_changed", "dist_train")), 5L)
 ```
 
 The `plot_freq_of_feature_changes()` method plots the frequency of feature changes across all counterfactuals. \
