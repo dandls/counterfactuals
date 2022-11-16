@@ -10,7 +10,7 @@
 #' Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
 #' 
 Counterfactuals = R6::R6Class("Counterfactuals",
-
+  
   public = list(
     
     #' @description 
@@ -77,6 +77,8 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #'   * `no_changed`: The number of feature changes w.r.t. `x_interest`.   
     #'   * `dist_train`: The (weighted) distance to the `k` nearest training data points measured by Gower's 
     #'   dissimilarity measure (Gower 1971).
+    #'   * `minimality`: The number of changed features that each could be set to the 
+    #'   value of `x_interest` while keeping the desired prediction value.
     #' 
     #' @param show_diff (`logical(1)`)\cr
     #'  Should the counterfactuals be displayed as their differences to `x_interest`? Default is `FALSE`.
@@ -91,10 +93,10 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #'  specifies the weight of the i-th closest data point.
     #'                                              
     #' @md
-    evaluate = function(measures = c("dist_x_interest", "dist_target", "no_changed", "dist_train"), show_diff = FALSE, 
-                        k = 1L, weights = NULL) {
+    evaluate = function(measures = c("dist_x_interest", "dist_target", "no_changed", "dist_train", "minimality"), 
+      show_diff = FALSE, k = 1L, weights = NULL) {
       
-      assert_names(measures, subset.of = c("dist_x_interest", "dist_target", "no_changed", "dist_train"))
+      assert_names(measures, subset.of = c("dist_x_interest", "dist_target", "no_changed", "dist_train", "minimality"))
       assert_flag(show_diff)
       assert_number(k, lower = 1, upper = nrow(private$predictor$data$X))
       assert_numeric(weights, any.missing = FALSE, len = k, null.ok = TRUE)
@@ -130,12 +132,82 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         evals$dist_target = sapply(
           pred, function(x) ifelse(between(x, target[1L], target[2L]), 0, min(abs(x - target)))
         )
+      }
+      
+      if ("minimality" %in% measures) {
+        nofeat = rep(0, nrow(private$.data))
+        for (feature in private$predictor$data$feature.names) {
+          transdata = private$.data
+          if (all(transdata[[feature]] == self$x_interest[[feature]])) {
+            next
+          }
+          transdata[[feature]] = self$x_interest[[feature]]
+          pred_column = private$get_pred_column()
+          newpred = private$predictor$predict(transdata)[[pred_column]]
+          if (private$predictor$task == "classification") {
+            target = private$.desired$desired_prob
+          } else {
+            target = private$.desired$desired_outcome
+          }
+            dist_target2 = sapply(
+              newpred, function(x) ifelse(between(x, target[1L], target[2L]), 0, min(abs(x - target)))
+            )
+          id = which(dist_target2 == 0 & private$.data[[feature]] != self$x_interest[[feature]])
+          if (length(id) > 0) {
+            nofeat[id] = nofeat[id] + 1
+          }
+        }
+        evals$minimality = nofeat
+      }
+      
+      if ("dist_target" %in% measures) {
         setorder(evals, dist_target)
       }
       
-      
       evals
     },
+    
+    evaluate_set = function(measures = c("diversity", "no_nondom", "frac_nondom", "hypervolume")) {
+      assert_names(measures, subset.of = c("diversity", "no_nondom", "frac_nondom", "hypervolume"))
+      
+      if (nrow(private$.data) <= 1) {
+        message("number of counterfactuals <= 1, no evaluation of set could be conducted")
+        return(NULL)
+      }
+      
+      evals = data.table(matrix(nrow = 1, ncol = length(measures)))
+      evals = setNames(evals, measures)
+      
+      if ("diversity" %in% measures) {
+        dist_matrix = eval_distance(private$.distance_function, x = private$.data, 
+          y = private$.data, data = private$predictor$data$X)
+        evals$diversity = mean(dist_matrix[lower.tri(dist_matrix)])
+      }
+      
+      if (any(c("no_nondom", "frac_nondom", "hypervolume") %in% measures)) {
+        res = self$evaluate()[, c("dist_x_interest", "dist_target", "no_changed", "dist_train")]
+        if (any(c("no_nondom", "frac_nondom") %in% measures)) {
+          idnondom = ecr::nondominated(t(res))#
+          if ("no_nondom" %in% measures) evals$no_nondom = sum(idnondom)
+          if ("frac_nondom" %in% measures) evals$frac_nondom = sum(idnondom)/nrow(res)
+        }
+        if ("hypervolume" %in% measures) {
+          if (private$predictor$task == "classification") {
+            target = private$.desired$desired_prob
+          } else {
+            target = private$.desired$desired_outcome
+          }
+          pred_column = private$get_pred_column()
+          y_hat_interest = private$predictor$predict(self$x_interest)[[pred_column]]
+          ref_point = c(min(abs(y_hat_interest - target)), 1, ncol(self$x_interest), 1)
+          evals$hypervolume = ecr::computeHV(t(res), ref.point = ref_point)
+        }
+      }
+      
+      evals
+      
+    },
+    
     
     #' @description Returns the predictions for the counterfactuals.
     predict = function() {
@@ -156,7 +228,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         message("Counterfactuals were already subsetted to the ones meeting the first ")
       }
     },
-
+    
     #' @description Plots a parallel plot that connects the (scaled) numeric feature values of each counterfactual and highlights
     #' `x_interest` in blue.
     #' 
@@ -189,7 +261,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       
       cfactuals = private$.data[row_ids, ..feature_names]
       dt = rbind(cfactuals, self$x_interest[, ..feature_names])
-
+      
       is_numeric_col = sapply(dt, function(x) is.numeric(x))
       numeric_cols = names(dt)[is_numeric_col]
       non_numeric_cols = names(dt)[!is_numeric_col]
@@ -203,7 +275,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       dt[, rn := rownames(dt)]
       
       GGally::ggparcoord(dt, 1:length(numeric_cols), groupColumn = "rn", scale = "uniminmax", showPoints = TRUE,
-                         alphaLines = 0.8) +
+        alphaLines = 0.8) +
         ggplot2::theme_bw() +
         ggplot2::ylim(c(-0.1, 1.1)) +
         ggplot2::theme(legend.position = "none") +
@@ -275,13 +347,13 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
       assert_data_table(self$data, min.rows = 1L)
       assert_names(feature_names, subset.of = names(private$.data))
-
+      
       diff_rel_feats = private$diff[, ..feature_names]
       n_changes_total = count_changes(private$.data, private$.x_interest)
       n_changes_rel_feats = rowSums(!is.na(diff_rel_feats))
       has_changes_in_rel_feats_only = (n_changes_rel_feats == n_changes_total)
       cfactuals_plotted = private$.data[which(has_changes_in_rel_feats_only)]
- 
+      
       make_surface_plot(
         grid_size, private$param_set, cfactuals_plotted, private$.x_interest, private$predictor, feature_names, 
         private$get_pred_column()
@@ -367,7 +439,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         stop("`$method` is read only", call. = FALSE)
       }
     },
-
+    
     #' @field subsetted (`logical(1)`)\cr
     #' Returns if data was subsetted to those meeting the
     #' desired prediction.
@@ -378,7 +450,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         stop("`$subsetted` is read only", call. = FALSE)
       }
     },
-
+    
     #' @field fulldata (`data.table`)\cr
     #' Returns the fulldata if data was subsetted to those meeting the
     #' desired outcome.

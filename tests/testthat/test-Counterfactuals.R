@@ -124,17 +124,17 @@ test_that("plot_parallel returns error for unknown feature names", {
 
 # $evaluate() ----------------------------------------------------------------------------------------------------------
 test_that("evaluate returns error if measures are not known", {
-  skip_on_ci()
   cf = make_counterfactual_test_obj()
-  expect_snapshot_error(cf$evaluate(c("wrong_measure")))
+  expect_error(cf$evaluate(c("wrong_measure")))
+  expect_error(cf$evaluate_set(c("wrong_measure")))
 })
 
 
-test_that("evaluate returns correct results", {
+test_that("evaluate and evaluate_set returns correct results", {
   cf = make_counterfactual_test_obj()
 
   cf_eval = cf$evaluate()
-  expect_data_table(cf_eval, nrows = nrow(cf$data), ncols = ncol(cf$data) + 4L)
+  expect_data_table(cf_eval, nrows = nrow(cf$data), ncols = ncol(cf$data) + 5L)
   expect_identical(sort(cf_eval$no_changed), sort(count_changes(cf$data, cf$x_interest)))
   des_outcome = cf$desired$desired_outcome
   exp_dist_target = unname(apply(cf$predict(), 1L, function(x) min(abs(x - cf$desired$desired_outcome))))
@@ -146,7 +146,28 @@ test_that("evaluate returns correct results", {
     sort(cf_eval$dist_x_interest), 
     sort(as.vector(gower_dist(cf$data, cf$x_interest, cf$.__enclos_env__$private$predictor$data$X)))
   )
+  
+  cf_evalset = cf$evaluate_set()
+  dist = gower_dist(cf$data, cf$data, cf$.__enclos_env__$private$predictor$data$X)
+  
+  expect_data_table(cf_evalset, nrows = 1L, ncols = 4L)
+  
+  expect_identical(cf_evalset$diversity, mean(dist[lower.tri(dist)]))
+  
+  expect_true(cf_evalset$no_nondom < nrow(cf$data))
+  expect_identical(
+    cf_evalset$no_nondom,
+    sum(ecr::nondominated(t(cf_eval[,c("dist_x_interest", "dist_target", "no_changed", "dist_train")])))
+  )
+  expect_identical(cf_evalset$frac_nondom, cf_evalset$no_nondom/nrow(cf$data))
+  
+  y_hat_interest = cf$.__enclos_env__$private$predictor$predict(cf$x_interest)[[1]]
+  ref_point = c(min(abs(y_hat_interest - c(42, 44))), 1, ncol(cf$x_interest), 1)
+  expect_identical(cf_evalset$hypervolume, 
+    ecr::computeHV(t(cf_eval[,c("dist_x_interest", "dist_target", "no_changed", "dist_train")]), ref.point = ref_point))
+  
 })
+
 
 # General
 test_that("methods that require at least one counterfactuals are blocked when no counterfactuals found", {
