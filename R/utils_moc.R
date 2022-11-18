@@ -230,10 +230,10 @@ make_moc_recombinator = function(ps, x_interest, max_changed, p_rec, p_rec_gen) 
   }
 
   if ("ParamInt" %in% ps$class) {
-    ops_list[["ParamInt"]] = rec("maybe", rec("sbx"),
+    # TODO: Change to sbx!!!
+    ops_list[["ParamInt"]] = rec("maybe", rec("xounif"), 
       rec("null", n_indivs_in = 2L, n_indivs_out = 2L), p = p_rec_gen)
   }
-  
   if ("ParamFct" %in% ps$class) {
     ops_list[["ParamFct"]] = rec("maybe", rec("xounif"), 
       rec("null", n_indivs_in = 2L, n_indivs_out = 2L), p = p_rec_gen)
@@ -412,7 +412,7 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
     best_min = best[, lapply(.SD, min, na.rm = TRUE), .SDcols = obj_names]
     hv = NULL
     hv = data.table(
-      hv = miesmuschel:::domhv(fitnesses = -as.matrix(best[, obj_names, with = FALSE]), nadir = -ref_point, on_worse_than_nadir = "quiet"),
+      hv = miesmuschel:::domhv(-as.matrix(best[, obj_names, with = FALSE]), nadir = -ref_point, on_worse_than_nadir = "quiet"),
       generations = i
     )
     best_mean[, "generation" := i]
