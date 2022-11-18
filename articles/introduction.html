@@ -346,7 +346,7 @@ Setting <code>subset_zero = TRUE</code> removes all unchanged features from the 
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nice_regr</span> <span class="op">=</span> <span class="va"><a href="../reference/NICERegr.html">NICERegr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predictor</span>, optimization <span class="op">=</span> <span class="st">"plausibility"</span>, </span>
 <span>  margin_correct <span class="op">=</span> <span class="fl">0.5</span>, return_multiple <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loaded Tensorflow version 2.10.0</span></span></code></pre></div>
+<span><span class="co">#&gt; Loaded Tensorflow version 2.11.0</span></span></code></pre></div>
 <p>Then, we use the <code>find_counterfactuals()</code> method to find counterfactuals for <code>x_interest</code> with a predicted housing value in the interval [30, 32].</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cfactuals</span> <span class="op">=</span> <span class="va">nice_regr</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span><span class="va">x_interest</span>, desired_outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">40</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
