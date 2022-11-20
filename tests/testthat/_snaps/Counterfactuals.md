@@ -4,7 +4,7 @@
 
 # plot_parallel returns error for unknown feature names
 
-    Assertion on 'feature_names' failed: Names must be a subset of {'var_num_1','var_num_2','var_fact_1','var_fact_2'}, but has additional elements {'non_in_data1','non_in_data2'}.
+    Assertion on 'feature_names' failed: Must be a subset of set {var_num_1,var_num_2,var_fact_1,var_fact_2}.
 
 # methods that require at least one counterfactuals are blocked when no counterfactuals found
 

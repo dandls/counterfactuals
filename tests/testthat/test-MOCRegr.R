@@ -97,3 +97,15 @@ test_that("distance_function can be exchanged", {
   expect_data_table(cfactuals$data)
 })
 
+test_that("init_strategy 'icecurve' works ordered factors", {
+  df = mtcars
+  df$cyl = factor(df$cyl, ordered = TRUE)
+  rf = randomForest(mpg ~ ., data = df)
+  predictor = iml::Predictor$new(rf, data = df)
+  moc_regr = MOCRegr$new(predictor, n_generations = 15L, quiet = TRUE)
+  cfactuals = moc_regr$find_counterfactuals(
+    x_interest = df[1L, ], desired_outcome = c(22, 24)
+  )
+  expect_data_table(cfactuals$data)
+  expect_factor(cfactuals$data$cyl, ordered = TRUE)
+})

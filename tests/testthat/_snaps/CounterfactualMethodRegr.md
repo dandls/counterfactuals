@@ -1,6 +1,6 @@
 # $find_counterfactuals returns meaningful error if x_interest does not contain all columns of predictor$data$X
 
-    Assertion on 'names(x_interest)' failed: Names must include the elements {'cyl','disp','hp','drat','wt','qsec','vs','am','gear','carb'}, but is missing elements {'cyl','disp','hp','drat','wt','qsec','vs','am','gear','carb'}.
+    Assertion on 'names(x_interest)' failed: Must include the elements {cyl,disp,hp,drat,wt,qsec,vs,am,gear,carb}.
 
 # $find_counterfactuals returns meaningful error if x_interest has unexpected column types
 

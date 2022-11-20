@@ -1,6 +1,6 @@
 # $find_counterfactuals returns meaningful error if x_interest does not contain all columns of predictor$data$X
 
-    Assertion on 'names(x_interest)' failed: Names must include the elements {'Sepal.Length','Sepal.Width','Petal.Length','Petal.Width'}, but is missing elements {'Sepal.Length','Sepal.Width','Petal.Length','Petal.Width'}.
+    Assertion on 'names(x_interest)' failed: Must include the elements {Sepal.Length,Sepal.Width,Petal.Length,Petal.Width}.
 
 # $find_counterfactuals returns meaningful error if x_interest has unexpected column types
 
