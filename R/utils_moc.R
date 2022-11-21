@@ -173,7 +173,7 @@ dist_crowding_custom = function(fitnesses, candidates) {
   
   g_dist = StatMatch::gower.dist(candidates_this_front, KR.corr = FALSE)
   
-  for (i in seq_len(4L)) {
+  for (i in seq_len(nrow(fitnesses))) {
     # get the order of the points when sorted according to the i-th objective
     ord = order(fitnesses[i, ])
     
