@@ -390,7 +390,8 @@ get_ICE_sd = function(x_interest, predictor, param_set) {
     ps_sub$subset(i_name)
     grid1d = generate_design_grid(ps_sub, resolution = 20L)$data
     if (is.factor(x_interest[[i_name]])) {
-      grid1d[, (i_name) := factor(grid1d[[i_name]], levels = levels(x_interest[[i_name]]))]
+      is_ordered = is.ordered(x_interest[[i_name]])
+      grid1d[, (i_name) := factor(grid1d[[i_name]], levels = levels(x_interest[[i_name]]), ordered = is_ordered)]
     }
     x_interest_sub = copy(x_interest)
     x_interest_sub[, (i_name) := NULL]

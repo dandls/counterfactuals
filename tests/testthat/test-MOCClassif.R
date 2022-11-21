@@ -9,10 +9,10 @@ test_that("Returns correct output format for soft binary classification", {
   mocc = MOCClassif$new(pred, n_generations = 5L, init_strategy = "random")
   x_interest = head(subset(mydf, select = -am), n = 1L)
   expect_snapshot({cfactuals = quiet(mocc$find_counterfactuals(x_interest, desired_class = "0"))})
-  
+
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
-  
+
 })
 
 test_that("Returns correct output format for hard binary classification", {
@@ -23,15 +23,15 @@ test_that("Returns correct output format for hard binary classification", {
   x_interest = iris[1L, -5L]
   expect_snapshot({
     cfactuals = quiet(mocc$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = 1))
-  })  
-  
+  })
+
   expect_data_table(cfactuals$data, col.names = "named", types = sapply(x_interest, class))
   expect_names(names(cfactuals$data), identical.to = names(x_interest))
 })
 
 test_that("Can handle non-numeric target classes", {
   set.seed(544564)
-  test_data = data.frame(a = rnorm(10), b = rnorm(10), cl = as.factor(rep(c("pos", "neg"), each = 5)), 
+  test_data = data.frame(a = rnorm(10), b = rnorm(10), cl = as.factor(rep(c("pos", "neg"), each = 5)),
     it = as.integer(c(2, 6, 1, 0, 2)))
   rf_pima = randomForest::randomForest(cl ~ . , test_data, ntree = 2L)
   pred = iml::Predictor$new(rf_pima, data = test_data, y = "cl")
@@ -52,7 +52,7 @@ test_that("Can handle ordered factor input columns", {
   x_interest = german[991L, -ncol(german)]
   pred_credit = iml::Predictor$new(rf, data = german, y = "credit_risk", type = "prob")
   moc_classif = MOCClassif$new(
-    pred_credit, n_generations = 3L, fixed_features = c("personal_status_sex", "age"), max_changed = 4L, 
+    pred_credit, n_generations = 3L, fixed_features = c("personal_status_sex", "age"), max_changed = 4L,
     init_strategy = "random"
   )
   expect_snapshot({
@@ -92,7 +92,7 @@ test_that("distance_function can be exchanged", {
     res
   }
   moc_classif = MOCClassif$new(
-    iris_pred, n_generations = 3L, distance_function = correct_dist_function, quiet = TRUE, 
+    iris_pred, n_generations = 3L, distance_function = correct_dist_function, quiet = TRUE,
     init_strategy = "random"
   )
   cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = c(0.5, 1))
@@ -107,14 +107,14 @@ test_that("distance_function gower and gower_c return equal results", {
   predictor = iml::Predictor$new(rf, type = "prob")
   # Find counterfactuals for x_interest
   set.seed(1007)
-  moc_g = MOCClassif$new(predictor, n_generations = 0L, distance_function = "gower", 
+  moc_g = MOCClassif$new(predictor, n_generations = 0L, distance_function = "gower",
     init_strategy = "random")
   cfactuals_g = moc_g$find_counterfactuals(
     x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
   )
   # Find counterfactuals for x_interest with gower distance C function
   set.seed(1007)
-  moc_gc = MOCClassif$new(predictor, n_generations = 0L, distance_function = "gower_c", 
+  moc_gc = MOCClassif$new(predictor, n_generations = 0L, distance_function = "gower_c",
     init_strategy = "random")
   cfactuals_gc = moc_gc$find_counterfactuals(
     x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
@@ -123,4 +123,18 @@ test_that("distance_function gower and gower_c return equal results", {
   expect_equal(cfactuals_g$data, cfactuals_gc$data)
 })
 
+
+test_that("init_strategy 'icecurve' works ordered factors", {
+  df = mtcars
+  df$am = as.factor(df$am)
+  df$cyl = factor(df$cyl, ordered = TRUE)
+  rf = randomForest(am ~ ., data = df)
+  predictor = iml::Predictor$new(rf, type = "prob", data = df)
+  moc_classif = MOCClassif$new(predictor, n_generations = 15L, quiet = TRUE)
+  cfactuals = moc_classif$find_counterfactuals(
+    x_interest = df[1L, ], desired_class = "0", desired_prob = c(0.5, 1)
+  )
+  expect_data_table(cfactuals$data)
+  expect_factor(cfactuals$data$cyl, ordered = TRUE)
+})
 
