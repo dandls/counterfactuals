@@ -65,6 +65,7 @@ test_that("plot_surface creates correct plot for numerical features", {
   skip_if_not_installed("ggplot2")
   skip_on_ci()
   cf = make_counterfactual_test_obj()
+  set.seed(122)
   expect_snapshot_file(
     save_test_png(cf$plot_surface(c("var_num_1", "var_num_2"))), 
     "plot_surface_all_numeric.png"
