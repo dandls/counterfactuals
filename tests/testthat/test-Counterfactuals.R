@@ -166,7 +166,7 @@ test_that("evaluate and evaluate_set returns correct results", {
   ref_point = c(min(abs(y_hat_interest - c(42, 44))), 1, ncol(cf$x_interest), 1)
   expect_identical(cf_evalset$hypervolume, 
   miesmuschel:::domhv(
-    -as.matrix(cf_eval[,c("dist_x_interest", "dist_target", "no_changed", "dist_train")]),
+    -as.matrix(cf_eval[,c("dist_target", "dist_x_interest", "no_changed", "dist_train")]),
     nadir = -ref_point,
     on_worse_than_nadir = "quiet"
   ))
