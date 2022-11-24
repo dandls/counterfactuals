@@ -278,6 +278,10 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       
       is_numeric_col = sapply(dt, function(x) is.numeric(x))
       numeric_cols = names(dt)[is_numeric_col]
+      if (length(numeric_cols) == 0L) {
+        stop("Can only consider numeric features for parallel plot, but no numeric features present in data")
+      }
+      
       non_numeric_cols = names(dt)[!is_numeric_col]
       if (length(non_numeric_cols) > 0L) {
         dt[, (non_numeric_cols) := NULL]
