@@ -158,7 +158,7 @@ test_that("evaluate and evaluate_set returns correct results", {
   expect_true(cf_evalset$no_nondom < nrow(cf$data))
   expect_identical(
     cf_evalset$no_nondom,
-    sum(miesmuschel::rank_nondominated(as.matrix(cf_eval[,c("dist_x_interest", "dist_target", "no_changed", "dist_train")]))$fronts == 1)
+    sum(miesmuschel::rank_nondominated(-as.matrix(cf_eval[,c("dist_x_interest", "dist_target", "no_changed", "dist_train")]))$fronts == 1)
   )
   expect_identical(cf_evalset$frac_nondom, cf_evalset$no_nondom/nrow(cf$data))
   

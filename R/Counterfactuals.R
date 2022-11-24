@@ -197,7 +197,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       if (any(c("no_nondom", "frac_nondom", "hypervolume") %in% measures)) {
         res = self$evaluate()[, c("dist_target", "dist_x_interest", "no_changed", "dist_train")]
         if (any(c("no_nondom", "frac_nondom") %in% measures)) {
-          idnondom = miesmuschel::rank_nondominated(as.matrix(res))$fronts == 1
+          idnondom = miesmuschel::rank_nondominated(-as.matrix(res))$fronts == 1
           if ("no_nondom" %in% measures) evals$no_nondom = sum(idnondom)
           if ("frac_nondom" %in% measures) evals$frac_nondom = sum(idnondom)/nrow(res)
         }
