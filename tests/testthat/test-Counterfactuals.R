@@ -122,6 +122,21 @@ test_that("plot_parallel returns error for unknown feature names", {
   expect_snapshot_error(cf$plot_surface(c("non_in_data1", "non_in_data2")))
 })
 
+test_that("plot_parallel returns error for if there are no numeric features", {
+  set.seed(1234)
+  df <- data.frame(
+    "a" = as.factor(sample(c("x", "y", "z"), size = 30, replace = TRUE)),
+    "b" = as.factor(sample(c("x", "y", "z"), size = 30, replace = TRUE)),
+    "c" = as.factor(sample(c("x", "y", "z"), size = 30, replace = TRUE)),
+    "target" = as.factor(sample(c("p", "n"), size = 30, replace = TRUE))
+  )
+  rf = randomForest(target ~ ., data = df, ntree = 5L)
+  pred = Predictor$new(rf, data = df, type = "class")
+  x_interest = head(subset(df, select = -target), n = 1L)
+  wi = WhatIfClassif$new(pred, n_counterfactuals = 5)
+  cfactuals = wi$find_counterfactuals(x_interest, desired_class = "p")
+  expect_snapshot_error(cfactuals$plot_parallel())
+})
 
 # $evaluate() ----------------------------------------------------------------------------------------------------------
 test_that("evaluate returns error if measures are not known", {
