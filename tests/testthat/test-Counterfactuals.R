@@ -185,6 +185,14 @@ test_that("evaluate and evaluate_set returns correct results", {
     nadir = -ref_point,
     on_worse_than_nadir = "quiet"
   ))
+  nadir = c(2, 1, ncol(cf$x_interest), 1)
+  expect_identical(cf$evaluate_set(measures = "hypervolume", nadir = nadir)[[1]], 
+    miesmuschel:::domhv(
+      -as.matrix(cf_eval[,c("dist_target", "dist_x_interest", "no_changed", "dist_train")]),
+      nadir = -nadir,
+      on_worse_than_nadir = "quiet"
+    ))
+  
 })
 
 
