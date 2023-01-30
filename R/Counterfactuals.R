@@ -177,8 +177,17 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #'   * `frac_nondom`: Fraction of counterfactuals that are not dominated by
     #'   other counterfactuals  
     #'   * `hypervolume`: Hypervolume of the induced Pareto front
-    evaluate_set = function(measures = c("diversity", "no_nondom", "frac_nondom", "hypervolume")) {
+    #' @param nadir (`numeric`) \cr Max objective values to calculate dominated hypervolume. 
+    #' Only considered, if `hypervolume` is one of the `measures`.
+    #' May be a scalar, in which case it is used for all four objectives, 
+    #' or a vector of length 4.
+    #' Default is NULL, meaning the nadir point by Dandl et al. (2020) is used: 
+    #' (min distance between prediction of `x_interest` to `desired_prob/_outcome`, 
+    #' 1, number of features, 1).
+    #' 
+    evaluate_set = function(measures = c("diversity", "no_nondom", "frac_nondom", "hypervolume"), nadir = NULL) {
       assert_names(measures, subset.of = c("diversity", "no_nondom", "frac_nondom", "hypervolume"))
+      assert_numeric(nadir, min.len = 1L, max.len = 4L, null.ok = TRUE)
       
       if (nrow(private$.data) <= 1) {
         message("number of counterfactuals <= 1, no evaluation of set could be conducted")
@@ -209,10 +218,12 @@ Counterfactuals = R6::R6Class("Counterfactuals",
           }
           pred_column = private$get_pred_column()
           y_hat_interest = private$predictor$predict(self$x_interest)[[pred_column]]
-          ref_point = c(min(abs(y_hat_interest - target)), 1, ncol(self$x_interest), 1)
+          if (is.null(nadir)) {
+            nadir = c(min(abs(y_hat_interest - target)), 1, ncol(self$x_interest), 1) 
+          } 
           evals$hypervolume = miesmuschel:::domhv(
             -as.matrix(res),
-            nadir = -ref_point,
+            nadir = -nadir, 
             on_worse_than_nadir = "quiet"
           )
         }
