@@ -58,6 +58,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       private$predictor = predictor
       private$param_set = param_set
       private$diff = make_cfactuals_diff(cfactuals, x_interest)
+      private$.fulldata = cfactuals
       private$.data = cfactuals
       private$.x_interest = x_interest
       private$.desired = desired
@@ -232,7 +233,6 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #' Process could be reverted using `revert_subset_to_valid()`.
     subset_to_valid = function() {
       if (!private$.subsetted) {
-        private$.fulldata = data.table::copy(private$.data)
         # [] necessary to ensure that $data prints the data on the first call
         # https://stackoverflow.com/questions/34270165/when-and-why-does-print-need-two-attempts-to-print-a-data-table
         private$.data =  self$evaluate(measures = "dist_target")[dist_target == 0][, dist_target := NULL][]
@@ -248,7 +248,6 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     revert_subset_to_valid = function() {
       if (private$.subsetted) {
         private$.data = private$.fulldata
-        private$.fulldata = NULL
         private$.subsetted = FALSE
       } else {
         message("Nothing can be reversed, subsetting to valid ones was not conducted beforehand")
