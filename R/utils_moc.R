@@ -413,7 +413,7 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
     best_min = best[, lapply(.SD, min, na.rm = TRUE), .SDcols = obj_names]
     hv = NULL
     hv = data.table(
-      hv = miesmuschel:::domhv(-as.matrix(best[, obj_names, with = FALSE]), nadir = -ref_point, on_worse_than_nadir = "quiet"),
+      hv = miesmuschel::domhv(-as.matrix(best[, obj_names, with = FALSE]), nadir = -ref_point, on_worse_than_nadir = "quiet"),
       generations = i
     )
     best_mean[, "generation" := i]
@@ -489,7 +489,7 @@ comp_domhv_all_gen = function(archive, ref_point) {
       seq_len(max(archive$data$batch_nr)), 
       function(i) {
         best = archive$best(seq_len(i))
-        miesmuschel:::domhv(
+        miesmuschel::domhv(
           -as.matrix(best[, obj_names, with = FALSE]),
           nadir = -ref_point,
           on_worse_than_nadir = "quiet"

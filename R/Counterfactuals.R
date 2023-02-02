@@ -221,7 +221,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
           if (is.null(nadir)) {
             nadir = c(min(abs(y_hat_interest - target)), 1, ncol(self$x_interest), 1) 
           } 
-          evals$hypervolume = miesmuschel:::domhv(
+          evals$hypervolume = miesmuschel::domhv(
             -as.matrix(res),
             nadir = -nadir, 
             on_worse_than_nadir = "quiet"
