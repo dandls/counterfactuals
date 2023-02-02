@@ -1,7 +1,7 @@
 moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower, upper, sdevs_num_feats, 
-                    epsilon,  fixed_features, max_changed, mu, n_generations, p_rec, p_rec_gen,
-                    p_mut, p_mut_gen, p_mut_use_orig, k, weights, init_strategy, distance_function, cond_sampler = NULL, 
-                    quiet = TRUE) {
+  epsilon,  fixed_features, max_changed, mu, termination_crit, n_generations, p_rec, p_rec_gen,
+  p_mut, p_mut_gen, p_mut_use_orig, k, weights, init_strategy, distance_function, cond_sampler = NULL, 
+  ref_point, quiet = TRUE) {
   
   codomain = ParamSet$new(list(
     ParamDbl$new("dist_target", tags = "minimize"),
@@ -9,7 +9,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
     ParamInt$new("no_changed", tags = "minimize"),
     ParamDbl$new("dist_train", tags = "minimize")
   ))
-
+  
   fitness_function = make_fitness_function(
     predictor, x_interest, pred_column, target, weights, k, fixed_features, param_set, distance_function
   )
@@ -29,7 +29,22 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
   )
   
   if (n_generations > 0L) {
-    terminator = bbotk::trm("gens", generations = n_generations)
+    if (termination_crit == "gens") {
+      terminator = bbotk::trm("gens", generations = n_generations)
+    } else if (termination_crit == "genstag") {
+      terminator = bbotk::trm("combo",
+        list(
+          bbotk::trm("genstag",
+            fitness_aggregator = function(fitnesses) {
+              domhv(-as.matrix(fitnesses), nadir = -ref_point)
+            },
+            include_previous_generations = TRUE,
+            min_delta = 0.00,
+            patience = n_generations), 
+          bbotk::trm("gens", generations = 500)
+        )
+      )
+    }
   } else {
     terminator = bbotk::trm("none")
   }

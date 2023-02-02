@@ -34,6 +34,11 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     #'   Maximum number of feature changes. `NULL` (default) allows any number of changes.
     #' @param mu (`integerish(1)`)\cr  
     #'   The population size. Default is `20L`.
+    #' @param termination_crit (`character(1)`|`NULL`)\cr 
+    #'   Termination criterion, currently, two criterions are implemented: "gens" (default), 
+    #'   which stops after `n_generations` generations,  and "genstag", which stops after 
+    #'   the hypervolume did not improve for `n_generations` generations 
+    #'   (the total number of generations is limited to 500).
     #' @param n_generations (`integerish(1)`)\cr  
     #'   The number of generations. Default is `175L`.   
     #' @param p_rec (`numeric(1)`)\cr  
@@ -71,9 +76,10 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     #'  return a `double` matrix with `nrow(x)` rows and maximum `nrow(y)` columns.
 
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, mu = 20L, 
-                          n_generations = 175L, p_rec = 0.71, p_rec_gen = 0.62, p_mut = 0.73,
-                          p_mut_gen = 0.5, p_mut_use_orig = 0.4, k = 1L, weights = NULL, lower = NULL, upper = NULL,
-                          init_strategy = "icecurve", use_conditional_mutator = FALSE, quiet = FALSE, distance_function = "gower") {
+                          termination_crit = "gens", n_generations = 175L, p_rec = 0.71, p_rec_gen = 0.62, 
+                          p_mut = 0.73, p_mut_gen = 0.5, p_mut_use_orig = 0.4, k = 1L, weights = NULL, 
+                          lower = NULL, upper = NULL, init_strategy = "icecurve", use_conditional_mutator = FALSE, 
+                          quiet = FALSE, distance_function = "gower") {
       
       if (is.character(distance_function)) {
         if (distance_function == "gower") {
@@ -97,6 +103,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       }
       assert_integerish(max_changed, lower = 0, len = 1L, null.ok = TRUE)
       assert_integerish(mu, lower = 0, len = 1L)
+      assert_choice(termination_crit, choices = c("gens", "genstag"))
       assert_integerish(n_generations, lower = 0, len = 1L)
       assert_number(p_rec, lower = 0, upper = 1)
       assert_number(p_rec_gen, lower = 0, upper = 1)
@@ -127,13 +134,13 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
           simplify = FALSE, USE.NAMES = TRUE
         )
         names(private$conditional_sampler) = nams_cs
-        
       }
 
       private$epsilon = epsilon
       private$fixed_features = fixed_features
       private$max_changed = max_changed
       private$mu = mu
+      private$termination_crit = termination_crit
       private$n_generations = n_generations
       private$p_rec = p_rec
       private$p_rec_gen = p_rec_gen
@@ -212,6 +219,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
     fixed_features = NULL,
     max_changed = NULL,
     mu = NULL,
+    termination_crit = NULL,
     n_generations = NULL,
     p_rec = NULL,
     p_rec_gen = NULL,
@@ -247,6 +255,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
         fixed_features = private$fixed_features,
         max_changed = private$max_changed,
         mu = private$mu,
+        termination_crit = private$termination_crit,
         n_generations = private$n_generations,
         p_rec = private$p_rec,
         p_rec_gen = private$p_rec_gen,
@@ -258,6 +267,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
         init_strategy = private$init_strategy,
         distance_function = private$distance_function,
         cond_sampler = private$conditional_sampler,
+        ref_point = private$ref_point,
         quiet = private$quiet
       )
 
@@ -272,6 +282,7 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       cat(" - lower: ", private$lower, "\n")
       cat(" - max_changed: ", private$max_changed, "\n")
       cat(" - mu: ", private$mu, "\n")
+      cat(" - termination_crit: ", private$termination_crit, "\n")    
       cat(" - n_generations: ", private$n_generations, "\n")
       cat(" - p_mut: ", private$p_mut, "\n")
       cat(" - p_mut_gen: ", private$p_mut_gen, "\n")
