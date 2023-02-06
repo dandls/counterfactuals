@@ -32,6 +32,11 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     #'   Maximum number of feature changes. `NULL` (default) allows any number of changes.
     #' @param mu (`integerish(1)`)\cr  
     #'   The population size. Default is `20L`.
+    #' @param termination_crit (`character(1)`|`NULL`)\cr 
+    #'   Termination criterion, currently, two criterions are implemented: "gens" (default), 
+    #'   which stops after `n_generations` generations,  and "genstag", which stops after 
+    #'   the hypervolume did not improve for `n_generations` generations 
+    #'   (the total number of generations is limited to 500).
     #' @param n_generations (`integerish(1)`)\cr  
     #'   The number of generations. Default is `175L`.   
     #' @param p_rec (`numeric(1)`)\cr  
@@ -69,9 +74,10 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     #'  return a `double` matrix with `nrow(x)` rows and maximum `nrow(y)` columns.
 
     initialize = function(predictor, epsilon = NULL, fixed_features = NULL, max_changed = NULL, mu = 20L, 
-                          n_generations = 175L,  p_rec = 0.71, p_rec_gen = 0.62, p_mut = 0.73,
-                          p_mut_gen = 0.5, p_mut_use_orig = 0.4, k = 1L, weights = NULL, lower = NULL, upper = NULL,
-                          init_strategy = "icecurve", use_conditional_mutator = FALSE, quiet = FALSE, distance_function = "gower") {
+                          termination_crit = "gens", n_generations = 175L, p_rec = 0.71, p_rec_gen = 0.62, 
+                          p_mut = 0.73, p_mut_gen = 0.5, p_mut_use_orig = 0.4, k = 1L, weights = NULL, 
+                          lower = NULL, upper = NULL, init_strategy = "icecurve", use_conditional_mutator = FALSE, 
+                          quiet = FALSE, distance_function = "gower") {
       
       if (is.character(distance_function)) {
         if (distance_function == "gower") {
@@ -95,6 +101,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
       }
       assert_integerish(max_changed, lower = 0, len = 1L, null.ok = TRUE)
       assert_integerish(mu, lower = 0, len = 1L)
+      assert_choice(termination_crit, choices = c("gens", "genstag"))
       assert_integerish(n_generations, lower = 0, len = 1L)
       assert_number(p_rec, lower = 0, upper = 1)
       assert_number(p_rec_gen, lower = 0, upper = 1)
@@ -131,6 +138,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
       private$fixed_features = fixed_features
       private$max_changed = max_changed
       private$mu = mu
+      private$termination_crit = termination_crit
       private$n_generations = n_generations
       private$p_rec = p_rec
       private$p_rec_gen = p_rec_gen
@@ -190,7 +198,6 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
       assert_names(objectives, subset.of = c("dist_target", "dist_x_interest", "no_changed", "dist_train"))
       make_moc_search_plot(self$optimizer$archive$data, objectives)
     }
-    
   ),
   
   active = list(
@@ -210,6 +217,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     fixed_features = NULL,
     max_changed = NULL,
     mu = NULL,
+    termination_crit = NULL,
     n_generations = NULL,
     p_rec = NULL,
     p_rec_gen = NULL,
@@ -244,6 +252,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
         fixed_features = private$fixed_features,
         max_changed = private$max_changed,
         mu = private$mu,
+        termination_crit = private$termination_crit,
         n_generations = private$n_generations,
         p_rec = private$p_rec,
         p_rec_gen = private$p_rec_gen,
@@ -259,7 +268,6 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
       )
 
       unique(private$.optimizer$result[, names(private$x_interest), with = FALSE])
-      
     },
 
     print_parameters = function() {
@@ -270,6 +278,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
       cat(" - lower: ", private$lower, "\n")
       cat(" - max_changed: ", private$max_changed, "\n")
       cat(" - mu: ", private$mu, "\n")
+      cat(" - termination_crit: ", private$termination_crit, "\n")    
       cat(" - n_generations: ", private$n_generations, "\n")
       cat(" - p_mut: ", private$p_mut, "\n")
       cat(" - p_mut_gen: ", private$p_mut_gen, "\n")

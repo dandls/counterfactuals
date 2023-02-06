@@ -138,3 +138,50 @@ test_that("init_strategy 'icecurve' works ordered factors", {
   expect_factor(cfactuals$data$cyl, ordered = TRUE)
 })
 
+test_that("termination criterion works properly", {
+  df = mtcars
+  df$am = as.factor(df$am)
+  df$cyl = factor(df$cyl, ordered = TRUE)
+  rf = randomForest(am ~ ., data = df)
+  predictor = iml::Predictor$new(rf, type = "prob", data = df)
+  # terminator_crit == "gens" 
+  moc_classif = MOCClassif$new(predictor, n_generations = 15L, quiet = TRUE)
+  cfactuals = moc_classif$find_counterfactuals(
+    x_interest = df[1L, ], desired_class = "0", desired_prob = c(0.5, 1)
+  )
+  expect_equal(max(moc_classif$optimizer$archive$data$batch_nr), 15L)
+  
+  # terminator_crit == "gens", n_generations = 0L
+  moc_classif = MOCClassif$new(predictor, n_generations = 0L, quiet = TRUE)
+  cfactuals = moc_classif$find_counterfactuals(
+    x_interest = df[1L, ], desired_class = "0", desired_prob = c(0.5, 1)
+  )
+  expect_equal(max(moc_classif$optimizer$archive$data$batch_nr), 1L)
+  
+  # terminator_crit == "genstag", n_generation = 0L
+  moc_classif = MOCClassif$new(predictor, termination_crit = "genstag", n_generations = 0L, quiet = TRUE)
+  cfactuals = moc_classif$find_counterfactuals(
+    x_interest = df[1L, ], desired_class = "0", desired_prob = c(0.5, 1)
+  )
+  expect_equal(max(moc_classif$optimizer$archive$data$batch_nr), 1L)
+  
+  # terminator_crit == "genstag", n_generation = 2L
+  moc_classif = MOCClassif$new(predictor, termination_crit = "genstag", n_generations = 2L, quiet = TRUE)
+  cfactuals = moc_classif$find_counterfactuals(
+    x_interest = df[1L, ], desired_class = "0", desired_prob = c(0.5, 1)
+  )
+  hv_history = moc_classif$optimizer$archive$data_extra$TerminatorGenerationStagnation
+  lenhis = length(hv_history)
+  expect_true(length(unique(as.numeric(hv_history[(lenhis-2):lenhis]))) == 1) # last 3 elements of vector same
+  
+  # terminator_crit == "genstag", n_generation = 5L
+  moc_classif = MOCClassif$new(predictor, termination_crit = "genstag", 
+    n_generations = 3L, quiet = TRUE)
+  cfactuals = moc_classif$find_counterfactuals(
+    x_interest = df[1L, ], desired_class = "0", desired_prob = c(0.5, 1)
+  )
+  hv_history = moc_classif$optimizer$archive$data_extra$TerminatorGenerationStagnation
+  lenhis = length(hv_history)
+  expect_true(length(unique(as.numeric(hv_history[(lenhis-3):lenhis]))) == 1) # last 4 elements of vector same
+  
+})
