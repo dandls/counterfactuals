@@ -58,6 +58,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       private$predictor = predictor
       private$param_set = param_set
       private$diff = make_cfactuals_diff(cfactuals, x_interest)
+      private$.fulldata = cfactuals
       private$.data = cfactuals
       private$.x_interest = x_interest
       private$.desired = desired
@@ -221,7 +222,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
           if (is.null(nadir)) {
             nadir = c(min(abs(y_hat_interest - target)), 1, ncol(self$x_interest), 1) 
           } 
-          evals$hypervolume = miesmuschel:::domhv(
+          evals$hypervolume = miesmuschel::domhv(
             -as.matrix(res),
             nadir = -nadir, 
             on_worse_than_nadir = "quiet"
@@ -240,17 +241,27 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     },
     
     #' @description Subset data to those meeting the desired prediction, 
-    #' full data is still accessible in the fulldata field
+    #' Process could be reverted using `revert_subset_to_valid()`.
     subset_to_valid = function() {
       if (!private$.subsetted) {
-        private$.fulldata = data.table::copy(private$.data)
         # [] necessary to ensure that $data prints the data on the first call
         # https://stackoverflow.com/questions/34270165/when-and-why-does-print-need-two-attempts-to-print-a-data-table
         private$.data =  self$evaluate(measures = "dist_target")[dist_target == 0][, dist_target := NULL][]
         private$diff = make_cfactuals_diff(private$.data, self$x_interest)
         private$.subsetted = TRUE
       } else {
-        message("Counterfactuals were already subsetted to the ones meeting the first ")
+        message("Counterfactuals were already subsetted beforehand")
+      }
+    },
+    
+    #' @description Subset data to those meeting the desired prediction, 
+    #' Process could be reverted using `revert_subset_to_valid()`.
+    revert_subset_to_valid = function() {
+      if (private$.subsetted) {
+        private$.data = private$.fulldata
+        private$.subsetted = FALSE
+      } else {
+        message("Nothing can be reversed, subsetting to valid ones was not conducted beforehand")
       }
     },
     
@@ -466,32 +477,6 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         private$.method
       } else {
         stop("`$method` is read only", call. = FALSE)
-      }
-    },
-    
-    #' @field subsetted (`logical(1)`)\cr
-    #' Returns if data was subsetted to those meeting the
-    #' desired prediction.
-    subsetted = function(value) {
-      if (missing(value)) {
-        private$.subsetted
-      } else {
-        stop("`$subsetted` is read only", call. = FALSE)
-      }
-    },
-    
-    #' @field fulldata (`data.table`)\cr
-    #' Returns the fulldata if data was subsetted to those meeting the
-    #' desired outcome.
-    fulldata = function(value) {
-      if (missing(value)) {
-        if (private$.subsetted) {
-          private$.fulldata
-        } else {
-          message("`$data` was not subsetted yet")
-        }
-      } else {
-        stop("`$data` is read only", call. = FALSE)
       }
     }
   ),

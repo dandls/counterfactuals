@@ -29,16 +29,23 @@ test_that("$predict method returns correct prediction", {
   
 })
 
-# $subset_to_valid() ---------------------------------------------------------------------------------------------------
-test_that("$subset_to_valid subsets results", {
+# $(revert_)subset_to_valid() ---------------------------------------------------------------------------------------------------
+test_that("$subset_to_valid subsets results and $reset_subset_to_valid undo it", {
   cf = make_counterfactual_test_obj()
-  expect_false(cf$subsetted)
+  expect_false(cf$.__enclos_env__$private$.subsetted)
+  expect_equal(cf$.__enclos_env__$private$.fulldata, cf$data)
   n = nrow(cf$data)
   cf$subset_to_valid()
   n2 = nrow(cf$data)
   expect_true(all(cf$evaluate(show_diff = TRUE)[["dist_target"]] == 0))
-  expect_true(cf$subsetted)
+  expect_true(n > n2)
+  expect_true(cf$.__enclos_env__$private$.subsetted)
   expect_message(cf$subset_to_valid(), "already subsetted")
+  expect_true(nrow(cf$.__enclos_env__$private$.fulldata) == n)
+  cf$revert_subset_to_valid()
+  expect_true(nrow(cf$data) == n)
+  expect_false(cf$.__enclos_env__$private$.subsetted)
+  expect_message(cf$revert_subset_to_valid(), "Nothing can be reversed")
 })
 
 # $get_freq_of_feature_changes() ---------------------------------------------------------------------------------------
@@ -180,7 +187,7 @@ test_that("evaluate and evaluate_set returns correct results", {
   y_hat_interest = cf$.__enclos_env__$private$predictor$predict(cf$x_interest)[[1]]
   ref_point = c(min(abs(y_hat_interest - c(42, 44))), 1, ncol(cf$x_interest), 1)
   expect_identical(cf_evalset$hypervolume, 
-  miesmuschel:::domhv(
+  miesmuschel::domhv(
     -as.matrix(cf_eval[,c("dist_target", "dist_x_interest", "no_changed", "dist_train")]),
     nadir = -ref_point,
     on_worse_than_nadir = "quiet"
