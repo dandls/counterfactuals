@@ -26,6 +26,7 @@ test_that("Returns correct output format for soft binary classification", {
   
   # Optim Plausibility
   skip_on_ci()
+  skip_on_cran()
   set.seed(544564)
   nice_regr = NICERegr$new(pred, optimization = "plausibility", x_nn_correct = FALSE, return_multiple = TRUE)
   cfactuals = nice_regr$find_counterfactuals(x_interest, desired_outcome = desired_outcome)

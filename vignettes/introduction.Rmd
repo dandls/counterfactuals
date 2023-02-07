@@ -277,6 +277,13 @@ predictor$predict(x_interest)
 
 For `x_interest`, the model predicts a median housing value of `r round(predictor$predict(x_interest), 2)[1]`.
 
+```{r, include = FALSE}
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+knitr::opts_chunk$set(
+  purl = NOT_CRAN,
+  eval = NOT_CRAN
+)
+```
 
 ### Find counterfactuals
 
