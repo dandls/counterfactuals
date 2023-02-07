@@ -10,12 +10,15 @@ vignette: >
 In the following, we explain the `counterfactuals` workflow for both a classification and a regression task using
 concrete use cases.
 
-```{r, include = FALSE}
+```{r, echo = FALSE}
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
 knitr::opts_chunk$set(
   collapse = TRUE,
   fig.width = 7,
   fig.height = 3,
-  comment = "#>"
+  comment = "#>",
+  purl = NOT_CRAN,
+  eval = NOT_CRAN
 )
 options(width = 200)
 ```

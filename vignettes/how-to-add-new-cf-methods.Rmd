@@ -279,6 +279,5 @@ clarity we will not do this here.
 
 Tolomei, G., Silvestri, F., Haines, A., Lalmas, M.: Interpretable Predictions of Tree-based Ensembles via Actionable 
 Feature Tweaking. In: Proceedings of the 23rd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining. 
-pp. 465--474. KDD '17, ACM, New York, NY, USA (2017). <https://doi.org/10.1145/3097983.3098039>,
-<http://doi.acm.org/10.1145/3097983.3098039>
+pp. 465--474. KDD '17, ACM, New York, NY, USA (2017). \doi{10.1145/3097983.3098039}.
 

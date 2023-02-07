@@ -434,7 +434,7 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
     dt_agg_min = melt(dt_agg_min, id.vars = "generation", measure.vars = obj_names)
     
     gg_mean = ggplot2::ggplot(dt_agg_mean) + 
-      ggplot2::geom_line(ggplot2::aes(x = generation, y = value, color = variable)) +
+      ggplot2::geom_line(ggplot2::aes(x = !!quote(generation), y = !!quote(value), color = !!quote(variable))) +
       ggplot2::xlab("generations") +
       ggplot2::ggtitle("Mean objective values (scaled)") +
       ggplot2::theme_bw() +
@@ -442,7 +442,7 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
       ggplot2::theme(legend.title = ggplot2::element_blank(), axis.title.y = ggplot2::element_blank())
     
     gg_min = ggplot2::ggplot(dt_agg_min) + 
-      ggplot2::geom_line(ggplot2::aes(x = generation, y = value, color = variable)) +
+      ggplot2::geom_line(ggplot2::aes(x = !!quote(generation), y = !!quote(value), color = !!quote(variable))) +
       ggplot2::xlab("generations") +
       ggplot2::ggtitle("Minimum objective values (scaled)") +
       ggplot2::theme_bw() +
@@ -454,7 +454,7 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
     dt_agg_min = melt(dt_agg_min, id.vars = "generation", measure.vars = obj_names)
     variable = NULL
     gg_mean = ggplot2::ggplot(dt_agg_mean) + 
-      ggplot2::geom_line(ggplot2::aes(x = generation, y = value)) +
+      ggplot2::geom_line(ggplot2::aes(x = !!quote(generation), y = !!quote(value))) +
       ggplot2::facet_wrap(ggplot2::vars(variable), scales = "free_y", nrow = 4L) +
       ggplot2::xlab("generations") +
       ggplot2::ggtitle("Mean objective values") +
@@ -462,7 +462,7 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
       ggplot2::scale_x_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1)))))
     
     gg_min = ggplot2::ggplot(dt_agg_min) + 
-      ggplot2::geom_line(ggplot2::aes(x = generation, y = value)) +
+      ggplot2::geom_line(ggplot2::aes(x = !!quote(generation), y = !!quote(value))) +
       ggplot2::facet_wrap(ggplot2::vars(variable), scales = "free_y", nrow = 4L) +
       ggplot2::xlab("generations") +
       ggplot2::ggtitle("Minimum objective values") +
@@ -471,7 +471,7 @@ make_moc_statistics_plots = function(archive, ref_point, normalize_objectives) {
   }
   
   gg_hv = ggplot2::ggplot(dt_hv) + 
-    ggplot2::geom_line(ggplot2::aes(x = generations, y = hv)) +
+    ggplot2::geom_line(ggplot2::aes(x = !!quote(generations), y = !!quote(hv))) +
     ggplot2::xlab("generations") +
     ggplot2::ggtitle("Dominated hypervolume") +
     ggplot2::theme_bw() +
@@ -504,7 +504,7 @@ comp_domhv_all_gen = function(archive, ref_point) {
 make_moc_search_plot = function(data, objectives) {
   feat_1 = ggplot2::sym(objectives[[1L]])
   feat_2 = ggplot2::sym(objectives[[2L]])
-  ggplot2::ggplot(data, ggplot2::aes(x = !!feat_1, y = !!feat_2, alpha = batch_nr)) +
+  ggplot2::ggplot(data, ggplot2::aes(x = !!feat_1, y = !!feat_2, alpha = !!quote(batch_nr))) +
     ggplot2::geom_point(color = "black") +
     ggplot2::scale_alpha_continuous(breaks = function(x) unique(floor(pretty(seq(0, (max(x) + 1) * 1.1), n = 5)))) +
     ggplot2::labs(alpha = "generation") +

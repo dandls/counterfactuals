@@ -45,8 +45,8 @@ make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest
     # TODO: adapt this for hard classification
     p = ggplot2::ggplot(data = dt_grid, ggplot2::aes(x = !!x_feat_name, 
       y = !!y_feat_name)) + 
-      ggplot2::geom_tile(ggplot2::aes(fill = pred)) +
-      ggplot2::geom_contour(ggplot2::aes(z = pred), colour = "white") +
+      ggplot2::geom_tile(ggplot2::aes(fill = !!quote(pred))) +
+      ggplot2::geom_contour(ggplot2::aes(z = !!quote(pred)), colour = "white") +
       ggplot2::geom_rug(ggplot2::aes(x = !!(x_feat_name), y = !!(y_feat_name)), 
         predictor$data$X, alpha = 0.2,
         position = ggplot2::position_jitter(), sides = "bl") +
@@ -65,7 +65,7 @@ make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest
     
   } else if (param_set_sub$all_categorical) {
     p = ggplot2::ggplot(dt_grid, ggplot2::aes(!!x_feat_name, !!y_feat_name)) +
-      ggplot2::geom_tile(ggplot2::aes(fill = pred)) +
+      ggplot2::geom_tile(ggplot2::aes(fill = !!quote(pred))) +
       ggplot2::geom_point(ggplot2::aes(!!x_feat_name, !!y_feat_name), x_interest, color = "white") +
       ggplot2::guides(fill = ggplot2::guide_legend(title = "pred")) +
       ggplot2::theme_bw()
@@ -86,7 +86,7 @@ make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest
     
     p = ggplot2::ggplot() +
       ggplot2::geom_line(
-        ggplot2::aes(x = !!num_feature, y = pred, group = !!cat_feature, color = !!cat_feature), 
+        ggplot2::aes(x = !!num_feature, y = !!quote(pred), group = !!cat_feature, color = !!cat_feature), 
         dt_grid
       ) +
       ggplot2::geom_rug(ggplot2::aes(x = !!num_feature), predictor$data$X, sides = "b") +
@@ -94,12 +94,12 @@ make_surface_plot = function(grid_size, param_set, cfactuals_plotted, x_interest
     
     if (nrow(cfactuals_plotted) > 0L) {
       p = p +
-        ggplot2::geom_point(ggplot2::aes(x = !!num_feature, y = pred), cfactuals_plotted, 
+        ggplot2::geom_point(ggplot2::aes(x = !!num_feature, y = !!quote(pred)), cfactuals_plotted, 
           colour = "black")
     }
     
     p = p +
-      ggplot2::geom_point(ggplot2::aes(x = !!num_feature, y = pred), 
+      ggplot2::geom_point(ggplot2::aes(x = !!num_feature, y = !!quote(pred)), 
         x_interest_with_pred, colour = "grey")
     
   }

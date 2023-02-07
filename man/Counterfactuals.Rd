@@ -32,14 +32,6 @@ The function must have three arguments:
 
 \item{\code{method}}{(\code{character}) \cr
 A single row with the observation of interest.}
-
-\item{\code{subsetted}}{(\code{logical(1)})\cr
-Returns if data was subsetted to those meeting the
-desired prediction.}
-
-\item{\code{fulldata}}{(\code{data.table})\cr
-Returns the fulldata if data was subsetted to those meeting the
-desired outcome.}
 }
 \if{html}{\out{</div>}}
 }
@@ -51,6 +43,7 @@ desired outcome.}
 \item \href{#method-evaluate_set}{\code{Counterfactuals$evaluate_set()}}
 \item \href{#method-predict}{\code{Counterfactuals$predict()}}
 \item \href{#method-subset_to_valid}{\code{Counterfactuals$subset_to_valid()}}
+\item \href{#method-revert_subset_to_valid}{\code{Counterfactuals$revert_subset_to_valid()}}
 \item \href{#method-plot_parallel}{\code{Counterfactuals$plot_parallel()}}
 \item \href{#method-plot_freq_of_feature_changes}{\code{Counterfactuals$plot_freq_of_feature_changes()}}
 \item \href{#method-get_freq_of_feature_changes}{\code{Counterfactuals$get_freq_of_feature_changes()}}
@@ -161,7 +154,8 @@ specifies the weight of the i-th closest data point.}
 Evaluates a set of counterfactuals. It returns the evaluation \code{measures}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$evaluate_set(
-  measures = c("diversity", "no_nondom", "frac_nondom", "hypervolume")
+  measures = c("diversity", "no_nondom", "frac_nondom", "hypervolume"),
+  nadir = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -179,6 +173,14 @@ counterfactuals.
 other counterfactuals
 \item \code{hypervolume}: Hypervolume of the induced Pareto front
 }}
+
+\item{\code{nadir}}{(\code{numeric}) \cr Max objective values to calculate dominated hypervolume.
+Only considered, if \code{hypervolume} is one of the \code{measures}.
+May be a scalar, in which case it is used for all four objectives,
+or a vector of length 4.
+Default is NULL, meaning the nadir point by Dandl et al. (2020) is used:
+(min distance between prediction of \code{x_interest} to \verb{desired_prob/_outcome},
+1, number of features, 1).}
 }
 \if{html}{\out{</div>}}
 }
@@ -198,9 +200,20 @@ Returns the predictions for the counterfactuals.
 \if{latex}{\out{\hypertarget{method-subset_to_valid}{}}}
 \subsection{Method \code{subset_to_valid()}}{
 Subset data to those meeting the desired prediction,
-full data is still accessible in the fulldata field
+Process could be reverted using \code{revert_subset_to_valid()}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$subset_to_valid()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-revert_subset_to_valid"></a>}}
+\if{latex}{\out{\hypertarget{method-revert_subset_to_valid}{}}}
+\subsection{Method \code{revert_subset_to_valid()}}{
+Subset data to those meeting the desired prediction,
+Process could be reverted using \code{revert_subset_to_valid()}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$revert_subset_to_valid()}\if{html}{\out{</div>}}
 }
 
 }

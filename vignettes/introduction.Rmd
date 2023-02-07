@@ -344,10 +344,9 @@ cfactuals
 
 # References
 
-Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “Multi-Objective Counterfactual Explanations.” In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr, Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Publishing.
+Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “Multi-Objective Counterfactual Explanations.” In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr, Michael Emmerich, and Heike Trautmann, 448–469. Cham: Springer International Publishing. \doi{10.1007/978-3-030-58112-1_31}.
 
 Brughmans D, Martens D (2022). “NICE: An Algorithm for Nearest Instance Counterfactual
-Explanations.” Technical report, arXiv 2104.07411 v2. URL https://arxiv.org/abs/
-2104.07411.
+Explanations.” Technical report, <arXiv:2104.07411> v2.
 
 Zitzler, Eckart, and Lothar Thiele. 1998. “Multiobjective Optimization Using Evolutionary Algorithms—a Comparative Case Study.” In International Conference on Parallel Problem Solving from Nature, 292–301. Springer.

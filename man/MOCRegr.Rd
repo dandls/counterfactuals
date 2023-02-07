@@ -56,24 +56,30 @@ if (require("randomForest")) {
 
 }
 \references{
-Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “Multi-Objective Counterfactual Explanations.”
-In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr,
-Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Publishing.
+Dandl, S., Molnar, C., Binder, M., and Bischl, B. (2020).
+"Multi-Objective Counterfactual Explanations". In: Parallel Problem
+Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss,
+André Deutz, Hao Wang, Carola Doerr, Michael Emmerich, and Heike Trautmann, 448–469,
+Cham, Springer International Publishing, \doi{10.1007/978-3-030-58112-1_31}.
 
-Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. A. M. T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
+Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. A. M. T. (2002).
+"A fast and elitist multiobjective genetic algorithm: NSGA-II".
 IEEE transactions on evolutionary computation, 6(2), 182-197.
 
-Goldstein, Alex, Adam Kapelner, Justin Bleich, and Emil Pitkin. 2015. "Peeking Inside the Black Box: Visualizing
-Statistical Learning with Plots of Individual Conditional Expectation." Journal of Computational and Graphical
-Statistics 24 (1): 44–65. https: //doi.org/10.1080/10618600.2014.907095.
+Goldstein, A., Kapelner, A., Bleich, J., and Pitkin, E. (2015).
+"Peeking Inside the Black Box: Visualizing
+Statistical Learning with Plots of Individual Conditional Expectation".
+Journal of Computational and Graphical Statistics 24 (1): 44–65.
+\doi{10.1080/10618600.2014.907095}.
 
-Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
+Gower, J. C. (1971). A general coefficient of similarity and some of its properties. Biometrics, 27, 623–637.
 
-Hothorn, T., Zeileis, A. (2017), "Transformation Forests". Technical Report, arXiv 1701.02110, https://arxiv.org/abs/1701.02110.
+Hothorn, T., Zeileis, A. (2017), "Transformation Forests".
+Technical Report, \href{https://arxiv.org/abs/1701.02110}{arXiv 1701.02110}.
 
-Li, Rui, Michael T. M. Emmerich, Jeroen Eggermont, Thomas Bäck, M. Schütz, J. Dijkstra, and J. H. C. Reiber. 2013.
-"Mixed Integer Evolution Strategies for Parameter Optimization." Evolutionary Computation 21 (1): 29–64. https:
-//doi.org/10.1162/EVCO_a_00059.
+Li, Rui, L., Emmerich, M. T. M., Eggermont, J. Bäck, T., Schütz, M., Dijkstra, J., Reiber, J. H. C. (2013).
+"Mixed Integer Evolution Strategies for Parameter Optimization."
+Evolutionary Computation 21 (1): 29–64. \doi{10.1162/EVCO_a_00059}.
 }
 \section{Super classes}{
 \code{\link[counterfactuals:CounterfactualMethod]{counterfactuals::CounterfactualMethod}} -> \code{\link[counterfactuals:CounterfactualMethodRegr]{counterfactuals::CounterfactualMethodRegr}} -> \code{MOCRegr}
@@ -116,6 +122,7 @@ Create a new \code{MOCRegr} object.
   fixed_features = NULL,
   max_changed = NULL,
   mu = 20L,
+  termination_crit = "gens",
   n_generations = 175L,
   p_rec = 0.71,
   p_rec_gen = 0.62,
@@ -151,6 +158,12 @@ Maximum number of feature changes. \code{NULL} (default) allows any number of ch
 
 \item{\code{mu}}{(\code{integerish(1)})\cr
 The population size. Default is \code{20L}.}
+
+\item{\code{termination_crit}}{(\code{character(1)}|\code{NULL})\cr
+Termination criterion, currently, two criterions are implemented: "gens" (default),
+which stops after \code{n_generations} generations,  and "genstag", which stops after
+the hypervolume did not improve for \code{n_generations} generations
+(the total number of generations is limited to 500).}
 
 \item{\code{n_generations}}{(\code{integerish(1)})\cr
 The number of generations. Default is \code{175L}.}
