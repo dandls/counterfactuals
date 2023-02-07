@@ -107,19 +107,28 @@ For details see Dandl et al. 2020.</p>
     </div>
     <div id="references">
     <h2>References</h2>
-    <p>Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “Multi-Objective Counterfactual Explanations.”
-In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr,
-Michael Emmerich, and Heike Trautmann, 448–69. Cham: Springer International Publishing.</p>
-<p>Deb, K., Pratap, A., Agarwal, S., &amp; Meyarivan, T. A. M. T. (2002). A fast and elitist multiobjective genetic algorithm: NSGA-II.
+    <p>Dandl, S., Molnar, C., Binder, M., and Bischl, B. (2020).
+"Multi-Objective Counterfactual Explanations". In: Parallel Problem
+Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss,
+André Deutz, Hao Wang, Carola Doerr, Michael Emmerich, and Heike Trautmann, 448–469,
+Cham, Springer International Publishing, <a href="https://doi.org/10.1007/978-3-030-58112-1_31" class="external-link">doi:10.1007/978-3-030-58112-1_31</a>
+.</p>
+<p>Deb, K., Pratap, A., Agarwal, S., &amp; Meyarivan, T. A. M. T. (2002).
+"A fast and elitist multiobjective genetic algorithm: NSGA-II".
 IEEE transactions on evolutionary computation, 6(2), 182-197.</p>
-<p>Goldstein, Alex, Adam Kapelner, Justin Bleich, and Emil Pitkin. 2015. "Peeking Inside the Black Box: Visualizing
-Statistical Learning with Plots of Individual Conditional Expectation." Journal of Computational and Graphical
-Statistics 24 (1): 44–65. https: //doi.org/10.1080/10618600.2014.907095.</p>
-<p>Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.</p>
-<p>Hothorn, T., Zeileis, A. (2017), "Transformation Forests". Technical Report, arXiv 1701.02110, https://arxiv.org/abs/1701.02110.</p>
-<p>Li, Rui, Michael T. M. Emmerich, Jeroen Eggermont, Thomas Bäck, M. Schütz, J. Dijkstra, and J. H. C. Reiber. 2013.
-"Mixed Integer Evolution Strategies for Parameter Optimization." Evolutionary Computation 21 (1): 29–64. https:
-//doi.org/10.1162/EVCO_a_00059.</p>
+<p>Goldstein, A., Kapelner, A., Bleich, J., and Pitkin, E. (2015).
+"Peeking Inside the Black Box: Visualizing
+Statistical Learning with Plots of Individual Conditional Expectation".
+Journal of Computational and Graphical Statistics 24 (1): 44–65.
+<a href="https://doi.org/10.1080/10618600.2014.907095" class="external-link">doi:10.1080/10618600.2014.907095</a>
+.</p>
+<p>Gower, J. C. (1971). A general coefficient of similarity and some of its properties. Biometrics, 27, 623–637.</p>
+<p>Hothorn, T., Zeileis, A. (2017), "Transformation Forests".
+Technical Report, <a href="https://arxiv.org/abs/1701.02110" class="external-link">arXiv 1701.02110</a>.</p>
+<p>Li, Rui, L., Emmerich, M. T. M., Eggermont, J. Bäck, T., Schütz, M., Dijkstra, J., Reiber, J. H. C. (2013).
+"Mixed Integer Evolution Strategies for Parameter Optimization."
+Evolutionary Computation 21 (1): 29–64. <a href="https://doi.org/10.1162/EVCO_a_00059" class="external-link">doi:10.1162/EVCO_a_00059</a>
+.</p>
     </div>
     <div id="super-classes">
     <h2>Super classes</h2>
@@ -157,6 +166,7 @@ The object used for optimization.</p></dd>
 <span>  fixed_features <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_changed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  mu <span class="op">=</span> <span class="fl">20L</span>,</span>
+<span>  termination_crit <span class="op">=</span> <span class="st">"gens"</span>,</span>
 <span>  n_generations <span class="op">=</span> <span class="fl">175L</span>,</span>
 <span>  p_rec <span class="op">=</span> <span class="fl">0.71</span>,</span>
 <span>  p_rec_gen <span class="op">=</span> <span class="fl">0.62</span>,</span>
@@ -200,6 +210,14 @@ Maximum number of feature changes. <code>NULL</code> (default) allows any number
 <dt><code>mu</code></dt>
 <dd><p>(<code>integerish(1)</code>)<br>
 The population size. Default is <code>20L</code>.</p></dd>
+
+
+<dt><code>termination_crit</code></dt>
+<dd><p>(<code>character(1)</code>|<code>NULL</code>)<br>
+Termination criterion, currently, two criterions are implemented: "gens" (default),
+which stops after <code>n_generations</code> generations,  and "genstag", which stops after
+the hypervolume did not improve for <code>n_generations</code> generations
+(the total number of generations is limited to 500).</p></dd>
 
 
 <dt><code>n_generations</code></dt>

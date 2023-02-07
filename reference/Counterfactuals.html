@@ -108,18 +108,6 @@ The function must have three arguments:
 A single row with the observation of interest.</p></dd>
 
 
-<dt><code>subsetted</code></dt>
-<dd><p>(<code>logical(1)</code>)<br>
-Returns if data was subsetted to those meeting the
-desired prediction.</p></dd>
-
-
-<dt><code>fulldata</code></dt>
-<dd><p>(<code>data.table</code>)<br>
-Returns the fulldata if data was subsetted to those meeting the
-desired outcome.</p></dd>
-
-
 </dl><p></p></div>
     </div>
     <div id="methods">
@@ -133,6 +121,7 @@ desired outcome.</p></dd>
 <li><p><a href="#method-evaluate_set"><code>Counterfactuals$evaluate_set()</code></a></p></li>
 <li><p><a href="#method-predict"><code>Counterfactuals$predict()</code></a></p></li>
 <li><p><a href="#method-subset_to_valid"><code>Counterfactuals$subset_to_valid()</code></a></p></li>
+<li><p><a href="#method-revert_subset_to_valid"><code>Counterfactuals$revert_subset_to_valid()</code></a></p></li>
 <li><p><a href="#method-plot_parallel"><code>Counterfactuals$plot_parallel()</code></a></p></li>
 <li><p><a href="#method-plot_freq_of_feature_changes"><code>Counterfactuals$plot_freq_of_feature_changes()</code></a></p></li>
 <li><p><a href="#method-get_freq_of_feature_changes"><code>Counterfactuals$get_freq_of_feature_changes()</code></a></p></li>
@@ -251,7 +240,8 @@ specifies the weight of the i-th closest data point.</p></dd>
 <p>Evaluates a set of counterfactuals. It returns the evaluation <code>measures</code>.</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">evaluate_set</span><span class="op">(</span></span>
-<span>  measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"diversity"</span>, <span class="st">"no_nondom"</span>, <span class="st">"frac_nondom"</span>, <span class="st">"hypervolume"</span><span class="op">)</span></span>
+<span>  measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"diversity"</span>, <span class="st">"no_nondom"</span>, <span class="st">"frac_nondom"</span>, <span class="st">"hypervolume"</span><span class="op">)</span>,</span>
+<span>  nadir <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -269,6 +259,16 @@ other counterfactuals</p></li>
 </ul></dd>
 
 
+<dt><code>nadir</code></dt>
+<dd><p>(<code>numeric</code>) <br> Max objective values to calculate dominated hypervolume.
+Only considered, if <code>hypervolume</code> is one of the <code>measures</code>.
+May be a scalar, in which case it is used for all four objectives,
+or a vector of length 4.
+Default is NULL, meaning the nadir point by Dandl et al. (2020) is used:
+(min distance between prediction of <code>x_interest</code> to <code>desired_prob/_outcome</code>,
+1, number of features, 1).</p></dd>
+
+
 </dl><p></p></div>
 </div>
 
@@ -283,9 +283,18 @@ other counterfactuals</p></li>
 </div><p></p><hr><a id="method-subset_to_valid"></a><div class="section">
 <h3 id="method-subset-to-valid-">Method <code>subset_to_valid()</code><a class="anchor" aria-label="anchor" href="#method-subset-to-valid-"></a></h3>
 <p>Subset data to those meeting the desired prediction,
-full data is still accessible in the fulldata field</p><div class="section">
+Process could be reverted using <code>revert_subset_to_valid()</code>.</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">subset_to_valid</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+
+</div><p></p><hr><a id="method-revert_subset_to_valid"></a><div class="section">
+<h3 id="method-revert-subset-to-valid-">Method <code>revert_subset_to_valid()</code><a class="anchor" aria-label="anchor" href="#method-revert-subset-to-valid-"></a></h3>
+<p>Subset data to those meeting the desired prediction,
+Process could be reverted using <code>revert_subset_to_valid()</code>.</p><div class="section">
+<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">revert_subset_to_valid</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 
@@ -293,7 +302,7 @@ full data is still accessible in the fulldata field</p><div class="section">
 <h3 id="method-plot-parallel-">Method <code>plot_parallel()</code><a class="anchor" aria-label="anchor" href="#method-plot-parallel-"></a></h3>
 <p>Plots a parallel plot that connects the (scaled) numeric feature values of each counterfactual and highlights
 <code>x_interest</code> in blue.</p><div class="section">
-<h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
+<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">plot_parallel</span><span class="op">(</span></span>
 <span>  feature_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  row_ids <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -323,7 +332,7 @@ The row ids of the counterfactuals to display. If <code>NULL</code> (default) al
 </div><p></p><hr><a id="method-plot_freq_of_feature_changes"></a><div class="section">
 <h3 id="method-plot-freq-of-feature-changes-">Method <code>plot_freq_of_feature_changes()</code><a class="anchor" aria-label="anchor" href="#method-plot-freq-of-feature-changes-"></a></h3>
 <p>Plots a bar chart with the frequency of feature changes across all counterfactuals.</p><div class="section">
-<h4 id="usage-6">Usage<a class="anchor" aria-label="anchor" href="#usage-6"></a></h4>
+<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">plot_freq_of_feature_changes</span><span class="op">(</span>subset_zero <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -340,7 +349,7 @@ Should unchanged features be excluded from the plot? Default is <code>FALSE</cod
 </div><p></p><hr><a id="method-get_freq_of_feature_changes"></a><div class="section">
 <h3 id="method-get-freq-of-feature-changes-">Method <code>get_freq_of_feature_changes()</code><a class="anchor" aria-label="anchor" href="#method-get-freq-of-feature-changes-"></a></h3>
 <p>Returns the frequency of feature changes across all counterfactuals.</p><div class="section">
-<h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
+<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">get_freq_of_feature_changes</span><span class="op">(</span>subset_zero <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -367,7 +376,7 @@ The exact plot type depends on the selected feature types and number of features
 <li><p>2 non-numeric features: heatmap</p></li>
 <li><p>1 numeric or non-numeric feature: line graph</p></li>
 </ul><div class="section">
-<h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
+<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">plot_surface</span><span class="op">(</span><span class="va">feature_names</span>, grid_size <span class="op">=</span> <span class="fl">250L</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -389,7 +398,7 @@ The grid size of the plot. It is ignored in case of two <code>non-numeric</code>
 </div><p></p><hr><a id="method-print"></a><div class="section">
 <h3 id="method-print-">Method <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code><a class="anchor" aria-label="anchor" href="#method-print-"></a></h3>
 <p>Prints the <code>Counterfactuals</code> object.</p><div class="section">
-<h4 id="usage-9">Usage<a class="anchor" aria-label="anchor" href="#usage-9"></a></h4>
+<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">print</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -397,7 +406,7 @@ The grid size of the plot. It is ignored in case of two <code>non-numeric</code>
 </div><p></p><hr><a id="method-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
+<h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Counterfactuals</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
