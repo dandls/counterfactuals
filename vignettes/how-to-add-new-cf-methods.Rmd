@@ -39,7 +39,7 @@ supports classification or regression tasks, it inherits from the (abstract) `Co
 for instance, as MOC is applicable to classification and regression tasks, we implement two classes: `MOCClassif` and `MOCRegr`.
 
 ```{r img_class_diagram, echo=FALSE, fig.cap="", out.width = '70%', fig.align='center'}
-knitr::include_graphics("how-to-add-new-cf-methods-res/class-diagram.png")
+knitr::include_graphics("figures/class-diagram.png")
 ```
 
 Leaf classes (like `MOCClassif` and `MOCRegr`) inherit the `find_counterfactuals()` method from `CounterfactualMethodClassif`
@@ -55,7 +55,7 @@ search and returns the counterfactuals as a `data.table` (2). The `find_counterf
 object, which contains the counterfactuals and provides several methods for their evaluation and visualization (3).
 
 ```{r img_call_diagram, echo=FALSE, fig.cap="", out.width = '60%', out.height='60%', fig.align='center'}
-knitr::include_graphics("how-to-add-new-cf-methods-res/call-diagram.png")
+knitr::include_graphics("figures/call-diagram.png")
 ```
 
 

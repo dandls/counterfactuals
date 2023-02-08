@@ -42,11 +42,12 @@ For details see Dandl et al. 2020.
 \examples{
 if (require("randomForest")) {
   # Train a model
-  rf = randomForest(Species ~ ., data = iris)
+  rf = randomForest(Species ~ ., data = iris, ntree = 10L)
   # Create a predictor object
   predictor = iml::Predictor$new(rf, type = "prob")
   # Find counterfactuals for x_interest
-  moc_classif = MOCClassif$new(predictor, n_generations = 15L, quiet = TRUE)
+  moc_classif = MOCClassif$new(predictor, n_generations = 1L, quiet = TRUE)
+  \dontrun{
   cfactuals = moc_classif$find_counterfactuals(
     x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
   )
@@ -54,6 +55,7 @@ if (require("randomForest")) {
   cfactuals$data
   # Plot evolution of hypervolume and mean and minimum objective values
   moc_classif$plot_statistics()
+  }
 }
 
 }

@@ -11,14 +11,14 @@ In the following, we explain the `counterfactuals` workflow for both a classific
 concrete use cases.
 
 ```{r, echo = FALSE}
-NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+# NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
 knitr::opts_chunk$set(
   collapse = TRUE,
   fig.width = 7,
   fig.height = 3,
-  comment = "#>",
-  purl = NOT_CRAN,
-  eval = NOT_CRAN
+  comment = "#>"
+  # purl = NOT_CRAN,
+  # eval = NOT_CRAN
 )
 options(width = 200)
 ```

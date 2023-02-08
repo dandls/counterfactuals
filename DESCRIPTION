@@ -31,7 +31,7 @@ Suggests:
     trtf,
     testthat,
     MASS,
-    knitr,
+    R.rsp,
     cowplot,
     covr,
     ggplot2,
@@ -40,7 +40,6 @@ Suggests:
     partykit,
     rmarkdown,
     basefun,
-    featureTweakR,
     rpart,
     mlbench, 
     mlr3,
@@ -52,8 +51,6 @@ Suggests:
 License: LGPL-3
 Encoding: UTF-8
 RoxygenNote: 7.1.2
-VignetteBuilder: knitr
+VignetteBuilder: R.rsp
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
-Remotes:
-    katokohaku/featureTweakR
