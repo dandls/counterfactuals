@@ -104,14 +104,14 @@
 <h3 id="class-diagram">Class diagram<a class="anchor" aria-label="anchor" href="#class-diagram"></a>
 </h3>
 <p>Each counterfactual method is represented by its own <code>R6</code> class. Depending on whether a counterfactual method supports classification or regression tasks, it inherits from the (abstract) <code>CounterfactualMethodClassif</code> or <code>CounterfactualMethodRegr</code> classes, respectively. Counterfactual methods that support both tasks are split into two separate classes; for instance, as MOC is applicable to classification and regression tasks, we implement two classes: <code>MOCClassif</code> and <code>MOCRegr</code>.</p>
-<p><img src="how-to-add-new-cf-methods-res/class-diagram.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="figures/class-diagram.png" width="70%" style="display: block; margin: auto;"></p>
 <p>Leaf classes (like <code>MOCClassif</code> and <code>MOCRegr</code>) inherit the <code>find_counterfactuals()</code> method from <code>CounterfactualMethodClassif</code> or <code>CounterfactualMethodRegr</code>, respectively. The key advantage of this approach is that we are able to provide a tailored <code>find_counterfactuals()</code> interface to the task at hand: for classification tasks <code>find_counterfactuals()</code> has two arguments <code>desired_class</code> and <code>desired_prob</code> and for regression tasks it has one argument <code>desired_outcome</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="call-graph">Call graph<a class="anchor" aria-label="anchor" href="#call-graph"></a>
 </h3>
 <p>The <code>find_counterfactuals()</code> method calls a private <code>run()</code> method (1)—implemented by the leaf classes—which performs the search and returns the counterfactuals as a <code>data.table</code> (2). The <code>find_counterfactuals()</code> method then creates a <code>Counterfactuals</code> object, which contains the counterfactuals and provides several methods for their evaluation and visualization (3).</p>
-<p><img src="how-to-add-new-cf-methods-res/call-diagram.png" width="60%" height="60%" style="display: block; margin: auto;"></p>
+<p><img src="figures/call-diagram.png" width="60%" height="60%" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level2">
