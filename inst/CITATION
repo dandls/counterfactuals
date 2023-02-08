@@ -9,6 +9,6 @@ bibentry(
         person(given = "Giuseppe", family = "Casalicchio")
     ),
     year = "2022",
-    note = "R package version 0.9.0"
+    note = "R package version 0.1.1"
 )
 
