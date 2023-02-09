@@ -5,18 +5,24 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/susanne-207/counterfactuals/workflows/R-CMD-check/badge.svg)](https://github.com/susanne-207/counterfactuals/actions)
+[![R-CMD-check](https://github.com/dandls/counterfactuals/workflows/R-CMD-check/badge.svg)](https://github.com/dandls/counterfactuals/actions)
 [![Codecov test
-coverage](https://codecov.io/gh/susanne-207/counterfactuals/branch/main/graph/badge.svg)](https://codecov.io/gh/susanne-207/counterfactuals?branch=main)
+coverage](https://codecov.io/gh/dandls/counterfactuals/branch/main/graph/badge.svg)](https://codecov.io/gh/dandls/counterfactuals?branch=main)
 <!-- badges: end -->
 
 The `counterfactuals` package provides various (model-agnostic)
 counterfactual explanation methods via a unified R6-based interface.
 
 Counterfactual explanation methods address questions of the form: “For
-input $\mathbf{x}$, the model predicted $\hat{y}$. What needs to be
-changed in $\mathbf{x}$ for the model to predict a desired
-outcome $y'$ instead?”.  
+input
+![\\mathbf{x^{\\star}}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cmathbf%7Bx%5E%7B%5Cstar%7D%7D
+"\\mathbf{x^{\\star}}"), the model predicted
+![y](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;y
+"y"). What needs to be changed in
+![\\mathbf{x^{\\star}}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cmathbf%7Bx%5E%7B%5Cstar%7D%7D
+"\\mathbf{x^{\\star}}") for the model to predict a desired outcome
+![\\tilde{y}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Ctilde%7By%7D
+"\\tilde{y}") instead?”.  
 Denied loan applications serve as a common example; here a
 counterfactual explanation (or counterfactual for short) could be: “The
 loan was denied because the amount of €30k is too high given the income.
@@ -34,11 +40,11 @@ Molnar. The package is based on the R code underlying the paper
 The following counterfactual explanation methods are currently
 implemented:
 
--   [Multi-Objective Counterfactual Explanations
+  - [Multi-Objective Counterfactual Explanations
     (MOC)](https://link.springer.com/chapter/10.1007%2F978-3-030-58112-1_31)
--   [Nearest Instance Counterfactual Explanations
+  - [Nearest Instance Counterfactual Explanations
     (NICE)](https://arxiv.org/abs/2104.07411) (an extended version)
--   [WhatIf](https://arxiv.org/abs/1907.04135) (an extended version)
+  - [WhatIf](https://arxiv.org/abs/1907.04135) (an extended version)
 
 ## Installation
 
@@ -66,8 +72,9 @@ library(iml)
 
 First, we train a `randomForest` model to predict the target variable
 `Species`, omitting one observation from the training data, which is
-`x_interest` (the observation *x*<sup>⋆</sup> for which we want to find
-counterfactuals).
+`x_interest` (the observation
+![x^{\\star}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x%5E%7B%5Cstar%7D
+"x^{\\star}") for which we want to find counterfactuals).
 
 ``` r
 rf = randomForest(Species ~ ., data = iris[-150L, ])
@@ -152,12 +159,12 @@ various quality measures.
 
 ``` r
 cfactuals$evaluate()
-#>    Sepal.Length Sepal.Width Petal.Length Petal.Width dist_x_interest nr_changed dist_train dist_target
-#> 1:          5.9         3.2          4.8         1.8      0.03354520          2          0           0
-#> 2:          6.0         2.7          5.1         1.6      0.05902778          3          0           0
-#> 3:          5.9         3.0          4.2         1.5      0.06938559          2          0           0
-#> 4:          6.7         3.0          5.0         1.7      0.07020951          3          0           0
-#> 5:          6.0         2.9          4.5         1.5      0.07403484          4          0           0
+#>    Sepal.Length Sepal.Width Petal.Length Petal.Width dist_x_interest no_changed dist_train dist_target minimality
+#> 1:          5.9         3.2          4.8         1.8      0.03354520          2          0           0          0
+#> 2:          6.0         2.7          5.1         1.6      0.05902778          3          0           0          2
+#> 3:          5.9         3.0          4.2         1.5      0.06938559          2          0           0          0
+#> 4:          6.7         3.0          5.0         1.7      0.07020951          3          0           0          1
+#> 5:          6.0         2.9          4.5         1.5      0.07403484          4          0           0          2
 ```
 
 One visualization option is to plot the frequency of feature changes
