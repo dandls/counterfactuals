@@ -6,8 +6,8 @@ Authors@R: c(
         person("Susanne", "Dandl", email = "dandls.datascience@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-4324-4163")),
         person("Andreas", "Hofheinz", email = "andreas.hofheinz@outlook.com", role = c("aut")),
-	person("Martin", "Binder", email = "developer.mb706@mb706.com", role = c("aut")),
-	person("Giuseppe","Casalicchio", email = "giuseppe.casalicchio@stat.uni-muenchen.de", role = c("aut"))
+	person("Martin", "Binder", email = "developer.mb706@mb706.com", role = c("ctb")),
+	person("Giuseppe","Casalicchio", email = "giuseppe.casalicchio@stat.uni-muenchen.de", role = c("ctb"))
     )
 Maintainer: Susanne Dandl <dandls.datascience@gmail.com>
 Description:  Provides a modular and unified R6-based interface for counterfactual explanation methods.
