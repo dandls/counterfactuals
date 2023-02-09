@@ -40,21 +40,21 @@ Interactive probing of machine learning models. IEEE transactions on visualizati
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{WhatIfClassif$new()}}
-\item \href{#method-clone}{\code{WhatIfClassif$clone()}}
+\item \href{#method-WhatIfClassif-new}{\code{WhatIfClassif$new()}}
+\item \href{#method-WhatIfClassif-clone}{\code{WhatIfClassif$clone()}}
 }
 }
-\if{html}{
-\out{<details open ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethod" data-id="print">}\href{../../counterfactuals/html/CounterfactualMethod.html#method-print}{\code{counterfactuals::CounterfactualMethod$print()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethodClassif" data-id="find_counterfactuals">}\href{../../counterfactuals/html/CounterfactualMethodClassif.html#method-find_counterfactuals}{\code{counterfactuals::CounterfactualMethodClassif$find_counterfactuals()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethod" data-id="print"><a href='../../counterfactuals/html/CounterfactualMethod.html#method-CounterfactualMethod-print'><code>counterfactuals::CounterfactualMethod$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethodClassif" data-id="find_counterfactuals"><a href='../../counterfactuals/html/CounterfactualMethodClassif.html#method-CounterfactualMethodClassif-find_counterfactuals'><code>counterfactuals::CounterfactualMethodClassif$find_counterfactuals()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-WhatIfClassif-new"></a>}}
+\if{latex}{\out{\hypertarget{method-WhatIfClassif-new}{}}}
 \subsection{Method \code{new()}}{
 Create a new WhatIfClassif object.
 \subsection{Usage}{
@@ -100,8 +100,8 @@ return a \code{double} matrix with \code{nrow(x)} rows and maximum \code{nrow(y)
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-WhatIfClassif-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-WhatIfClassif-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

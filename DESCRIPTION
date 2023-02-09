@@ -50,7 +50,7 @@ Suggests:
     mlr
 License: LGPL-3
 Encoding: UTF-8
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 VignetteBuilder: R.rsp
-Roxygen: list(markdown = TRUE)
+Roxygen: list(markdown = TRUE, r6 = TRUE)
 Config/testthat/edition: 3

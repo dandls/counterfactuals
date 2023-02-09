@@ -38,23 +38,23 @@ A single row with the observation of interest.}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{Counterfactuals$new()}}
-\item \href{#method-evaluate}{\code{Counterfactuals$evaluate()}}
-\item \href{#method-evaluate_set}{\code{Counterfactuals$evaluate_set()}}
-\item \href{#method-predict}{\code{Counterfactuals$predict()}}
-\item \href{#method-subset_to_valid}{\code{Counterfactuals$subset_to_valid()}}
-\item \href{#method-revert_subset_to_valid}{\code{Counterfactuals$revert_subset_to_valid()}}
-\item \href{#method-plot_parallel}{\code{Counterfactuals$plot_parallel()}}
-\item \href{#method-plot_freq_of_feature_changes}{\code{Counterfactuals$plot_freq_of_feature_changes()}}
-\item \href{#method-get_freq_of_feature_changes}{\code{Counterfactuals$get_freq_of_feature_changes()}}
-\item \href{#method-plot_surface}{\code{Counterfactuals$plot_surface()}}
-\item \href{#method-print}{\code{Counterfactuals$print()}}
-\item \href{#method-clone}{\code{Counterfactuals$clone()}}
+\item \href{#method-Counterfactuals-new}{\code{Counterfactuals$new()}}
+\item \href{#method-Counterfactuals-evaluate}{\code{Counterfactuals$evaluate()}}
+\item \href{#method-Counterfactuals-evaluate_set}{\code{Counterfactuals$evaluate_set()}}
+\item \href{#method-Counterfactuals-predict}{\code{Counterfactuals$predict()}}
+\item \href{#method-Counterfactuals-subset_to_valid}{\code{Counterfactuals$subset_to_valid()}}
+\item \href{#method-Counterfactuals-revert_subset_to_valid}{\code{Counterfactuals$revert_subset_to_valid()}}
+\item \href{#method-Counterfactuals-plot_parallel}{\code{Counterfactuals$plot_parallel()}}
+\item \href{#method-Counterfactuals-plot_freq_of_feature_changes}{\code{Counterfactuals$plot_freq_of_feature_changes()}}
+\item \href{#method-Counterfactuals-get_freq_of_feature_changes}{\code{Counterfactuals$get_freq_of_feature_changes()}}
+\item \href{#method-Counterfactuals-plot_surface}{\code{Counterfactuals$plot_surface()}}
+\item \href{#method-Counterfactuals-print}{\code{Counterfactuals$print()}}
+\item \href{#method-Counterfactuals-clone}{\code{Counterfactuals$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-Counterfactuals-new"></a>}}
+\if{latex}{\out{\hypertarget{method-Counterfactuals-new}{}}}
 \subsection{Method \code{new()}}{
 Creates a new \code{Counterfactuals} object.
 This method should only be called by the \verb{$find_counterfactuals} methods of \link{CounterfactualMethodRegr}
@@ -98,8 +98,8 @@ NULL which means that no name is provided.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-evaluate"></a>}}
-\if{latex}{\out{\hypertarget{method-evaluate}{}}}
+\if{html}{\out{<a id="method-Counterfactuals-evaluate"></a>}}
+\if{latex}{\out{\hypertarget{method-Counterfactuals-evaluate}{}}}
 \subsection{Method \code{evaluate()}}{
 Evaluates the counterfactuals. It returns the counterfactuals together with the evaluation \code{measures}.
 \subsection{Usage}{
@@ -148,8 +148,8 @@ specifies the weight of the i-th closest data point.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-evaluate_set"></a>}}
-\if{latex}{\out{\hypertarget{method-evaluate_set}{}}}
+\if{html}{\out{<a id="method-Counterfactuals-evaluate_set"></a>}}
+\if{latex}{\out{\hypertarget{method-Counterfactuals-evaluate_set}{}}}
 \subsection{Method \code{evaluate_set()}}{
 Evaluates a set of counterfactuals. It returns the evaluation \code{measures}.
 \subsection{Usage}{
@@ -186,8 +186,8 @@ Default is NULL, meaning the nadir point by Dandl et al. (2020) is used:
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-predict"></a>}}
-\if{latex}{\out{\hypertarget{method-predict}{}}}
+\if{html}{\out{<a id="method-Counterfactuals-predict"></a>}}
+\if{latex}{\out{\hypertarget{method-Counterfactuals-predict}{}}}
 \subsection{Method \code{predict()}}{
 Returns the predictions for the counterfactuals.
 \subsection{Usage}{
@@ -196,8 +196,8 @@ Returns the predictions for the counterfactuals.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-subset_to_valid"></a>}}
-\if{latex}{\out{\hypertarget{method-subset_to_valid}{}}}
+\if{html}{\out{<a id="method-Counterfactuals-subset_to_valid"></a>}}
+\if{latex}{\out{\hypertarget{method-Counterfactuals-subset_to_valid}{}}}
 \subsection{Method \code{subset_to_valid()}}{
 Subset data to those meeting the desired prediction,
 Process could be reverted using \code{revert_subset_to_valid()}.
@@ -207,8 +207,8 @@ Process could be reverted using \code{revert_subset_to_valid()}.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-revert_subset_to_valid"></a>}}
-\if{latex}{\out{\hypertarget{method-revert_subset_to_valid}{}}}
+\if{html}{\out{<a id="method-Counterfactuals-revert_subset_to_valid"></a>}}
+\if{latex}{\out{\hypertarget{method-Counterfactuals-revert_subset_to_valid}{}}}
 \subsection{Method \code{revert_subset_to_valid()}}{
 Subset data to those meeting the desired prediction,
 Process could be reverted using \code{revert_subset_to_valid()}.
@@ -218,8 +218,8 @@ Process could be reverted using \code{revert_subset_to_valid()}.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-plot_parallel"></a>}}
-\if{latex}{\out{\hypertarget{method-plot_parallel}{}}}
+\if{html}{\out{<a id="method-Counterfactuals-plot_parallel"></a>}}
+\if{latex}{\out{\hypertarget{method-Counterfactuals-plot_parallel}{}}}
 \subsection{Method \code{plot_parallel()}}{
 Plots a parallel plot that connects the (scaled) numeric feature values of each counterfactual and highlights
 \code{x_interest} in blue.
@@ -246,8 +246,8 @@ The row ids of the counterfactuals to display. If \code{NULL} (default) all coun
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-plot_freq_of_feature_changes"></a>}}
-\if{latex}{\out{\hypertarget{method-plot_freq_of_feature_changes}{}}}
+\if{html}{\out{<a id="method-Counterfactuals-plot_freq_of_feature_changes"></a>}}
+\if{latex}{\out{\hypertarget{method-Counterfactuals-plot_freq_of_feature_changes}{}}}
 \subsection{Method \code{plot_freq_of_feature_changes()}}{
 Plots a bar chart with the frequency of feature changes across all counterfactuals.
 \subsection{Usage}{
@@ -264,8 +264,8 @@ Should unchanged features be excluded from the plot? Default is \code{FALSE}.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_freq_of_feature_changes"></a>}}
-\if{latex}{\out{\hypertarget{method-get_freq_of_feature_changes}{}}}
+\if{html}{\out{<a id="method-Counterfactuals-get_freq_of_feature_changes"></a>}}
+\if{latex}{\out{\hypertarget{method-Counterfactuals-get_freq_of_feature_changes}{}}}
 \subsection{Method \code{get_freq_of_feature_changes()}}{
 Returns the frequency of feature changes across all counterfactuals.
 \subsection{Usage}{
@@ -285,8 +285,8 @@ A (named) \code{numeric} vector with the frequency of feature changes.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-plot_surface"></a>}}
-\if{latex}{\out{\hypertarget{method-plot_surface}{}}}
+\if{html}{\out{<a id="method-Counterfactuals-plot_surface"></a>}}
+\if{latex}{\out{\hypertarget{method-Counterfactuals-plot_surface}{}}}
 \subsection{Method \code{plot_surface()}}{
 Creates a surface plot for two features. \code{x_interest} is represented as a white dot and
 all counterfactuals that differ from \code{x_interest} \strong{only} in the two selected features are represented as black dots.
@@ -314,8 +314,8 @@ The grid size of the plot. It is ignored in case of two \code{non-numeric} featu
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-print"></a>}}
-\if{latex}{\out{\hypertarget{method-print}{}}}
+\if{html}{\out{<a id="method-Counterfactuals-print"></a>}}
+\if{latex}{\out{\hypertarget{method-Counterfactuals-print}{}}}
 \subsection{Method \code{print()}}{
 Prints the \code{Counterfactuals} object.
 \subsection{Usage}{
@@ -324,8 +324,8 @@ Prints the \code{Counterfactuals} object.
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-Counterfactuals-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-Counterfactuals-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

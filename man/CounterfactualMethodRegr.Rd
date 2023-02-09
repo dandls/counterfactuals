@@ -21,21 +21,21 @@ Child classes: \link{MOCRegr}, \link{WhatIfRegr}, \link{NICERegr}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{CounterfactualMethodRegr$new()}}
-\item \href{#method-find_counterfactuals}{\code{CounterfactualMethodRegr$find_counterfactuals()}}
-\item \href{#method-clone}{\code{CounterfactualMethodRegr$clone()}}
+\item \href{#method-CounterfactualMethodRegr-new}{\code{CounterfactualMethodRegr$new()}}
+\item \href{#method-CounterfactualMethodRegr-find_counterfactuals}{\code{CounterfactualMethodRegr$find_counterfactuals()}}
+\item \href{#method-CounterfactualMethodRegr-clone}{\code{CounterfactualMethodRegr$clone()}}
 }
 }
-\if{html}{
-\out{<details open ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethod" data-id="print">}\href{../../counterfactuals/html/CounterfactualMethod.html#method-print}{\code{counterfactuals::CounterfactualMethod$print()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethod" data-id="print"><a href='../../counterfactuals/html/CounterfactualMethod.html#method-CounterfactualMethod-print'><code>counterfactuals::CounterfactualMethod$print()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-CounterfactualMethodRegr-new"></a>}}
+\if{latex}{\out{\hypertarget{method-CounterfactualMethodRegr-new}{}}}
 \subsection{Method \code{new()}}{
 Creates a new CounterfactualMethodRegr object.
 \subsection{Usage}{
@@ -72,8 +72,8 @@ rows and \code{nrow(y)} columns.}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-find_counterfactuals"></a>}}
-\if{latex}{\out{\hypertarget{method-find_counterfactuals}{}}}
+\if{html}{\out{<a id="method-CounterfactualMethodRegr-find_counterfactuals"></a>}}
+\if{latex}{\out{\hypertarget{method-CounterfactualMethodRegr-find_counterfactuals}{}}}
 \subsection{Method \code{find_counterfactuals()}}{
 Runs the counterfactual method and returns the counterfactuals.
 It searches for counterfactuals that have a predicted outcome in the interval \code{desired_outcome}.
@@ -98,8 +98,8 @@ A \link{Counterfactuals} object containing the results.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-CounterfactualMethodRegr-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-CounterfactualMethodRegr-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

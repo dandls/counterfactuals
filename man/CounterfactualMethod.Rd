@@ -14,14 +14,14 @@ Child classes: \link{CounterfactualMethodClassif}, \link{CounterfactualMethodReg
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{CounterfactualMethod$new()}}
-\item \href{#method-print}{\code{CounterfactualMethod$print()}}
-\item \href{#method-clone}{\code{CounterfactualMethod$clone()}}
+\item \href{#method-CounterfactualMethod-new}{\code{CounterfactualMethod$new()}}
+\item \href{#method-CounterfactualMethod-print}{\code{CounterfactualMethod$print()}}
+\item \href{#method-CounterfactualMethod-clone}{\code{CounterfactualMethod$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-CounterfactualMethod-new"></a>}}
+\if{latex}{\out{\hypertarget{method-CounterfactualMethod-new}{}}}
 \subsection{Method \code{new()}}{
 Creates a new \code{CounterfactualMethod} object.
 \subsection{Usage}{
@@ -59,8 +59,8 @@ Either the name of an already implemented distance function
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-print"></a>}}
-\if{latex}{\out{\hypertarget{method-print}{}}}
+\if{html}{\out{<a id="method-CounterfactualMethod-print"></a>}}
+\if{latex}{\out{\hypertarget{method-CounterfactualMethod-print}{}}}
 \subsection{Method \code{print()}}{
 Prints a \code{CounterfactualMethod} object.
 The method calls a (private) \verb{$print_parameters()} method which should be implemented by the leaf classes.
@@ -70,8 +70,8 @@ The method calls a (private) \verb{$print_parameters()} method which should be i
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-CounterfactualMethod-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-CounterfactualMethod-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

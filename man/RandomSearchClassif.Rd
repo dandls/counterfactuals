@@ -78,24 +78,24 @@ The object used for optimization.}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{RandomSearchClassif$new()}}
-\item \href{#method-plot_statistics}{\code{RandomSearchClassif$plot_statistics()}}
-\item \href{#method-get_dominated_hv}{\code{RandomSearchClassif$get_dominated_hv()}}
-\item \href{#method-plot_search}{\code{RandomSearchClassif$plot_search()}}
-\item \href{#method-clone}{\code{RandomSearchClassif$clone()}}
+\item \href{#method-RandomSearchClassif-new}{\code{RandomSearchClassif$new()}}
+\item \href{#method-RandomSearchClassif-plot_statistics}{\code{RandomSearchClassif$plot_statistics()}}
+\item \href{#method-RandomSearchClassif-get_dominated_hv}{\code{RandomSearchClassif$get_dominated_hv()}}
+\item \href{#method-RandomSearchClassif-plot_search}{\code{RandomSearchClassif$plot_search()}}
+\item \href{#method-RandomSearchClassif-clone}{\code{RandomSearchClassif$clone()}}
 }
 }
-\if{html}{
-\out{<details open ><summary>Inherited methods</summary>}
-\itemize{
-\item \out{<span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethod" data-id="print">}\href{../../counterfactuals/html/CounterfactualMethod.html#method-print}{\code{counterfactuals::CounterfactualMethod$print()}}\out{</span>}
-\item \out{<span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethodClassif" data-id="find_counterfactuals">}\href{../../counterfactuals/html/CounterfactualMethodClassif.html#method-find_counterfactuals}{\code{counterfactuals::CounterfactualMethodClassif$find_counterfactuals()}}\out{</span>}
-}
-\out{</details>}
-}
+\if{html}{\out{
+<details open><summary>Inherited methods</summary>
+<ul>
+<li><span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethod" data-id="print"><a href='../../counterfactuals/html/CounterfactualMethod.html#method-CounterfactualMethod-print'><code>counterfactuals::CounterfactualMethod$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethodClassif" data-id="find_counterfactuals"><a href='../../counterfactuals/html/CounterfactualMethodClassif.html#method-CounterfactualMethodClassif-find_counterfactuals'><code>counterfactuals::CounterfactualMethodClassif$find_counterfactuals()</code></a></span></li>
+</ul>
+</details>
+}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-RandomSearchClassif-new"></a>}}
+\if{latex}{\out{\hypertarget{method-RandomSearchClassif-new}{}}}
 \subsection{Method \code{new()}}{
 Create a new \code{RandomSearchClassif} object.
 \subsection{Usage}{
@@ -168,8 +168,8 @@ return a \code{double} matrix with \code{nrow(x)} rows and maximum \code{nrow(y)
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-plot_statistics"></a>}}
-\if{latex}{\out{\hypertarget{method-plot_statistics}{}}}
+\if{html}{\out{<a id="method-RandomSearchClassif-plot_statistics"></a>}}
+\if{latex}{\out{\hypertarget{method-RandomSearchClassif-plot_statistics}{}}}
 \subsection{Method \code{plot_statistics()}}{
 Plots the evolution of the mean and minimum objective values together with the dominated hypervolume over
 the generations. All values for a generation are computed based on all non-dominated individuals that emerged until
@@ -190,8 +190,8 @@ since they (usually) have different scales. If set to \code{TRUE} (default), the
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_dominated_hv"></a>}}
-\if{latex}{\out{\hypertarget{method-get_dominated_hv}{}}}
+\if{html}{\out{<a id="method-RandomSearchClassif-get_dominated_hv"></a>}}
+\if{latex}{\out{\hypertarget{method-RandomSearchClassif-get_dominated_hv}{}}}
 \subsection{Method \code{get_dominated_hv()}}{
 Calculates the dominated hypervolume of each generation. The randomly drawn samples are therefore split
 into \code{n_generations} folds of size \code{mu.}
@@ -205,8 +205,8 @@ A \code{data.table} with the dominated hypervolume of each generation.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-plot_search"></a>}}
-\if{latex}{\out{\hypertarget{method-plot_search}{}}}
+\if{html}{\out{<a id="method-RandomSearchClassif-plot_search"></a>}}
+\if{latex}{\out{\hypertarget{method-RandomSearchClassif-plot_search}{}}}
 \subsection{Method \code{plot_search()}}{
 Visualizes two selected objective values of all emerged individuals in a scatter plot.
 The randomly drawn samples are therefore split into \code{n_generations} folds of size \code{mu.}
@@ -228,8 +228,8 @@ and "dist_train".}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-RandomSearchClassif-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-RandomSearchClassif-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
