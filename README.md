@@ -6,8 +6,6 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/dandls/counterfactuals/workflows/R-CMD-check/badge.svg)](https://github.com/dandls/counterfactuals/actions)
-[![Codecov test
-coverage](https://codecov.io/gh/dandls/counterfactuals/branch/main/graph/badge.svg)](https://codecov.io/gh/dandls/counterfactuals?branch=main)
 <!-- badges: end -->
 
 The `counterfactuals` package provides various (model-agnostic)
@@ -33,7 +31,7 @@ Chapter 9.3 of the [Interpretable Machine Learning
 book](https://christophm.github.io/interpretable-ml-book/) by Christoph
 Molnar. The package is based on the R code underlying the paper
 [Multi-Objective Counterfactual Explanations
-(MOC)](https://link.springer.com/chapter/10.1007%2F978-3-030-58112-1_31).
+(MOC)](https://link.springer.com/chapter/10.1007/978-3-030-58112-1_31).
 
 ## Available methods
 

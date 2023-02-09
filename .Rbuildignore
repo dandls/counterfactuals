@@ -1,9 +1,13 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.git$
 ^\.github$
+^\.github$
+^\.gitignore$
 ^codecov\.yml$
 ^_config\.yml$
 ^LICENSE\.md$
+^README\.html$
 ^README\.Rmd$
 ^_pkgdown\.yml$
 ^docs$
