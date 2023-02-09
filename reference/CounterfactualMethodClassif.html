@@ -91,11 +91,11 @@ by the child classes and return the counterfactuals as a <code>data.table</code>
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
 
-<ul><li><p><a href="#method-new"><code>CounterfactualMethodClassif$new()</code></a></p></li>
-<li><p><a href="#method-find_counterfactuals"><code>CounterfactualMethodClassif$find_counterfactuals()</code></a></p></li>
-<li><p><a href="#method-clone"><code>CounterfactualMethodClassif$clone()</code></a></p></li>
-</ul></div><p><details open><summary>Inherited methods</summary><ul><li><p><span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethod" data-id="print"><a href="CounterfactualMethod.html#method-print"><code>counterfactuals::CounterfactualMethod$print()</code></a></span></p></li>
-</ul></details></p><hr><a id="method-new"></a><div class="section">
+<ul><li><p><a href="#method-CounterfactualMethodClassif-new"><code>CounterfactualMethodClassif$new()</code></a></p></li>
+<li><p><a href="#method-CounterfactualMethodClassif-find_counterfactuals"><code>CounterfactualMethodClassif$find_counterfactuals()</code></a></p></li>
+<li><p><a href="#method-CounterfactualMethodClassif-clone"><code>CounterfactualMethodClassif$clone()</code></a></p></li>
+</ul></div><p><details open><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethod" data-id="print"><a href="CounterfactualMethod.html#method-print"><code>counterfactuals::CounterfactualMethod$print()</code></a></span></li>
+</ul></details></p><hr><a id="method-CounterfactualMethodClassif-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Creates a new <code>CounterfactualMethodClassif</code> object.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
@@ -138,7 +138,7 @@ rows and <code>nrow(y)</code> columns.</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-find_counterfactuals"></a><div class="section">
+</div><p></p><hr><a id="method-CounterfactualMethodClassif-find_counterfactuals"></a><div class="section">
 <h3 id="method-find-counterfactuals-">Method <code>find_counterfactuals()</code><a class="anchor" aria-label="anchor" href="#method-find-counterfactuals-"></a></h3>
 <p>Runs the counterfactual method and returns the counterfactuals.
 It searches for counterfactuals that have a predicted probability in the interval <code>desired_prob</code> for the
@@ -178,7 +178,7 @@ A scalar is internally converted to an interval.</p></dd>
 <p>A <a href="Counterfactuals.html">Counterfactuals</a> object containing the results.</p>
 </div>
 
-</div><p></p><hr><a id="method-clone"></a><div class="section">
+</div><p></p><hr><a id="method-CounterfactualMethodClassif-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>

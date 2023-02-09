@@ -116,19 +116,19 @@ A single row with the observation of interest.</p></dd>
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
 
-<ul><li><p><a href="#method-new"><code>Counterfactuals$new()</code></a></p></li>
-<li><p><a href="#method-evaluate"><code>Counterfactuals$evaluate()</code></a></p></li>
-<li><p><a href="#method-evaluate_set"><code>Counterfactuals$evaluate_set()</code></a></p></li>
-<li><p><a href="#method-predict"><code>Counterfactuals$predict()</code></a></p></li>
-<li><p><a href="#method-subset_to_valid"><code>Counterfactuals$subset_to_valid()</code></a></p></li>
-<li><p><a href="#method-revert_subset_to_valid"><code>Counterfactuals$revert_subset_to_valid()</code></a></p></li>
-<li><p><a href="#method-plot_parallel"><code>Counterfactuals$plot_parallel()</code></a></p></li>
-<li><p><a href="#method-plot_freq_of_feature_changes"><code>Counterfactuals$plot_freq_of_feature_changes()</code></a></p></li>
-<li><p><a href="#method-get_freq_of_feature_changes"><code>Counterfactuals$get_freq_of_feature_changes()</code></a></p></li>
-<li><p><a href="#method-plot_surface"><code>Counterfactuals$plot_surface()</code></a></p></li>
-<li><p><a href="#method-print"><code>Counterfactuals$print()</code></a></p></li>
-<li><p><a href="#method-clone"><code>Counterfactuals$clone()</code></a></p></li>
-</ul></div><p></p><hr><a id="method-new"></a><div class="section">
+<ul><li><p><a href="#method-Counterfactuals-new"><code>Counterfactuals$new()</code></a></p></li>
+<li><p><a href="#method-Counterfactuals-evaluate"><code>Counterfactuals$evaluate()</code></a></p></li>
+<li><p><a href="#method-Counterfactuals-evaluate_set"><code>Counterfactuals$evaluate_set()</code></a></p></li>
+<li><p><a href="#method-Counterfactuals-predict"><code>Counterfactuals$predict()</code></a></p></li>
+<li><p><a href="#method-Counterfactuals-subset_to_valid"><code>Counterfactuals$subset_to_valid()</code></a></p></li>
+<li><p><a href="#method-Counterfactuals-revert_subset_to_valid"><code>Counterfactuals$revert_subset_to_valid()</code></a></p></li>
+<li><p><a href="#method-Counterfactuals-plot_parallel"><code>Counterfactuals$plot_parallel()</code></a></p></li>
+<li><p><a href="#method-Counterfactuals-plot_freq_of_feature_changes"><code>Counterfactuals$plot_freq_of_feature_changes()</code></a></p></li>
+<li><p><a href="#method-Counterfactuals-get_freq_of_feature_changes"><code>Counterfactuals$get_freq_of_feature_changes()</code></a></p></li>
+<li><p><a href="#method-Counterfactuals-plot_surface"><code>Counterfactuals$plot_surface()</code></a></p></li>
+<li><p><a href="#method-Counterfactuals-print"><code>Counterfactuals$print()</code></a></p></li>
+<li><p><a href="#method-Counterfactuals-clone"><code>Counterfactuals$clone()</code></a></p></li>
+</ul></div><p></p><hr><a id="method-Counterfactuals-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Creates a new <code>Counterfactuals</code> object.
 This method should only be called by the <code>$find_counterfactuals</code> methods of <a href="CounterfactualMethodRegr.html">CounterfactualMethodRegr</a>
@@ -182,7 +182,7 @@ NULL which means that no name is provided.</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-evaluate"></a><div class="section">
+</div><p></p><hr><a id="method-Counterfactuals-evaluate"></a><div class="section">
 <h3 id="method-evaluate-">Method <code>evaluate()</code><a class="anchor" aria-label="anchor" href="#method-evaluate-"></a></h3>
 <p>Evaluates the counterfactuals. It returns the counterfactuals together with the evaluation <code>measures</code>.</p><div class="section">
 <h4 id="usage-1">Usage<a class="anchor" aria-label="anchor" href="#usage-1"></a></h4>
@@ -235,7 +235,7 @@ specifies the weight of the i-th closest data point.</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-evaluate_set"></a><div class="section">
+</div><p></p><hr><a id="method-Counterfactuals-evaluate_set"></a><div class="section">
 <h3 id="method-evaluate-set-">Method <code>evaluate_set()</code><a class="anchor" aria-label="anchor" href="#method-evaluate-set-"></a></h3>
 <p>Evaluates a set of counterfactuals. It returns the evaluation <code>measures</code>.</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
@@ -272,7 +272,7 @@ Default is NULL, meaning the nadir point by Dandl et al. (2020) is used:
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-predict"></a><div class="section">
+</div><p></p><hr><a id="method-Counterfactuals-predict"></a><div class="section">
 <h3 id="method-predict-">Method <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code><a class="anchor" aria-label="anchor" href="#method-predict-"></a></h3>
 <p>Returns the predictions for the counterfactuals.</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
@@ -280,7 +280,7 @@ Default is NULL, meaning the nadir point by Dandl et al. (2020) is used:
 </div>
 
 
-</div><p></p><hr><a id="method-subset_to_valid"></a><div class="section">
+</div><p></p><hr><a id="method-Counterfactuals-subset_to_valid"></a><div class="section">
 <h3 id="method-subset-to-valid-">Method <code>subset_to_valid()</code><a class="anchor" aria-label="anchor" href="#method-subset-to-valid-"></a></h3>
 <p>Subset data to those meeting the desired prediction,
 Process could be reverted using <code>revert_subset_to_valid()</code>.</p><div class="section">
@@ -289,7 +289,7 @@ Process could be reverted using <code>revert_subset_to_valid()</code>.</p><div c
 </div>
 
 
-</div><p></p><hr><a id="method-revert_subset_to_valid"></a><div class="section">
+</div><p></p><hr><a id="method-Counterfactuals-revert_subset_to_valid"></a><div class="section">
 <h3 id="method-revert-subset-to-valid-">Method <code>revert_subset_to_valid()</code><a class="anchor" aria-label="anchor" href="#method-revert-subset-to-valid-"></a></h3>
 <p>Subset data to those meeting the desired prediction,
 Process could be reverted using <code>revert_subset_to_valid()</code>.</p><div class="section">
@@ -298,7 +298,7 @@ Process could be reverted using <code>revert_subset_to_valid()</code>.</p><div c
 </div>
 
 
-</div><p></p><hr><a id="method-plot_parallel"></a><div class="section">
+</div><p></p><hr><a id="method-Counterfactuals-plot_parallel"></a><div class="section">
 <h3 id="method-plot-parallel-">Method <code>plot_parallel()</code><a class="anchor" aria-label="anchor" href="#method-plot-parallel-"></a></h3>
 <p>Plots a parallel plot that connects the (scaled) numeric feature values of each counterfactual and highlights
 <code>x_interest</code> in blue.</p><div class="section">
@@ -329,7 +329,7 @@ The row ids of the counterfactuals to display. If <code>NULL</code> (default) al
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-plot_freq_of_feature_changes"></a><div class="section">
+</div><p></p><hr><a id="method-Counterfactuals-plot_freq_of_feature_changes"></a><div class="section">
 <h3 id="method-plot-freq-of-feature-changes-">Method <code>plot_freq_of_feature_changes()</code><a class="anchor" aria-label="anchor" href="#method-plot-freq-of-feature-changes-"></a></h3>
 <p>Plots a bar chart with the frequency of feature changes across all counterfactuals.</p><div class="section">
 <h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
@@ -346,7 +346,7 @@ Should unchanged features be excluded from the plot? Default is <code>FALSE</cod
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-get_freq_of_feature_changes"></a><div class="section">
+</div><p></p><hr><a id="method-Counterfactuals-get_freq_of_feature_changes"></a><div class="section">
 <h3 id="method-get-freq-of-feature-changes-">Method <code>get_freq_of_feature_changes()</code><a class="anchor" aria-label="anchor" href="#method-get-freq-of-feature-changes-"></a></h3>
 <p>Returns the frequency of feature changes across all counterfactuals.</p><div class="section">
 <h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
@@ -367,7 +367,7 @@ Should unchanged features be excluded? Default is <code>FALSE</code>.</p></dd>
 <p>A (named) <code>numeric</code> vector with the frequency of feature changes.</p>
 </div>
 
-</div><p></p><hr><a id="method-plot_surface"></a><div class="section">
+</div><p></p><hr><a id="method-Counterfactuals-plot_surface"></a><div class="section">
 <h3 id="method-plot-surface-">Method <code>plot_surface()</code><a class="anchor" aria-label="anchor" href="#method-plot-surface-"></a></h3>
 <p>Creates a surface plot for two features. <code>x_interest</code> is represented as a white dot and
 all counterfactuals that differ from <code>x_interest</code> <strong>only</strong> in the two selected features are represented as black dots.
@@ -395,7 +395,7 @@ The grid size of the plot. It is ignored in case of two <code>non-numeric</code>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-print"></a><div class="section">
+</div><p></p><hr><a id="method-Counterfactuals-print"></a><div class="section">
 <h3 id="method-print-">Method <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code><a class="anchor" aria-label="anchor" href="#method-print-"></a></h3>
 <p>Prints the <code>Counterfactuals</code> object.</p><div class="section">
 <h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
@@ -403,7 +403,7 @@ The grid size of the plot. It is ignored in case of two <code>non-numeric</code>
 </div>
 
 
-</div><p></p><hr><a id="method-clone"></a><div class="section">
+</div><p></p><hr><a id="method-Counterfactuals-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>

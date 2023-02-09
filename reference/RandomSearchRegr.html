@@ -132,14 +132,14 @@ The object used for optimization.</p></dd>
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
 
-<ul><li><p><a href="#method-new"><code>RandomSearchRegr$new()</code></a></p></li>
-<li><p><a href="#method-plot_statistics"><code>RandomSearchRegr$plot_statistics()</code></a></p></li>
-<li><p><a href="#method-get_dominated_hv"><code>RandomSearchRegr$get_dominated_hv()</code></a></p></li>
-<li><p><a href="#method-plot_search"><code>RandomSearchRegr$plot_search()</code></a></p></li>
-<li><p><a href="#method-clone"><code>RandomSearchRegr$clone()</code></a></p></li>
-</ul></div><p><details open><summary>Inherited methods</summary><ul><li><p><span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethod" data-id="print"><a href="CounterfactualMethod.html#method-print"><code>counterfactuals::CounterfactualMethod$print()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethodRegr" data-id="find_counterfactuals"><a href="CounterfactualMethodRegr.html#method-find_counterfactuals"><code>counterfactuals::CounterfactualMethodRegr$find_counterfactuals()</code></a></span></p></li>
-</ul></details></p><hr><a id="method-new"></a><div class="section">
+<ul><li><p><a href="#method-RandomSearchRegr-new"><code>RandomSearchRegr$new()</code></a></p></li>
+<li><p><a href="#method-RandomSearchRegr-plot_statistics"><code>RandomSearchRegr$plot_statistics()</code></a></p></li>
+<li><p><a href="#method-RandomSearchRegr-get_dominated_hv"><code>RandomSearchRegr$get_dominated_hv()</code></a></p></li>
+<li><p><a href="#method-RandomSearchRegr-plot_search"><code>RandomSearchRegr$plot_search()</code></a></p></li>
+<li><p><a href="#method-RandomSearchRegr-clone"><code>RandomSearchRegr$clone()</code></a></p></li>
+</ul></div><p><details open><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethod" data-id="print"><a href="CounterfactualMethod.html#method-print"><code>counterfactuals::CounterfactualMethod$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethodRegr" data-id="find_counterfactuals"><a href="CounterfactualMethodRegr.html#method-find_counterfactuals"><code>counterfactuals::CounterfactualMethodRegr$find_counterfactuals()</code></a></span></li>
+</ul></details></p><hr><a id="method-RandomSearchRegr-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create a new <code>RandomSearchRegr</code> object.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
@@ -232,7 +232,7 @@ return a <code>double</code> matrix with <code>nrow(x)</code> rows and maximum <
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-plot_statistics"></a><div class="section">
+</div><p></p><hr><a id="method-RandomSearchRegr-plot_statistics"></a><div class="section">
 <h3 id="method-plot-statistics-">Method <code>plot_statistics()</code><a class="anchor" aria-label="anchor" href="#method-plot-statistics-"></a></h3>
 <p>Plots the evolution of the mean and minimum objective values together with the dominated hypervolume over
 the generations. All values for a generation are computed based on all non-dominated individuals that emerged until
@@ -253,7 +253,7 @@ since they (usually) have different scales. If set to <code>TRUE</code> (default
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-get_dominated_hv"></a><div class="section">
+</div><p></p><hr><a id="method-RandomSearchRegr-get_dominated_hv"></a><div class="section">
 <h3 id="method-get-dominated-hv-">Method <code>get_dominated_hv()</code><a class="anchor" aria-label="anchor" href="#method-get-dominated-hv-"></a></h3>
 <p>Calculates the dominated hypervolume of each generation. The randomly drawn samples are therefore split
 into <code>n_generations</code> folds of size <code>mu.</code>
@@ -267,7 +267,7 @@ This function mimics MOCs <code>get_dominated_hv()</code> method. See the <code>
 <p>A <code>data.table</code> with the dominated hypervolume of each generation.</p>
 </div>
 
-</div><p></p><hr><a id="method-plot_search"></a><div class="section">
+</div><p></p><hr><a id="method-RandomSearchRegr-plot_search"></a><div class="section">
 <h3 id="method-plot-search-">Method <code>plot_search()</code><a class="anchor" aria-label="anchor" href="#method-plot-search-"></a></h3>
 <p>Visualizes two selected objective values of all emerged individuals in a scatter plot.
 The randomly drawn samples are therefore split into <code>n_generations</code> folds of size <code>mu.</code>
@@ -287,7 +287,7 @@ and "dist_train".</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-clone"></a><div class="section">
+</div><p></p><hr><a id="method-RandomSearchRegr-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>

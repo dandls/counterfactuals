@@ -149,14 +149,14 @@ The object used for optimization.</p></dd>
 <div class="section">
 <h3 id="public-methods">Public methods<a class="anchor" aria-label="anchor" href="#public-methods"></a></h3>
 
-<ul><li><p><a href="#method-new"><code>MOCRegr$new()</code></a></p></li>
-<li><p><a href="#method-plot_statistics"><code>MOCRegr$plot_statistics()</code></a></p></li>
-<li><p><a href="#method-get_dominated_hv"><code>MOCRegr$get_dominated_hv()</code></a></p></li>
-<li><p><a href="#method-plot_search"><code>MOCRegr$plot_search()</code></a></p></li>
-<li><p><a href="#method-clone"><code>MOCRegr$clone()</code></a></p></li>
-</ul></div><p><details open><summary>Inherited methods</summary><ul><li><p><span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethod" data-id="print"><a href="CounterfactualMethod.html#method-print"><code>counterfactuals::CounterfactualMethod$print()</code></a></span></p></li>
-<li><p><span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethodRegr" data-id="find_counterfactuals"><a href="CounterfactualMethodRegr.html#method-find_counterfactuals"><code>counterfactuals::CounterfactualMethodRegr$find_counterfactuals()</code></a></span></p></li>
-</ul></details></p><hr><a id="method-new"></a><div class="section">
+<ul><li><p><a href="#method-MOCRegr-new"><code>MOCRegr$new()</code></a></p></li>
+<li><p><a href="#method-MOCRegr-plot_statistics"><code>MOCRegr$plot_statistics()</code></a></p></li>
+<li><p><a href="#method-MOCRegr-get_dominated_hv"><code>MOCRegr$get_dominated_hv()</code></a></p></li>
+<li><p><a href="#method-MOCRegr-plot_search"><code>MOCRegr$plot_search()</code></a></p></li>
+<li><p><a href="#method-MOCRegr-clone"><code>MOCRegr$clone()</code></a></p></li>
+</ul></div><p><details open><summary>Inherited methods</summary><ul><li><span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethod" data-id="print"><a href="CounterfactualMethod.html#method-print"><code>counterfactuals::CounterfactualMethod$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="counterfactuals" data-topic="CounterfactualMethodRegr" data-id="find_counterfactuals"><a href="CounterfactualMethodRegr.html#method-find_counterfactuals"><code>counterfactuals::CounterfactualMethodRegr$find_counterfactuals()</code></a></span></li>
+</ul></details></p><hr><a id="method-MOCRegr-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create a new <code>MOCRegr</code> object.</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
@@ -307,7 +307,7 @@ return a <code>double</code> matrix with <code>nrow(x)</code> rows and maximum <
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-plot_statistics"></a><div class="section">
+</div><p></p><hr><a id="method-MOCRegr-plot_statistics"></a><div class="section">
 <h3 id="method-plot-statistics-">Method <code>plot_statistics()</code><a class="anchor" aria-label="anchor" href="#method-plot-statistics-"></a></h3>
 <p>Plots the evolution of the mean and minimum objective values together with the dominated hypervolume over
 the generations. All values for a generation are computed based on all non-dominated individuals that emerged until
@@ -327,7 +327,7 @@ since they (usually) have different scales. If set to <code>TRUE</code> (default
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-get_dominated_hv"></a><div class="section">
+</div><p></p><hr><a id="method-MOCRegr-get_dominated_hv"></a><div class="section">
 <h3 id="method-get-dominated-hv-">Method <code>get_dominated_hv()</code><a class="anchor" aria-label="anchor" href="#method-get-dominated-hv-"></a></h3>
 <p>Calculates the dominated hypervolume of each generation.</p><div class="section">
 <h4 id="usage-2">Usage<a class="anchor" aria-label="anchor" href="#usage-2"></a></h4>
@@ -339,7 +339,7 @@ since they (usually) have different scales. If set to <code>TRUE</code> (default
 <p>A <code>data.table</code> with the dominated hypervolume of each generation.</p>
 </div>
 
-</div><p></p><hr><a id="method-plot_search"></a><div class="section">
+</div><p></p><hr><a id="method-MOCRegr-plot_search"></a><div class="section">
 <h3 id="method-plot-search-">Method <code>plot_search()</code><a class="anchor" aria-label="anchor" href="#method-plot-search-"></a></h3>
 <p>Visualizes two selected objective values of all emerged individuals in a scatter plot.</p><div class="section">
 <h4 id="usage-3">Usage<a class="anchor" aria-label="anchor" href="#usage-3"></a></h4>
@@ -357,7 +357,7 @@ and "dist_train".</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-clone"></a><div class="section">
+</div><p></p><hr><a id="method-MOCRegr-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
 <h4 id="usage-4">Usage<a class="anchor" aria-label="anchor" href="#usage-4"></a></h4>
