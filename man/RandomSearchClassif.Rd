@@ -23,7 +23,7 @@ is only required to make certain statistics comparable with MOC (e.g. the evolut
 }
 \examples{
 if (require("randomForest")) {
-#' \dontrun{
+\dontrun{
   # Train a model
   rf = randomForest(Species ~ ., data = iris)
   # Create a predictor object

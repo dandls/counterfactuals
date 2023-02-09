@@ -4,7 +4,7 @@
 #'
 #' @examples
 #' if (require("randomForest")) {
-#' #' \dontrun{
+#' \dontrun{
 #'   # Train a model
 #'   rf = randomForest(Species ~ ., data = iris)
 #'   # Create a predictor object
