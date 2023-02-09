@@ -4,13 +4,14 @@
 #' 
 #' @examples 
 #' if (require("randomForest")) {
+#'  \dontrun{
 #'   # Train a model
-#'   rf = randomForest(Species ~ ., data = iris, ntree = 10L)
+#'   rf = randomForest(Species ~ ., data = iris)
 #'   # Create a predictor object
 #'   predictor = iml::Predictor$new(rf, type = "prob")
 #'   # Find counterfactuals for x_interest
-#'   moc_classif = MOCClassif$new(predictor, n_generations = 1L, quiet = TRUE)
-#'   \dontrun{
+#'   moc_classif = MOCClassif$new(predictor, n_generations = 15L, quiet = TRUE)
+#'  
 #'   cfactuals = moc_classif$find_counterfactuals(
 #'     x_interest = iris[150L, ], desired_class = "versicolor", desired_prob = c(0.5, 1)
 #'   )

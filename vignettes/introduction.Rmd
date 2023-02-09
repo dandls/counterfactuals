@@ -29,7 +29,6 @@ library("iml")
 library("randomForest")
 library("mlr3")
 library("mlr3learners")
-library("mlr3pipelines")
 library("data.table")
 ```
 
@@ -126,7 +125,8 @@ cfactuals = moc_classif$find_counterfactuals(
 
 ```{r, echo=FALSE, results='hide', message=FALSE}
 if (!file.exists("introduction-res/cfactuals.RDS")) {
-  moc_classif = MOCClassif$new(predictor, epsilon = 0, fixed_features = c("pregnant", "age"), quiet = TRUE)
+  moc_classif = MOCClassif$new(predictor, epsilon = 0, fixed_features = c("pregnant", "age"), 
+    init_strategy = "icecurve", quiet = TRUE)
   cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "pos", desired_prob = c(0, 0.4))
   dir.create("introduction-res")
   saveRDS(moc_classif, file = "introduction-res/moc_classif.RDS")
@@ -201,7 +201,7 @@ reference point (that represents the maximal values of the objectives) could be 
 The evolution of the hypervolume indicator can be plotted together with the evolution of mean and minimum objective values 
 using the `plot_statistics()` method.
 
-```{r, fig.height=2.5, results='asis', eval=FALSE}
+```{r, fig.height=2.5, results='asis', eval=TRUE}
 moc_classif$plot_statistics(centered_obj = TRUE)
 ```
 

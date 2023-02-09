@@ -485,24 +485,33 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb8-2"><a href="#cb8-2"></a>predictor<span class="op">$</span><span class="kw">predict</span>(x_interest)</span>
 <span id="cb8-3"><a href="#cb8-3"></a><span class="co">#&gt;   setosa versicolor virginica</span></span>
 <span id="cb8-4"><a href="#cb8-4"></a><span class="co">#&gt; 1      0        0.3       0.7</span></span></code></pre></div>
+<pre><code>#&gt; extracting sampled 10 of 20 trees
+#&gt; Time difference of 3.120119 secs
+#&gt; set e-satisfactory instance (10 trees)
+#&gt; Time difference of 0.4980896 secs
+#&gt; 1 instances were predicted by 10 trees: 
+#&gt; instance[1]: predicted &quot;virginica&quot; agreed by 7 tree (wants &quot;virginica&quot;-&gt;&quot;versicolor&quot;)
+#&gt; evaluate 26 rules in 7 trees
+#&gt; - evalutate 10 candidate of rules (delta.min=0.951)
+#&gt; Time difference of 0.08894181 secs</code></pre>
 <p>Now, we use Feature Tweaking to address the question: &quot;What would need to change in <code>x_interest</code> for the model to predict a probability of at least 60% for<code>versicolor</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># Set up FeatureTweakerClassif</span></span>
-<span id="cb9-2"><a href="#cb9-2"></a>ft_classif =<span class="st"> </span>FeatureTweakerClassif<span class="op">$</span><span class="kw">new</span>(predictor, <span class="dt">ktree =</span> 10L, <span class="dt">resample =</span> <span class="ot">TRUE</span>)</span>
-<span id="cb9-3"><a href="#cb9-3"></a></span>
-<span id="cb9-4"><a href="#cb9-4"></a><span class="co"># Find counterfactuals and create Counterfactuals Object</span></span>
-<span id="cb9-5"><a href="#cb9-5"></a>cfactuals =<span class="st"> </span>ft_classif<span class="op">$</span><span class="kw">find_counterfactuals</span>(</span>
-<span id="cb9-6"><a href="#cb9-6"></a>  <span class="dt">x_interest =</span> x_interest, <span class="dt">desired_class =</span> <span class="st">&quot;versicolor&quot;</span>, <span class="dt">desired_prob =</span> <span class="kw">c</span>(<span class="fl">0.6</span>, <span class="dv">1</span>)</span>
-<span id="cb9-7"><a href="#cb9-7"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># Set up FeatureTweakerClassif</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>ft_classif =<span class="st"> </span>FeatureTweakerClassif<span class="op">$</span><span class="kw">new</span>(predictor, <span class="dt">ktree =</span> 10L, <span class="dt">resample =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb10-3"><a href="#cb10-3"></a></span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="co"># Find counterfactuals and create Counterfactuals Object</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a>cfactuals =<span class="st"> </span>ft_classif<span class="op">$</span><span class="kw">find_counterfactuals</span>(</span>
+<span id="cb10-6"><a href="#cb10-6"></a>  <span class="dt">x_interest =</span> x_interest, <span class="dt">desired_class =</span> <span class="st">&quot;versicolor&quot;</span>, <span class="dt">desired_prob =</span> <span class="kw">c</span>(<span class="fl">0.6</span>, <span class="dv">1</span>)</span>
+<span id="cb10-7"><a href="#cb10-7"></a>)</span></code></pre></div>
 <p>Just as for the existing methods, the result is a <code>Counterfactuals</code> object.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>cfactuals</span>
-<span id="cb10-2"><a href="#cb10-2"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
-<span id="cb10-3"><a href="#cb10-3"></a><span class="co">#&gt;  </span></span>
-<span id="cb10-4"><a href="#cb10-4"></a><span class="co">#&gt; Desired class: versicolor </span></span>
-<span id="cb10-5"><a href="#cb10-5"></a><span class="co">#&gt; Desired predicted probability range: [0.6, 1] </span></span>
-<span id="cb10-6"><a href="#cb10-6"></a><span class="co">#&gt;  </span></span>
-<span id="cb10-7"><a href="#cb10-7"></a><span class="co">#&gt; Head: </span></span>
-<span id="cb10-8"><a href="#cb10-8"></a><span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width</span></span>
-<span id="cb10-9"><a href="#cb10-9"></a><span class="co">#&gt; 1:          7.2           3         4.85        1.55</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>cfactuals</span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="co">#&gt;  </span></span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="co">#&gt; Desired class: versicolor </span></span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="co">#&gt; Desired predicted probability range: [0.6, 1] </span></span>
+<span id="cb11-6"><a href="#cb11-6"></a><span class="co">#&gt;  </span></span>
+<span id="cb11-7"><a href="#cb11-7"></a><span class="co">#&gt; Head: </span></span>
+<span id="cb11-8"><a href="#cb11-8"></a><span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width</span></span>
+<span id="cb11-9"><a href="#cb11-9"></a><span class="co">#&gt; 1:          7.2           3         4.85        1.55</span></span></code></pre></div>
 </div>
 <div id="comments" class="section level2">
 <h2>Comments</h2>
