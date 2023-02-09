@@ -38,7 +38,7 @@ For an introduction to counterfactual explanation methods, we recommend Chapter 
 
 The following counterfactual explanation methods are currently implemented:
 
-- [Multi-Objective Counterfactual Explanations (MOC)](https://link.springer.com/chapter/10.1007%2F978-3-030-58112-1_31) 
+- [Multi-Objective Counterfactual Explanations (MOC)](https://link.springer.com/chapter/10.1007/978-3-030-58112-1_31) 
 - [Nearest Instance Counterfactual Explanations (NICE)](https://arxiv.org/abs/2104.07411) (an extended version)
 - [WhatIf](https://arxiv.org/abs/1907.04135) (an extended version)
 
