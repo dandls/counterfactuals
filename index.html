@@ -88,7 +88,7 @@
 </h1></div>
 <!-- badges: start -->
 <p>The <code>counterfactuals</code> package provides various (model-agnostic) counterfactual explanation methods via a unified R6-based interface.</p>
-<p>Counterfactual explanation methods address questions of the form: “For input <span class="math inline"><strong>x</strong></span>, the model predicted <span class="math inline"><em>ŷ</em></span>. What needs to be changed in <span class="math inline"><strong>x</strong></span> for the model to predict a desired outcome <span class="math inline"><em>y</em>′</span> instead?”.<br>
+<p>Counterfactual explanation methods address questions of the form: “For input <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Cmathbf%7Bx%5E%7B%5Cstar%7D%7D%20%22%5Cmathbf%7Bx%5E%7B%5Cstar%7D%7D%22" alt="\mathbf{x^{\star}}">, the model predicted <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;y%20%22y%22" alt="y">. What needs to be changed in <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Cmathbf%7Bx%5E%7B%5Cstar%7D%7D%20%22%5Cmathbf%7Bx%5E%7B%5Cstar%7D%7D%22" alt="\mathbf{x^{\star}}"> for the model to predict a desired outcome <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Ctilde%7By%7D%20%22%5Ctilde%7By%7D%22" alt="\tilde{y}"> instead?”.<br>
 Denied loan applications serve as a common example; here a counterfactual explanation (or counterfactual for short) could be: “The loan was denied because the amount of €30k is too high given the income. If the amount had been €20k, the loan would have been granted.”</p>
 <p>For an introduction to counterfactual explanation methods, we recommend Chapter 9.3 of the <a href="https://christophm.github.io/interpretable-ml-book/" class="external-link">Interpretable Machine Learning book</a> by Christoph Molnar. The package is based on the R code underlying the paper <a href="https://link.springer.com/chapter/10.1007%2F978-3-030-58112-1_31" class="external-link">Multi-Objective Counterfactual Explanations (MOC)</a>.</p>
 <div class="section level2">
@@ -122,7 +122,7 @@ Denied loan applications serve as a common example; here a counterfactual explan
 <div class="section level3">
 <h3 id="fitting-a-model">Fitting a model<a class="anchor" aria-label="anchor" href="#fitting-a-model"></a>
 </h3>
-<p>First, we train a <code>randomForest</code> model to predict the target variable <code>Species</code>, omitting one observation from the training data, which is <code>x_interest</code> (the observation <em>x</em><sup>⋆</sup> for which we want to find counterfactuals).</p>
+<p>First, we train a <code>randomForest</code> model to predict the target variable <code>Species</code>, omitting one observation from the training data, which is <code>x_interest</code> (the observation <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;x%5E%7B%5Cstar%7D%20%22x%5E%7B%5Cstar%7D%22" alt="x^{\star}"> for which we want to find counterfactuals).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html" class="external-link">randomForest</a></span><span class="op">(</span><span class="va">Species</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="op">-</span><span class="fl">150L</span>, <span class="op">]</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -180,12 +180,12 @@ Denied loan applications serve as a common example; here a counterfactual explan
 <p>With the <code>evaluate()</code> method, we can evaluate the counterfactuals using various quality measures.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">evaluate</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width dist_x_interest nr_changed dist_train dist_target</span></span>
-<span><span class="co">#&gt; 1:          5.9         3.2          4.8         1.8      0.03354520          2          0           0</span></span>
-<span><span class="co">#&gt; 2:          6.0         2.7          5.1         1.6      0.05902778          3          0           0</span></span>
-<span><span class="co">#&gt; 3:          5.9         3.0          4.2         1.5      0.06938559          2          0           0</span></span>
-<span><span class="co">#&gt; 4:          6.7         3.0          5.0         1.7      0.07020951          3          0           0</span></span>
-<span><span class="co">#&gt; 5:          6.0         2.9          4.5         1.5      0.07403484          4          0           0</span></span></code></pre></div>
+<span><span class="co">#&gt;    Sepal.Length Sepal.Width Petal.Length Petal.Width dist_x_interest no_changed dist_train dist_target minimality</span></span>
+<span><span class="co">#&gt; 1:          5.9         3.2          4.8         1.8      0.03354520          2          0           0          0</span></span>
+<span><span class="co">#&gt; 2:          6.0         2.7          5.1         1.6      0.05902778          3          0           0          2</span></span>
+<span><span class="co">#&gt; 3:          5.9         3.0          4.2         1.5      0.06938559          2          0           0          0</span></span>
+<span><span class="co">#&gt; 4:          6.7         3.0          5.0         1.7      0.07020951          3          0           0          1</span></span>
+<span><span class="co">#&gt; 5:          6.0         2.9          4.5         1.5      0.07403484          4          0           0          2</span></span></code></pre></div>
 <p>One visualization option is to plot the frequency of feature changes across all counterfactuals using the <code>plot_freq_of_feature_changes()</code> method.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_freq_of_feature_changes</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -236,8 +236,8 @@ Denied loan applications serve as a common example; here a counterfactual explan
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/susanne-207/counterfactuals/actions" class="external-link"><img src="https://github.com/susanne-207/counterfactuals/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://codecov.io/gh/susanne-207/counterfactuals?branch=main" class="external-link"><img src="https://codecov.io/gh/susanne-207/counterfactuals/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://github.com/dandls/counterfactuals/actions" class="external-link"><img src="https://github.com/dandls/counterfactuals/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://codecov.io/gh/dandls/counterfactuals?branch=main" class="external-link"><img src="https://codecov.io/gh/dandls/counterfactuals/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>
 </div>
 
