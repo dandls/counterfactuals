@@ -4,7 +4,6 @@
 #'
 #' @examples
 #' if (require("randomForest")) {
-#' \dontrun{
 #'   # Train a model
 #'   rf = randomForest(Species ~ ., data = iris)
 #'   # Create a predictor object
@@ -18,7 +17,6 @@
 #'   cfactuals$data
 #'   # Plot evolution of hypervolume and mean and minimum objective values
 #'   rs_classif$plot_statistics()
-#'   }
 #' }
 #'
 #' @export

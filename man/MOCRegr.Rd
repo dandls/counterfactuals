@@ -41,12 +41,12 @@ For details see Dandl et al. 2020.
 }
 \examples{
 if (require("randomForest")) {
-  \dontrun{
   # Train a model
   rf = randomForest(mpg ~ ., data = mtcars)
   # Create a predictor object
   predictor = iml::Predictor$new(rf)
   # Find counterfactuals for x_interest
+  \donttest{
   moc_regr = MOCRegr$new(predictor, n_generations = 15L, quiet = TRUE)
   cfactuals = moc_regr$find_counterfactuals(x_interest = mtcars[1L, ], desired_outcome = c(22, 26))
   # Print the counterfactuals

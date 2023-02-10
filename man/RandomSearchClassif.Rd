@@ -23,7 +23,6 @@ is only required to make certain statistics comparable with MOC (e.g. the evolut
 }
 \examples{
 if (require("randomForest")) {
-\dontrun{
   # Train a model
   rf = randomForest(Species ~ ., data = iris)
   # Create a predictor object
@@ -37,7 +36,6 @@ if (require("randomForest")) {
   cfactuals$data
   # Plot evolution of hypervolume and mean and minimum objective values
   rs_classif$plot_statistics()
-  }
 }
 
 }

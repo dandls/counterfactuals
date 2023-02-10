@@ -41,7 +41,7 @@ For details see Dandl et al. 2020.
 }
 \examples{
 if (require("randomForest")) {
- \dontrun{
+ \donttest{
   # Train a model
   rf = randomForest(Species ~ ., data = iris)
   # Create a predictor object
