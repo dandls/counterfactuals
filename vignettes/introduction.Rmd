@@ -35,54 +35,46 @@ library("data.table")
 
 ## Classification Task
 
-To illustrate the `counterfactuals` workflow for classification tasks, we search for counterfactuals for 
-diabetes-tested patients with `MOC` (Dandl et al. 2020). 
+To illustrate the `counterfactuals` workflow for classification tasks, we search 
+for counterfactuals with `MOC` (Dandl et al. 2020) for a bank customer, whose 
+credit application is rejected.
 
-### Data: Pima Indians Diabetes Database
+### Data: German Credit Dataset
 
-As training data, we use the Pima Indians Diabetes Database from the `mlbench` package.
-The data set contains 768 observations with 8 features and the binary target variable `diabetes`.
+As training data, we use the German Credit Data from the `rchallenge`` package.
+The data set contains 1000 observations with 21 features and the binary target variable `credit_risk`.
+For illustrative purposes, we only consider 8 of the 21 features in the following: 
+
+```{r}
+data(german, package = "rchallenge")  
+credit = german[, c("duration", "amount", "purpose", "age", "savings", "employment_duration", "housing", "number_credits", "credit_risk")]
+```
 
 ```{r, echo=FALSE}
 column_descr = data.frame(
   rbind(
-    cbind("pregnant", "Number of times pregnant"),
-    cbind("glucose", "Plasma glucose concentration (glucose tolerance test)"),
-    cbind("pressure", "Diastolic blood pressure (mm Hg)"),
-    cbind("triceps", "Triceps skin fold thickness (mm)"),
-    cbind("insulin", "2-Hour serum insulin (mu U/ml)"),
-    cbind("mass", "Body mass index"),
-    cbind("pedigree", "Diabetes pedigree function"),
+    cbind("duration", "Credit duration"),
+    cbind("amount", "Credit amount (DM)"),
+    cbind("purpose", "Purpose of credit"),
     cbind("age", "Age (years)"),
-    cbind("diabetes", "Class variable (test for diabetes)")
+    cbind("savings", "Amount in savings account"),
+    cbind("employment_duration", "Years in present employment"),
+    cbind("housing", "Type of housing"),
+    cbind("number_credits", "Number of credits"),
+    cbind("credit_risk", "Class variable (credit worthiness)")
   )
 )
 names(column_descr) <- c("Variable", "Description")
 knitr::kable(column_descr, escape = FALSE, format = "html", table.attr = "style='width:100%;'")
 ```
 
-```{r}
-data(PimaIndiansDiabetes, package = "mlbench")  
-```
-
-
-We convert `integerish` features to the `integer` data type to ensure that the counterfactuals will
-only contain `integer` values for these features (for example no `2.76` pregnancies).
-
-```{r}
-PimaIndiansDiabetes$pregnant = as.integer(PimaIndiansDiabetes$pregnant)
-PimaIndiansDiabetes$glucose = as.integer(PimaIndiansDiabetes$glucose)
-PimaIndiansDiabetes$age = as.integer(PimaIndiansDiabetes$age)
-```
-
-
 ### Fitting a model
 
-First, we train a model to predict `diabetes`, omitting one observation from the training data, which is `x_interest`.
+First, we train a model to predict whether a credit is `good` or `bad`, omitting one observation from the training data, which is `x_interest`.
 
 ```{r}
 set.seed(20210816)
-rf = randomForest::randomForest(diabetes ~ ., data = PimaIndiansDiabetes[-499L, ])
+rf = randomForest::randomForest(credit_risk ~ ., data = credit[-998L,])
 ```
 
 ### Setting up an iml::Predictor() object
@@ -92,48 +84,48 @@ model types. It contains the model and the data for its analysis.
 
 ```{r}
 predictor = iml::Predictor$new(rf, type = "prob")
-x_interest = PimaIndiansDiabetes[499L, ]
+x_interest = credit[998L, ]
 predictor$predict(x_interest)
 ```
 
-For `x_interest`, the model predicts a diabetes probability of `r round(predictor$predict(x_interest), 2)[2]`.
+For `x_interest`, the model predicts a probability of being a bad credit risk of `r round(predictor$predict(x_interest), 2)[2]`.
 
 ### Find counterfactuals
 
-Now, we examine which risk factors need to be changed to reduce the predicted diabetes probability to a maximum of 40%.\
+Now, we examine which factors need to be changed to incrase the predicted probability of being a good credit risk to more than 60%.\
 Since we want to apply MOC to a classification model, we initialize a `MOCClassif` object.
 Individuals whose prediction is farther away from the desired prediction than `epsilon` can be penalized.
 Here, we set `epsilon = 0`, penalizing all individuals whose prediction is outside the desired interval. 
-With the `fixed_features` argument, we can fix non-actionable features, here `pregnant` and `age`.
+With the `fixed_features` argument, we can fix non-actionable features, here `age` and `employment_duration`.
 
 ```{r, eval=FALSE}
 moc_classif = MOCClassif$new(
-  predictor, epsilon = 0, fixed_features = c("pregnant", "age"), init_strategy = "icecurve"
+  predictor, epsilon = 0, fixed_features = c("age", "employment_duration"), init_strategy = "icecurve", quiet = TRUE, termination_crit = "genstag", n_generations = 10L
 )
 ```
 
 Then, we use the `find_counterfactuals()` method to find counterfactuals for `x_interest`. 
-As we aim to find counterfactuals with a predicted diabetes probability of at most 40%, we set the `desired_class` to 
-`"pos"` and the `desired_prob` to `c(0, 0.4)`; in the binary classification case, this is equivalent to setting 
-`desired_class` to `"neg"` and `desired_prob` to `c(0.6, 1)`.
+As we aim to find counterfactuals with a predicted probability of being a good credit risk of at least 60%, we set the `desired_class` to 
+`"good"` and the `desired_prob` to `c(0.6, 1)`.
 
 ```{r, eval=FALSE}
 cfactuals = moc_classif$find_counterfactuals(
-  x_interest, desired_class = "pos", desired_prob = c(0, 0.4)
+  x_interest, desired_class = "good", desired_prob = c(0.6, 1)
 )
 ```
 
 ```{r, echo=FALSE, results='hide', message=FALSE}
-if (!file.exists("introduction-res/cfactuals.RDS")) {
-  moc_classif = MOCClassif$new(predictor, epsilon = 0, fixed_features = c("pregnant", "age"), 
-    init_strategy = "icecurve", quiet = TRUE)
-  cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "pos", desired_prob = c(0, 0.4))
+if (!file.exists("introduction-res/cfactuals_credit.RDS")) {
+  moc_classif = MOCClassif$new(
+  predictor, epsilon = 0, fixed_features = c("age", "employment_duration"), init_strategy = "icecurve", termination_crit = "genstag", n_generations = 10L, quiet = TRUE
+)
+  cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "good", desired_prob = c(0.6, 1))
   dir.create("introduction-res")
-  saveRDS(moc_classif, file = "introduction-res/moc_classif.RDS")
-  saveRDS(cfactuals, file = "introduction-res/cfactuals.RDS")
+  saveRDS(moc_classif, file = "introduction-res/moc_classif_credit.RDS")
+  saveRDS(cfactuals, file = "introduction-res/cfactuals_credit.RDS")
 }
-moc_classif = readRDS("introduction-res/moc_classif.RDS")
-cfactuals = readRDS("introduction-res/cfactuals.RDS")
+moc_classif = readRDS("introduction-res/moc_classif_credit.RDS")
+cfactuals = readRDS("introduction-res/cfactuals_credit.RDS")
 ```
 
 
@@ -168,7 +160,16 @@ differs from `x_interest.`; `NA` means "no difference" in both cases.
 head(cfactuals$evaluate(show_diff = TRUE, measures = c("dist_x_interest", "dist_target", "no_changed", "dist_train")), 5L)
 ```
 
-The `plot_freq_of_feature_changes()` method plots the frequency of feature changes across all counterfactuals. \
+By design, not all counterfactuals generated with MOC have a prediction equal to the desired 
+prediction. We can use `subset_to_valid()` to omit all counterfactuals that do not achieve 
+the desired predicition. 
+```{r}
+cfactuals$subset_to_valid()
+cfactuals
+```
+
+The `plot_freq_of_feature_changes()` method plots the frequency of feature changes across all
+remaining counterfactuals. 
 Setting `subset_zero = TRUE` removes all unchanged features from the plot.
 
 ```{r, fig.height=2}
@@ -178,7 +179,7 @@ cfactuals$plot_freq_of_feature_changes(subset_zero = TRUE)
 The parallel plot connects the (scaled) feature values of each counterfactual and highlights `x_interest` in blue.
 
 ```{r, message=FALSE, fig.height=2.5}
-cfactuals$plot_parallel(feature_names = NULL, row_ids = NULL, 
+cfactuals$plot_parallel(feature_names = c("duration", "amount"), row_ids = NULL, 
  digits_min_max = 2L)
 ```
 
@@ -188,7 +189,7 @@ counterfactuals.
 
 
 ```{r, fig.height=3}
-cfactuals$plot_surface(feature_names = c("glucose", "insulin"))
+cfactuals$plot_surface(feature_names = c("duration", "amount"))
 ```
 
 
@@ -218,52 +219,51 @@ moc_classif$plot_search(objectives = c("dist_x_interest", "dist_train"))
 ## Regression Tasks
 
 Finding counterfactuals for regression models is analogous to classification models. In this example, we use 
-`NICE` (Brughmans et al. (2022)) to search for counterfactuals for housing prices. 
+`NICE` (Brughmans et al. (2022)) to search for counterfactuals for plasma . 
 Brughmans et al. introduced `NICE` only for the classification setting but for 
 this package the method was extended to also work for regression tasks by allowing 
 prediction functions to return real-valued outcomes instead of classification scores. 
 
-### Data: Boston Housing Data
+### Data: Plasma Retinol
 
-As training data, we use the Boston Housing dataset from the `mlbench` package. 
-The dataset contains 506 observations with 13 features and the (continuous) target variable `medv`.
-
-```{r, echo=FALSE}
-# data(BostonHousing, package = "mlbench")  
-# df = data.frame(
-#   Variable = colnames(BostonHousing),
-#   Description = c(
-#     "Per capita crime rate by town",
-#     "Proportion of residential land zoned for lots over 25,000 sq.ft.",
-#     "Proportion of non-retail business acres per town",
-#     "Charles River dummy variable (= 1 if tract bounds river; 0 otherwise)",
-#     "Nitrogen oxides concentration (parts per 10 million).",
-#     "Average number of rooms per dwelling.",
-#     "Proportion of owner-occupied units built prior to 1940",
-#     "Weighted mean of distances to five Boston employment centres.",
-#     "Index of accessibility to radial highways.",
-#     "Full-value property-tax rate per $10,000.",
-#     "Pupil-teacher ratio by town.",
-#     "1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town.",
-#     "Percentage of lower status of the population",
-#     "Median value of owner-occupied homes in USD 1000's"
-#   )
-# )
-# knitr::kable(df, format = "html", table.attr = "style='width:100%;'")
-```
+As training data, we use the plasma dataset from the `gamlss.data` package. 
+The dataset contains 315 observations with 13 features and the (continuous) target variable `retplasma`, the plasma retinol concentration in ng/ml.
+The plasma retinol concentration is interesting because low concentrations are associated with an increased risk for some types of cancer (Harrell 2022). 
 
 ```{r}
-data(BostonHousing, package = "mlbench")
+data(plasma, package = "gamlss.data")
 ```
 
+```{r, echo=FALSE}
+df = data.frame(
+  Variable = colnames(plasma),
+  Description = c(
+    "Age (years)",
+    "Sex (1 = male, 2 = female)",
+    "Smoking status (1 = never, 2 = former, 3 = current smoker)",
+    "Body mass index (weight/(height^2))",
+    "Vitamin use (1 = yes, fairly often, 2 = yes, not often, 3 = no)",
+    "Number of calories consumed per day",
+    "Grams of fat consumed per day",
+    "Grams of fiber consumed per day",
+    "Number of alcoholic drinks consumed per week",
+    "Cholesterol consumed (mg per day)",
+    "Dietary beta-carotene consumed (mcg per day)",
+    "Dietary retinol consumed (mcg per day)",
+    "Plasma beta-carotene (ng/ml)",
+    "Plasma retinol (ng/ml)"
+  )
+)
+knitr::kable(df, format = "html", table.attr = "style='width:100%;'")
+```
 
 ### Fitting a model
 
-First, we train a model to predict `medv`, again omitting `x_interest` from the training data.
-This time we use a support vector machine trained with the `mlr3` package. 
+First, we train a model to predict `plasma_retinol`, again omitting `x_interest` from the training data.
+This time we use a regression tree trained with the `mlr3` and `rpart` package. 
 
 ```{r}
-tsk = mlr3::TaskRegr$new(id = "boston", backend = BostonHousing[-1L,], target = "medv")
+tsk = mlr3::TaskRegr$new(id = "plasma", backend = plasma[-100L,], target = "retplasma")
 tree = lrn("regr.rpart")
 model = tree$train(tsk)
 ```
@@ -273,31 +273,31 @@ model = tree$train(tsk)
 Then, we initialize an [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object.
 
 ```{r}
-predictor = iml::Predictor$new(model, data = BostonHousing, y = "medv")
-x_interest = BostonHousing[1L, ]
+predictor = iml::Predictor$new(model, data = plasma, y = "retplasma")
+x_interest = plasma[100L, ]
 predictor$predict(x_interest)
 ```
 
-For `x_interest`, the model predicts a median housing value of `r round(predictor$predict(x_interest), 2)[1]`.
+For `x_interest`, the model predicts a plasma concentration of `r round(predictor$predict(x_interest), 2)[1]`.
 
 ### Find counterfactuals
 
 Since we want to apply `NICE` to a regression model, we initialize a `NICERegr` object. 
 For regression models, we define a correctly predicted datapoint when its prediction
 is less than a user-specified value away. Here we allow for a deviation of 
-`margin_correct = 0.5`. In this example, we aim for plausible counterfactuals 
-in additional to sparse ones, such that we set `optimization = "plausiblity"`. 
+`margin_correct = 0.5`. In this example, we aim for proximal counterfactuals 
+in additional to sparse ones, such that we set `optimization = "proximity"`. 
 
 ```{r}
-nice_regr = NICERegr$new(predictor, optimization = "plausibility", 
+nice_regr = NICERegr$new(predictor, optimization = "proximity", 
   margin_correct = 0.5, return_multiple = FALSE)
 ```
 
 Then, we use the `find_counterfactuals()` method to find counterfactuals for `x_interest` with a predicted
-housing value in the interval [30, 32].
+plasma concentration in the interval [500, Inf].
  
 ```{r}
-cfactuals = nice_regr$find_counterfactuals(x_interest, desired_outcome = c(30, 40))
+cfactuals = nice_regr$find_counterfactuals(x_interest, desired_outcome = c(500, Inf))
 ```
 
 ### The counterfactuals object
@@ -337,10 +337,10 @@ l0_norm(xt, yt, data = NULL)
 Replacing the distance function is fairly easy: 
 
 ```{r}
-nice_regr = NICERegr$new(predictor, optimization = "plausibility", 
+nice_regr = NICERegr$new(predictor, optimization = "proximity", 
   margin_correct = 0.5, return_multiple = FALSE, 
   distance_function = l0_norm)
-cfactuals = nice_regr$find_counterfactuals(x_interest, desired_outcome = c(30, 40))
+cfactuals = nice_regr$find_counterfactuals(x_interest, desired_outcome = c(500, 1000))
 cfactuals
 ```
 
@@ -352,3 +352,5 @@ Brughmans D, Martens D (2022). “NICE: An Algorithm for Nearest Instance Counte
 Explanations.” Technical report, <arXiv:2104.07411> v2.
 
 Zitzler, Eckart, and Lothar Thiele. 1998. “Multiobjective Optimization Using Evolutionary Algorithms—a Comparative Case Study.” In International Conference on Parallel Problem Solving from Nature, 292–301. Springer.
+
+Harrell, F. E. 2002. “Plasma Retinol and Beta-Carotene Dataset“. https://hbiostat.org/data/repo/plasma.html.
