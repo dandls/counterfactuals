@@ -184,8 +184,11 @@ The parallel plot connects the (scaled) feature values of each counterfactual an
 cfactuals$plot_parallel(digits_min_max = 2L)
 ```
 
-The white dot in the prediction surface plot represents `x_interest`. All counterfactuals that differ from `x_interest` only in the 
-selected features are displayed as black dots. The tick marks next to the axes indicate the marginal distribution of the
+In the following surface plot, 
+the white dot represents `x_interest`.
+All counterfactuals that differ from `x_interest` only in the 
+selected features are displayed as black dots. 
+The tick marks next to the axes indicate the marginal distribution of the
 counterfactuals.
 
 
