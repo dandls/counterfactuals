@@ -57,7 +57,7 @@ treecaret = caret::train(retplasma ~ ., data = plasma[-100L,], method = "rpart",
   tuneGrid = data.frame(cp = 0.01))
 predcaret = Predictor$new(model = treecaret, data = plasma[-100L,], y = "retplasma")
 predcaret$predict(x_interest)
-nicecaret = NICERegr$new(predcaret, optimization = "plausibility", 
+nicecaret = NICERegr$new(predcaret, optimization = "proximity", 
   margin_correct = 0.5, return_multiple = FALSE)
 nicecaret$find_counterfactuals(x_interest, desired_outcome = c(500, Inf))
 ```
@@ -69,7 +69,7 @@ treetm = decision_tree(mode = "regression", engine = "rpart") %>%
   fit(retplasma ~ ., data = plasma[-100L,])
 predtm = Predictor$new(model = treetm, data = plasma[-100L,], y = "retplasma")
 predtm$predict(x_interest)
-nicetm = NICERegr$new(predtm, optimization = "plausibility", 
+nicetm = NICERegr$new(predtm, optimization = "proximity", 
   margin_correct = 0.5, return_multiple = FALSE)
 nicetm$find_counterfactuals(x_interest, desired_outcome = c(500, Inf))
 ```
@@ -83,7 +83,7 @@ mod = makeLearner("regr.rpart")
 treemlr = train(mod, task)
 predmlr = Predictor$new(model = treemlr, data = plasma[-100L,], y = "retplasma")
 predmlr$predict(x_interest)
-nicemlr = NICERegr$new(predmlr, optimization = "plausibility", 
+nicemlr = NICERegr$new(predmlr, optimization = "proximity", 
   margin_correct = 0.5, return_multiple = FALSE)
 nicemlr$find_counterfactuals(x_interest, desired_outcome = c(500, Inf))
 ```
@@ -93,7 +93,7 @@ nicemlr$find_counterfactuals(x_interest, desired_outcome = c(500, Inf))
 treerpart = rpart(retplasma ~ ., data = plasma[-100L,])
 predrpart = Predictor$new(model = treerpart, data = plasma[-100L,], y = "retplasma")
 predrpart$predict(x_interest)
-nicerpart = NICERegr$new(predrpart, optimization = "plausibility", 
+nicerpart = NICERegr$new(predrpart, optimization = "proximity", 
   margin_correct = 0.5, return_multiple = FALSE)
 nicerpart$find_counterfactuals(x_interest, desired_outcome = c(500, Inf))
 ```

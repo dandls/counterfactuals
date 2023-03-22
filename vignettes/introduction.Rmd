@@ -47,7 +47,7 @@ For illustrative purposes, we only consider 8 of the 21 features in the followin
 
 ```{r}
 data(german, package = "rchallenge")  
-credit = german[, c("duration", "amount", "purpose", "age", "savings", "employment_duration", "housing", "number_credits", "credit_risk")]
+credit = german[, c("duration", "amount", "purpose", "age", "employment_duration", "housing", "number_credits", "credit_risk")]
 ```
 
 ```{r, echo=FALSE}
@@ -100,7 +100,8 @@ With the `fixed_features` argument, we can fix non-actionable features, here `ag
 
 ```{r, eval=FALSE}
 moc_classif = MOCClassif$new(
-  predictor, epsilon = 0, fixed_features = c("age", "employment_duration"), init_strategy = "icecurve", quiet = TRUE, termination_crit = "genstag", n_generations = 10L
+  predictor, epsilon = 0, fixed_features = c("age", "employment_duration"), 
+  quiet = TRUE, termination_crit = "genstag", n_generations = 10L
 )
 ```
 
@@ -117,7 +118,8 @@ cfactuals = moc_classif$find_counterfactuals(
 ```{r, echo=FALSE, results='hide', message=FALSE}
 if (!file.exists("introduction-res/cfactuals_credit.RDS")) {
   moc_classif = MOCClassif$new(
-  predictor, epsilon = 0, fixed_features = c("age", "employment_duration"), init_strategy = "icecurve", termination_crit = "genstag", n_generations = 10L, quiet = TRUE
+  predictor, epsilon = 0, fixed_features = c("age", "employment_duration"), 
+    termination_crit = "genstag", n_generations = 10L, quiet = TRUE
 )
   cfactuals = moc_classif$find_counterfactuals(x_interest, desired_class = "good", desired_prob = c(0.6, 1))
   dir.create("introduction-res")
@@ -146,7 +148,7 @@ print(cfactuals)
 The `predict()` method returns the predictions for the counterfactuals.
 
 ```{r}
-head(cbind(cfactuals$data, cfactuals$predict()), 5L)
+head(cfactuals$predict(), 3L)
 ```
 
 The `evaluate()` method returns the counterfactuals along with the evaluation measures `dist_x_interest`, `dist_target`,
@@ -157,7 +159,7 @@ and negative values indicate a decrease; for factors, the counterfactual feature
 differs from `x_interest.`; `NA` means "no difference" in both cases.
 
 ```{r}
-head(cfactuals$evaluate(show_diff = TRUE, measures = c("dist_x_interest", "dist_target", "no_changed", "dist_train")), 5L)
+head(cfactuals$evaluate(show_diff = TRUE, measures = c("dist_x_interest", "dist_target", "no_changed", "dist_train")), 3L)
 ```
 
 By design, not all counterfactuals generated with MOC have a prediction equal to the desired 
@@ -165,7 +167,7 @@ prediction. We can use `subset_to_valid()` to omit all counterfactuals that do n
 the desired predicition. 
 ```{r}
 cfactuals$subset_to_valid()
-cfactuals
+ nrow(cfactuals$data)
 ```
 
 The `plot_freq_of_feature_changes()` method plots the frequency of feature changes across all
@@ -179,8 +181,7 @@ cfactuals$plot_freq_of_feature_changes(subset_zero = TRUE)
 The parallel plot connects the (scaled) feature values of each counterfactual and highlights `x_interest` in blue.
 
 ```{r, message=FALSE, fig.height=2.5}
-cfactuals$plot_parallel(feature_names = c("duration", "amount"), row_ids = NULL, 
- digits_min_max = 2L)
+cfactuals$plot_parallel(digits_min_max = 2L)
 ```
 
 The white dot in the prediction surface plot represents `x_interest`. All counterfactuals that differ from `x_interest` only in the 
@@ -188,7 +189,7 @@ selected features are displayed as black dots. The tick marks next to the axes i
 counterfactuals.
 
 
-```{r, fig.height=3}
+```{r, fig.height=2.5}
 cfactuals$plot_surface(feature_names = c("duration", "amount"))
 ```
 
@@ -210,7 +211,7 @@ Ideally, one would like the mean value of each objective to decrease over the ge
 hypervolume.
 We could visualize the objective values of the emerging candidates throughout the generations via 
 the  `plot_search` method for pairs of objectives. 
-```{r, fig.height=2.5}
+```{r, fig.height=2}
 moc_classif$plot_search(objectives = c("dist_train", "dist_target"))
 moc_classif$plot_search(objectives = c("dist_x_interest", "dist_train"))
 ```
@@ -219,7 +220,7 @@ moc_classif$plot_search(objectives = c("dist_x_interest", "dist_train"))
 ## Regression Tasks
 
 Finding counterfactuals for regression models is analogous to classification models. In this example, we use 
-`NICE` (Brughmans et al. (2022)) to search for counterfactuals for plasma . 
+`NICE` (Brughmans et al. (2002)) to search for counterfactuals for plasma . 
 Brughmans et al. introduced `NICE` only for the classification setting but for 
 this package the method was extended to also work for regression tasks by allowing 
 prediction functions to return real-valued outcomes instead of classification scores. 
@@ -306,6 +307,13 @@ As a result, we obtain a `Counterfactuals` object, just like for the classificat
 
 ```{r}
 cfactuals
+```
+
+To inspect the counterfactual, we can use the same tools as before.
+For example, in the surface plot, we see that increasing betaplasma helps while changing the age alone has no impact on the prediction.
+
+```{r, fig.height=3, fig.width=9}
+cfactuals$plot_surface(feature_names = c("betaplasma", "age"), grid_size = 200)
 ```
 
 ### User-defined distance function
