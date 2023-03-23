@@ -265,7 +265,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
     },
     
-    #' @description Plots a parallel plot that connects the (scaled) numeric feature values of each counterfactual and highlights
+    #' @description Plots a parallel plot that connects the (scaled) feature values of each counterfactual and highlights
     #' `x_interest` in blue.
     #' 
     #' @param feature_names (`character` | `NULL`)\cr
@@ -296,18 +296,6 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       
       cfactuals = private$.data[row_ids, ..feature_names]
       dt = rbind(cfactuals, self$x_interest[, ..feature_names])
-      
-      # is_numeric_col = sapply(dt, function(x) is.numeric(x))
-      # numeric_cols = names(dt)[is_numeric_col]
-      # if (length(numeric_cols) == 0L) {
-      #   stop("Can only consider numeric features for parallel plot, but no numeric features present in data")
-      # }
-      
-      # non_numeric_cols = names(dt)[!is_numeric_col]
-      # if (length(non_numeric_cols) > 0L) {
-      #   dt[, (non_numeric_cols) := NULL]
-      #   warning("Can only consider numeric features for parallel plot. Non-numeric features have been removed.")
-      # }
       
       feat_nam = copy(names(dt))
       
@@ -342,6 +330,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
         ggplot2::theme(legend.position = "none") +
         ggplot2::ylab("scaled feature values") +
         ggplot2::xlab("variables") +
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = -15, vjust = .2, hjust=0.5)) +
         ggplot2::scale_colour_manual(name = "rows", values = line_colors) +
         ggplot2::annotate(
           "text", x = 1:length(feat_nam), y = 1.05, size = 3.5,
