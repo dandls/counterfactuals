@@ -265,7 +265,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       }
     },
     
-    #' @description Plots a parallel plot that connects the (scaled) numeric feature values of each counterfactual and highlights
+    #' @description Plots a parallel plot that connects the (scaled) feature values of each counterfactual and highlights
     #' `x_interest` in blue.
     #' 
     #' @param feature_names (`character` | `NULL`)\cr
@@ -274,7 +274,6 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #'  The row ids of the counterfactuals to display. If `NULL` (default) all counterfactuals are displayed.
     #' @param digits_min_max Maximum number of digits for the minimum and maximum features values. Default is `2L`.
     plot_parallel = function(feature_names = NULL, row_ids = NULL, digits_min_max = 2L) {
-      
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
         stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)
       }
@@ -298,37 +297,62 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       cfactuals = private$.data[row_ids, ..feature_names]
       dt = rbind(cfactuals, self$x_interest[, ..feature_names])
       
-      is_numeric_col = sapply(dt, function(x) is.numeric(x))
-      numeric_cols = names(dt)[is_numeric_col]
-      if (length(numeric_cols) == 0L) {
-        stop("Can only consider numeric features for parallel plot, but no numeric features present in data")
+      feat_nam = copy(names(dt))
+      
+      is_character_col = names(dt)[sapply(dt, is.character)]
+      if (length(is_character_col) > 0) {
+        dt_char = sapply(dt[, ..is_character_col], as.numeric)
+        dt[, (is_character_col) := NULL]
+        dt = cbind(dt, dt_char)
       }
       
-      non_numeric_cols = names(dt)[!is_numeric_col]
-      if (length(non_numeric_cols) > 0L) {
-        dt[, (non_numeric_cols) := NULL]
-        warning("Can only consider numeric features for parallel plot. Non-numeric features have been removed.")
+      is_factor_col = names(dt)[sapply(dt, is.factor)]
+      if (length(is_factor_col) > 0) {
+        dt_fact = sapply(dt[, ..is_factor_col], unclass)
+        dt[, (is_factor_col) := NULL]
+        dt = cbind(dt, dt_fact)
       }
+      
+      dt = dt[, ..feat_nam]
       
       line_colors = c(rep("gray", nrow(cfactuals)), "blue")
       names(line_colors) <- rownames(dt)
       dt[, rn := rownames(dt)]
+ 
+      param.set = self$.__enclos_env__$private$param.set
+      val.f = private$param_set$levels
+      val.f = val.f[lapply(val.f,length)>0]
       
-      GGally::ggparcoord(dt, 1:length(numeric_cols), groupColumn = "rn", scale = "uniminmax", showPoints = TRUE,
+      GGally::ggparcoord(dt, 1:(ncol(dt)-1), groupColumn = "rn", scale = "uniminmax", showPoints = TRUE,
         alphaLines = 0.8) +
         ggplot2::theme_bw() +
         ggplot2::ylim(c(-0.1, 1.1)) +
         ggplot2::theme(legend.position = "none") +
         ggplot2::ylab("scaled feature values") +
         ggplot2::xlab("variables") +
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = -15, vjust = .2, hjust=0.5)) +
         ggplot2::scale_colour_manual(name = "rows", values = line_colors) +
         ggplot2::annotate(
-          "text", x = 1:length(numeric_cols), y = 1.05, size = 3.5,
-          label = sapply(dt[, ..numeric_cols], function(x) round(max(x, na.rm = TRUE), digits = digits_min_max))
+          "text", x = 1:length(feat_nam), y = 1.05, size = 3.5,
+          label = sapply(feat_nam, function(nam) {
+            feat_max = round(max(dt[, ..nam], na.rm = TRUE), digits = digits_min_max)
+            if (nam %in% names(val.f)) {
+              feat_max = val.f[[nam]][feat_max]
+            } 
+            return(feat_max)
+          })
         ) +
         ggplot2::annotate(
-          "text", x = 1:length(numeric_cols), y = -0.05, size = 3.5,
-          label = sapply(dt[, ..numeric_cols], function(x) round(min(x, na.rm = TRUE), digits = digits_min_max))
+          "text", x = 1:length(feat_nam), y = -0.05, size = 3.5,
+          label = sapply(feat_nam, function(nam) {
+            feat_min = round(min(dt[, ..nam], na.rm = TRUE), digits = digits_min_max)
+            feat_max = round(max(dt[, ..nam], na.rm = TRUE), digits = digits_min_max)
+            if (feat_min == feat_max) return("")
+            if (nam %in% names(val.f)) {
+              feat_min = val.f[[nam]][feat_min]
+            } 
+            return(feat_min)
+          })
         )
     },
     

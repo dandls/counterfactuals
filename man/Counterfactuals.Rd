@@ -221,7 +221,7 @@ Process could be reverted using \code{revert_subset_to_valid()}.
 \if{html}{\out{<a id="method-Counterfactuals-plot_parallel"></a>}}
 \if{latex}{\out{\hypertarget{method-Counterfactuals-plot_parallel}{}}}
 \subsection{Method \code{plot_parallel()}}{
-Plots a parallel plot that connects the (scaled) numeric feature values of each counterfactual and highlights
+Plots a parallel plot that connects the (scaled) feature values of each counterfactual and highlights
 \code{x_interest} in blue.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Counterfactuals$plot_parallel(
