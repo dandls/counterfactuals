@@ -78,9 +78,9 @@ nicetm$find_counterfactuals(x_interest, desired_outcome = c(500, Inf))
 ```{r}
 library("mlr")
 task = mlr::makeRegrTask(data = plasma[-100L,], target = "retplasma")
-mod = makeLearner("regr.rpart")
+mod = mlr::makeLearner("regr.rpart")
 
-treemlr = train(mod, task)
+treemlr = mlr::train(mod, task)
 predmlr = Predictor$new(model = treemlr, data = plasma[-100L,], y = "retplasma")
 predmlr$predict(x_interest)
 nicemlr = NICERegr$new(predmlr, optimization = "proximity", 

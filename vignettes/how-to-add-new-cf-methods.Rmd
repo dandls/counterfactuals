@@ -262,11 +262,6 @@ cfactuals = ft_classif$find_counterfactuals(
 Just as for the existing methods, the result is a `Counterfactuals` object.
 
 
-```{r}
-cfactuals
-```
-
-
 ## Comments
 
 A minor limitation of this basic implementation is that we would not be able to find counterfactuals for a setting with 
