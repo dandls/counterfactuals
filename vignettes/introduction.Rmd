@@ -179,9 +179,12 @@ cfactuals$plot_freq_of_feature_changes(subset_zero = TRUE)
 ```
 
 The parallel plot connects the (scaled) feature values of each counterfactual and highlights `x_interest` in blue.
+We specify `feature_names` to order the features according to their frequency of changes.
 
 ```{r, message=FALSE, fig.height=2.5}
-cfactuals$plot_parallel(digits_min_max = 2L)
+cfactuals$plot_parallel(feature_names = names(
+  cfactuals$get_freq_of_feature_changes()),  digits_min_max = 2L)
+
 ```
 
 In the following surface plot, 
