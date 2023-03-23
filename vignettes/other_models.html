@@ -14,107 +14,103 @@
 
 <title>Other types of models</title>
 
-<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
-// v0.0.1
-// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
-
-document.addEventListener('DOMContentLoaded', function() {
-  const codeList = document.getElementsByClassName("sourceCode");
-  for (var i = 0; i < codeList.length; i++) {
-    var linkList = codeList[i].getElementsByTagName('a');
-    for (var j = 0; j < linkList.length; j++) {
-      if (linkList[j].innerHTML === "") {
-        linkList[j].setAttribute('aria-hidden', 'true');
-      }
-    }
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
   }
 });
 </script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
 
 
 
 <style type="text/css">
-  code {
-    white-space: pre;
-  }
-  .sourceCode {
-    overflow: visible;
-  }
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
 </style>
 <style type="text/css" data-origin="pandoc">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
-  { counter-reset: source-line 0; }
+{ counter-reset: source-line 0; }
 pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
+{ position: relative; left: -4em; counter-increment: source-line; }
 pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -123,13 +119,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -337,95 +340,105 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<p>In the following, we explain the <code>counterfactuals</code> workflow for both a classification and a regression task using concrete use cases.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(<span class="st">&quot;counterfactuals&quot;</span>)</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(<span class="st">&quot;iml&quot;</span>)</span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">library</span>(<span class="st">&quot;rpart&quot;</span>)</span></code></pre></div>
+<p>In the following, we explain the <code>counterfactuals</code>
+workflow for both a classification and a regression task using concrete
+use cases.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;counterfactuals&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;iml&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;rpart&quot;</span>)</span></code></pre></div>
 <div id="other-types-of-models" class="section level1">
 <h1>Other types of models</h1>
-<p>The <code>Predictor</code> class of the <code>iml</code> package provides the necessary flexibility to cover classification and regression models fitted with diverse R packages. In the introduction vignette, we saw models fitted with the <code>mlr3</code> and <code>randomForest</code> packages. In the following, we show extensions to - an classification tree fitted with the <code>caret</code> package, the <code>mlr</code> (a predecesor of <code>mlr3</code>) and <code>tidymodels</code>. For each model we generate counterfactuals for the first row of the BostonHousing dataset using the <code>WhatIf</code> method</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">data</span>(BostonHousing, <span class="dt">package =</span> <span class="st">&quot;mlbench&quot;</span>)</span>
-<span id="cb2-2"><a href="#cb2-2"></a>x_interest =<span class="st"> </span>BostonHousing[1L,]</span></code></pre></div>
+<p>The <code>Predictor</code> class of the <code>iml</code> package
+provides the necessary flexibility to cover classification and
+regression models fitted with diverse R packages. In the introduction
+vignette, we saw models fitted with the <code>mlr3</code> and
+<code>randomForest</code> packages. In the following, we show extensions
+to - an classification tree fitted with the <code>caret</code> package,
+the <code>mlr</code> (a predecesor of <code>mlr3</code>) and
+<code>tidymodels</code>. For each model we generate counterfactuals for
+the 100th row of the plasma dataset of the <code>gamlss.data</code>
+package using the <code>WhatIf</code> method.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(plasma, <span class="at">package =</span> <span class="st">&quot;gamlss.data&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x_interest <span class="ot">=</span> plasma[100L,]</span></code></pre></div>
 <div id="rpart---caret-package" class="section level2">
 <h2>rpart - caret package</h2>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">library</span>(<span class="st">&quot;caret&quot;</span>)</span>
-<span id="cb3-2"><a href="#cb3-2"></a></span>
-<span id="cb3-3"><a href="#cb3-3"></a>treecaret =<span class="st"> </span>caret<span class="op">::</span><span class="kw">train</span>(medv <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> BostonHousing[<span class="op">-</span><span class="dv">1</span>,], <span class="dt">method =</span> <span class="st">&quot;rpart&quot;</span>, </span>
-<span id="cb3-4"><a href="#cb3-4"></a>  <span class="dt">tuneGrid =</span> <span class="kw">data.frame</span>(<span class="dt">cp =</span> <span class="fl">0.01</span>))</span>
-<span id="cb3-5"><a href="#cb3-5"></a>predcaret =<span class="st"> </span>Predictor<span class="op">$</span><span class="kw">new</span>(<span class="dt">model =</span> treecaret, <span class="dt">data =</span> BostonHousing[<span class="op">-</span>1L,], <span class="dt">y =</span> <span class="st">&quot;medv&quot;</span>)</span>
-<span id="cb3-6"><a href="#cb3-6"></a>predcaret<span class="op">$</span><span class="kw">predict</span>(x_interest)</span>
-<span id="cb3-7"><a href="#cb3-7"></a><span class="co">#&gt;   .prediction</span></span>
-<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#&gt; 1    27.49074</span></span>
-<span id="cb3-9"><a href="#cb3-9"></a>nicecaret =<span class="st"> </span>NICERegr<span class="op">$</span><span class="kw">new</span>(predcaret, <span class="dt">optimization =</span> <span class="st">&quot;plausibility&quot;</span>, </span>
-<span id="cb3-10"><a href="#cb3-10"></a>  <span class="dt">margin_correct =</span> <span class="fl">0.5</span>, <span class="dt">return_multiple =</span> <span class="ot">FALSE</span>)</span>
-<span id="cb3-11"><a href="#cb3-11"></a>nicecaret<span class="op">$</span><span class="kw">find_counterfactuals</span>(x_interest, <span class="dt">desired_outcome =</span> <span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">40</span>))</span>
-<span id="cb3-12"><a href="#cb3-12"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
-<span id="cb3-13"><a href="#cb3-13"></a><span class="co">#&gt;  </span></span>
-<span id="cb3-14"><a href="#cb3-14"></a><span class="co">#&gt; Desired outcome range: [30, 40] </span></span>
-<span id="cb3-15"><a href="#cb3-15"></a><span class="co">#&gt;  </span></span>
-<span id="cb3-16"><a href="#cb3-16"></a><span class="co">#&gt; Head: </span></span>
-<span id="cb3-17"><a href="#cb3-17"></a><span class="co">#&gt;       crim zn indus chas   nox   rm  age    dis rad tax ptratio     b lstat</span></span>
-<span id="cb3-18"><a href="#cb3-18"></a><span class="co">#&gt; 1: 0.07503 33  2.18    0 0.472 7.42 71.9 3.0992   7 222    18.4 396.9  6.47</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;caret&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>treecaret <span class="ot">=</span> caret<span class="sc">::</span><span class="fu">train</span>(retplasma <span class="sc">~</span> ., <span class="at">data =</span> plasma[<span class="sc">-</span>100L,], <span class="at">method =</span> <span class="st">&quot;rpart&quot;</span>, </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">tuneGrid =</span> <span class="fu">data.frame</span>(<span class="at">cp =</span> <span class="fl">0.01</span>))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>predcaret <span class="ot">=</span> Predictor<span class="sc">$</span><span class="fu">new</span>(<span class="at">model =</span> treecaret, <span class="at">data =</span> plasma[<span class="sc">-</span>100L,], <span class="at">y =</span> <span class="st">&quot;retplasma&quot;</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>predcaret<span class="sc">$</span><span class="fu">predict</span>(x_interest)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .prediction</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    342.9231</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>nicecaret <span class="ot">=</span> NICERegr<span class="sc">$</span><span class="fu">new</span>(predcaret, <span class="at">optimization =</span> <span class="st">&quot;proximity&quot;</span>, </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">margin_correct =</span> <span class="fl">0.5</span>, <span class="at">return_multiple =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>nicecaret<span class="sc">$</span><span class="fu">find_counterfactuals</span>(x_interest, <span class="at">desired_outcome =</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="cn">Inf</span>))</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Desired outcome range: [500, Inf] </span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Head: </span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    age sex smokstat      bmi vituse calories   fat fiber alcohol cholesterol betadiet retdiet betaplasma</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:  46   1        3 35.25969      3   2667.5 131.6  10.1       0       550.5     1210    1291        218</span></span></code></pre></div>
 </div>
 <div id="rpart---tidymodels-package" class="section level2">
 <h2>rpart - tidymodels package</h2>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">library</span>(<span class="st">&quot;tidymodels&quot;</span>)</span>
-<span id="cb4-2"><a href="#cb4-2"></a>treetm =<span class="st"> </span><span class="kw">decision_tree</span>(<span class="dt">mode =</span> <span class="st">&quot;regression&quot;</span>, <span class="dt">engine =</span> <span class="st">&quot;rpart&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb4-3"><a href="#cb4-3"></a><span class="st">  </span><span class="kw">fit</span>(medv <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> BostonHousing[<span class="op">-</span>1L,])</span>
-<span id="cb4-4"><a href="#cb4-4"></a>predtm =<span class="st"> </span>Predictor<span class="op">$</span><span class="kw">new</span>(<span class="dt">model =</span> treetm, <span class="dt">data =</span> BostonHousing[<span class="op">-</span>1L,], <span class="dt">y =</span> <span class="st">&quot;medv&quot;</span>)</span>
-<span id="cb4-5"><a href="#cb4-5"></a>predtm<span class="op">$</span><span class="kw">predict</span>(x_interest)</span>
-<span id="cb4-6"><a href="#cb4-6"></a><span class="co">#&gt;      .pred</span></span>
-<span id="cb4-7"><a href="#cb4-7"></a><span class="co">#&gt; 1 27.49074</span></span>
-<span id="cb4-8"><a href="#cb4-8"></a>nicetm =<span class="st"> </span>NICERegr<span class="op">$</span><span class="kw">new</span>(predtm, <span class="dt">optimization =</span> <span class="st">&quot;plausibility&quot;</span>, </span>
-<span id="cb4-9"><a href="#cb4-9"></a>  <span class="dt">margin_correct =</span> <span class="fl">0.5</span>, <span class="dt">return_multiple =</span> <span class="ot">FALSE</span>)</span>
-<span id="cb4-10"><a href="#cb4-10"></a>nicetm<span class="op">$</span><span class="kw">find_counterfactuals</span>(x_interest, <span class="dt">desired_outcome =</span> <span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">40</span>))</span>
-<span id="cb4-11"><a href="#cb4-11"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
-<span id="cb4-12"><a href="#cb4-12"></a><span class="co">#&gt;  </span></span>
-<span id="cb4-13"><a href="#cb4-13"></a><span class="co">#&gt; Desired outcome range: [30, 40] </span></span>
-<span id="cb4-14"><a href="#cb4-14"></a><span class="co">#&gt;  </span></span>
-<span id="cb4-15"><a href="#cb4-15"></a><span class="co">#&gt; Head: </span></span>
-<span id="cb4-16"><a href="#cb4-16"></a><span class="co">#&gt;       crim zn indus chas   nox   rm  age    dis rad tax ptratio     b lstat</span></span>
-<span id="cb4-17"><a href="#cb4-17"></a><span class="co">#&gt; 1: 0.07503 33  2.18    0 0.472 7.42 71.9 3.0992   7 222    18.4 396.9  6.47</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;tidymodels&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>treetm <span class="ot">=</span> <span class="fu">decision_tree</span>(<span class="at">mode =</span> <span class="st">&quot;regression&quot;</span>, <span class="at">engine =</span> <span class="st">&quot;rpart&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(retplasma <span class="sc">~</span> ., <span class="at">data =</span> plasma[<span class="sc">-</span>100L,])</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>predtm <span class="ot">=</span> Predictor<span class="sc">$</span><span class="fu">new</span>(<span class="at">model =</span> treetm, <span class="at">data =</span> plasma[<span class="sc">-</span>100L,], <span class="at">y =</span> <span class="st">&quot;retplasma&quot;</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>predtm<span class="sc">$</span><span class="fu">predict</span>(x_interest)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      .pred</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 342.9231</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>nicetm <span class="ot">=</span> NICERegr<span class="sc">$</span><span class="fu">new</span>(predtm, <span class="at">optimization =</span> <span class="st">&quot;proximity&quot;</span>, </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">margin_correct =</span> <span class="fl">0.5</span>, <span class="at">return_multiple =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>nicetm<span class="sc">$</span><span class="fu">find_counterfactuals</span>(x_interest, <span class="at">desired_outcome =</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="cn">Inf</span>))</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Desired outcome range: [500, Inf] </span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Head: </span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    age sex smokstat      bmi vituse calories   fat fiber alcohol cholesterol betadiet retdiet betaplasma</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:  46   1        3 35.25969      3   2667.5 131.6  10.1       0       550.5     1210    1291        218</span></span></code></pre></div>
 </div>
 <div id="rpart---mlr-package" class="section level2">
 <h2>rpart - mlr package</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">library</span>(<span class="st">&quot;mlr&quot;</span>)</span>
-<span id="cb5-2"><a href="#cb5-2"></a>task =<span class="st"> </span>mlr<span class="op">::</span><span class="kw">makeRegrTask</span>(<span class="dt">data =</span> BostonHousing[<span class="op">-</span>1L,], <span class="dt">target =</span> <span class="st">&quot;medv&quot;</span>)</span>
-<span id="cb5-3"><a href="#cb5-3"></a>mod =<span class="st"> </span><span class="kw">makeLearner</span>(<span class="st">&quot;regr.rpart&quot;</span>)</span>
-<span id="cb5-4"><a href="#cb5-4"></a></span>
-<span id="cb5-5"><a href="#cb5-5"></a>treemlr =<span class="st"> </span><span class="kw">train</span>(mod, task)</span>
-<span id="cb5-6"><a href="#cb5-6"></a>predmlr =<span class="st"> </span>Predictor<span class="op">$</span><span class="kw">new</span>(<span class="dt">model =</span> treemlr, <span class="dt">data =</span> BostonHousing[<span class="op">-</span>1L,], <span class="dt">y =</span> <span class="st">&quot;medv&quot;</span>)</span>
-<span id="cb5-7"><a href="#cb5-7"></a>predmlr<span class="op">$</span><span class="kw">predict</span>(x_interest)</span>
-<span id="cb5-8"><a href="#cb5-8"></a><span class="co">#&gt;   .prediction</span></span>
-<span id="cb5-9"><a href="#cb5-9"></a><span class="co">#&gt; 1    27.49074</span></span>
-<span id="cb5-10"><a href="#cb5-10"></a>nicemlr =<span class="st"> </span>NICERegr<span class="op">$</span><span class="kw">new</span>(predmlr, <span class="dt">optimization =</span> <span class="st">&quot;plausibility&quot;</span>, </span>
-<span id="cb5-11"><a href="#cb5-11"></a>  <span class="dt">margin_correct =</span> <span class="fl">0.5</span>, <span class="dt">return_multiple =</span> <span class="ot">FALSE</span>)</span>
-<span id="cb5-12"><a href="#cb5-12"></a>nicemlr<span class="op">$</span><span class="kw">find_counterfactuals</span>(x_interest, <span class="dt">desired_outcome =</span> <span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">40</span>))</span>
-<span id="cb5-13"><a href="#cb5-13"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
-<span id="cb5-14"><a href="#cb5-14"></a><span class="co">#&gt;  </span></span>
-<span id="cb5-15"><a href="#cb5-15"></a><span class="co">#&gt; Desired outcome range: [30, 40] </span></span>
-<span id="cb5-16"><a href="#cb5-16"></a><span class="co">#&gt;  </span></span>
-<span id="cb5-17"><a href="#cb5-17"></a><span class="co">#&gt; Head: </span></span>
-<span id="cb5-18"><a href="#cb5-18"></a><span class="co">#&gt;       crim zn indus chas   nox   rm  age    dis rad tax ptratio     b lstat</span></span>
-<span id="cb5-19"><a href="#cb5-19"></a><span class="co">#&gt; 1: 0.07503 33  2.18    0 0.472 7.42 71.9 3.0992   7 222    18.4 396.9  6.47</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;mlr&quot;</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>task <span class="ot">=</span> mlr<span class="sc">::</span><span class="fu">makeRegrTask</span>(<span class="at">data =</span> plasma[<span class="sc">-</span>100L,], <span class="at">target =</span> <span class="st">&quot;retplasma&quot;</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">=</span> <span class="fu">makeLearner</span>(<span class="st">&quot;regr.rpart&quot;</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>treemlr <span class="ot">=</span> <span class="fu">train</span>(mod, task)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>predmlr <span class="ot">=</span> Predictor<span class="sc">$</span><span class="fu">new</span>(<span class="at">model =</span> treemlr, <span class="at">data =</span> plasma[<span class="sc">-</span>100L,], <span class="at">y =</span> <span class="st">&quot;retplasma&quot;</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>predmlr<span class="sc">$</span><span class="fu">predict</span>(x_interest)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .prediction</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    342.9231</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>nicemlr <span class="ot">=</span> NICERegr<span class="sc">$</span><span class="fu">new</span>(predmlr, <span class="at">optimization =</span> <span class="st">&quot;proximity&quot;</span>, </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">margin_correct =</span> <span class="fl">0.5</span>, <span class="at">return_multiple =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>nicemlr<span class="sc">$</span><span class="fu">find_counterfactuals</span>(x_interest, <span class="at">desired_outcome =</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="cn">Inf</span>))</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Desired outcome range: [500, Inf] </span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Head: </span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    age sex smokstat      bmi vituse calories   fat fiber alcohol cholesterol betadiet retdiet betaplasma</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:  46   1        3 35.25969      3   2667.5 131.6  10.1       0       550.5     1210    1291        218</span></span></code></pre></div>
 </div>
 <div id="decision-tree---rpart-package" class="section level2">
 <h2>Decision tree - rpart package</h2>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>treerpart =<span class="st"> </span><span class="kw">rpart</span>(medv <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> BostonHousing[<span class="op">-</span>1L,])</span>
-<span id="cb6-2"><a href="#cb6-2"></a>predrpart =<span class="st"> </span>Predictor<span class="op">$</span><span class="kw">new</span>(<span class="dt">model =</span> treerpart, <span class="dt">data =</span> BostonHousing[<span class="op">-</span>1L,], <span class="dt">y =</span> <span class="st">&quot;medv&quot;</span>)</span>
-<span id="cb6-3"><a href="#cb6-3"></a>predrpart<span class="op">$</span><span class="kw">predict</span>(x_interest)</span>
-<span id="cb6-4"><a href="#cb6-4"></a><span class="co">#&gt;       pred</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a><span class="co">#&gt; 1 27.49074</span></span>
-<span id="cb6-6"><a href="#cb6-6"></a>nicerpart =<span class="st"> </span>NICERegr<span class="op">$</span><span class="kw">new</span>(predrpart, <span class="dt">optimization =</span> <span class="st">&quot;plausibility&quot;</span>, </span>
-<span id="cb6-7"><a href="#cb6-7"></a>  <span class="dt">margin_correct =</span> <span class="fl">0.5</span>, <span class="dt">return_multiple =</span> <span class="ot">FALSE</span>)</span>
-<span id="cb6-8"><a href="#cb6-8"></a>nicerpart<span class="op">$</span><span class="kw">find_counterfactuals</span>(x_interest, <span class="dt">desired_outcome =</span> <span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">40</span>))</span>
-<span id="cb6-9"><a href="#cb6-9"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
-<span id="cb6-10"><a href="#cb6-10"></a><span class="co">#&gt;  </span></span>
-<span id="cb6-11"><a href="#cb6-11"></a><span class="co">#&gt; Desired outcome range: [30, 40] </span></span>
-<span id="cb6-12"><a href="#cb6-12"></a><span class="co">#&gt;  </span></span>
-<span id="cb6-13"><a href="#cb6-13"></a><span class="co">#&gt; Head: </span></span>
-<span id="cb6-14"><a href="#cb6-14"></a><span class="co">#&gt;       crim zn indus chas   nox   rm  age    dis rad tax ptratio     b lstat</span></span>
-<span id="cb6-15"><a href="#cb6-15"></a><span class="co">#&gt; 1: 0.07503 33  2.18    0 0.472 7.42 71.9 3.0992   7 222    18.4 396.9  6.47</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>treerpart <span class="ot">=</span> <span class="fu">rpart</span>(retplasma <span class="sc">~</span> ., <span class="at">data =</span> plasma[<span class="sc">-</span>100L,])</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>predrpart <span class="ot">=</span> Predictor<span class="sc">$</span><span class="fu">new</span>(<span class="at">model =</span> treerpart, <span class="at">data =</span> plasma[<span class="sc">-</span>100L,], <span class="at">y =</span> <span class="st">&quot;retplasma&quot;</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>predrpart<span class="sc">$</span><span class="fu">predict</span>(x_interest)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       pred</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 342.9231</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>nicerpart <span class="ot">=</span> NICERegr<span class="sc">$</span><span class="fu">new</span>(predrpart, <span class="at">optimization =</span> <span class="st">&quot;proximity&quot;</span>, </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">margin_correct =</span> <span class="fl">0.5</span>, <span class="at">return_multiple =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>nicerpart<span class="sc">$</span><span class="fu">find_counterfactuals</span>(x_interest, <span class="at">desired_outcome =</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="cn">Inf</span>))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Desired outcome range: [500, Inf] </span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Head: </span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    age sex smokstat      bmi vituse calories   fat fiber alcohol cholesterol betadiet retdiet betaplasma</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:  46   1        3 35.25969      3   2667.5 131.6  10.1       0       550.5     1210    1291        218</span></span></code></pre></div>
 </div>
 </div>
 
