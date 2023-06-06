@@ -54,7 +54,7 @@
 #' 
 #' @export
 NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
-
+  
   public = list(
     
     #' @description Create a new NICEClassif object.
@@ -82,7 +82,7 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
     #'  A function must have three arguments  `x`, `y`, and `data` and should
     #'  return a `double` matrix with `nrow(x)` rows and maximum `nrow(y)` columns.
     initialize = function(predictor, optimization = "sparsity", x_nn_correct = TRUE, return_multiple = FALSE,
-                          finish_early = TRUE, distance_function = "gower") {
+      finish_early = TRUE, distance_function = "gower") {
       
       if (is.character(distance_function)) {
         if (distance_function == "gower") {
@@ -108,7 +108,7 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
       private$return_multiple = return_multiple
       private$finish_early = finish_early
       private$y_hat = private$predictor$predict(predictor$data$X)
-
+      
       if (private$optimization == "plausibility") {
         if (!requireNamespace("keras", quietly = TRUE)) {
           stop("Package 'keras' needed for this function to work. Please install it.", call. = FALSE)
@@ -116,16 +116,21 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
         private$ae_preprocessor = AEPreprocessor$new(private$predictor$data$X)
         private$ae_model = train_AE_model(private$predictor$data$X, private$ae_preprocessor)
       }
-      
       private$is_correctly_classified = seq_len(nrow(private$predictor$data$X))
       if (x_nn_correct) {
-        pred_classes = names(private$y_hat)[max.col(private$y_hat, ties.method = "random")] 
-        private$is_correctly_classified = (private$predictor$data$y[[1L]] == pred_classes)
+        if (is.null(private$predictor$data$y)) {
+          stop("true outcome variable `predictor$data$y` is not available, update `predictor$data` or consider setting `x_nn_correct = FALSE`.")
+        } else {
+          pred_classes = names(private$y_hat)[max.col(private$y_hat, ties.method = "random")] 
+          private$is_correctly_classified = (private$predictor$data$y[[1L]] == pred_classes)
+          if (!any(private$is_correctly_classified)) {
+            stop("no correctly classified instance exist, inspect `predictor$model` and consider setting `x_nn_correct = FALSE`.")
+          }
+        }
       }
       private$candidates_x_nn = private$predictor$data$X[private$is_correctly_classified]
-   
     }
-
+    
   ),
   
   active = list(
@@ -151,7 +156,7 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
       }
     }
   ),
-
+  
   private = list(
     optimization = NULL,
     X_train_class = NULL,
@@ -165,7 +170,7 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
     candidates_x_nn = NULL,
     .x_nn = NULL,
     .archive = NULL,
-
+    
     run = function() {
       # Flush
       private$.archive = NULL
@@ -190,7 +195,7 @@ NICEClassif = R6::R6Class("NICEClassif", inherit = CounterfactualMethodClassif,
       private$.archive = res$archive
       res$counterfactuals
     },
-
+    
     print_parameters = function() {
       cat(" - finish_early: ", private$finish_early, "\n")
       cat(" - optimization: ", private$optimization, "\n")

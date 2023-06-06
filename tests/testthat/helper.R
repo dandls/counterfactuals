@@ -24,6 +24,9 @@ get_rf_classif_iris = function() {
 
 save_test_png = function(code, width = 400, height = 400) {
   path = tempfile(fileext = ".png")
+  if (!requireNamespace("cowplot", quietly = TRUE)) {
+    install.packages("cowplot")
+  }
   cowplot::save_plot(path, code)
   path
 }

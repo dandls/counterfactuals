@@ -136,7 +136,7 @@ test_that("Returns warning if no counterfactuals could be found", {
   mydf = mtcars
   mydf$am = as.factor(mydf$am)
   rf = randomForest::randomForest(am ~ ., data = mydf, ntree = 5L)
-  pred = Predictor$new(rf, data = mydf, type = "class")
+  pred = Predictor$new(rf, data = mydf, type = "class", y = NULL)
   x_interest = head(subset(mydf, select = -am), n = 1L)
   nice_classif = NICEClassif$new(pred, optimization = "sparsity", x_nn_correct = TRUE, return_multiple = TRUE)
   print(nice_classif)
@@ -147,6 +147,20 @@ test_that("Returns warning if no counterfactuals could be found", {
   expect_null(nice_classif$x_nn)
 })
 
+test_that("Returns error if no correctly classified datapoint available", {
+  set.seed(54542142)
+  mydf = mtcars
+  mydf$am = as.factor(mydf$am)
+  rf = randomForest::randomForest(am ~ ., data = mydf, ntree = 5L)
+  mydf$am = NULL
+  pred = Predictor$new(rf, data = mydf, type = "class", y = NULL)
+  x_interest = mydf[1,]
+  expect_error(NICEClassif$new(pred, optimization = "sparsity", x_nn_correct = TRUE, return_multiple = FALSE))
+  mydf$am = 0
+  mydf = mydf[1:3,]
+  pred = Predictor$new(rf, data = mydf, type = "class", y = NULL)
+  expect_error(NICEClassif$new(pred, optimization = "sparsity", x_nn_correct = TRUE, return_multiple = FALSE))
+})
 
 test_that("Returns x_nn if finish_early=FALSE and return_multiple=FALSE", {
   set.seed(54542142)

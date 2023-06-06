@@ -46,6 +46,7 @@ test_that("$subset_to_valid subsets results and $reset_subset_to_valid undo it",
   expect_true(nrow(cf$data) == n)
   expect_false(cf$.__enclos_env__$private$.subsetted)
   expect_message(cf$revert_subset_to_valid(), "Nothing can be reversed")
+  expect_data_table(cf$evaluate(show_diff = TRUE))
 })
 
 # $get_freq_of_feature_changes() ---------------------------------------------------------------------------------------

@@ -259,6 +259,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     revert_subset_to_valid = function() {
       if (private$.subsetted) {
         private$.data = private$.fulldata
+        private$diff = make_cfactuals_diff(private$.data, self$x_interest)
         private$.subsetted = FALSE
       } else {
         message("Nothing can be reversed, subsetting to valid ones was not conducted beforehand")

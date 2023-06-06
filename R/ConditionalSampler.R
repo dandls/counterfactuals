@@ -32,6 +32,18 @@ ConditionalSampler = R6::R6Class(
       if (!requireNamespace("partykit", quietly = TRUE)) {
         stop("Package 'partykit' needed for this function to work. Please install it.", call. = FALSE)
       }
+      if (!requireNamespace("variables", quietly = TRUE)) {
+        stop("Package 'variables' needed for this function to work. Please install it.", call. = FALSE)
+      }
+      if (!requireNamespace("basefun", quietly = TRUE)) {
+        stop("Package 'basefun' needed for this function to work. Please install it.", call. = FALSE)
+      }
+      if (!requireNamespace("mlt", quietly = TRUE)) {
+        stop("Package 'mlt' needed for this function to work. Please install it.", call. = FALSE)
+      }
+      if (!requireNamespace("trtf", quietly = TRUE)) {
+        stop("Package 'trtf' needed for this function to work. Please install it.", call. = FALSE)
+      }
       ctrl = partykit::ctree_control(maxdepth = 5L)
       y_unique = unique(private$y)
       if (is.numeric(y_unique) && length(y_unique[!is.na(y_unique)]) > 5L) {

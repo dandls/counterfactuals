@@ -60,7 +60,7 @@
 NICERegr = R6::R6Class("NICERegr",
   inherit = CounterfactualMethodRegr,
   public = list(
-
+    
     #' @description Create a new NICERegr object.
     #' @template predictor
     #' @param optimization (`character(1)`)\cr
@@ -90,8 +90,8 @@ NICERegr = R6::R6Class("NICERegr",
     #'  A function must have three arguments  `x`, `y`, and `data` and should
     #'  return a `double` matrix with `nrow(x)` rows and maximum `nrow(y)` columns.
     initialize = function(predictor, optimization = "sparsity", x_nn_correct = TRUE, margin_correct = NULL, 
-                          return_multiple = FALSE, finish_early = TRUE, distance_function = "gower") {
-
+      return_multiple = FALSE, finish_early = TRUE, distance_function = "gower") {
+      
       if (is.character(distance_function)) {
         if (distance_function == "gower") {
           distance_function = gower_dist
@@ -111,13 +111,13 @@ NICERegr = R6::R6Class("NICERegr",
       assert_flag(return_multiple)
       assert_flag(finish_early)
       assert_numeric(margin_correct, len = 1L, any.missing = FALSE, null.ok = TRUE)
-
+      
       private$optimization = optimization
       private$x_nn_correct = x_nn_correct
       private$return_multiple = return_multiple
       private$finish_early = finish_early
       private$y_hat = private$predictor$predict(predictor$data$X)
-
+      
       if (private$optimization == "plausibility") {
         if (!requireNamespace("keras", quietly = TRUE)) {
           stop("Package 'keras' needed for this function to work. Please install it.", call. = FALSE)
@@ -125,14 +125,21 @@ NICERegr = R6::R6Class("NICERegr",
         private$ae_preprocessor = AEPreprocessor$new(private$predictor$data$X)
         private$ae_model = train_AE_model(private$predictor$data$X, private$ae_preprocessor)
       }
-
+      
       private$is_correctly_classified = seq_len(nrow(private$predictor$data$X))
       if (x_nn_correct) {
-        if (is.null(margin_correct)) {
-          all_residuals = abs(private$y_hat[[1L]] - private$predictor$data$y[[1L]])
-          margin_correct = median(all_residuals) / 2
+        if (is.null(private$predictor$data$y)) {
+          stop("true outcome variable `predictor$data$y` is not available, update `predictor$data` or consider setting `x_nn_correct = FALSE`.")
+        } else {
+          if (is.null(margin_correct)) {
+            all_residuals = abs(private$y_hat[[1L]] - private$predictor$data$y[[1L]])
+            margin_correct = median(all_residuals) / 2
+          }
+          private$is_correctly_classified = abs(private$y_hat[[1L]] - private$predictor$data$y[[1L]]) < margin_correct
+          if (!any(private$is_correctly_classified)) {
+            stop("no correctly predicted instance exist, inspect `predictor$model` and consider setting `x_nn_correct = FALSE` or updating `margin_correct`.")
+          }
         }
-        private$is_correctly_classified = abs(private$y_hat[[1L]] - private$predictor$data$y[[1L]]) < margin_correct
       }
       private$candidates_x_nn = private$predictor$data$X[private$is_correctly_classified]
     }
@@ -147,7 +154,7 @@ NICERegr = R6::R6Class("NICERegr",
         stop("`$x_nn` is read only", call. = FALSE)
       }
     },
-
+    
     #' @field archive (`list()`) \cr
     #' A list that stores the history of the algorithm run. For each algorithm iteration, it has one element containing
     #' a `data.table`, which stores all created instances of this iteration together with their
@@ -176,9 +183,9 @@ NICERegr = R6::R6Class("NICERegr",
     run = function() {
       # Flush
       private$.archive = NULL
-
+      
       pred_column = private$get_pred_column()
-
+      
       res = nice_algo(
         predictor = private$predictor,
         return_multiple = private$return_multiple,
@@ -193,7 +200,7 @@ NICERegr = R6::R6Class("NICERegr",
         archive = private$.archive,
         distance_function = private$distance_function
       )
-
+      
       private$.x_nn = res$x_nn
       private$.archive = res$archive
       res$counterfactuals
