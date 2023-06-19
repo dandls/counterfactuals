@@ -29,7 +29,6 @@ library("iml")
 library("randomForest")
 library("mlr3")
 library("mlr3learners")
-library("data.table")
 ```
 
 
@@ -343,8 +342,8 @@ l0_norm = function(x, y, data) {
 A short example illustrates the functionality of `l0_norm()`. 
 
 ```{r}
-xt = data.table::data.table(a = c(0.5), b = c("a"))
-yt = data.table::data.table(a = c(0.5, 3.2, 0.1), b = c("a", "b", "a"))
+xt = data.frame(a = c(0.5), b = c("a"))
+yt = data.frame(a = c(0.5, 3.2, 0.1), b = c("a", "b", "a"))
 l0_norm(xt, yt, data = NULL)
 ```
 

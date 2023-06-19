@@ -51,7 +51,7 @@ x_interest = plasma[100L,]
 
 
 ## rpart - caret package
-```{r}
+```{r, message = FALSE}
 library("caret")
 treecaret = caret::train(retplasma ~ ., data = plasma[-100L,], method = "rpart", 
   tuneGrid = data.frame(cp = 0.01))
@@ -63,7 +63,7 @@ nicecaret$find_counterfactuals(x_interest, desired_outcome = c(500, Inf))
 ```
 
 ## rpart - tidymodels package
-```{r}
+```{r, message = FALSE}
 library("tidymodels")
 treetm = decision_tree(mode = "regression", engine = "rpart") %>% 
   fit(retplasma ~ ., data = plasma[-100L,])
@@ -75,7 +75,7 @@ nicetm$find_counterfactuals(x_interest, desired_outcome = c(500, Inf))
 ```
 
 ## rpart - mlr package
-```{r}
+```{r, message = FALSE}
 library("mlr")
 task = mlr::makeRegrTask(data = plasma[-100L,], target = "retplasma")
 mod = mlr::makeLearner("regr.rpart")
