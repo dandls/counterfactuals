@@ -16,11 +16,5 @@
 ^Meta$
 ^LICENSE$
 ^man-roxygen$
-
-
 ^tests$
-^vignettes/how-to-add-new-cf-methods-res$
-^vignettes/introduction-res$
-^vignettes/how-to-add-new-cf-methods\.Rmd$
-^vignettes/introduction\.Rmd$
-^vignettes/other_models\.Rmd$
+
