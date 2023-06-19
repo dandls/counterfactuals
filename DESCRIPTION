@@ -32,7 +32,6 @@ Suggests:
     gower,
     randomForest,
     GGally,
-    trtf,
     testthat,
     MASS,
     R.rsp,
@@ -46,7 +45,6 @@ Suggests:
     mlt,
     variables,
     trtf,
-    basefun,
     rmarkdown,
     basefun,
     rpart,
@@ -55,10 +53,11 @@ Suggests:
     mlr3pipelines,
     tidymodels,
     caret,
-    mlr
+    mlr,
+    knitr
 License: LGPL-3
 Encoding: UTF-8
 RoxygenNote: 7.2.3
-VignetteBuilder: R.rsp
+VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE, r6 = TRUE)
 Config/testthat/edition: 3
