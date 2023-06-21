@@ -23,6 +23,7 @@ test_that("Returns correct output format for soft binary classification", {
   # Optim Plausibility
   skip_on_ci()
   skip_on_cran()
+  skip_if_not_installed("keras")
   set.seed(544564)
   nice_classif = NICEClassif$new(pred, optimization = "plausibility", x_nn_correct = FALSE, return_multiple = TRUE)
   cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "0")
@@ -51,6 +52,7 @@ test_that("Returns correct output format for hard binary classification", {
   # Optim Plausibility
   skip_on_ci()
   skip_on_cran()
+  skip_if_not_installed("keras")
   set.seed(544564)
   nice_classif = NICEClassif$new(iris_pred, optimization = "plausibility", x_nn_correct = FALSE, return_multiple = TRUE)
   cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "versicolor", desired_prob = 1)
@@ -85,6 +87,7 @@ test_that("Can handle non-numeric target classes", {
   # Optim Plausibility
   skip_on_ci()
   skip_on_cran()
+  skip_if_not_installed("keras")
   set.seed(57421)
   nice_classif = NICEClassif$new(pred, optimization = "plausibility", x_nn_correct = FALSE, return_multiple = TRUE)
   cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "neg")
@@ -120,6 +123,7 @@ test_that("Can handle ordered factor input columns", {
   # Optim Plausibility
   skip_on_ci()
   skip_on_cran()
+  skip_if_not_installed("keras")
   set.seed(544564)
   nice_classif = NICEClassif$new(pred_credit, optimization = "plausibility", x_nn_correct = FALSE, return_multiple = TRUE)
   cfactuals = nice_classif$find_counterfactuals(x_interest, desired_class = "good", desired_prob = c(0.8 , 1))
