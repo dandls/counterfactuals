@@ -60,11 +60,11 @@ Create a new \code{MOCClassif} object.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CountARFactualClassif$new(
   predictor,
-  max_feats_to_change = 1L,
+  max_feats_to_change = predictor$data$n.features,
   n_synth = 10L,
-  n_iterations = 10L,
+  n_iterations = 50L,
   feature_selector = "random_importance",
-  importance_method = "fastshap"
+  importance_method = "icesd"
 )}\if{html}{\out{</div>}}
 }
 
@@ -75,14 +75,14 @@ Create a new \code{MOCClassif} object.
 The object (created with \code{iml::Predictor$new()}) holding the machine learning model and the data.}
 
 \item{\code{max_feats_to_change}}{(\code{numeric(1)})\cr
-The maximum number of features allowed to be altered (default 1L).}
+The maximum number of features allowed to be altered (default is the number of features in the used data set (\code{predictor$data$n.features})).}
 
 \item{\code{n_synth}}{(\code{numeric(1)}) \cr
 The number of samples drawn from the marginal distributions (default 10L).}
 
 \item{\code{n_iterations}}{(\code{numeric(1)}) \cr
 The number of iteration. In each iteration a new terminal node is chosen
-from which the \code{n_synth} candidates are drawn.}
+from which the \code{n_synth} candidates are drawn. Default 50L.}
 
 \item{\code{feature_selector}}{(\code{character(1)})\cr
 The method to choose features that are fixed for a counterfactual and which
