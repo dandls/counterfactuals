@@ -27,7 +27,8 @@ Imports:
     data.table,
     paradox,
     miesmuschel,
-    bbotk
+    bbotk,
+    arf
 Suggests:
     gower,
     randomForest,
@@ -46,6 +47,7 @@ Suggests:
     mlt,
     variables,
     trtf,
+    fastshap,
     basefun,
     rmarkdown,
     basefun,
