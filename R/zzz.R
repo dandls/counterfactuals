@@ -4,6 +4,5 @@
 #' @import iml
 #' @import data.table
 #' @import miesmuschel
-#' @import arf
 #' @importFrom stats weighted.mean
 NULL
