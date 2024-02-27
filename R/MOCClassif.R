@@ -244,6 +244,10 @@ MOCClassif = R6::R6Class("MOCClassif", inherit = CounterfactualMethodClassif,
       pred_column = private$get_pred_column()
       y_hat_interest = private$predictor$predict(private$x_interest)[[pred_column]]
       private$ref_point = c(min(abs(y_hat_interest - private$desired_prob)), 1, ncol(private$x_interest), 1)
+
+      if (is.character(private$param_set$check(as.list(private$x_interest)))) {
+      	private$param_set = make_param_set(rbind(predictor$data$X, private$x_interest), private$lower, private$upper)
+      }
       
       private$.optimizer = moc_algo(
         predictor = private$predictor,
