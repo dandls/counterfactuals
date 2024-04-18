@@ -184,3 +184,10 @@ cfactuals$plot_parallel()
 ```
 
 ![](man/figures/README-unnamed-chunk-11-1.png)<!-- -->
+
+## Documentation 
+
+Each of the implemented R6 Classes has its own documentation. 
+Counterfactual methods can be accessed via `?WhatIfClassif`, for example, and its general parent class via `?CounterfactualMethod`.
+For notes on the evaluation and visualization methods for generated counterfactuals -- independent on the method that was used -- `?Counterfactuals` should be consulted. 
+
