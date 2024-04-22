@@ -45,6 +45,7 @@ CounterfactualMethodClassif = R6::R6Class("CounterfactualMethodClassif", inherit
     #'   A scalar is internally converted to an interval.
     #'   
     #' @return A \link{Counterfactuals} object containing the results.
+    #' @concept find_counterfactuals
     find_counterfactuals = function(x_interest, desired_class = NULL, desired_prob = c(0.5, 1)) {
       # Checks x_interest
       assert_data_frame(x_interest, nrows = 1L)

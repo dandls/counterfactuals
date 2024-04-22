@@ -92,7 +92,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #'  How should the `k` nearest training points be weighted when computing the `dist_train` measure? If `NULL`
     #'  (default) then all `k` points are weighted equally. If a numeric vector of length `k` is given, the i-th element
     #'  specifies the weight of the i-th closest data point.
-    #'                                              
+    #' @concept evaluate                                          
     #' @md
     evaluate = function(measures = c("dist_x_interest", "dist_target", "no_changed", "dist_train", "minimality"), 
       show_diff = FALSE, k = 1L, weights = NULL) {
@@ -185,7 +185,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #' Default is NULL, meaning the nadir point by Dandl et al. (2020) is used: 
     #' (min distance between prediction of `x_interest` to `desired_prob/_outcome`, 
     #' 1, number of features, 1).
-    #' 
+    #' @concept evaluate_set
     evaluate_set = function(measures = c("diversity", "no_nondom", "frac_nondom", "hypervolume"), nadir = NULL) {
       assert_names(measures, subset.of = c("diversity", "no_nondom", "frac_nondom", "hypervolume"))
       assert_numeric(nadir, min.len = 1L, max.len = 4L, null.ok = TRUE)
@@ -233,8 +233,6 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       evals
       
     },
-    
-    
     #' @description Returns the predictions for the counterfactuals.
     predict = function() {
       private$predictor$predict(private$.data) 
@@ -256,6 +254,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     
     #' @description Subset data to those meeting the desired prediction, 
     #' Process could be reverted using `revert_subset_to_valid()`.
+    #' @concept revert_subset_to_valid
     revert_subset_to_valid = function() {
       if (private$.subsetted) {
         private$.data = private$.fulldata
@@ -274,6 +273,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #' @param row_ids (`integerish` | `NULL`)\cr
     #'  The row ids of the counterfactuals to display. If `NULL` (default) all counterfactuals are displayed.
     #' @param digits_min_max Maximum number of digits for the minimum and maximum features values. Default is `2L`.
+    #' @concept plot_parallel
     plot_parallel = function(feature_names = NULL, row_ids = NULL, digits_min_max = 2L) {
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
         stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)
@@ -361,6 +361,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #' 
     #' @param subset_zero (`logical(1)`)\cr
     #'  Should unchanged features be excluded from the plot? Default is `FALSE`.
+    #' @concept plot_freq_of_feature_changes
     plot_freq_of_feature_changes = function(subset_zero = FALSE) {
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
         stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)
@@ -381,6 +382,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #'  Should unchanged features be excluded? Default is `FALSE`.
     #'  
     #' @return A (named) `numeric` vector with the frequency of feature changes.
+    #' @concept get_freq_of_feature_changes
     get_freq_of_feature_changes = function(subset_zero = FALSE) {
       assert_flag(subset_zero)
       assert_data_table(self$data, min.rows = 1L)
@@ -406,6 +408,7 @@ Counterfactuals = R6::R6Class("Counterfactuals",
     #' @param grid_size (`integerish(1)`)\cr
     #'  The grid size of the plot. It is ignored in case of two `non-numeric` features. Default is `250L`.
     #' @md
+    #' @concept plot_surface
     plot_surface = function(feature_names, grid_size = 250L) {
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
         stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)

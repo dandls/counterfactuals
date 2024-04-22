@@ -165,6 +165,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     #' @param centered_obj (`logical(1)`)\cr  
     #'   Should the objective values be centered? If set to `FALSE`, each objective value is visualized in a separate plot, 
     #'   since they (usually) have different scales. If set to `TRUE` (default), they are visualized in a single plot.
+    #' @concept plot_statistics
     plot_statistics = function(centered_obj = TRUE) {
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
         stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)
@@ -179,6 +180,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     #' @description Calculates the dominated hypervolume of each generation. 
     #' 
     #' @return A `data.table` with the dominated hypervolume of each generation.
+    #' @concept get_dominated_hv
     get_dominated_hv = function() {
       if (is.null(self$optimizer)) {
         stop("There are no results yet. Please run `$find_counterfactuals` first.")
@@ -190,6 +192,7 @@ MOCRegr = R6::R6Class("MOCRegr", inherit = CounterfactualMethodRegr,
     #' @param objectives (`character(2)`)\cr  
     #'   The two objectives to be shown in the plot. Possible values are "dist_target", "dist_x_interest, "no_changed",
     #'   and "dist_train".
+    #' @concept plot_search
     plot_search = function(objectives = c("dist_target", "dist_x_interest")) {
       if (!requireNamespace("ggplot2", quietly = TRUE)) {
         stop("Package 'ggplot2' needed for this function to work. Please install it.", call. = FALSE)

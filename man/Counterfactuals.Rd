@@ -11,6 +11,13 @@ It contains the counterfactuals and has several methods for their evaluation and
 \references{
 Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
 }
+\concept{evaluate}
+\concept{evaluate_set}
+\concept{get_freq_of_feature_changes}
+\concept{plot_freq_of_feature_changes}
+\concept{plot_parallel}
+\concept{plot_surface}
+\concept{revert_subset_to_valid}
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{

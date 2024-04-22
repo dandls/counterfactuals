@@ -15,6 +15,7 @@ by the child classes and return the counterfactuals as a \code{data.table} (pref
 Child classes: \link{MOCRegr}, \link{WhatIfRegr}, \link{NICERegr}
 }
 
+\concept{find_counterfactuals}
 \section{Super class}{
 \code{\link[counterfactuals:CounterfactualMethod]{counterfactuals::CounterfactualMethod}} -> \code{CounterfactualMethodRegr}
 }

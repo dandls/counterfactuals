@@ -86,6 +86,9 @@ Li, Rui, L., Emmerich, M. T. M., Eggermont, J. Bäck, T., Schütz, M., Dijkstra,
 "Mixed Integer Evolution Strategies for Parameter Optimization."
 Evolutionary Computation 21 (1): 29–64. \doi{10.1162/EVCO_a_00059}.
 }
+\concept{get_dominated_hv}
+\concept{plot_search}
+\concept{plot_statistics}
 \section{Super classes}{
 \code{\link[counterfactuals:CounterfactualMethod]{counterfactuals::CounterfactualMethod}} -> \code{\link[counterfactuals:CounterfactualMethodClassif]{counterfactuals::CounterfactualMethodClassif}} -> \code{MOCClassif}
 }
