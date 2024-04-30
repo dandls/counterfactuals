@@ -188,6 +188,8 @@ cfactuals$plot_parallel()
 ## Documentation 
 
 Each of the implemented R6 Classes has its own documentation. 
-Counterfactual methods can be accessed via `?WhatIfClassif`, for example, and its general parent class via `?CounterfactualMethod`.
-For notes on the evaluation and visualization methods for generated counterfactuals -- independent on the method that was used -- `?Counterfactuals` should be consulted. 
+Counterfactual generation methods can be accessed, e.g., via `?WhatIfClassif` for the WhatIf method applied to a classification task. 
+The documentation for its parent class can be accessed via `?CounterfactualMethodClassif` and `?CounterfactualMethod`.
+For notes on the evaluation and visualization methods for generated counterfactuals - independent on the method that was used - `?Counterfactuals` should be consulted. 
+Class methods can also be found via `??<methodname>`, e.g., `??find_counterfactuals` will point to the help page of the `CounterfactualMethodClassif` class.
 
