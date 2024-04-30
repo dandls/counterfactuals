@@ -41,6 +41,7 @@ CounterfactualMethodRegr = R6::R6Class("CounterfactualMethodRegr", inherit = Cou
     #' The desired predicted outcome. It can be a numeric scalar or a vector with two numeric values that specify an
     #' outcome interval. A scalar is internally converted to an interval.
     #' @return A \link{Counterfactuals} object containing the results.
+    #' @concept find_counterfactuals
     find_counterfactuals = function(x_interest, desired_outcome) {
       
       # Checks x_interest
