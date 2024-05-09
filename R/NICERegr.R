@@ -206,10 +206,10 @@ NICERegr = R6::R6Class("NICERegr",
       res$counterfactuals
     },
     print_parameters = function() {
-      cat(" - finish_early: ", private$finish_early, "\n")
-      cat(" - optimization: ", private$optimization, "\n")
-      cat(" - return_multiple: ", private$return_multiple, "\n")
-      cat(" - x_nn_correct: ", private$x_nn_correct, "\n")
+      cat(" - finish_early: ", private$finish_early %??% "NULL", "\n")
+      cat(" - optimization: ", private$optimization %??% "NULL", "\n")
+      cat(" - return_multiple: ", private$return_multiple %??% "NULL", "\n")
+      cat(" - x_nn_correct: ", private$x_nn_correct %??% "NULL", "\n")
     }
   )
 )
