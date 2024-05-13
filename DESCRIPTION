@@ -10,7 +10,7 @@ Authors@R: c(
 	person("Giuseppe","Casalicchio", email = "giuseppe.casalicchio@stat.uni-muenchen.de", role = c("ctb"))
     )
 Maintainer: Susanne Dandl <dandls.datascience@gmail.com>
-Description:  Modular and unified R6-based interface for counterfactual explanation methods.
+Description: Modular and unified R6-based interface for counterfactual explanation methods.
     The following methods are currently implemented: Burghmans et al. (2022) <arXiv:2104.07411>, 
     Dandl et al. (2020) <doi:10.1007/978-3-030-58112-1_31> and Wexler et al. (2019) <doi:10.1109/TVCG.2019.2934619>.
     Optional extensions allow these methods to be applied to a variety of models and use cases.
@@ -58,7 +58,7 @@ Suggests:
     mlr
 License: LGPL-3
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 VignetteBuilder: R.rsp
 Roxygen: list(markdown = TRUE, r6 = TRUE)
 Config/testthat/edition: 3
