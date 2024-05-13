@@ -2,11 +2,11 @@
 #' 
 #' @description 
 #' Creates a \link[paradox]{ParamSet} for the columns of `dt`. Depending on the class of a column, a different
-#' \link[paradox]{Param} is created:
-#' * `double`: \link[paradox]{ParamDbl}
-#' * `integer`: \link[paradox]{ParamInt}
-#' * `character`: \link[paradox]{ParamFct} (with unique values as levels)
-#' * `factor`: \link[paradox]{ParamFct} (with factor levels as levels)
+#' \link[paradox]{Domain} is created:
+#' * `double`: `p_dbl()`
+#' * `integer`: `p_int()`
+#' * `character`: `p_fct()` (with unique values as levels)
+#' * `factor`: `p_fct()` (with factor levels as levels)
 #' 
 #' @param dt (`data.table()`)\cr
 #'  The data for the \link[paradox]{ParamSet}.
@@ -40,19 +40,19 @@ make_param_set = function(dt, lower = NULL, upper = NULL) {
     
     # make param
     if (is.double(column)) {
-      param = ParamDbl$new(col_name, lower = lb, upper = ub)
+      param = p_dbl(lower = lb, upper = ub)
     } else if (is.integer(column)) {
-      param = ParamInt$new(col_name, lower = lb, upper = ub)
+      param = p_int(lower = lb, upper = ub)
     } else if (is.character(column)) {
-      param = ParamFct$new(col_name, levels = unique(column))
+      param = p_fct(levels = unique(column))
     } else {
-      param = ParamFct$new(col_name, levels = levels(column))
+      param = p_fct(levels = levels(column))
     }
     
     param
   })
-
-  ParamSet$new(param_list)
+  names(param_list) = names(dt)
+  do.call(paradox::ps, param_list)
 }
 
 

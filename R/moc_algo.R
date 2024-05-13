@@ -3,12 +3,12 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
   p_mut, p_mut_gen, p_mut_use_orig, k, weights, init_strategy, distance_function, cond_sampler = NULL, 
   ref_point, quiet = TRUE) {
   
-  codomain = ParamSet$new(list(
-    ParamDbl$new("dist_target", tags = "minimize"),
-    ParamDbl$new("dist_x_interest", tags = "minimize"),
-    ParamInt$new("no_changed", tags = "minimize"),
-    ParamDbl$new("dist_train", tags = "minimize")
-  ))
+  codomain = ps(
+    dist_target = p_dbl(tags = "minimize"),
+    dist_x_interest = p_dbl(tags = "minimize"),
+    no_changed = p_int(tags = "minimize"),
+    dist_train = p_dbl(tags = "minimize")
+  )
   
   fitness_function = make_fitness_function(
     predictor, x_interest, pred_column, target, weights, k, fixed_features, param_set, distance_function
