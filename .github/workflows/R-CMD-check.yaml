@@ -89,9 +89,9 @@ jobs:
           Rscript -e "remotes::install_local()"
           Rscript -e "keras::install_keras(tensorflow = Sys.getenv('TF_VERSION'), extra_packages = c('IPython', 'requests', 'certifi', 'urllib3', 'pandas', 'h5py'))"
       - if: ${{ matrix.config.r }} == 'release' && runner.os == 'Linux'
-          shell: Rscript {0}
-          run: |
-            remotes::install_github('mlr-org/miesmuschel')
+        shell: Rscript {0}
+        run: |
+          remotes::install_github('mlr-org/miesmuschel')
       - if: ${{ matrix.config.r }} == 'release' && runner.os == 'Linux' && ${{ matrix.config.check }} == 'newparadox'
         shell: Rscript {0}
         run: |
