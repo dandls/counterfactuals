@@ -23,11 +23,11 @@ A \link[paradox]{ParamSet} for the features of \code{dt}.
 }
 \description{
 Creates a \link[paradox]{ParamSet} for the columns of \code{dt}. Depending on the class of a column, a different
-\link[paradox]{Param} is created:
+\link[paradox]{Domain} is created:
 \itemize{
-\item \code{double}: \link[paradox]{ParamDbl}
-\item \code{integer}: \link[paradox]{ParamInt}
-\item \code{character}: \link[paradox]{ParamFct} (with unique values as levels)
-\item \code{factor}: \link[paradox]{ParamFct} (with factor levels as levels)
+\item \code{double}: \code{p_dbl()}
+\item \code{integer}: \code{p_int()}
+\item \code{character}: \code{p_fct()} (with unique values as levels)
+\item \code{factor}: \code{p_fct()} (with factor levels as levels)
 }
 }

@@ -45,12 +45,12 @@ make_counterfactual_test_obj = function() {
   x_interest = X[1L, ]
   rf = randomForest(var_target ~ ., data = dt)
   mod = Predictor$new(rf, data = X)
-  ps = ParamSet$new(list(
-    var_num_1 = ParamDbl$new(id = "var_num_1", lower = -5, upper = 5),
-    var_num_2 = ParamDbl$new(id = "var_num_2", lower = 0, upper = 10),
-    var_fact_1 = ParamFct$new(id = "var_fact_1", levels = levels(dt$var_fact_1)),
-    var_fact_2 = ParamFct$new(id = "var_fact_2", levels = levels(dt$var_fact_2))
-  ))
+  ps = ps(
+    var_num_1 = p_dbl(lower = -5, upper = 5),
+    var_num_2 = p_dbl(lower = 0, upper = 10),
+    var_fact_1 = p_fct(levels = levels(dt$var_fact_1)),
+    var_fact_2 = p_fct(levels = levels(dt$var_fact_2))
+  )
   
   cf = Counterfactuals$new(as.data.table(X), mod, x_interest, ps, desired = list(desired_outcome = c(42, 44)))
   cf
