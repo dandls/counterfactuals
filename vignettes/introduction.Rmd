@@ -80,7 +80,7 @@ rf = randomForest::randomForest(credit_risk ~ ., data = credit[-998L,])
 
 ### Setting up an iml::Predictor() object
 
-An [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object serves as a wrapper for different 
+An [`iml::Predictor`](https://giuseppec.github.io/iml/reference/Predictor.html) object serves as a wrapper for different 
 model types. It contains the model and the data for its analysis.
 
 ```{r}
@@ -277,7 +277,7 @@ model = tree$train(tsk)
 
 ### Setting up an iml::Predictor() object
 
-Then, we initialize an [`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object.
+Then, we initialize an [`iml::Predictor`](https://giuseppec.github.io/iml/reference/Predictor.html) object.
 
 ```{r}
 predictor = iml::Predictor$new(model, data = plasma, y = "retplasma")

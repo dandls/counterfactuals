@@ -213,7 +213,7 @@ FeatureTweakerClassif = R6Class("FeatureTweakerClassif",
 Now, that we have implemented `FeatureTweakerClassif`, let's look at a short application to the `iris` dataset.
 
 First, we train a `randomForest` model on the `iris` data set and set up the
-[`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object, omitting `x_interest` from the
+[`iml::Predictor`](https://giuseppec.github.io/iml/reference/Predictor.html) object, omitting `x_interest` from the
 training data.
 
 ```{r}

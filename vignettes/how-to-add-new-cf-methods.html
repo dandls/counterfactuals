@@ -429,7 +429,7 @@ former.</p>
 <div id="implement-the-initialize-method" class="section level3">
 <h3>Implement the <code>$initialize</code> method</h3>
 <p>The <code>initialize()</code> method must have a predictor argument
-that takes an <a href="https://christophm.github.io/iml/reference/Predictor.html"><code>iml::Predictor</code></a>
+that takes an <a href="https://giuseppec.github.io/iml/reference/Predictor.html"><code>iml::Predictor</code></a>
 object. In addition, it may have further arguments that are specific to
 the counterfactual method such as <code>ktree</code>,
 <code>epsiron</code>, and <code>resample</code> in this case. For
@@ -536,7 +536,7 @@ rule extraction is a random process. Hence, these steps can be repeated
 <p>Now, that we have implemented <code>FeatureTweakerClassif</code>,
 let’s look at a short application to the <code>iris</code> dataset.</p>
 <p>First, we train a <code>randomForest</code> model on the
-<code>iris</code> data set and set up the <a href="https://christophm.github.io/iml/reference/Predictor.html"><code>iml::Predictor</code></a>
+<code>iris</code> data set and set up the <a href="https://giuseppec.github.io/iml/reference/Predictor.html"><code>iml::Predictor</code></a>
 object, omitting <code>x_interest</code> from the training data.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">78546</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">subset</span>(iris, <span class="at">select =</span> <span class="sc">-</span>Species)[<span class="sc">-</span> 130L,]</span>

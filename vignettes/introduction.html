@@ -461,7 +461,7 @@ training data, which is <code>x_interest</code>.</p>
 </div>
 <div id="setting-up-an-imlpredictor-object" class="section level3">
 <h3>Setting up an iml::Predictor() object</h3>
-<p>An <a href="https://christophm.github.io/iml/reference/Predictor.html"><code>iml::Predictor</code></a>
+<p>An <a href="https://giuseppec.github.io/iml/reference/Predictor.html"><code>iml::Predictor</code></a>
 object serves as a wrapper for different model types. It contains the
 model and the data for its analysis.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>predictor <span class="ot">=</span> iml<span class="sc">::</span>Predictor<span class="sc">$</span><span class="fu">new</span>(rf, <span class="at">type =</span> <span class="st">&quot;prob&quot;</span>)</span>
@@ -755,7 +755,7 @@ use a regression tree trained with the <code>mlr3</code> and
 </div>
 <div id="setting-up-an-imlpredictor-object-1" class="section level3">
 <h3>Setting up an iml::Predictor() object</h3>
-<p>Then, we initialize an <a href="https://christophm.github.io/iml/reference/Predictor.html"><code>iml::Predictor</code></a>
+<p>Then, we initialize an <a href="https://giuseppec.github.io/iml/reference/Predictor.html"><code>iml::Predictor</code></a>
 object.</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>predictor <span class="ot">=</span> iml<span class="sc">::</span>Predictor<span class="sc">$</span><span class="fu">new</span>(model, <span class="at">data =</span> plasma, <span class="at">y =</span> <span class="st">&quot;retplasma&quot;</span>)</span>
 <span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>x_interest <span class="ot">=</span> plasma[100L, ]</span>
