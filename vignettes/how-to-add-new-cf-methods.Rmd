@@ -103,7 +103,7 @@ FeatureTweakerClassif = R6::R6Class("FeatureTweakerClassif", inherit = Counterfa
 ### Implement the `$initialize` method
 
 The `initialize()` method must have a predictor argument that takes an
-[`iml::Predictor`](https://christophm.github.io/iml/reference/Predictor.html) object.  In addition, it may
+[`iml::Predictor`](https://giuseppec.github.io/iml/reference/Predictor.html) object.  In addition, it may
 have further arguments that are specific to the counterfactual method such as `ktree`, `epsiron`, and `resample` in this case. 
 For argument checks, we recommend the [`checkmate`](https://mllg.github.io/checkmate/) package. 
 We also fill the `print_parameters()` method with the parameters of Feature Tweaking.
