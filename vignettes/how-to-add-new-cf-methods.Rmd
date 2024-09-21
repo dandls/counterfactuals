@@ -18,12 +18,13 @@ knitr::opts_chunk$set(
 )
 options(width = 200)
 
-library(devtools)
 if (!require("featureTweakR")) { 
-  install_github("katokohaku/featureTweakR")
+  if (!require("devtools")) install.packages("devtools")
+  devtools::install_github("katokohaku/featureTweakR")
 }
 if (!require("pforeach")) {
-  install_github("hoxo-m/pforeach")
+  if (!require("devtools")) install.packages("devtools")
+  devtools::install_github("hoxo-m/pforeach")
 }
 ```
 
