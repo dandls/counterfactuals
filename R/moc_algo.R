@@ -48,7 +48,7 @@ moc_algo = function(predictor, x_interest, pred_column, target, param_set, lower
     terminator = bbotk::trm("none")
   }
 
-  oi = bbotk::OptimInstanceMultiCrit$new(
+  oi = bbotk::OptimInstanceBatchMultiCrit$new(
     objective,
     terminator = terminator
   )
