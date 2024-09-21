@@ -49,7 +49,7 @@ jobs:
         
       - name: Install TensorFlow
         run: |
-          Rscript -e "reticulate::conda_create('r-reticulate', packages = c('python==3.8'))"
+          Rscript -e "reticulate::conda_create('r-reticulate', packages = c('python==3.10'))"
           Rscript -e "remotes::install_local()"
           Rscript -e "keras::install_keras(tensorflow = Sys.getenv('TF_VERSION'), extra_packages = c('IPython', 'requests', 'certifi', 'urllib3', 'pandas', 'h5py'))"  
 
