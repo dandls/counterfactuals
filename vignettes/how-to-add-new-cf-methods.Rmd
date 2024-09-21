@@ -17,6 +17,14 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 options(width = 200)
+
+library(devtools)
+if (!require("featureTweakR")) { 
+  install_github("katokohaku/featureTweakR")
+}
+if (!require("pforeach")) {
+  install_github("hoxo-m/pforeach")
+}
 ```
 
 In the following, we illustrate how further methods can be added to the `counterfactuals` package by integrating

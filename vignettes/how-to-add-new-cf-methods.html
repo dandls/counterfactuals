@@ -49,7 +49,7 @@ overflow: visible;
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -474,7 +474,7 @@ flexible to add new counterfactual methods to the
 <code>featureTweakR</code> package is explained <a href="https://github.com/katokohaku/featureTweakR">here</a> and
 essentially consists of these steps:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Rule extraction</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>rules <span class="ot">=</span> <span class="fu">getRules</span>(rf, <span class="at">ktree =</span> 5L)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>rules <span class="ot">=</span> <span class="fu">getRules</span>(rf, <span class="at">ktree =</span> <span class="dv">5</span><span class="dt">L</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co"># Get e-satisfactory instance </span></span>
 <span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>es <span class="ot">=</span> <span class="fu">set.eSatisfactory</span>(rules, <span class="at">epsiron =</span> <span class="fl">0.3</span>)</span>
 <span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co"># Compute counterfactuals</span></span>
@@ -539,13 +539,13 @@ let’s look at a short application to the <code>iris</code> dataset.</p>
 <code>iris</code> data set and set up the <a href="https://giuseppec.github.io/iml/reference/Predictor.html"><code>iml::Predictor</code></a>
 object, omitting <code>x_interest</code> from the training data.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">78546</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">subset</span>(iris, <span class="at">select =</span> <span class="sc">-</span>Species)[<span class="sc">-</span> 130L,]</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>y <span class="ot">=</span> iris<span class="sc">$</span>Species[<span class="sc">-</span>130L]</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>rf <span class="ot">=</span> <span class="fu">randomForest</span>(X, y, <span class="at">ntree =</span> 20L)</span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>predictor <span class="ot">=</span> iml<span class="sc">::</span>Predictor<span class="sc">$</span><span class="fu">new</span>(rf, <span class="at">data =</span> iris[<span class="sc">-</span>130L, ], <span class="at">y =</span> <span class="st">&quot;Species&quot;</span>, <span class="at">type =</span> <span class="st">&quot;prob&quot;</span>)</span></code></pre></div>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">subset</span>(iris, <span class="at">select =</span> <span class="sc">-</span>Species)[<span class="sc">-</span> <span class="dv">130</span><span class="dt">L</span>,]</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>y <span class="ot">=</span> iris<span class="sc">$</span>Species[<span class="sc">-</span><span class="dv">130</span><span class="dt">L</span>]</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>rf <span class="ot">=</span> <span class="fu">randomForest</span>(X, y, <span class="at">ntree =</span> <span class="dv">20</span><span class="dt">L</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>predictor <span class="ot">=</span> iml<span class="sc">::</span>Predictor<span class="sc">$</span><span class="fu">new</span>(rf, <span class="at">data =</span> iris[<span class="sc">-</span><span class="dv">130</span><span class="dt">L</span>, ], <span class="at">y =</span> <span class="st">&quot;Species&quot;</span>, <span class="at">type =</span> <span class="st">&quot;prob&quot;</span>)</span></code></pre></div>
 <p>For <code>x_interest</code>, the model predicts a probability of 25%
 for <code>versicolor</code>.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>x_interest <span class="ot">=</span> iris[130L, ]</span>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>x_interest <span class="ot">=</span> iris[<span class="dv">130</span><span class="dt">L</span>, ]</span>
 <span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>predictor<span class="sc">$</span><span class="fu">predict</span>(x_interest)</span>
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt;   setosa versicolor virginica</span></span>
 <span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt; 1      0        0.3       0.7</span></span></code></pre></div>
@@ -553,7 +553,7 @@ for <code>versicolor</code>.</p>
 need to change in <code>x_interest</code> for the model to predict a
 probability of at least 60% for<code>versicolor</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Set up FeatureTweakerClassif</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>ft_classif <span class="ot">=</span> FeatureTweakerClassif<span class="sc">$</span><span class="fu">new</span>(predictor, <span class="at">ktree =</span> 10L, <span class="at">resample =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>ft_classif <span class="ot">=</span> FeatureTweakerClassif<span class="sc">$</span><span class="fu">new</span>(predictor, <span class="at">ktree =</span> <span class="dv">10</span><span class="dt">L</span>, <span class="at">resample =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a></span>
 <span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co"># Find counterfactuals and create Counterfactuals Object</span></span>
 <span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>cfactuals <span class="ot">=</span> ft_classif<span class="sc">$</span><span class="fu">find_counterfactuals</span>(</span>
