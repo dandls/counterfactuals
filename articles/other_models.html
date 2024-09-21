@@ -6,20 +6,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Other types of models • counterfactuals</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Other types of models">
-<meta property="og:description" content="counterfactuals">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -33,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">counterfactuals</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.4</span>
       </span>
     </div>
 
@@ -45,7 +44,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -68,7 +67,7 @@
 <li>
   <a href="https://github.com/dandls/counterfactuals/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul>
@@ -79,162 +78,143 @@
 </div>
 <!--/.navbar -->
 
-      
 
-      </header><script src="other_models_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Other types of models</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/dandls/counterfactuals/blob/HEAD/vignettes/other_models.Rmd" class="external-link"><code>vignettes/other_models.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/dandls/counterfactuals/blob/main/vignettes/other_models.Rmd" class="external-link"><code>vignettes/other_models.Rmd</code></a></small>
       <div class="hidden name"><code>other_models.Rmd</code></div>
 
     </div>
 
     
     
-<p>In the following, we explain the <code>counterfactuals</code> workflow for both a classification and a regression task using concrete use cases.</p>
+<p>In the following, we explain the <code>counterfactuals</code>
+workflow for both a classification and a regression task using concrete
+use cases.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/dandls/counterfactuals" class="external-link">"counterfactuals"</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://christophm.github.io/iml/" class="external-link">"iml"</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://giuseppec.github.io/iml/" class="external-link">"iml"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/bethatkinson/rpart" class="external-link">"rpart"</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="other-types-of-models">Other types of models<a class="anchor" aria-label="anchor" href="#other-types-of-models"></a>
 </h2>
-<p>The <code>Predictor</code> class of the <code>iml</code> package provides the necessary flexibility to cover classification and regression models fitted with diverse R packages. In the introduction vignette, we saw models fitted with the <code>mlr3</code> and <code>randomForest</code> packages. In the following, we show extensions to - an classification tree fitted with the <code>caret</code> package, the <code>mlr</code> (a predecesor of <code>mlr3</code>) and <code>tidymodels</code>. For each model we generate counterfactuals for the first row of the BostonHousing dataset using the <code>WhatIf</code> method</p>
+<p>The <code>Predictor</code> class of the <code>iml</code> package
+provides the necessary flexibility to cover classification and
+regression models fitted with diverse R packages. In the introduction
+vignette, we saw models fitted with the <code>mlr3</code> and
+<code>randomForest</code> packages. In the following, we show extensions
+to - an classification tree fitted with the <code>caret</code> package,
+the <code>mlr</code> (a predecesor of <code>mlr3</code>) and
+<code>tidymodels</code>. For each model we generate counterfactuals for
+the 100th row of the plasma dataset of the <code>gamlss.data</code>
+package using the <code>WhatIf</code> method.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">BostonHousing</span>, package <span class="op">=</span> <span class="st">"mlbench"</span><span class="op">)</span></span>
-<span><span class="va">x_interest</span> <span class="op">=</span> <span class="va">BostonHousing</span><span class="op">[</span><span class="fl">1L</span>,<span class="op">]</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">plasma</span>, package <span class="op">=</span> <span class="st">"gamlss.data"</span><span class="op">)</span></span>
+<span><span class="va">x_interest</span> <span class="op">=</span> <span class="va">plasma</span><span class="op">[</span><span class="fl">100L</span>,<span class="op">]</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="rpart---caret-package">rpart - caret package<a class="anchor" aria-label="anchor" href="#rpart---caret-package"></a>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/topepo/caret/" class="external-link">"caret"</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: ggplot2</span></span>
-<span><span class="co">#&gt; Loading required package: lattice</span></span>
-<span></span>
-<span><span class="va">treecaret</span> <span class="op">=</span> <span class="fu">caret</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/caret/man/train.html" class="external-link">train</a></span><span class="op">(</span><span class="va">medv</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">BostonHousing</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span>,<span class="op">]</span>, method <span class="op">=</span> <span class="st">"rpart"</span>, </span>
+<span><span class="va">treecaret</span> <span class="op">=</span> <span class="fu">caret</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/caret/man/train.html" class="external-link">train</a></span><span class="op">(</span><span class="va">retplasma</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">plasma</span><span class="op">[</span><span class="op">-</span><span class="fl">100L</span>,<span class="op">]</span>, method <span class="op">=</span> <span class="st">"rpart"</span>, </span>
 <span>  tuneGrid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>cp <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">predcaret</span> <span class="op">=</span> <span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>model <span class="op">=</span> <span class="va">treecaret</span>, data <span class="op">=</span> <span class="va">BostonHousing</span><span class="op">[</span><span class="op">-</span><span class="fl">1L</span>,<span class="op">]</span>, y <span class="op">=</span> <span class="st">"medv"</span><span class="op">)</span></span>
+<span><span class="va">predcaret</span> <span class="op">=</span> <span class="va"><a href="https://giuseppec.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>model <span class="op">=</span> <span class="va">treecaret</span>, data <span class="op">=</span> <span class="va">plasma</span><span class="op">[</span><span class="op">-</span><span class="fl">100L</span>,<span class="op">]</span>, y <span class="op">=</span> <span class="st">"retplasma"</span><span class="op">)</span></span>
 <span><span class="va">predcaret</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="va">x_interest</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   .prediction</span></span>
-<span><span class="co">#&gt; 1    27.49074</span></span>
-<span><span class="va">nicecaret</span> <span class="op">=</span> <span class="va"><a href="../reference/NICERegr.html">NICERegr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predcaret</span>, optimization <span class="op">=</span> <span class="st">"plausibility"</span>, </span>
+<span><span class="co">#&gt; 1    342.9231</span></span>
+<span><span class="va">nicecaret</span> <span class="op">=</span> <span class="va"><a href="../reference/NICERegr.html">NICERegr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predcaret</span>, optimization <span class="op">=</span> <span class="st">"proximity"</span>, </span>
 <span>  margin_correct <span class="op">=</span> <span class="fl">0.5</span>, return_multiple <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">nicecaret</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span><span class="va">x_interest</span>, desired_outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">40</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">nicecaret</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span><span class="va">x_interest</span>, desired_outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">500</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 1 Counterfactual(s) </span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Desired outcome range: [30, 40] </span></span>
+<span><span class="co">#&gt; Desired outcome range: [500, Inf] </span></span>
 <span><span class="co">#&gt;  </span></span>
 <span><span class="co">#&gt; Head: </span></span>
-<span><span class="co">#&gt;       crim zn indus chas   nox   rm  age    dis rad tax ptratio     b lstat</span></span>
-<span><span class="co">#&gt; 1: 0.07503 33  2.18    0 0.472 7.42 71.9 3.0992   7 222    18.4 396.9  6.47</span></span></code></pre></div>
+<span><span class="co">#&gt;      age    sex smokstat      bmi vituse calories   fat fiber alcohol cholesterol betadiet retdiet betaplasma</span></span>
+<span><span class="co">#&gt;    &lt;int&gt; &lt;fctr&gt;   &lt;fctr&gt;    &lt;num&gt; &lt;fctr&gt;    &lt;num&gt; &lt;num&gt; &lt;num&gt;   &lt;num&gt;       &lt;num&gt;    &lt;int&gt;   &lt;int&gt;      &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:    46      1        3 35.25969      3   2667.5 131.6  10.1       0       550.5     1210    1291        218</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="rpart---tidymodels-package">rpart - tidymodels package<a class="anchor" aria-label="anchor" href="#rpart---tidymodels-package"></a>
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://tidymodels.tidymodels.org" class="external-link">"tidymodels"</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; ── <span style="font-weight: bold;">Attaching packages</span> ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidymodels 1.0.0 ──</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">broom       </span> 1.0.3     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">rsample     </span> 1.1.1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">dials       </span> 1.1.0     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">tibble      </span> 3.1.8</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">dplyr       </span> 1.1.0     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">tidyr       </span> 1.3.0</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">infer       </span> 1.0.4     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">tune        </span> 1.0.1</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">modeldata   </span> 1.1.0     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">workflows   </span> 1.1.2</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">parsnip     </span> 1.0.3     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">workflowsets</span> 1.0.0</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">purrr       </span> 1.0.1     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">yardstick   </span> 1.1.0</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">recipes     </span> 1.0.4</span></span>
-<span><span class="co">#&gt; ── <span style="font-weight: bold;">Conflicts</span> ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidymodels_conflicts() ──</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">purrr</span>::<span style="color: #00BB00;">discard()</span>         masks <span style="color: #0000BB;">scales</span>::discard()</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">dplyr</span>::<span style="color: #00BB00;">filter()</span>          masks <span style="color: #0000BB;">stats</span>::filter()</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">dplyr</span>::<span style="color: #00BB00;">lag()</span>             masks <span style="color: #0000BB;">stats</span>::lag()</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">purrr</span>::<span style="color: #00BB00;">lift()</span>            masks <span style="color: #0000BB;">caret</span>::lift()</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">yardstick</span>::<span style="color: #00BB00;">precision()</span>   masks <span style="color: #0000BB;">caret</span>::precision()</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">dials</span>::<span style="color: #00BB00;">prune()</span>           masks <span style="color: #0000BB;">rpart</span>::prune()</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">yardstick</span>::<span style="color: #00BB00;">recall()</span>      masks <span style="color: #0000BB;">caret</span>::recall()</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">yardstick</span>::<span style="color: #00BB00;">sensitivity()</span> masks <span style="color: #0000BB;">caret</span>::sensitivity()</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">yardstick</span>::<span style="color: #00BB00;">specificity()</span> masks <span style="color: #0000BB;">caret</span>::specificity()</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">recipes</span>::<span style="color: #00BB00;">step()</span>          masks <span style="color: #0000BB;">stats</span>::step()</span></span>
-<span><span class="co">#&gt; <span style="color: #0000BB;">•</span> Learn how to get started at <span style="color: #00BB00;">https://www.tidymodels.org/start/</span></span></span>
 <span><span class="va">treetm</span> <span class="op">=</span> <span class="fu">decision_tree</span><span class="op">(</span>mode <span class="op">=</span> <span class="st">"regression"</span>, engine <span class="op">=</span> <span class="st">"rpart"</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
-<span>  <span class="fu">fit</span><span class="op">(</span><span class="va">medv</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">BostonHousing</span><span class="op">[</span><span class="op">-</span><span class="fl">1L</span>,<span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">predtm</span> <span class="op">=</span> <span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>model <span class="op">=</span> <span class="va">treetm</span>, data <span class="op">=</span> <span class="va">BostonHousing</span><span class="op">[</span><span class="op">-</span><span class="fl">1L</span>,<span class="op">]</span>, y <span class="op">=</span> <span class="st">"medv"</span><span class="op">)</span></span>
+<span>  <span class="fu">fit</span><span class="op">(</span><span class="va">retplasma</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">plasma</span><span class="op">[</span><span class="op">-</span><span class="fl">100L</span>,<span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">predtm</span> <span class="op">=</span> <span class="va"><a href="https://giuseppec.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>model <span class="op">=</span> <span class="va">treetm</span>, data <span class="op">=</span> <span class="va">plasma</span><span class="op">[</span><span class="op">-</span><span class="fl">100L</span>,<span class="op">]</span>, y <span class="op">=</span> <span class="st">"retplasma"</span><span class="op">)</span></span>
 <span><span class="va">predtm</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="va">x_interest</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      .pred</span></span>
-<span><span class="co">#&gt; 1 27.49074</span></span>
-<span><span class="va">nicetm</span> <span class="op">=</span> <span class="va"><a href="../reference/NICERegr.html">NICERegr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predtm</span>, optimization <span class="op">=</span> <span class="st">"plausibility"</span>, </span>
+<span><span class="co">#&gt; 1 342.9231</span></span>
+<span><span class="va">nicetm</span> <span class="op">=</span> <span class="va"><a href="../reference/NICERegr.html">NICERegr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predtm</span>, optimization <span class="op">=</span> <span class="st">"proximity"</span>, </span>
 <span>  margin_correct <span class="op">=</span> <span class="fl">0.5</span>, return_multiple <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">nicetm</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span><span class="va">x_interest</span>, desired_outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">40</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">nicetm</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span><span class="va">x_interest</span>, desired_outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">500</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 1 Counterfactual(s) </span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Desired outcome range: [30, 40] </span></span>
+<span><span class="co">#&gt; Desired outcome range: [500, Inf] </span></span>
 <span><span class="co">#&gt;  </span></span>
 <span><span class="co">#&gt; Head: </span></span>
-<span><span class="co">#&gt;       crim zn indus chas   nox   rm  age    dis rad tax ptratio     b lstat</span></span>
-<span><span class="co">#&gt; 1: 0.07503 33  2.18    0 0.472 7.42 71.9 3.0992   7 222    18.4 396.9  6.47</span></span></code></pre></div>
+<span><span class="co">#&gt;      age    sex smokstat      bmi vituse calories   fat fiber alcohol cholesterol betadiet retdiet betaplasma</span></span>
+<span><span class="co">#&gt;    &lt;int&gt; &lt;fctr&gt;   &lt;fctr&gt;    &lt;num&gt; &lt;fctr&gt;    &lt;num&gt; &lt;num&gt; &lt;num&gt;   &lt;num&gt;       &lt;num&gt;    &lt;int&gt;   &lt;int&gt;      &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:    46      1        3 35.25969      3   2667.5 131.6  10.1       0       550.5     1210    1291        218</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="rpart---mlr-package">rpart - mlr package<a class="anchor" aria-label="anchor" href="#rpart---mlr-package"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://mlr.mlr-org.com" class="external-link">"mlr"</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: ParamHelpers</span></span>
 <span><span class="co">#&gt; Warning in fun(pkgname, pkgpath): Packages 'paradox' and 'ParamHelpers' are conflicting and should not be loaded in the same session</span></span>
-<span><span class="co">#&gt; Warning message: 'mlr' is in 'maintenance-only' mode since July 2019. Future development will only happen in 'mlr3' (&lt;https://mlr3.mlr-org.com&gt;). Due to the focus on 'mlr3' there</span></span>
-<span><span class="co">#&gt; might be uncaught bugs meanwhile in {mlr} - please consider switching.</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'mlr'</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:caret':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     train</span></span>
-<span><span class="va">task</span> <span class="op">=</span> <span class="fu">mlr</span><span class="fu">::</span><span class="fu"><a href="https://mlr.mlr-org.com/reference/RegrTask.html" class="external-link">makeRegrTask</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">BostonHousing</span><span class="op">[</span><span class="op">-</span><span class="fl">1L</span>,<span class="op">]</span>, target <span class="op">=</span> <span class="st">"medv"</span><span class="op">)</span></span>
-<span><span class="va">mod</span> <span class="op">=</span> <span class="fu"><a href="https://mlr.mlr-org.com/reference/makeLearner.html" class="external-link">makeLearner</a></span><span class="op">(</span><span class="st">"regr.rpart"</span><span class="op">)</span></span>
+<span><span class="va">task</span> <span class="op">=</span> <span class="fu">mlr</span><span class="fu">::</span><span class="fu"><a href="https://mlr.mlr-org.com/reference/RegrTask.html" class="external-link">makeRegrTask</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">plasma</span><span class="op">[</span><span class="op">-</span><span class="fl">100L</span>,<span class="op">]</span>, target <span class="op">=</span> <span class="st">"retplasma"</span><span class="op">)</span></span>
+<span><span class="va">mod</span> <span class="op">=</span> <span class="fu">mlr</span><span class="fu">::</span><span class="fu"><a href="https://mlr.mlr-org.com/reference/makeLearner.html" class="external-link">makeLearner</a></span><span class="op">(</span><span class="st">"regr.rpart"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">treemlr</span> <span class="op">=</span> <span class="fu"><a href="https://mlr.mlr-org.com/reference/train.html" class="external-link">train</a></span><span class="op">(</span><span class="va">mod</span>, <span class="va">task</span><span class="op">)</span></span>
-<span><span class="va">predmlr</span> <span class="op">=</span> <span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>model <span class="op">=</span> <span class="va">treemlr</span>, data <span class="op">=</span> <span class="va">BostonHousing</span><span class="op">[</span><span class="op">-</span><span class="fl">1L</span>,<span class="op">]</span>, y <span class="op">=</span> <span class="st">"medv"</span><span class="op">)</span></span>
+<span><span class="va">treemlr</span> <span class="op">=</span> <span class="fu">mlr</span><span class="fu">::</span><span class="fu"><a href="https://mlr.mlr-org.com/reference/train.html" class="external-link">train</a></span><span class="op">(</span><span class="va">mod</span>, <span class="va">task</span><span class="op">)</span></span>
+<span><span class="va">predmlr</span> <span class="op">=</span> <span class="va"><a href="https://giuseppec.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>model <span class="op">=</span> <span class="va">treemlr</span>, data <span class="op">=</span> <span class="va">plasma</span><span class="op">[</span><span class="op">-</span><span class="fl">100L</span>,<span class="op">]</span>, y <span class="op">=</span> <span class="st">"retplasma"</span><span class="op">)</span></span>
 <span><span class="va">predmlr</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="va">x_interest</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   .prediction</span></span>
-<span><span class="co">#&gt; 1    27.49074</span></span>
-<span><span class="va">nicemlr</span> <span class="op">=</span> <span class="va"><a href="../reference/NICERegr.html">NICERegr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predmlr</span>, optimization <span class="op">=</span> <span class="st">"plausibility"</span>, </span>
+<span><span class="co">#&gt; 1    342.9231</span></span>
+<span><span class="va">nicemlr</span> <span class="op">=</span> <span class="va"><a href="../reference/NICERegr.html">NICERegr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predmlr</span>, optimization <span class="op">=</span> <span class="st">"proximity"</span>, </span>
 <span>  margin_correct <span class="op">=</span> <span class="fl">0.5</span>, return_multiple <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">nicemlr</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span><span class="va">x_interest</span>, desired_outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">40</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">nicemlr</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span><span class="va">x_interest</span>, desired_outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">500</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 1 Counterfactual(s) </span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Desired outcome range: [30, 40] </span></span>
+<span><span class="co">#&gt; Desired outcome range: [500, Inf] </span></span>
 <span><span class="co">#&gt;  </span></span>
 <span><span class="co">#&gt; Head: </span></span>
-<span><span class="co">#&gt;       crim zn indus chas   nox   rm  age    dis rad tax ptratio     b lstat</span></span>
-<span><span class="co">#&gt; 1: 0.07503 33  2.18    0 0.472 7.42 71.9 3.0992   7 222    18.4 396.9  6.47</span></span></code></pre></div>
+<span><span class="co">#&gt;      age    sex smokstat      bmi vituse calories   fat fiber alcohol cholesterol betadiet retdiet betaplasma</span></span>
+<span><span class="co">#&gt;    &lt;int&gt; &lt;fctr&gt;   &lt;fctr&gt;    &lt;num&gt; &lt;fctr&gt;    &lt;num&gt; &lt;num&gt; &lt;num&gt;   &lt;num&gt;       &lt;num&gt;    &lt;int&gt;   &lt;int&gt;      &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:    46      1        3 35.25969      3   2667.5 131.6  10.1       0       550.5     1210    1291        218</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="decision-tree---rpart-package">Decision tree - rpart package<a class="anchor" aria-label="anchor" href="#decision-tree---rpart-package"></a>
 </h3>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">treerpart</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/rpart/man/rpart.html" class="external-link">rpart</a></span><span class="op">(</span><span class="va">medv</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">BostonHousing</span><span class="op">[</span><span class="op">-</span><span class="fl">1L</span>,<span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">predrpart</span> <span class="op">=</span> <span class="va"><a href="https://christophm.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>model <span class="op">=</span> <span class="va">treerpart</span>, data <span class="op">=</span> <span class="va">BostonHousing</span><span class="op">[</span><span class="op">-</span><span class="fl">1L</span>,<span class="op">]</span>, y <span class="op">=</span> <span class="st">"medv"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">treerpart</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/rpart/man/rpart.html" class="external-link">rpart</a></span><span class="op">(</span><span class="va">retplasma</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">plasma</span><span class="op">[</span><span class="op">-</span><span class="fl">100L</span>,<span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">predrpart</span> <span class="op">=</span> <span class="va"><a href="https://giuseppec.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>model <span class="op">=</span> <span class="va">treerpart</span>, data <span class="op">=</span> <span class="va">plasma</span><span class="op">[</span><span class="op">-</span><span class="fl">100L</span>,<span class="op">]</span>, y <span class="op">=</span> <span class="st">"retplasma"</span><span class="op">)</span></span>
 <span><span class="va">predrpart</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="va">x_interest</span><span class="op">)</span></span>
 <span><span class="co">#&gt;       pred</span></span>
-<span><span class="co">#&gt; 1 27.49074</span></span>
-<span><span class="va">nicerpart</span> <span class="op">=</span> <span class="va"><a href="../reference/NICERegr.html">NICERegr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predrpart</span>, optimization <span class="op">=</span> <span class="st">"plausibility"</span>, </span>
+<span><span class="co">#&gt; 1 342.9231</span></span>
+<span><span class="va">nicerpart</span> <span class="op">=</span> <span class="va"><a href="../reference/NICERegr.html">NICERegr</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">predrpart</span>, optimization <span class="op">=</span> <span class="st">"proximity"</span>, </span>
 <span>  margin_correct <span class="op">=</span> <span class="fl">0.5</span>, return_multiple <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">nicerpart</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span><span class="va">x_interest</span>, desired_outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">40</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">nicerpart</span><span class="op">$</span><span class="fu">find_counterfactuals</span><span class="op">(</span><span class="va">x_interest</span>, desired_outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">500</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 1 Counterfactual(s) </span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Desired outcome range: [30, 40] </span></span>
+<span><span class="co">#&gt; Desired outcome range: [500, Inf] </span></span>
 <span><span class="co">#&gt;  </span></span>
 <span><span class="co">#&gt; Head: </span></span>
-<span><span class="co">#&gt;       crim zn indus chas   nox   rm  age    dis rad tax ptratio     b lstat</span></span>
-<span><span class="co">#&gt; 1: 0.07503 33  2.18    0 0.472 7.42 71.9 3.0992   7 222    18.4 396.9  6.47</span></span></code></pre></div>
+<span><span class="co">#&gt;      age    sex smokstat      bmi vituse calories   fat fiber alcohol cholesterol betadiet retdiet betaplasma</span></span>
+<span><span class="co">#&gt;    &lt;int&gt; &lt;fctr&gt;   &lt;fctr&gt;    &lt;num&gt; &lt;fctr&gt;    &lt;num&gt; &lt;num&gt; &lt;num&gt;   &lt;num&gt;       &lt;num&gt;    &lt;int&gt;   &lt;int&gt;      &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:    46      1        3 35.25969      3   2667.5 131.6  10.1       0       550.5     1210    1291        218</span></span></code></pre></div>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
+      </div>
 
 </div>
 
@@ -247,16 +227,16 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer>
 </div>
 
-  
 
 
-  
+
+
 
   </body>
 </html>

@@ -1,81 +1,29 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>/articles/how-to-add-new-cf-methods.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/introduction.html</loc>
-  </url>
-  <url>
-    <loc>/articles/other_models.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/news/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CounterfactualMethod.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CounterfactualMethodClassif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/CounterfactualMethodRegr.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Counterfactuals.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MOCClassif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MOCRegr.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NICEClassif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NICERegr.html</loc>
-  </url>
-  <url>
-    <loc>/reference/RandomSearchClassif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/RandomSearchRegr.html</loc>
-  </url>
-  <url>
-    <loc>/reference/WhatIfClassif.html</loc>
-  </url>
-  <url>
-    <loc>/reference/WhatIfRegr.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dist_to_interval.html</loc>
-  </url>
-  <url>
-    <loc>/reference/eval_distance.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/make_param_set.html</loc>
-  </url>
-  <url>
-    <loc>/reference/smallest_n_indices.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/articles/how-to-add-new-cf-methods.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/introduction.html</loc></url>
+<url><loc>/articles/other_models.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/CounterfactualMethod.html</loc></url>
+<url><loc>/reference/CounterfactualMethodClassif.html</loc></url>
+<url><loc>/reference/CounterfactualMethodRegr.html</loc></url>
+<url><loc>/reference/Counterfactuals.html</loc></url>
+<url><loc>/reference/MOCClassif.html</loc></url>
+<url><loc>/reference/MOCRegr.html</loc></url>
+<url><loc>/reference/NICEClassif.html</loc></url>
+<url><loc>/reference/NICERegr.html</loc></url>
+<url><loc>/reference/RandomSearchClassif.html</loc></url>
+<url><loc>/reference/RandomSearchRegr.html</loc></url>
+<url><loc>/reference/WhatIfClassif.html</loc></url>
+<url><loc>/reference/WhatIfRegr.html</loc></url>
+<url><loc>/reference/dist_to_interval.html</loc></url>
+<url><loc>/reference/eval_distance.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/make_param_set.html</loc></url>
+<url><loc>/reference/smallest_n_indices.html</loc></url>
 </urlset>
+
