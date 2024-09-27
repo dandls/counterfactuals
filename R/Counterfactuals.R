@@ -282,7 +282,6 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       if (!requireNamespace("GGally", quietly = TRUE)) {
         stop("Package 'GGally' needed for this function to work. Please install it.", call. = FALSE)
       }
-      
       assert_data_table(self$data, min.rows = 1L)
       if (is.null(feature_names)) {
         feature_names = names(private$.data)
@@ -320,7 +319,6 @@ Counterfactuals = R6::R6Class("Counterfactuals",
       names(line_colors) <- rownames(dt)
       dt[, rn := rownames(dt)]
  
-      param.set = self$.__enclos_env__$private$param.set
       val.f = private$param_set$levels
       val.f = val.f[lapply(val.f,length)>0]
       
