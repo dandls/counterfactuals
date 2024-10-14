@@ -92,7 +92,7 @@ Evolutionary Computation 21 (1): 29–64. \doi{10.1162/EVCO_a_00059}.
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
-\item{\code{optimizer}}{(\link[bbotk]{OptimInstanceMultiCrit}) \cr
+\item{\code{optimizer}}{(\link[bbotk]{OptimInstanceBatchMultiCrit}) \cr
 The object used for optimization.}
 }
 \if{html}{\out{</div>}}
