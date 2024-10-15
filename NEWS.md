@@ -1,3 +1,6 @@
+# counterfactuals 0.1.5
+* Compatability with name changes in `bbotk` (OptimInstanceMultiCrit)
+
 # counterfactuals 0.1.4
 * Compatibility with upcoming 'paradox' release
 * Improved print methods for counterfactual methods
