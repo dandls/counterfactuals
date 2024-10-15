@@ -140,7 +140,7 @@ RandomSearchRegr = R6::R6Class("RandomSearchRegr",
     }
   ),
   active = list(
-    #' @field optimizer (\link[bbotk]{OptimInstanceMultiCrit}) \cr
+    #' @field optimizer (\link[bbotk]{OptimInstanceBatchMultiCrit}) \cr
     #'  The object used for optimization.
     optimizer = function(value) {
       if (missing(value)) {
