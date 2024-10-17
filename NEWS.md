@@ -1,3 +1,6 @@
+# counterfactuals 0.1.6 
+* Fix display issues in html vignettes
+
 # counterfactuals 0.1.5
 * Compatability with name changes in `bbotk` (OptimInstanceMultiCrit)
 

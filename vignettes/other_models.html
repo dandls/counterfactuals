@@ -369,83 +369,81 @@ package using the <code>WhatIf</code> method.</p>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>predcaret <span class="ot">=</span> Predictor<span class="sc">$</span><span class="fu">new</span>(<span class="at">model =</span> treecaret, <span class="at">data =</span> plasma[<span class="sc">-</span>100L,], <span class="at">y =</span> <span class="st">&quot;retplasma&quot;</span>)</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>predcaret<span class="sc">$</span><span class="fu">predict</span>(x_interest)</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .prediction</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    342.9231</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>nicecaret <span class="ot">=</span> NICERegr<span class="sc">$</span><span class="fu">new</span>(predcaret, <span class="at">optimization =</span> <span class="st">&quot;proximity&quot;</span>, </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">margin_correct =</span> <span class="fl">0.5</span>, <span class="at">return_multiple =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>nicecaret<span class="sc">$</span><span class="fu">find_counterfactuals</span>(x_interest, <span class="at">desired_outcome =</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="cn">Inf</span>))</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Desired outcome range: [500, Inf] </span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Head: </span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      age    sex smokstat      bmi vituse calories   fat fiber alcohol cholesterol betadiet retdiet betaplasma</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;int&gt; &lt;fctr&gt;   &lt;fctr&gt;    &lt;num&gt; &lt;fctr&gt;    &lt;num&gt; &lt;num&gt; &lt;num&gt;   &lt;num&gt;       &lt;num&gt;    &lt;int&gt;   &lt;int&gt;      &lt;int&gt;</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:    46      1        3 35.25969      3   2667.5 131.6  10.1       0       550.5     1210    1291        218</span></span></code></pre></div>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    342.9231</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>nicecaret <span class="ot">=</span> NICERegr<span class="sc">$</span><span class="fu">new</span>(predcaret, <span class="at">optimization =</span> <span class="st">&quot;proximity&quot;</span>, </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">margin_correct =</span> <span class="fl">0.5</span>, <span class="at">return_multiple =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>nicecaret<span class="sc">$</span><span class="fu">find_counterfactuals</span>(x_interest, <span class="at">desired_outcome =</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="cn">Inf</span>))</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Desired outcome range: [500, Inf] </span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Head: </span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      age    sex smokstat      bmi vituse calories   fat fiber alcohol cholesterol betadiet retdiet betaplasma</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;int&gt; &lt;fctr&gt;   &lt;fctr&gt;    &lt;num&gt; &lt;fctr&gt;    &lt;num&gt; &lt;num&gt; &lt;num&gt;   &lt;num&gt;       &lt;num&gt;    &lt;int&gt;   &lt;int&gt;      &lt;int&gt;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:    46      1        3 35.25969      3   2667.5 131.6  10.1       0       550.5     1210    1291        218</span></span></code></pre></div>
 </div>
 <div id="rpart---tidymodels-package" class="section level2">
 <h2>rpart - tidymodels package</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;tidymodels&quot;</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>treetm <span class="ot">=</span> <span class="fu">decision_tree</span>(<span class="at">mode =</span> <span class="st">&quot;regression&quot;</span>, <span class="at">engine =</span> <span class="st">&quot;rpart&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(retplasma <span class="sc">~</span> ., <span class="at">data =</span> plasma[<span class="sc">-</span>100L,])</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>predtm <span class="ot">=</span> Predictor<span class="sc">$</span><span class="fu">new</span>(<span class="at">model =</span> treetm, <span class="at">data =</span> plasma[<span class="sc">-</span>100L,], <span class="at">y =</span> <span class="st">&quot;retplasma&quot;</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>predtm<span class="sc">$</span><span class="fu">predict</span>(x_interest)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      .pred</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 342.9231</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nicetm <span class="ot">=</span> NICERegr<span class="sc">$</span><span class="fu">new</span>(predtm, <span class="at">optimization =</span> <span class="st">&quot;proximity&quot;</span>, </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">margin_correct =</span> <span class="fl">0.5</span>, <span class="at">return_multiple =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>nicetm<span class="sc">$</span><span class="fu">find_counterfactuals</span>(x_interest, <span class="at">desired_outcome =</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="cn">Inf</span>))</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Desired outcome range: [500, Inf] </span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Head: </span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      age    sex smokstat      bmi vituse calories   fat fiber alcohol cholesterol betadiet retdiet betaplasma</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;int&gt; &lt;fctr&gt;   &lt;fctr&gt;    &lt;num&gt; &lt;fctr&gt;    &lt;num&gt; &lt;num&gt; &lt;num&gt;   &lt;num&gt;       &lt;num&gt;    &lt;int&gt;   &lt;int&gt;      &lt;int&gt;</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:    46      1        3 35.25969      3   2667.5 131.6  10.1       0       550.5     1210    1291        218</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;tidymodels&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>treetm <span class="ot">=</span> <span class="fu">decision_tree</span>(<span class="at">mode =</span> <span class="st">&quot;regression&quot;</span>, <span class="at">engine =</span> <span class="st">&quot;rpart&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(retplasma <span class="sc">~</span> ., <span class="at">data =</span> plasma[<span class="sc">-</span>100L,])</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>predtm <span class="ot">=</span> Predictor<span class="sc">$</span><span class="fu">new</span>(<span class="at">model =</span> treetm, <span class="at">data =</span> plasma[<span class="sc">-</span>100L,], <span class="at">y =</span> <span class="st">&quot;retplasma&quot;</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>predtm<span class="sc">$</span><span class="fu">predict</span>(x_interest)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      .pred</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 342.9231</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>nicetm <span class="ot">=</span> NICERegr<span class="sc">$</span><span class="fu">new</span>(predtm, <span class="at">optimization =</span> <span class="st">&quot;proximity&quot;</span>, </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">margin_correct =</span> <span class="fl">0.5</span>, <span class="at">return_multiple =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>nicetm<span class="sc">$</span><span class="fu">find_counterfactuals</span>(x_interest, <span class="at">desired_outcome =</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="cn">Inf</span>))</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Desired outcome range: [500, Inf] </span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Head: </span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      age    sex smokstat      bmi vituse calories   fat fiber alcohol cholesterol betadiet retdiet betaplasma</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;int&gt; &lt;fctr&gt;   &lt;fctr&gt;    &lt;num&gt; &lt;fctr&gt;    &lt;num&gt; &lt;num&gt; &lt;num&gt;   &lt;num&gt;       &lt;num&gt;    &lt;int&gt;   &lt;int&gt;      &lt;int&gt;</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:    46      1        3 35.25969      3   2667.5 131.6  10.1       0       550.5     1210    1291        218</span></span></code></pre></div>
 </div>
 <div id="rpart---mlr-package" class="section level2">
 <h2>rpart - mlr package</h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;mlr&quot;</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in fun(pkgname, pkgpath): Packages &#39;paradox&#39; and &#39;ParamHelpers&#39; are conflicting and should not be loaded in the same session</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in fun(pkgname, pkgpath): Packages &#39;mlr3&#39; and &#39;mlr&#39; are conflicting and should not be loaded in the same session</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>task <span class="ot">=</span> mlr<span class="sc">::</span><span class="fu">makeRegrTask</span>(<span class="at">data =</span> plasma[<span class="sc">-</span>100L,], <span class="at">target =</span> <span class="st">&quot;retplasma&quot;</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">=</span> mlr<span class="sc">::</span><span class="fu">makeLearner</span>(<span class="st">&quot;regr.rpart&quot;</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>treemlr <span class="ot">=</span> mlr<span class="sc">::</span><span class="fu">train</span>(mod, task)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>predmlr <span class="ot">=</span> Predictor<span class="sc">$</span><span class="fu">new</span>(<span class="at">model =</span> treemlr, <span class="at">data =</span> plasma[<span class="sc">-</span>100L,], <span class="at">y =</span> <span class="st">&quot;retplasma&quot;</span>)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>predmlr<span class="sc">$</span><span class="fu">predict</span>(x_interest)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .prediction</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    342.9231</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>nicemlr <span class="ot">=</span> NICERegr<span class="sc">$</span><span class="fu">new</span>(predmlr, <span class="at">optimization =</span> <span class="st">&quot;proximity&quot;</span>, </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">margin_correct =</span> <span class="fl">0.5</span>, <span class="at">return_multiple =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>nicemlr<span class="sc">$</span><span class="fu">find_counterfactuals</span>(x_interest, <span class="at">desired_outcome =</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="cn">Inf</span>))</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Desired outcome range: [500, Inf] </span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Head: </span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      age    sex smokstat      bmi vituse calories   fat fiber alcohol cholesterol betadiet retdiet betaplasma</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;int&gt; &lt;fctr&gt;   &lt;fctr&gt;    &lt;num&gt; &lt;fctr&gt;    &lt;num&gt; &lt;num&gt; &lt;num&gt;   &lt;num&gt;       &lt;num&gt;    &lt;int&gt;   &lt;int&gt;      &lt;int&gt;</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:    46      1        3 35.25969      3   2667.5 131.6  10.1       0       550.5     1210    1291        218</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;mlr&quot;</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>task <span class="ot">=</span> mlr<span class="sc">::</span><span class="fu">makeRegrTask</span>(<span class="at">data =</span> plasma[<span class="sc">-</span>100L,], <span class="at">target =</span> <span class="st">&quot;retplasma&quot;</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">=</span> mlr<span class="sc">::</span><span class="fu">makeLearner</span>(<span class="st">&quot;regr.rpart&quot;</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>treemlr <span class="ot">=</span> mlr<span class="sc">::</span><span class="fu">train</span>(mod, task)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>predmlr <span class="ot">=</span> Predictor<span class="sc">$</span><span class="fu">new</span>(<span class="at">model =</span> treemlr, <span class="at">data =</span> plasma[<span class="sc">-</span>100L,], <span class="at">y =</span> <span class="st">&quot;retplasma&quot;</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>predmlr<span class="sc">$</span><span class="fu">predict</span>(x_interest)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .prediction</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    342.9231</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>nicemlr <span class="ot">=</span> NICERegr<span class="sc">$</span><span class="fu">new</span>(predmlr, <span class="at">optimization =</span> <span class="st">&quot;proximity&quot;</span>, </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">margin_correct =</span> <span class="fl">0.5</span>, <span class="at">return_multiple =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>nicemlr<span class="sc">$</span><span class="fu">find_counterfactuals</span>(x_interest, <span class="at">desired_outcome =</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="cn">Inf</span>))</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Desired outcome range: [500, Inf] </span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Head: </span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      age    sex smokstat      bmi vituse calories   fat fiber alcohol cholesterol betadiet retdiet betaplasma</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;int&gt; &lt;fctr&gt;   &lt;fctr&gt;    &lt;num&gt; &lt;fctr&gt;    &lt;num&gt; &lt;num&gt; &lt;num&gt;   &lt;num&gt;       &lt;num&gt;    &lt;int&gt;   &lt;int&gt;      &lt;int&gt;</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:    46      1        3 35.25969      3   2667.5 131.6  10.1       0       550.5     1210    1291        218</span></span></code></pre></div>
 </div>
 <div id="decision-tree---rpart-package" class="section level2">
 <h2>Decision tree - rpart package</h2>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>treerpart <span class="ot">=</span> <span class="fu">rpart</span>(retplasma <span class="sc">~</span> ., <span class="at">data =</span> plasma[<span class="sc">-</span>100L,])</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>predrpart <span class="ot">=</span> Predictor<span class="sc">$</span><span class="fu">new</span>(<span class="at">model =</span> treerpart, <span class="at">data =</span> plasma[<span class="sc">-</span>100L,], <span class="at">y =</span> <span class="st">&quot;retplasma&quot;</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>predrpart<span class="sc">$</span><span class="fu">predict</span>(x_interest)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       pred</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 342.9231</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>nicerpart <span class="ot">=</span> NICERegr<span class="sc">$</span><span class="fu">new</span>(predrpart, <span class="at">optimization =</span> <span class="st">&quot;proximity&quot;</span>, </span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">margin_correct =</span> <span class="fl">0.5</span>, <span class="at">return_multiple =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>nicerpart<span class="sc">$</span><span class="fu">find_counterfactuals</span>(x_interest, <span class="at">desired_outcome =</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="cn">Inf</span>))</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Desired outcome range: [500, Inf] </span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Head: </span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      age    sex smokstat      bmi vituse calories   fat fiber alcohol cholesterol betadiet retdiet betaplasma</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;int&gt; &lt;fctr&gt;   &lt;fctr&gt;    &lt;num&gt; &lt;fctr&gt;    &lt;num&gt; &lt;num&gt; &lt;num&gt;   &lt;num&gt;       &lt;num&gt;    &lt;int&gt;   &lt;int&gt;      &lt;int&gt;</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:    46      1        3 35.25969      3   2667.5 131.6  10.1       0       550.5     1210    1291        218</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>treerpart <span class="ot">=</span> <span class="fu">rpart</span>(retplasma <span class="sc">~</span> ., <span class="at">data =</span> plasma[<span class="sc">-</span>100L,])</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>predrpart <span class="ot">=</span> Predictor<span class="sc">$</span><span class="fu">new</span>(<span class="at">model =</span> treerpart, <span class="at">data =</span> plasma[<span class="sc">-</span>100L,], <span class="at">y =</span> <span class="st">&quot;retplasma&quot;</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>predrpart<span class="sc">$</span><span class="fu">predict</span>(x_interest)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       pred</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 342.9231</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>nicerpart <span class="ot">=</span> NICERegr<span class="sc">$</span><span class="fu">new</span>(predrpart, <span class="at">optimization =</span> <span class="st">&quot;proximity&quot;</span>, </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">margin_correct =</span> <span class="fl">0.5</span>, <span class="at">return_multiple =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>nicerpart<span class="sc">$</span><span class="fu">find_counterfactuals</span>(x_interest, <span class="at">desired_outcome =</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="cn">Inf</span>))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Counterfactual(s) </span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Desired outcome range: [500, Inf] </span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Head: </span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      age    sex smokstat      bmi vituse calories   fat fiber alcohol cholesterol betadiet retdiet betaplasma</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;int&gt; &lt;fctr&gt;   &lt;fctr&gt;    &lt;num&gt; &lt;fctr&gt;    &lt;num&gt; &lt;num&gt; &lt;num&gt;   &lt;num&gt;       &lt;num&gt;    &lt;int&gt;   &lt;int&gt;      &lt;int&gt;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1:    46      1        3 35.25969      3   2667.5 131.6  10.1       0       550.5     1210    1291        218</span></span></code></pre></div>
 </div>
 </div>
 

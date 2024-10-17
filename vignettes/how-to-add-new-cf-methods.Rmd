@@ -109,7 +109,7 @@ FeatureTweakerClassif = R6::R6Class("FeatureTweakerClassif", inherit = Counterfa
 )
 ```
 
-### Implement the `$initialize` method
+### Implement the initialize method
 
 The `initialize()` method must have a predictor argument that takes an
 [`iml::Predictor`](https://giuseppec.github.io/iml/reference/Predictor.html) object.  In addition, it may
@@ -147,7 +147,7 @@ FeatureTweakerClassif = R6Class("FeatureTweakerClassif", inherit = Counterfactua
 )
 ```
 
-### Implement the `$run` method
+### Implement the run method
 
 The `run()` method performs the search for counterfactuals. Its structure is completely free, which makes it flexible to 
 add new counterfactual methods to the `counterfactuals` package.
