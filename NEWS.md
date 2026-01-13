@@ -1,3 +1,8 @@
+# counterfactuals 1.0.0
+* Add DOI of JSS publication and change CITATION
+* Minor style adjustments in references
+* Update of vignettes according to JSS publication
+
 # counterfactuals 0.1.6 
 * Fix display issues in html vignettes
 
