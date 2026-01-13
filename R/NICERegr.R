@@ -35,7 +35,7 @@
 #' Brughmans, D., & Martens, D. (2021). NICE: An Algorithm for Nearest Instance Counterfactual Explanations.
 #' \href{https://arxiv.org/abs/2104.07411}{arXiv 2104.07411} v2.
 #'
-#' Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
+#' Gower, J. C. (1971). A general coefficient of similarity and some of its properties. Biometrics, 27, 623–637.
 #'
 #'
 #' @examples

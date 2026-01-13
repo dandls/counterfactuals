@@ -58,30 +58,29 @@ if (require("randomForest")) {
 
 }
 \references{
-Dandl, S., Molnar, C., Binder, M., and Bischl, B. (2020).
+Dandl, S., Molnar, C., Binder, M., & Bischl, B. (2020).
 "Multi-Objective Counterfactual Explanations". In: Parallel Problem
 Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss,
 André Deutz, Hao Wang, Carola Doerr, Michael Emmerich, and Heike Trautmann, 448–469,
 Cham, Springer International Publishing, \doi{10.1007/978-3-030-58112-1_31}.
 
 Deb, K., Pratap, A., Agarwal, S., & Meyarivan, T. A. M. T. (2002).
-"A fast and elitist multiobjective genetic algorithm: NSGA-II".
-IEEE transactions on evolutionary computation, 6(2), 182-197.
+"A Fast and Elitist Multiobjective Genetic Algorithm: NSGA-II".
+IEEE Transactions on Evolutionary Computation, 6(2), 182-197.
 
-Goldstein, A., Kapelner, A., Bleich, J., and Pitkin, E. (2015).
+Goldstein, A., Kapelner, A., Bleich, J., & Pitkin, E. (2015).
 "Peeking Inside the Black Box: Visualizing
 Statistical Learning with Plots of Individual Conditional Expectation".
 Journal of Computational and Graphical Statistics 24 (1): 44–65.
 \doi{10.1080/10618600.2014.907095}.
 
-Gower, J. C. (1971). A general coefficient of similarity and some of its properties. Biometrics, 27, 623–637.
+Gower, J. C. (1971). "A General Coefficient of Similarity and Some of its Properties". Biometrics, 27, 623–637.
 
-Hothorn, T., Zeileis, A. (2017), "Transformation Forests".
+Hothorn, T., & Zeileis, A. (2017), "Transformation Forests".
 Technical Report, \href{https://arxiv.org/abs/1701.02110}{arXiv 1701.02110}.
 
-Li, Rui, L., Emmerich, M. T. M., Eggermont, J. Bäck, T., Schütz, M., Dijkstra, J., Reiber, J. H. C. (2013).
-"Mixed Integer Evolution Strategies for Parameter Optimization."
-Evolutionary Computation 21 (1): 29–64. \doi{10.1162/EVCO_a_00059}.
+Li, Rui, L., Emmerich, M. T. M., Eggermont, J. Bäck, T., Schütz, M., Dijkstra, J., & Reiber, J. H. C. (2013).
+"Mixed Integer Evolution Strategies for Parameter Optimization." Evolutionary Computation 21 (1): 29–64. \doi{10.1162/EVCO_a_00059}.
 }
 \concept{get_dominated_hv}
 \concept{plot_search}

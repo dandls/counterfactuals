@@ -11,6 +11,9 @@ Abstract base class for counterfactual explanation methods.
 Child classes: \link{CounterfactualMethodClassif}, \link{CounterfactualMethodRegr}
 }
 
+\references{
+Dandl, S., Hofheinz, A., Binder, M., Bischl, B., & Casalicchio, C. (2025). "counterfactuals: An R Package for Counterfactual Explanation Methods". Journal of Statistical Software, 115(9), 1–48. doi:10.18637/jss.v115.i09
+}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{

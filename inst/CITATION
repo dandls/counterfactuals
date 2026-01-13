@@ -1,14 +1,22 @@
-bibentry(
-    bibtype = "manual",
-    key = "counterfactuals",
-    title = "counterfactuals: An R Package for Counterfactual Explanation Methods",
-    author = c(
-        person(given = "Susanne", family = "Dandl"), 
-        person(given = "Andreas", family = "Hofheinz"),
-        person(given = "Martin", family = "Binder"),
-        person(given = "Giuseppe", family = "Casalicchio")
-    ),
-    year = "2023",
-    note = "R package version 0.1.2"
+bibentry(bibtype = "Article",
+  title        = "{counterfactuals}: An {R} Package for Counterfactual Explanation Methods",
+  author       = c(person(given = "Susanne",
+                          family = "Dandl"),
+                   person(given = "Andreas",
+                          family = "Hofheinz"),
+                   person(given = "Martin",
+                          family = "Binder"),
+                   person(given = "Bernd",
+                          family = "Bischl"),
+                   person(given = "Giuseppe",
+                          family = "Casalicchio",
+                          email = "Giuseppe.Casalicchio@stat.uni-muenchen.de")),
+  journal      = "Journal of Statistical Software",
+  year         = "2025",
+  volume       = "115",
+  number       = "9",
+  pages        = "1--48",
+  doi          = "10.18637/jss.v115.i09",
+  header       = "To cite counterfactuals in publications use:"
 )
 

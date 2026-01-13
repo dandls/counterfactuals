@@ -362,11 +362,13 @@ cfactuals
 
 # References
 
-Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl. 2020. “Multi-Objective Counterfactual Explanations.” In Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr, Michael Emmerich, and Heike Trautmann, 448–469. Cham: Springer International Publishing. \doi{10.1007/978-3-030-58112-1_31}.
+Dandl, S., Hofheinz, A., Binder, M., Bischl, B., & Casalicchio, C. (2025). "counterfactuals: An R Package for Counterfactual Explanation Methods". Journal of Statistical Software, 115(9), 1–48. \doi{10.18637/jss.v115.i09}
 
-Brughmans D, Martens D (2022). “NICE: An Algorithm for Nearest Instance Counterfactual
-Explanations.” Technical report, <arXiv:2104.07411> v2.
+Dandl, S., Molnar, C., Binder, M., & Bernd Bischl. 2020. "Multi-Objective Counterfactual Explanations". In: Parallel Problem Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss, André Deutz, Hao Wang, Carola Doerr, Michael Emmerich, and Heike Trautmann, 448–469. Cham: Springer International Publishing. \doi{10.1007/978-3-030-58112-1_31}
 
-Zitzler, Eckart, and Lothar Thiele. 1998. “Multiobjective Optimization Using Evolutionary Algorithms—a Comparative Case Study.” In International Conference on Parallel Problem Solving from Nature, 292–301. Springer.
+Brughmans, D., & Martens D. (2022). “NICE: An Algorithm for Nearest Instance Counterfactual
+Explanations.” Technical report, <arXiv:2104.07411> v2
 
-Harrell, F. E. 2002. “Plasma Retinol and Beta-Carotene Dataset“. https://hbiostat.org/data/repo/plasma.html.
+Zitzler, E., & Thiele, L. (1998). “Multiobjective Optimization Using Evolutionary Algorithms—a Comparative Case Study.” In International Conference on Parallel Problem Solving from Nature, 292–301. Springer
+
+Harrell, F. E. (2002). "Plasma Retinol and Beta-Carotene Dataset". https://hbiostat.org/data/repo/plasma.html

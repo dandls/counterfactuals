@@ -2,6 +2,6 @@
 
     Code
       cfactuals = mocr$find_counterfactuals(x_interest, desired_outcome)
-    Message <simpleMessage>
+    Message
       `x_interest` was removed from results.
 

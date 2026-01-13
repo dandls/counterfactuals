@@ -9,7 +9,9 @@ or \link{CounterfactualMethodClassif}.
 It contains the counterfactuals and has several methods for their evaluation and visualization.
 }
 \references{
-Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
+Gower, J. C. (1971). "A General Coefficient of Similarity and Some of its Properties". Biometrics, 27, 623–637.
+
+Dandl, S., Hofheinz, A., Binder, M., Bischl, B., & Casalicchio, C. (2025). "counterfactuals: An R Package for Counterfactual Explanation Methods". Journal of Statistical Software, 115(9), 1–48. doi:10.18637/jss.v115.i09
 }
 \concept{evaluate}
 \concept{evaluate_set}

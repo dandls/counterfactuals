@@ -227,15 +227,15 @@ training data.
 
 ```{r}
 set.seed(78546)
-X = subset(iris, select = -Species)[- 130L,]
-y = iris$Species[-130L]
+X = subset(iris, select = -Species)[- 150L,]
+y = iris$Species[-150L]
 rf = randomForest(X, y, ntree = 20L)
-predictor = iml::Predictor$new(rf, data = iris[-130L, ], y = "Species", type = "prob")
+predictor = iml::Predictor$new(rf, data = iris[-150L, ], y = "Species", type = "prob")
 ```
 
 For `x_interest`, the model predicts a probability of 25% for `versicolor`. 
 ```{r}
-x_interest = iris[130L, ]
+x_interest = iris[150L, ]
 predictor$predict(x_interest)
 ```
 
@@ -281,7 +281,9 @@ clarity we will not do this here.
 
 ## References
 
-Tolomei, G., Silvestri, F., Haines, A., Lalmas, M.: Interpretable Predictions of Tree-based Ensembles via Actionable 
-Feature Tweaking. In: Proceedings of the 23rd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining. 
-pp. 465--474. KDD '17, ACM, New York, NY, USA (2017). \doi{10.1145/3097983.3098039}.
+Dandl, S., Hofheinz, A., Binder, M., Bischl, B., & Casalicchio, C. (2025). "counterfactuals: An R Package for Counterfactual Explanation Methods". Journal of Statistical Software, 115(9), 1–48. \doi{10.18637/jss.v115.i09}
+
+Tolomei, G., Silvestri, F., Haines, A., Lalmas, M. (2017). "Interpretable Predictions of Tree-based Ensembles via Actionable 
+Feature Tweaking". In: Proceedings of the 23rd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining. 
+pp. 465-474. KDD '17, ACM, New York, NY, USA. \doi{10.1145/3097983.3098039}
 

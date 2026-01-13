@@ -29,10 +29,10 @@ if (require("randomForest")) {
 
 }
 \references{
-Gower, J. C. (1971), "A general coefficient of similarity and some of its properties". Biometrics, 27, 623–637.
+Gower, J. C. (1971). "A General Coefficient of Similarity and Some of its Properties". Biometrics, 27, 623–637.
 
-Wexler, J., Pushkarna, M., Bolukbasi, T., Wattenberg, M., Viégas, F., & Wilson, J. (2019). The what-if tool:
-Interactive probing of machine learning models. IEEE transactions on visualization and computer graphics, 26(1), 56–65.
+Wexler, J., Pushkarna, M., Bolukbasi, T., Wattenberg, M., Viégas, F., & Wilson, J. (2019). "The What-If tool:
+Interactive Probing of Machine Learning Models". IEEE Transactions on Visualization and Computer Graphics, 26(1), 56–65.
 }
 \section{Super classes}{
 \code{\link[counterfactuals:CounterfactualMethod]{counterfactuals::CounterfactualMethod}} -> \code{\link[counterfactuals:CounterfactualMethodRegr]{counterfactuals::CounterfactualMethodRegr}} -> \code{WhatIfRegr}
