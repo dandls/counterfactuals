@@ -33,13 +33,13 @@ jobs:
       DISPLAY: 99.0
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-r@v4
         with:
           r-version: ${{ matrix.config.r }}
       
-      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-pandoc@v4
 
       - name: Query dependencies
         run: |
@@ -54,7 +54,7 @@ jobs:
 
       - name: Restore R package cache
         if: runner.os != 'Windows'
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
