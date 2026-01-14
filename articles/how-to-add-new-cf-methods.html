@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">counterfactuals</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -119,7 +119,7 @@ Counterfactual methods that support both tasks are split into two
 separate classes; for instance, as MOC is applicable to classification
 and regression tasks, we implement two classes: <code>MOCClassif</code>
 and <code>MOCRegr</code>.</p>
-<p><img src="figures%2Fclass-diagram.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="figures/class-diagram.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
 <p>Leaf classes (like <code>MOCClassif</code> and <code>MOCRegr</code>)
 inherit the <code>find_counterfactuals()</code> method from
 <code>CounterfactualMethodClassif</code> or
@@ -141,7 +141,7 @@ performs the search and returns the counterfactuals as a
 method then creates a <code>Counterfactuals</code> object, which
 contains the counterfactuals and provides several methods for their
 evaluation and visualization (3).</p>
-<p><img src="figures%2Fcall-diagram.png" width="60%" height="60%" style="display: block; margin: auto;"></p>
+<p><img src="figures/call-diagram.png" class="r-plt" alt="" width="60%" height="60%" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level2">
@@ -307,17 +307,17 @@ let’s look at a short application to the <code>iris</code> dataset.</p>
 object, omitting <code>x_interest</code> from the training data.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">78546</span><span class="op">)</span></span>
-<span><span class="va">X</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">iris</span>, select <span class="op">=</span> <span class="op">-</span><span class="va">Species</span><span class="op">)</span><span class="op">[</span><span class="op">-</span> <span class="fl">130L</span>,<span class="op">]</span></span>
-<span><span class="va">y</span> <span class="op">=</span> <span class="va">iris</span><span class="op">$</span><span class="va">Species</span><span class="op">[</span><span class="op">-</span><span class="fl">130L</span><span class="op">]</span></span>
+<span><span class="va">X</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">iris</span>, select <span class="op">=</span> <span class="op">-</span><span class="va">Species</span><span class="op">)</span><span class="op">[</span><span class="op">-</span> <span class="fl">150L</span>,<span class="op">]</span></span>
+<span><span class="va">y</span> <span class="op">=</span> <span class="va">iris</span><span class="op">$</span><span class="va">Species</span><span class="op">[</span><span class="op">-</span><span class="fl">150L</span><span class="op">]</span></span>
 <span><span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html" class="external-link">randomForest</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">y</span>, ntree <span class="op">=</span> <span class="fl">20L</span><span class="op">)</span></span>
-<span><span class="va">predictor</span> <span class="op">=</span> <span class="fu">iml</span><span class="fu">::</span><span class="va"><a href="https://giuseppec.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rf</span>, data <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="op">-</span><span class="fl">130L</span>, <span class="op">]</span>, y <span class="op">=</span> <span class="st">"Species"</span>, type <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">predictor</span> <span class="op">=</span> <span class="fu">iml</span><span class="fu">::</span><span class="va"><a href="https://giuseppec.github.io/iml/reference/Predictor.html" class="external-link">Predictor</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rf</span>, data <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="op">-</span><span class="fl">150L</span>, <span class="op">]</span>, y <span class="op">=</span> <span class="st">"Species"</span>, type <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span></span></code></pre></div>
 <p>For <code>x_interest</code>, the model predicts a probability of 25%
 for <code>versicolor</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">x_interest</span> <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">130L</span>, <span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">x_interest</span> <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="fl">150L</span>, <span class="op">]</span></span>
 <span><span class="va">predictor</span><span class="op">$</span><span class="fu">predict</span><span class="op">(</span><span class="va">x_interest</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   setosa versicolor virginica</span></span>
-<span><span class="co">#&gt; 1      0       0.45      0.55</span></span></code></pre></div>
+<span><span class="co">#&gt; 1      0        0.1       0.9</span></span></code></pre></div>
 <p>Now, we use Feature Tweaking to address the question: “What would
 need to change in <code>x_interest</code> for the model to predict a
 probability of at least 60% for<code>versicolor</code>.</p>
@@ -346,11 +346,14 @@ internal code, but for the sake of clarity we will not do this here.</p>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<p>Tolomei, G., Silvestri, F., Haines, A., Lalmas, M.: Interpretable
-Predictions of Tree-based Ensembles via Actionable Feature Tweaking. In:
-Proceedings of the 23rd ACM SIGKDD International Conference on Knowledge
-Discovery and Data Mining. pp. 465–474. KDD ’17, ACM, New York, NY, USA
-(2017). .</p>
+<p>Dandl, S., Hofheinz, A., Binder, M., Bischl, B., &amp; Casalicchio,
+C. (2025). “counterfactuals: An R Package for Counterfactual Explanation
+Methods”. Journal of Statistical Software, 115(9), 1–48. </p>
+<p>Tolomei, G., Silvestri, F., Haines, A., Lalmas, M. (2017).
+“Interpretable Predictions of Tree-based Ensembles via Actionable
+Feature Tweaking”. In: Proceedings of the 23rd ACM SIGKDD International
+Conference on Knowledge Discovery and Data Mining. pp. 465-474. KDD ’17,
+ACM, New York, NY, USA. </p>
 </div>
   </div>
 
@@ -369,7 +372,7 @@ Discovery and Data Mining. pp. 465–474. KDD ’17, ACM, New York, NY, USA
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>

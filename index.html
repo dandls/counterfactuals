@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Counterfactual Explanations">
-<meta property="og:description" content="Modular and unified R6-based interface for counterfactual explanation methods. The following methods are currently implemented: Burghmans et al. (2022) &lt;doi:10.48550/arXiv.2104.07411&gt;, Dandl et al. (2020) &lt;doi:10.1007/978-3-030-58112-1_31&gt; and Wexler et al. (2019) &lt;doi:10.1109/TVCG.2019.2934619&gt;. Optional extensions allow these methods to be applied to a variety of models and use cases. Once generated, the counterfactuals can be analyzed and visualized by provided functionalities.">
+<meta property="og:description" content="Modular and unified R6-based interface for counterfactual explanation methods. The following methods are currently implemented: Burghmans et al. (2022) &lt;doi:10.48550/arXiv.2104.07411&gt;, Dandl et al. (2020) &lt;doi:10.1007/978-3-030-58112-1_31&gt; and Wexler et al. (2019) &lt;doi:10.1109/TVCG.2019.2934619&gt;. Optional extensions allow these methods to be applied to a variety of models and use cases. Once generated, the counterfactuals can be analyzed and visualized by provided functionalities. The package is described in detail in Dandl et al. (2025) &lt;doi:10.18637/jss.v115.i09&gt;.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">counterfactuals</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -89,7 +89,7 @@
 <!-- badges: start -->
 
 <p>The <code>counterfactuals</code> package provides various (model-agnostic) counterfactual explanation methods via a unified R6-based interface.</p>
-<p>Counterfactual explanation methods address questions of the form: “For input <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Cmathbf%7Bx%5E%7B%5Cstar%7D%7D%20%22%5Cmathbf%7Bx%5E%7B%5Cstar%7D%7D%22" alt="\mathbf{x^{\star}}">, the model predicted <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;y%20%22y%22" alt="y">. What needs to be changed in <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Cmathbf%7Bx%5E%7B%5Cstar%7D%7D%20%22%5Cmathbf%7Bx%5E%7B%5Cstar%7D%7D%22" alt="\mathbf{x^{\star}}"> for the model to predict a desired outcome <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Ctilde%7By%7D%20%22%5Ctilde%7By%7D%22" alt="\tilde{y}"> instead?”.<br>
+<p>Counterfactual explanation methods address questions of the form: “For input <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Cmathbf%7Bx%5E%7B%5Cstar%7D%7D%20%22\mathbf%7Bx%5E%7B\star%7D%7D%22" alt="\mathbf{x^{\star}}">, the model predicted <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;y%20%22y%22" alt="y">. What needs to be changed in <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Cmathbf%7Bx%5E%7B%5Cstar%7D%7D%20%22\mathbf%7Bx%5E%7B\star%7D%7D%22" alt="\mathbf{x^{\star}}"> for the model to predict a desired outcome <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;%5Ctilde%7By%7D%20%22\tilde%7By%7D%22" alt="\tilde{y}"> instead?”.<br>
 Denied loan applications serve as a common example; here a counterfactual explanation (or counterfactual for short) could be: “The loan was denied because the amount of €30k is too high given the income. If the amount had been €20k, the loan would have been granted.”</p>
 <p>For an introduction to counterfactual explanation methods, we recommend Chapter 9.3 of the <a href="https://christophm.github.io/interpretable-ml-book/" class="external-link">Interpretable Machine Learning book</a> by Christoph Molnar. The package is based on the R code underlying the paper <a href="https://link.springer.com/chapter/10.1007/978-3-030-58112-1_31" class="external-link">Multi-Objective Counterfactual Explanations (MOC)</a>.</p>
 <div class="section level2">
@@ -110,7 +110,7 @@ Denied loan applications serve as a common example; here a counterfactual explan
 <p>You can install the development version from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"dandls/counterfactuals"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"dandls/counterfactuals"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="get-started">Get started<a class="anchor" aria-label="anchor" href="#get-started"></a>
@@ -123,7 +123,7 @@ Denied loan applications serve as a common example; here a counterfactual explan
 <div class="section level3">
 <h3 id="fitting-a-model">Fitting a model<a class="anchor" aria-label="anchor" href="#fitting-a-model"></a>
 </h3>
-<p>First, we train a <code>randomForest</code> model to predict the target variable <code>Species</code>, omitting one observation from the training data, which is <code>x_interest</code> (the observation <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;x%5E%7B%5Cstar%7D%20%22x%5E%7B%5Cstar%7D%22" alt="x^{\star}"> for which we want to find counterfactuals).</p>
+<p>First, we train a <code>randomForest</code> model to predict the target variable <code>Species</code>, omitting one observation from the training data, which is <code>x_interest</code> (the observation <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;x%5E%7B%5Cstar%7D%20%22x%5E%7B\star%7D%22" alt="x^{\star}"> for which we want to find counterfactuals).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rf</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html" class="external-link">randomForest</a></span><span class="op">(</span><span class="va">Species</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">iris</span><span class="op">[</span><span class="op">-</span><span class="fl">150L</span>, <span class="op">]</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -233,8 +233,8 @@ Denied loan applications serve as a common example; here a counterfactual explan
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Susanne Dandl <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-4324-4163" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Andreas Hofheinz <br><small class="roles"> Author </small>  </li>
+<li>Susanne Dandl <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-4324-4163" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Andreas Hofheinz <br><small class="roles"> Author </small>   </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
@@ -257,7 +257,7 @@ Denied loan applications serve as a common example; here a counterfactual explan
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>

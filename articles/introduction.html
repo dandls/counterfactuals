@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">counterfactuals</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -323,8 +323,9 @@ frequency of feature changes across all remaining counterfactuals.
 Setting <code>subset_zero = TRUE</code> removes all unchanged features
 from the plot.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_freq_of_feature_changes</span><span class="op">(</span>subset_zero <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="introduction_files/figure-html/unnamed-chunk-13-1.png" width="672"></p>
+<code class="sourceCode R"><span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_freq_of_feature_changes</span><span class="op">(</span>subset_zero <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: `label` cannot be a <span style="color: #0000BB;">&lt;ggplot2::element_blank&gt;</span> object.</span></span></code></pre></div>
+<p><img src="introduction_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="672"></p>
 <p>The parallel plot connects the (scaled) feature values of each
 counterfactual and highlights <code>x_interest</code> in blue. We
 specify <code>feature_names</code> to order the features according to
@@ -332,7 +333,7 @@ their frequency of changes.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_parallel</span><span class="op">(</span>feature_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span></span>
 <span>  <span class="va">cfactuals</span><span class="op">$</span><span class="fu">get_freq_of_feature_changes</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, digits_min_max <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></code></pre></div>
-<p><img src="introduction_files/figure-html/unnamed-chunk-14-1.png" width="672"></p>
+<p><img src="introduction_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="" width="672"></p>
 <p>In the following surface plot, the white dot represents
 <code>x_interest</code>. All counterfactuals that differ from
 <code>x_interest</code> only in the selected features are displayed as
@@ -340,7 +341,7 @@ black dots. The tick marks next to the axes indicate the marginal
 distribution of the counterfactuals.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_surface</span><span class="op">(</span>feature_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"duration"</span>, <span class="st">"amount"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="introduction_files/figure-html/unnamed-chunk-15-1.png" width="672"></p>
+<p><img src="introduction_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="" width="672"></p>
 </div>
 <div class="section level4">
 <h4 id="moc-diagnostics">MOC diagnostics<a class="anchor" aria-label="anchor" href="#moc-diagnostics"></a>
@@ -355,11 +356,11 @@ mean and minimum objective values using the
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">moc_classif</span><span class="op">$</span><span class="fu">plot_statistics</span><span class="op">(</span>centered_obj <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>[[1]]
-<img src="introduction_files/figure-html/unnamed-chunk-16-1.png" width="672">
+<img src="introduction_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="" width="672">
 [[2]]
-<img src="introduction_files/figure-html/unnamed-chunk-16-2.png" width="672">
+<img src="introduction_files/figure-html/unnamed-chunk-16-2.png" class="r-plt" alt="" width="672">
 [[3]]
-<img src="introduction_files/figure-html/unnamed-chunk-16-3.png" width="672"></p>
+<img src="introduction_files/figure-html/unnamed-chunk-16-3.png" class="r-plt" alt="" width="672"></p>
 <p>Ideally, one would like the mean value of each objective to decrease
 over the generations, leading to an increase of the hypervolume. We
 could visualize the objective values of the emerging candidates
@@ -367,10 +368,10 @@ throughout the generations via the <code>plot_search</code> method for
 pairs of objectives.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">moc_classif</span><span class="op">$</span><span class="fu">plot_search</span><span class="op">(</span>objectives <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dist_train"</span>, <span class="st">"dist_target"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="introduction_files/figure-html/unnamed-chunk-17-1.png" width="672"></p>
+<p><img src="introduction_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="" width="672"></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">moc_classif</span><span class="op">$</span><span class="fu">plot_search</span><span class="op">(</span>objectives <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dist_x_interest"</span>, <span class="st">"dist_train"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="introduction_files/figure-html/unnamed-chunk-17-2.png" width="672"></p>
+<p><img src="introduction_files/figure-html/unnamed-chunk-17-2.png" class="r-plt" alt="" width="672"></p>
 </div>
 </div>
 <div class="section level3">
@@ -587,7 +588,7 @@ For example, in the surface plot, we see that increasing betaplasma
 helps while changing the age alone has no impact on the prediction.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cfactuals</span><span class="op">$</span><span class="fu">plot_surface</span><span class="op">(</span>feature_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"betaplasma"</span>, <span class="st">"age"</span><span class="op">)</span>, grid_size <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span></code></pre></div>
-<p><img src="introduction_files/figure-html/unnamed-chunk-25-1.png" width="672"></p>
+<p><img src="introduction_files/figure-html/unnamed-chunk-25-1.png" class="r-plt" alt="" width="672"></p>
 </div>
 <div class="section level4">
 <h4 id="user-defined-distance-function">User-defined distance function<a class="anchor" aria-label="anchor" href="#user-defined-distance-function"></a>
@@ -636,19 +637,22 @@ example, the Gower distance can be replaces by the L_0 norm.</p>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<p>Dandl, Susanne, Christoph Molnar, Martin Binder, and Bernd Bischl.
-2020. “Multi-Objective Counterfactual Explanations.” In Parallel Problem
+<p>Dandl, S., Hofheinz, A., Binder, M., Bischl, B., &amp; Casalicchio,
+C. (2025). “counterfactuals: An R Package for Counterfactual Explanation
+Methods”. Journal of Statistical Software, 115(9), 1–48. </p>
+<p>Dandl, S., Molnar, C., Binder, M., &amp; Bernd Bischl. 2020.
+“Multi-Objective Counterfactual Explanations”. In: Parallel Problem
 Solving from Nature – PPSN XVI, edited by Thomas Bäck, Mike Preuss,
 André Deutz, Hao Wang, Carola Doerr, Michael Emmerich, and Heike
-Trautmann, 448–469. Cham: Springer International Publishing. .</p>
-<p>Brughmans D, Martens D (2022). “NICE: An Algorithm for Nearest
-Instance Counterfactual Explanations.” Technical report,
-&lt;arXiv:2104.07411&gt; v2.</p>
-<p>Zitzler, Eckart, and Lothar Thiele. 1998. “Multiobjective
-Optimization Using Evolutionary Algorithms—a Comparative Case Study.” In
+Trautmann, 448–469. Cham: Springer International Publishing. </p>
+<p>Brughmans, D., &amp; Martens D. (2022). “NICE: An Algorithm for
+Nearest Instance Counterfactual Explanations.” Technical report,
+&lt;arXiv:2104.07411&gt; v2</p>
+<p>Zitzler, E., &amp; Thiele, L. (1998). “Multiobjective Optimization
+Using Evolutionary Algorithms—a Comparative Case Study.” In
 International Conference on Parallel Problem Solving from Nature,
-292–301. Springer.</p>
-<p>Harrell, F. E. 2002. “Plasma Retinol and Beta-Carotene Dataset“. <a href="https://hbiostat.org/data/repo/plasma.html" class="external-link uri">https://hbiostat.org/data/repo/plasma.html</a>.</p>
+292–301. Springer</p>
+<p>Harrell, F. E. (2002). “Plasma Retinol and Beta-Carotene Dataset”. <a href="https://hbiostat.org/data/repo/plasma.html" class="external-link uri">https://hbiostat.org/data/repo/plasma.html</a></p>
 </div>
   </div>
 
@@ -667,7 +671,7 @@ International Conference on Parallel Problem Solving from Nature,
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>
